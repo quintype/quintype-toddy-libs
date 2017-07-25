@@ -1,0 +1,22 @@
+{
+  "name": "quintype-toddy-libs",
+  "version": "1.0.0",
+  "description": "Libraries to help build Quintype Node.js apps",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quintype/quintype-toddy-libs.git"
+  },
+  "keywords": [
+    "quintype"
+  ],
+  "author": "Quintype Developers <dev-core@quintype.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/quintype/quintype-toddy-libs/issues"
+  },
+  "homepage": "https://github.com/quintype/quintype-toddy-libs#readme"
+}
