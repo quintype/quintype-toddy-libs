@@ -2,8 +2,30 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 
+import { createBrowserHistory } from 'history'
+
 import { IsomorphicComponent } from '../isomorphic/component'
 import { BreakingNews } from '../components/breaking-news'
+import { NAVIGATE_TO_PAGE } from '../store/actions';
+
+export var history = createBrowserHistory();
+
+export function getRouteData(path, opts) {
+  opts = opts || {};
+  return superagent.get('/route-data.json', Object.assign({path: path}, opts));
+}
+
+export function navigateToPage(dispatch, path, doNotPushPath) {
+  getRouteData(path)
+    .then((response) => dispatch({
+      type: NAVIGATE_TO_PAGE,
+      page: response.body,
+      currentPath: path
+    })).then(() => {
+      if(!doNotPushPath)
+        history.push(path)
+    });
+}
 
 export function renderComponent(clazz, container, store, props) {
   return ReactDOM.render(
