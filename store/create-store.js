@@ -1,4 +1,4 @@
-import { createStore, combineReducers } from 'redux';
+import { createStore } from 'redux';
 import { NAVIGATE_TO_PAGE, BREAKING_NEWS_UPDATED } from './actions';
 
 function internalReducers(state, action) {
@@ -10,7 +10,7 @@ function internalReducers(state, action) {
 }
 
 function createQtStore(customReducers, initialValue) {
-  return createStore(combineReducers(Object.assign({qtReducers: internalReducers}, customReducers)), Object.assign({currentPath: window.location.pathname}, initialValue));
+  return createStore(internalReducers, Object.assign({currentPath: window.location.pathname}, initialValue));
 }
 
 exports.createStore = createQtStore;
