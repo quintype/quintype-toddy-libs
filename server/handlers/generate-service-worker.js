@@ -5,9 +5,10 @@ function generateServiceWorker(req, res, {config, generateRoutes}) {
   res.header("Content-Type", "application/javascript");
   res.header("Cache-Control", "public,max-age=300");
   res.render("js/service-worker", {
-    routes: generateRoutes(config),
+    routes: generateRoutes(config).filter(route => !route.skipPWA),
     serviceWorkerHelper: serviceWorkerContents,
-    assetPath: assetPath
+    assetPath: assetPath,
+    hostname: req.hostname,
   });
   return Promise.resolve();
 }
