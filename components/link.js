@@ -3,7 +3,11 @@ const {connect} = require("react-redux");
 const _ = require("lodash");
 
 function LinkBase(props) {
-  return <a {..._.omit(props, "navigateTo")} onClick={(e) => {e.preventDefault(); e.stopPropagation(); props.navigateTo(props.href)}}/>;
+  return React.createElement("a", _(props)
+    .omit("navigateTo")
+    .merge({onClick: (e) => {e.preventDefault(); e.stopPropagation(); props.navigateTo(props.href)}})
+    .value()
+  );
 }
 
 function mapStateToProps(state) {
