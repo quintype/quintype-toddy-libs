@@ -1,6 +1,6 @@
 {
   "name": "quintype-toddy-libs",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,10 @@
     "js-yaml": "^3.9.0",
     "quintype-backend": "^0.2.4",
     "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-redux": "^5.0.5",
     "react-router": "^4.1.2",
+    "redux": "^3.7.2",
     "url": "^0.11.0"
   }
 }

@@ -2,7 +2,7 @@ const config = require("./publisher-config");
 const client = require("./api-client");
 
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
-const {handleIsomorphicShell, handleIsomorphicDataLoad} = require("./handlers/isomorphic-handler");
+const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute} = require("./handlers/isomorphic-handler");
 
 function withConfig(logError, f, staticParams) {
   return function(req, res, opts) {
@@ -55,8 +55,9 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app) {
   app.all("/news_sitemap.xml", sketchesProxy);
 }
 
-exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logError, renderLayout, loadData}) {
-  app.get("/service-worker.js", withConfig(logError, generateServiceWorker, {generateRoutes: generateRoutes}));
-  app.get("/shell.html", withConfig(logError, handleIsomorphicShell, {renderLayout: renderLayout}));
-  app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes: generateRoutes, loadData: loadData}));
+exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logError, renderLayout, loadData, pickComponent}) {
+  app.get("/service-worker.js", withConfig(logError, generateServiceWorker, {generateRoutes}));
+  app.get("/shell.html", withConfig(logError, handleIsomorphicShell, {renderLayout}));
+  app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes, loadData}));
+  app.get("/*", withConfig(logError, handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent}));
 }
