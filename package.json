@@ -1,6 +1,6 @@
 {
   "name": "quintype-toddy-libs",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -18,5 +18,9 @@
   "bugs": {
     "url": "https://github.com/quintype/quintype-toddy-libs/issues"
   },
-  "homepage": "https://github.com/quintype/quintype-toddy-libs#readme"
+  "homepage": "https://github.com/quintype/quintype-toddy-libs#readme",
+  "dependencies": {
+    "js-yaml": "^3.9.0",
+    "quintype-backend": "^0.2.4"
+  }
 }
