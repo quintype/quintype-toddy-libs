@@ -9,8 +9,8 @@ function internalReducers(state, action) {
   }
 }
 
-function createQtStore(customReducer, initialValue) {
-  return createStore(combineReducers(internalReducers, customReducer), Object.assign({currentPath: window.location.pathname}, initialValue));
+function createQtStore(customReducers, initialValue) {
+  return createStore(combineReducers(Object.assign({qtReducers: internalReducers}, customReducers)), Object.assign({currentPath: window.location.pathname}, initialValue));
 }
 
 exports.createStore = createQtStore;
