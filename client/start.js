@@ -8,7 +8,7 @@ import { IsomorphicComponent } from '../isomorphic/component'
 import { BreakingNews } from '../components/breaking-news'
 import { NAVIGATE_TO_PAGE } from '../store/actions';
 
-export var history = createBrowserHistory();
+export const history = createBrowserHistory();
 
 export function getRouteData(path, opts) {
   opts = opts || {};
