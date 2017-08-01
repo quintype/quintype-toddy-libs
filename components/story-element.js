@@ -1,5 +1,7 @@
 const React = require("react");
 const classNames = require("classnames");
+const getYouTubeID = require('get-youtube-id');
+const YouTube = require('react-youtube').default;
 const { ResponsiveImage } = require("./responsive-image");
 
 function storyElementText(storyElement) {
@@ -25,12 +27,22 @@ function storyElementTitle(storyElement) {
   return React.createElement("h2", {}, storyElement.text);
 }
 
-// FIXME MISSING: youtube-video, soundcloud-audio, composite, polltype, jsembed
+function storyElementYoutube(storyElement) {
+  const opts = {
+    playerVars: {
+      autoplay: 0
+    }
+  };
+  return React.createElement(YouTube, {videoId: getYouTubeID(storyElement.url), opts:opts });
+}
+
+// FIXME MISSING: soundcloud-audio, composite, polltype, jsembed
 // TODO: Can also support various subtypes (though not needed potentially)
 const DEFAULT_TEMPLATES = {
   "text": {render: storyElementText},
   "image": {render: storyElementImage},
-  "title": {render: storyElementTitle}
+  "title": {render: storyElementTitle},
+  "youtube-video": {render: storyElementYoutube}
 };
 
 class StoryElement extends React.Component {
