@@ -1145,6 +1145,12 @@ react-router@^4.1.2:
     prop-types "^15.5.4"
     warning "^3.0.0"
 
+react-soundcloud-widget@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/react-soundcloud-widget/-/react-soundcloud-widget-2.0.4.tgz#69663516878d8d52de1d93e4fac062f02a9c60af"
+  dependencies:
+    load-script "^1.0.0"
+
 react-youtube@^7.4.0:
   version "7.4.0"
   resolved "https://registry.yarnpkg.com/react-youtube/-/react-youtube-7.4.0.tgz#d346c30ec77eec61871e8c0784cef2cb2c69b63d"
