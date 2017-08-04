@@ -1,6 +1,6 @@
 {
   "name": "quintype-toddy-libs",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/quintype/quintype-toddy-libs#readme",
   "dependencies": {
+    "atob": "^2.0.3",
     "classnames": "^2.2.5",
     "get-youtube-id": "^1.0.0",
     "http-proxy": "^1.16.2",
