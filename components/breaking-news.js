@@ -16,6 +16,10 @@ class BreakingNewsBase extends React.Component {
     this.interval = global.setInterval(() => this.updateBreakingNews(), this.props.updateInterval || 60000);
     this.updateBreakingNews();
   }
+
+  componentWillUnmount() {
+    global.clearInterval(this.interval);
+  }
 }
 
 function mapStateToProps(state) {
