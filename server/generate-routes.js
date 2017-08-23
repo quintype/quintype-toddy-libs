@@ -29,7 +29,8 @@ function sectionPageRoute(section, sectionsById) {
     pageType: "section-page",
     exact: true,
     params: {
-      sectionId: section.id
+      sectionId: section.id,
+      collectionSlug: section.collection ? section.collection.slug : 'not-found',
     }
   };
 }
