@@ -37,7 +37,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
       .then((result) => {
         const context = {};
         const store = createStore((state) => state, result);
-        renderLayout(res.status(200), {
+        renderLayout(res.status(result.httpStatusCode), {
           content: ReactDOMServer.renderToString(
             React.createElement(Provider, {store: store},
                 React.createElement(IsomorphicComponent, {pickComponent: pickComponent})))
