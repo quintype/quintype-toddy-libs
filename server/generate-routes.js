@@ -30,7 +30,7 @@ function sectionPageRoute(section, sectionsById) {
     exact: true,
     params: {
       sectionId: section.id,
-      collectionSlug: section.collection ? section.collection.slug : 'not-found',
+      collectionSlug: section.collection ? section.collection.slug : null
     }
   };
 }
