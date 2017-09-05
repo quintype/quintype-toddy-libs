@@ -55,9 +55,9 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app) {
   app.all("/news_sitemap.xml", sketchesProxy);
 }
 
-exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logError, renderLayout, loadData, pickComponent}) {
+exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logError, renderLayout, loadData, pickComponent, loadErrorData}) {
   app.get("/service-worker.js", withConfig(logError, generateServiceWorker, {generateRoutes}));
   app.get("/shell.html", withConfig(logError, handleIsomorphicShell, {renderLayout}));
-  app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes, loadData}));
-  app.get("/*", withConfig(logError, handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent}));
+  app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData}));
+  app.get("/*", withConfig(logError, handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData}));
 }
