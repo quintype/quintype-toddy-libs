@@ -50,14 +50,20 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
   const match = matchBestRoute(url.pathname, generateRoutes(config));
   if(match) {
     return fetchData(loadData, loadErrorData, match.pageType, match.params, config)
-      .then((result) => {
-        const store = createStore((state) => state, result);
-        renderLayout(res.status(result.httpStatusCode || 200), {
-          content: ReactDOMServer.renderToString(
-            React.createElement(Provider, {store: store},
-                React.createElement(IsomorphicComponent, {pickComponent: pickComponent})))
-        });
+    .then((result) => {
+      const store = createStore(
+        (state) => state,
+        {pageType : result.pageType, data : result.data, config : result.config}
+      );
+
+      renderLayout(res.status(result.httpStatusCode || 200), {
+        metadata: loadSeoData(config, result.pageType, result.data),
+        content: ReactDOMServer.renderToString(
+          React.createElement(Provider, {store: store},
+              React.createElement(IsomorphicComponent, {pickComponent: pickComponent}))
+        )
       });
+    });
   } else {
     renderLayout(res.status(404), {
       content: "Not Found"
