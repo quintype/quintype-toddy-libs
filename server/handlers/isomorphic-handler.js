@@ -45,7 +45,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
   }
 };
 
-exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData}) {
+exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, loadSeoData}) {
   const url = urlLib.parse(req.url);
   const match = matchBestRoute(url.pathname, generateRoutes(config));
   if(match) {
