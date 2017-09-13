@@ -1,4 +1,5 @@
 const React = require("react");
+const handleViewport = require("react-in-viewport").default;
 const classNames = require("classnames");
 const getYouTubeID = require('get-youtube-id');
 const YouTube = require('react-youtube').default;
@@ -84,20 +85,40 @@ class StoryElement extends React.Component {
     return this.props.element;
   }
 
+  trackStoryElement(){
+    const { story, card, element } = this.props;
+    qlitics('track', 'story-element-view', {
+      'story-content-id': story['story-content-id'],
+      'story-version-id': story['story-version-id'],
+      'card-content-id': card['content-id'],
+      'card-version-id': card['content-version-id'],
+      'story-element-id': element.id,
+      'story-element-type': element.type
+    });
+  }
+
   render() {
+    //For tracking story element view(qlitics).
+    const { inViewport, innerRef } = this.props;
+    if(inViewport){
+      this.trackStoryElement();
+    }
+
     const storyElement = this.props.element;
     const typeClassName = `story-element-${storyElement.type}`;
     const subtypeClassName = `story-element-${storyElement.type}-${storyElement.subtype}`;
 
     return React.createElement("div", {
       className: classNames({
+        "story-element-view": true,
         "story-element": true,
         [typeClassName]: true,
         [subtypeClassName]: !!storyElement.subtype
-      })
+      }),
+      'ref': innerRef,
     }, this.template().render.call(this, this.props.element, this.props.story))
   }
 }
 
-exports.StoryElement = StoryElement;
+exports.StoryElement = handleViewport(StoryElement);
 exports.STORY_ELEMENT_TEMPLATES = DEFAULT_TEMPLATES;
