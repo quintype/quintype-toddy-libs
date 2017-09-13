@@ -6,6 +6,7 @@ const YouTube = require('react-youtube').default;
 const SoundCloudPlayer = require('react-soundcloud-widget').default;
 const JSEmbed = require('./story-elements/jsembed');
 const { ResponsiveImage } = require("./responsive-image");
+const { trackStoryElementAction, trackStoryElementView } = require("../utils/analytics");
 
 function storyElementText(storyElement) {
   return React.createElement("div", {dangerouslySetInnerHTML: {__html: storyElement.text}});
@@ -39,12 +40,24 @@ function storyElementJsembed(storyElement) {
 }
 
 function storyElementYoutube(storyElement) {
+  const allProps = this.props;
   const opts = {
     playerVars: {
       autoplay: 0
     }
   };
-  return React.createElement(YouTube, {videoId: getYouTubeID(storyElement.url), opts:opts });
+  const playerEvents = {
+    onPlay: function(){
+      trackStoryElementAction(allProps, "play");
+    },
+    onPause: function(){
+      trackStoryElementAction(allProps, "pause");
+    },
+    onEnd: function(){
+      trackStoryElementAction(allProps, "complete");
+    }
+  }
+  return React.createElement(YouTube, Object.assign({videoId: getYouTubeID(storyElement.url), opts:opts }, playerEvents));
 }
 
 // FIXME MISSING: composite, polltype
@@ -85,23 +98,11 @@ class StoryElement extends React.Component {
     return this.props.element;
   }
 
-  trackStoryElement(){
-    const { story, card, element } = this.props;
-    qlitics('track', 'story-element-view', {
-      'story-content-id': story['story-content-id'],
-      'story-version-id': story['story-version-id'],
-      'card-content-id': card['content-id'],
-      'card-version-id': card['content-version-id'],
-      'story-element-id': element.id,
-      'story-element-type': element.type
-    });
-  }
-
   render() {
     //For tracking story element view(qlitics).
     const { inViewport, innerRef } = this.props;
     if(inViewport){
-      this.trackStoryElement();
+      trackStoryElementView(this.props);
     }
 
     const storyElement = this.props.element;
