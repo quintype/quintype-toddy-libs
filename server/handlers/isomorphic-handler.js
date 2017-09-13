@@ -20,7 +20,7 @@ function fetchData(loadData, loadErrorData = () => Promise.resolve({}), pageType
         return Promise.resolve({httpStatusCode: error.httpStatusCode || 500, pageType: "error"});
       } else {
         throw error;
-      } 
+      }
     })
 }
 
@@ -36,7 +36,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
   res.setHeader("Content-Type", "application/json");
   if(match) {
     return fetchData(loadData, loadErrorData, match.pageType, match.params, config)
-      .then((result) => res.status(200).json(result))      
+      .then((result) => res.status(200).json(result))
   } else {
     res.status(404).json({
       error: {message: "Not Found"}
@@ -58,6 +58,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
 
       renderLayout(res.status(result.httpStatusCode || 200), {
         metadata: loadSeoData(config, result.pageType, result.data),
+        pageType: result.pageType,
         content: ReactDOMServer.renderToString(
           React.createElement(Provider, {store: store},
               React.createElement(IsomorphicComponent, {pickComponent: pickComponent}))

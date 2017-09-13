@@ -1,10 +1,12 @@
 const React = require("react");
+const handleViewport = require("react-in-viewport").default;
 const classNames = require("classnames");
 const getYouTubeID = require('get-youtube-id');
 const YouTube = require('react-youtube').default;
 const SoundCloudPlayer = require('react-soundcloud-widget').default;
 const JSEmbed = require('./story-elements/jsembed');
 const { ResponsiveImage } = require("./responsive-image");
+const { trackStoryElementAction, trackStoryElementView } = require("../utils/analytics");
 
 function storyElementText(storyElement) {
   return React.createElement("div", {dangerouslySetInnerHTML: {__html: storyElement.text}});
@@ -38,12 +40,24 @@ function storyElementJsembed(storyElement) {
 }
 
 function storyElementYoutube(storyElement) {
+  const allProps = this.props;
   const opts = {
     playerVars: {
       autoplay: 0
     }
   };
-  return React.createElement(YouTube, {videoId: getYouTubeID(storyElement.url), opts:opts });
+  const playerEvents = {
+    onPlay: function(){
+      trackStoryElementAction(allProps, "play");
+    },
+    onPause: function(){
+      trackStoryElementAction(allProps, "pause");
+    },
+    onEnd: function(){
+      trackStoryElementAction(allProps, "complete");
+    }
+  }
+  return React.createElement(YouTube, Object.assign({videoId: getYouTubeID(storyElement.url), opts:opts }, playerEvents));
 }
 
 // FIXME MISSING: composite, polltype
@@ -58,6 +72,11 @@ const DEFAULT_TEMPLATES = {
 };
 
 class StoryElement extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
   template() {
     const storyElement = this.props.element;
     const templates = Object.assign({}, DEFAULT_TEMPLATES, this.props.templates);
@@ -80,6 +99,13 @@ class StoryElement extends React.Component {
       componentWillUnmount.call(this);
   }
 
+  componentWillReceiveProps(nextProps){
+    if(nextProps.inViewport && !this.state.elementViewedOnce) {
+      this.setState({elementViewedOnce: true});
+      trackStoryElementView(nextProps);
+    }
+  }
+
   storyElement() {
     return this.props.element;
   }
@@ -91,13 +117,15 @@ class StoryElement extends React.Component {
 
     return React.createElement("div", {
       className: classNames({
+        "story-element-view": true,
         "story-element": true,
         [typeClassName]: true,
         [subtypeClassName]: !!storyElement.subtype
-      })
+      }),
+      'ref': this.props.innerRef,
     }, this.template().render.call(this, this.props.element, this.props.story))
   }
 }
 
-exports.StoryElement = StoryElement;
+exports.StoryElement = handleViewport(StoryElement);
 exports.STORY_ELEMENT_TEMPLATES = DEFAULT_TEMPLATES;
