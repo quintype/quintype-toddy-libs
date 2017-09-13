@@ -1,5 +1,4 @@
-function trackStoryElementAction(data, action){
-  const { story, card, element } = data;
+function trackStoryElementAction({ story, card, element }, action){
   qlitics('track', 'story-element-action', {
     'story-content-id': story['story-content-id'],
     'story-version-id': story['story-version-id'],
@@ -11,8 +10,7 @@ function trackStoryElementAction(data, action){
   });
 }
 
-function trackStoryElementView(data){
-  const { story, card, element } = data;
+function trackStoryElementView({ story, card, element }){
   qlitics('track', 'story-element-view', {
     'story-content-id': story['story-content-id'],
     'story-version-id': story['story-version-id'],

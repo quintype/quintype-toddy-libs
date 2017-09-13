@@ -72,6 +72,11 @@ const DEFAULT_TEMPLATES = {
 };
 
 class StoryElement extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+
   template() {
     const storyElement = this.props.element;
     const templates = Object.assign({}, DEFAULT_TEMPLATES, this.props.templates);
@@ -94,8 +99,11 @@ class StoryElement extends React.Component {
       componentWillUnmount.call(this);
   }
 
-  componentWillReceiveProps(){
-    trackStoryElementView(this.props);
+  componentWillReceiveProps(nextProps){
+    if(nextProps.inViewport && !this.state.elementViewedOnce) {
+      this.setState({elementViewedOnce: true});
+      trackStoryElementView(nextProps);
+    }
   }
 
   storyElement() {
