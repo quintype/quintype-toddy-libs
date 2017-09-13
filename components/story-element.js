@@ -94,17 +94,15 @@ class StoryElement extends React.Component {
       componentWillUnmount.call(this);
   }
 
+  componentWillReceiveProps(){
+    trackStoryElementView(this.props);
+  }
+
   storyElement() {
     return this.props.element;
   }
 
   render() {
-    //For tracking story element view(qlitics).
-    const { inViewport, innerRef } = this.props;
-    if(inViewport){
-      trackStoryElementView(this.props);
-    }
-
     const storyElement = this.props.element;
     const typeClassName = `story-element-${storyElement.type}`;
     const subtypeClassName = `story-element-${storyElement.type}-${storyElement.subtype}`;
@@ -116,7 +114,7 @@ class StoryElement extends React.Component {
         [typeClassName]: true,
         [subtypeClassName]: !!storyElement.subtype
       }),
-      'ref': innerRef,
+      'ref': this.props.innerRef,
     }, this.template().render.call(this, this.props.element, this.props.story))
   }
 }
