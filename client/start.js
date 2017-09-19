@@ -6,6 +6,7 @@ import { createBrowserHistory } from 'history'
 
 import { IsomorphicComponent } from '../isomorphic/component'
 import { BreakingNews } from '../components/breaking-news'
+import { NavigationComponent } from '../components/navbar'
 import { NAVIGATE_TO_PAGE } from '../store/actions';
 
 export const history = createBrowserHistory();
@@ -40,4 +41,8 @@ export function renderIsomorphicComponent(container, store, pickComponent, props
 
 export function renderBreakingNews(container, store, view, props) {
   return renderComponent(BreakingNews, container, store, Object.assign({view}, props));
+}
+
+export function renderNavigationBar(container, store, view, props) {
+  return renderComponent(NavigationComponent, container, store, Object.assign({view}, props));
 }
