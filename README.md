@@ -67,6 +67,15 @@ This highlights the three important places to put stuff for an isomorphic app
 * Load the Data Required for that `pageType`, typically in `app/server/load-data.js`. This returns a promise with required data.
 * Render the correct component for that `pageType`, typically in `app/isomorphic/pick-component.js`. This must be a pure component
 
+### Useful Components
+
+* BreakingNews - This component will automatically fetch breaking news every 30 seconds, and render the provided view.
+```javascript
+import { renderBreakingNews } from 'quintype-toddy-libs/client/start';
+const BreakingNewsView = (props) => <ul>{props.breakingNews.map(news => <li key={news.id}>{news.headline}</li>)}</ul>
+renderBreakingNews('breaking-news-container', store, BreakingNewsView);
+```
+
 ### References
 
 * This architecture is heavily influenced by the method described in this [video](https://www.youtube.com/watch?v=atUdVSuNRjA)
