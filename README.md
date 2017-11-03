@@ -72,8 +72,43 @@ This highlights the three important places to put stuff for an isomorphic app
 * BreakingNews - This component will automatically fetch breaking news every 30 seconds, and render the provided view.
 ```javascript
 import { renderBreakingNews } from 'quintype-toddy-libs/client/start';
-const BreakingNewsView = (props) => <ul>{props.breakingNews.map(news => <li key={news.id}>{news.headline}</li>)}</ul>
+const BreakingNewsView = (props) => <ul>{props.breakingNews.map((news) => <li key={news.id}>{news.headline}</li>)}</ul>
 renderBreakingNews('breaking-news-container', store, BreakingNewsView);
+```
+
+* ClientSideOnly - This component will be loaded by client, and bypassed when doing server side rendering.
+```javascript
+const { ClientSideOnly } = require("quintype-toddy-libs/components/client-side-only");
+<ClientSideOnly>
+  This will be shown only on the client side
+</ClientSideOnly>
+```
+
+* Link - This component generates an anchor tag. Instead of doing a browser page load, it will go to the next page via AJAX. Analytics scripts will be fired correctly (and if not, it's a bug)
+```javascript
+const { Link } = require("quintype-toddy-libs/components/link");
+<Link href="/section/story-slug" otherLinkAttribute="value">Text here</Link>
+```
+
+* ResponsiveImage - This component takes an image, and resizes it to the correct aspect ratio using imgix or thumbor.
+```javascript
+const { ResponsiveImage } = require("quintype-toddy-libs/components/responsive-image");
+<figure className="story-grid-item-image qt-image-16x9">
+  <ResponsiveImage slug={props.story["hero-image-s3-key"]} metadata={props.story["hero-image-metadata"]}
+    aspectRatio={[16,9]}
+    defaultWidth={480} widths={[250,480,640]} sizes="(max-width: 500px) 98%, (max-width: 768px) 48%, 23%"
+    imgParams={{auto:['format', 'compress']}}/>
+</figure>
+```
+
+* StoryElement - This component renders different types of story elements
+```javascript
+const { StoryElement } = require("quintype-toddy-libs/components/story-element");
+function StoryCard(props){
+  return <div>
+    {props.card['story-elements'].map((element, index) => <StoryElement element={element} key={index} story={props.story}></StoryElement>)}
+  </div>
+}
 ```
 
 ### References
