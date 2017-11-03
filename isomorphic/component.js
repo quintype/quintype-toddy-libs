@@ -7,9 +7,9 @@ function IsomorphicComponentBase(props) {
 
 function mapStateToProps(state) {
   return {
-    pageType: state.pageType,
-    config: state.config,
-    data: state.data
+    pageType: state.qt.pageType,
+    config: state.qt.config,
+    data: state.qt.data
   }
 }
 

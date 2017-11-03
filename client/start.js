@@ -27,6 +27,11 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
     });
 }
 
+export function maybeNavigateTo(path, store) {
+  if(store.getState().qt.currentPath != path)
+    navigateToPage(store.dispatch, path, true);
+}
+
 export function renderComponent(clazz, container, store, props) {
   return ReactDOM.render(
     React.createElement(Provider, {store: store},

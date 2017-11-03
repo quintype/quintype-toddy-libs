@@ -51,10 +51,9 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
   if(match) {
     return fetchData(loadData, loadErrorData, match.pageType, match.params, config)
     .then((result) => {
-      const store = createStore(
-        (state) => state,
-        {pageType : result.pageType, data : result.data, config : result.config}
-      );
+      const store = createStore((state) => state, {
+        qt: {pageType: result.pageType, data: result.data, config: result.config}
+      });
 
       renderLayout(res.status(result.httpStatusCode || 200), {
         metadata: loadSeoData(config, result.pageType, result.data),

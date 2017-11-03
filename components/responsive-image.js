@@ -27,7 +27,7 @@ function ResponsiveImageBase(props) {
 
 function mapStateToProps(state) {
   return {
-    imageCDN: state.config["cdn-image"]
+    imageCDN: state.qt.config["cdn-image"]
   };
 }
 
