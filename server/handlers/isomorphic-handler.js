@@ -9,8 +9,8 @@ const React = require("react");
 const {createStore} = require("redux");
 const {Provider} = require("react-redux");
 
-function fetchData(loadData, loadErrorData = () => Promise.resolve({}), pageType, params, config) {
-  return loadData(pageType, params, config)
+function fetchData(loadData, loadErrorData = () => Promise.resolve({}), pageType, params, config, client) {
+  return loadData(pageType, params, config, client)
     .catch(error => {
       if (error instanceof NotFoundException) {
         return loadErrorData(error)
@@ -20,7 +20,7 @@ function fetchData(loadData, loadErrorData = () => Promise.resolve({}), pageType
         return Promise.resolve({httpStatusCode: error.httpStatusCode || 500, pageType: "error"});
       } else {
         throw error;
-      } 
+      }
     })
 }
 
@@ -30,13 +30,13 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, {config
   });
 }
 
-exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, generateRoutes, loadData, loadErrorData}) {
+exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData}) {
   const url = urlLib.parse(req.query.path || "/");
   const match = matchBestRoute(url.pathname, generateRoutes(config));
   res.setHeader("Content-Type", "application/json");
   if(match) {
-    return fetchData(loadData, loadErrorData, match.pageType, match.params, config)
-      .then((result) => res.status(200).json(result))      
+    return fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
+      .then((result) => res.status(200).json(result))
   } else {
     res.status(404).json({
       error: {message: "Not Found"}
@@ -45,11 +45,11 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
   }
 };
 
-exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, loadSeoData}) {
+exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, loadSeoData}) {
   const url = urlLib.parse(req.url);
   const match = matchBestRoute(url.pathname, generateRoutes(config));
   if(match) {
-    return fetchData(loadData, loadErrorData, match.pageType, match.params, config)
+    return fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
     .then((result) => {
       const store = createStore((state) => state, {
         qt: {pageType: result.pageType, data: result.data, config: result.config}
