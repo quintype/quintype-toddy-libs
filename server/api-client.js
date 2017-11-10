@@ -2,16 +2,21 @@ const backend = require("quintype-backend");
 const Client = backend.Client;
 const config = require("./publisher-config");
 
-// default client
-const client = new Client(config.sketches_host);
+const defaultClient = new Client(config.sketches_host);
 const cachedSecondaryClients = {};
 
 function getClient(hostname) {
-  return cachedSecondaryClients[hostname] || client;
+  return cachedSecondaryClients[hostname] || createTemporaryClient(hostname) || defaultClient;
+}
+
+function createTemporaryClient(hostname) {
+  const matchedString = (config.host_to_automatic_api_host || []).some(str => hostname.includes(str) && str);
+  if(matchedString)
+    return new Client(`https://${hostname.replace(matchedString, "")}`, true);
 }
 
 function initializeAllClients() {
-  const promises = [client.getConfig()];
+  const promises = [defaultClient.getConfig()];
   Object.entries(config.host_to_api_host || []).forEach(([host, apiHost]) => {
     const client = new Client(apiHost);
     cachedSecondaryClients[host] = client;
@@ -20,8 +25,8 @@ function initializeAllClients() {
   return Promise.all(promises);
 }
 
-client.client = client;
-client.Story = backend.Story;
-client.getClient = getClient;
-client.initializeAllClients = initializeAllClients;
-module.exports = client;
+defaultClient.client = defaultClient;
+defaultClient.Story = backend.Story;
+defaultClient.getClient = getClient;
+defaultClient.initializeAllClients = initializeAllClients;
+module.exports = defaultClient;
