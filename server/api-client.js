@@ -41,12 +41,9 @@ const { storyToCacheKey, collectionToCacheKey, authorToCacheKey } = require("./c
 
 Collection.prototype.cacheKeys = function(publisherId) {
   return [collectionToCacheKey(publisherId, this)]
-    .concat(this.items.map(item => {
-      if(item["type"] == "collection")
-        return collectionToCacheKey(publisherId, item.collection)
-      else if(item["type"] == "story")
-        return storyToCacheKey(publisherId, item.story)
-    }));
+           .concat(this.items
+                       .filter(item => item["type"] == "story")
+                       .map(item => storyToCacheKey(publisherId, item.story)));
 };
 
 Story.prototype.cacheKeys = function(publisherId) {
