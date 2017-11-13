@@ -1,3 +1,5 @@
+const _ = require("lodash");
+
 const urlLib = require("url");
 const {matchBestRoute} = require('../../isomorphic/match-best-route');
 const {IsomorphicComponent} = require("../../isomorphic/component");
@@ -30,13 +32,27 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, {config
   });
 }
 
+function addCacheHeaders(res, result) {
+  if(_.get(result, ["data", "cacheKeys"])) {
+    res.setHeader('Cache-Control', "public,max-age=15");
+    res.setHeader('Vary', "Accept-Encoding");
+    res.setHeader('Surrogate-Control', "public,max-age=240,stale-while-revalidate=300,stale-if-error=14400");
+    res.setHeader('Surrogate-Key', _.get(result, ["data", "cacheKeys"]));
+  }
+  return res;
+}
+
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData}) {
   const url = urlLib.parse(req.query.path || "/");
   const match = matchBestRoute(url.pathname, generateRoutes(config));
   res.setHeader("Content-Type", "application/json");
   if(match) {
     return fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
-      .then((result) => res.status(200).json(result))
+      .then((result) => {
+        res.status(200);
+        addCacheHeaders(res, result);
+        res.json(Object.assign({}, result, {data: _.omit(result.data, ["cacheKeys"])}));
+      })
   } else {
     res.status(404).json({
       error: {message: "Not Found"}
@@ -55,7 +71,9 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
         qt: {pageType: result.pageType, data: result.data, config: result.config}
       });
 
-      renderLayout(res.status(result.httpStatusCode || 200), {
+      res.status(result.httpStatusCode || 200)
+      addCacheHeaders(res, result);
+      renderLayout(res, {
         metadata: loadSeoData(config, result.pageType, result.data),
         content: ReactDOMServer.renderToString(
           React.createElement(Provider, {store: store},
