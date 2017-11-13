@@ -37,7 +37,7 @@ function addCacheHeaders(res, result) {
     res.setHeader('Cache-Control', "public,max-age=15");
     res.setHeader('Vary', "Accept-Encoding");
     res.setHeader('Surrogate-Control', "public,max-age=240,stale-while-revalidate=300,stale-if-error=14400");
-    res.setHeader('Surrogate-Key', _.get(result, ["data", "cacheKeys"]));
+    res.setHeader('Surrogate-Key', _.get(result, ["data", "cacheKeys"]).join(" "));
   }
   return res;
 }
@@ -52,7 +52,11 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
         res.status(200);
         addCacheHeaders(res, result);
         res.json(Object.assign({}, result, {data: _.omit(result.data, ["cacheKeys"])}));
-      })
+      }).catch(e => {
+        console.trace(e);
+        res.status(500);
+        res.json({error: {message: e.message}});
+      }).finally(() => res.end());
   } else {
     res.status(404).json({
       error: {message: "Not Found"}
@@ -66,21 +70,25 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
   const match = matchBestRoute(url.pathname, generateRoutes(config));
   if(match) {
     return fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
-    .then((result) => {
-      const store = createStore((state) => state, {
-        qt: {pageType: result.pageType, data: result.data, config: result.config}
-      });
+      .then((result) => {
+        const store = createStore((state) => state, {
+          qt: {pageType: result.pageType, data: result.data, config: result.config}
+        });
 
-      res.status(result.httpStatusCode || 200)
-      addCacheHeaders(res, result);
-      renderLayout(res, {
-        metadata: loadSeoData(config, result.pageType, result.data),
-        content: ReactDOMServer.renderToString(
-          React.createElement(Provider, {store: store},
-              React.createElement(IsomorphicComponent, {pickComponent: pickComponent}))
-        )
-      });
-    });
+        res.status(result.httpStatusCode || 200)
+        addCacheHeaders(res, result);
+        renderLayout(res, {
+          metadata: loadSeoData(config, result.pageType, result.data),
+          content: ReactDOMServer.renderToString(
+            React.createElement(Provider, {store: store},
+                React.createElement(IsomorphicComponent, {pickComponent: pickComponent}))
+          )
+        });
+      }).catch(e => {
+        console.trace(e);
+        res.status(500);
+        res.send(e.message);
+      }).finally(() => res.end());
   } else {
     renderLayout(res.status(404), {
       content: "Not Found"
