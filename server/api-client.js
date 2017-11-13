@@ -1,5 +1,4 @@
-const backend = require("quintype-backend");
-const Client = backend.Client;
+const { Client, Story, Author, Member, Collection } = require("quintype-backend");
 const config = require("./publisher-config");
 
 const defaultClient = new Client(config.sketches_host);
@@ -25,8 +24,32 @@ function initializeAllClients() {
   return Promise.all(promises);
 }
 
-defaultClient.client = defaultClient;
-defaultClient.Story = backend.Story;
-defaultClient.getClient = getClient;
-defaultClient.initializeAllClients = initializeAllClients;
-module.exports = defaultClient;
+module.exports = {
+  Story: Story,
+  Author: Author,
+  Collection: Collection,
+  Member: Member,
+
+  client: defaultClient,
+  getClient: getClient,
+  initializeAllClients: initializeAllClients
+};
+
+// Patching functions for caching related. Ideally should happen elsewhere
+const _ = require("lodash");
+const { storyToCacheKey, collectionToCacheKey, authorToCacheKey } = require("./caching");
+
+Collection.prototype.cacheKeys = function(publisherId) {
+  return [collectionToCacheKey(publisherId, this)]
+    .concat(this.items.map(item => {
+      if(item["type"] == "collection")
+        return collectionToCacheKey(publisherId, item.collection)
+      else if(item["type"] == "story")
+        return storyToCacheKey(publisherId, item.story)
+    }));
+};
+
+Story.prototype.cacheKeys = function(publisherId) {
+  return [storyToCacheKey(publisherId, this)]
+    .concat((this.authors || []).map(author => authorToCacheKey(publisherId, author)));
+}

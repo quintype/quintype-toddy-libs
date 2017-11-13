@@ -1,5 +1,5 @@
 exports.authorToCacheKey = function authorToCacheKey(publisherId, author) {
-  return `a/${publisherId}/${author['id'].substr(0,8)}`;
+  return `a/${publisherId}/${author['id']}`;
 }
 
 exports.storyToCacheKey = function storyToCacheKey(publisherId, story) {
@@ -7,9 +7,9 @@ exports.storyToCacheKey = function storyToCacheKey(publisherId, story) {
 }
 
 exports.collectionToCacheKey = function collectionToCacheKey(publisherId, collection) {
-  return `s/${publisherId}/${collection['id']}`;
+  return `c/${publisherId}/${collection['id']}`;
 }
 
 exports.sorterToCacheKey = function sorterToCacheKey(publisherId, storyGroup, sectionId) {
-  return `c/${publisherId}/${storyGroup}/${sectionId ? `section-${sectionId}` : "home"}`
+  return `q/${publisherId}/${storyGroup}/${sectionId ? `section-${sectionId}` : "home"}`
 }
