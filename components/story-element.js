@@ -5,6 +5,7 @@ const YouTube = require('react-youtube').default;
 const SoundCloudPlayer = require('react-soundcloud-widget').default;
 const JSEmbed = require('./story-elements/jsembed');
 const { ResponsiveImage } = require("./responsive-image");
+const Polltype = require('./story-elements/polltype');
 
 function storyElementText(storyElement) {
   return React.createElement("div", {dangerouslySetInnerHTML: {__html: storyElement.text}});
@@ -46,7 +47,14 @@ function storyElementYoutube(storyElement) {
   return React.createElement(YouTube, {videoId: getYouTubeID(storyElement.url), opts:opts });
 }
 
-// FIXME MISSING: composite, polltype
+function storyElementPolltype(storyElement) {
+  return React.createElement(
+    Polltype,
+    {id: storyElement['polltype-id']}
+  );
+}
+
+// FIXME MISSING: composite
 // TODO: Can also support various subtypes (though not needed potentially)
 const DEFAULT_TEMPLATES = {
   "text": {render: storyElementText},
@@ -54,7 +62,8 @@ const DEFAULT_TEMPLATES = {
   "title": {render: storyElementTitle},
   "youtube-video": {render: storyElementYoutube},
   "soundcloud-audio": {render: storyElementSoundCloud},
-  "jsembed": {render: storyElementJsembed}
+  "jsembed": {render: storyElementJsembed},
+  "polltype": {render: storyElementPolltype}
 };
 
 class StoryElement extends React.Component {
