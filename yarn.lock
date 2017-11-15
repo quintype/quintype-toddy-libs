@@ -1102,9 +1102,9 @@ querystring@0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/querystring/-/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
 
-quintype-backend@^0.2.4:
-  version "0.2.4"
-  resolved "https://registry.yarnpkg.com/quintype-backend/-/quintype-backend-0.2.4.tgz#17fe9ccb03aec61c6306b42b8015ea2c1cc5fe72"
+quintype-backend@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/quintype-backend/-/quintype-backend-0.4.1.tgz#7817c42244aa11af7f7a720e148893b1e1f63eba"
   dependencies:
     lodash "^3.10.1"
     request "^2.74.0"

@@ -1,5 +1,5 @@
 const config = require("./publisher-config");
-const client = require("./api-client");
+const {getClient} = require("./api-client");
 
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
 const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute} = require("./handlers/isomorphic-handler");
@@ -7,8 +7,9 @@ const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute} =
 function withConfig(logError, f, staticParams) {
   return function(req, res, opts) {
     opts = Object.assign({}, opts, staticParams);
+    const client = getClient(req.hostname);
     return client.getConfig()
-      .then(c => f(req, res, Object.assign({}, opts, {config: c})))
+      .then(c => f(req, res, Object.assign({}, opts, {config: c, client: client})))
       .catch(logError);
   }
 }
@@ -16,21 +17,18 @@ function withConfig(logError, f, staticParams) {
 exports.withConfig = withConfig;
 
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app) {
-  const sketchesHost = config.sketches_host;
-  const httpHost = sketchesHost.replace(/https?:\/\//, "");
-
   const apiProxy = require("http-proxy").createProxyServer({
-    target: sketchesHost
+    target: config.sketches_host
   });
 
   apiProxy.on('proxyReq', function(proxyReq, req, res, options) {
-    proxyReq.setHeader('Host', httpHost);
+    proxyReq.setHeader('Host', getClient(req.hostname).getHostname());
   });
 
   const sketchesProxy = (req, res) => apiProxy.web(req, res);
 
   app.get("/ping", function(req, res) {
-    client
+    getClient(req.hostname)
     .getConfig()
     .then(() => res.send("pong"))
     .catch(() =>
