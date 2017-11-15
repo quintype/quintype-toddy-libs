@@ -50,7 +50,7 @@ function storyElementYoutube(storyElement) {
 function storyElementPolltype(storyElement) {
   return React.createElement(
     Polltype,
-    {id: storyElement['polltype-id'], description: storyElement['description']}
+    {id: storyElement['polltype-id']}
   );
 }
 

@@ -1,6 +1,8 @@
 const React = require('react');
 const { connect } = require('react-redux');
 
+const defaultPolltypeHost = 'https://www.polltype.com';
+
 class Polltype extends React.Component {
 
   componentDidMount() {
@@ -9,7 +11,8 @@ class Polltype extends React.Component {
 
   loadPolltypeJS() {
     const source = this.props.polltypeHost.replace(/^https:|^http:/i, '') + '/embed.js';
-    if (!document.querySelector(`script[src="${source}"]`)) {
+    if (!global._polltypeAdded) {
+      global._polltypeAdded = true;
       const script = document.createElement('script');
       script.type = 'text/javascript';
       script.src = source;
@@ -19,15 +22,15 @@ class Polltype extends React.Component {
 
   render() {
     return (
-      <div>
-        <div data-polltype-embed-id={this.props.id} />
-      </div>
+      <div data-polltype-embed-id={this.props.id} />
     );
   }
 }
 
 function mapStateToProps(state) {
-  return { polltypeHost: state.qt.config["polltype-host"] };
+  return {
+    polltypeHost: state.qt.config["polltype-host"] || defaultPolltypeHost
+  };
 }
 
 module.exports = connect(mapStateToProps, {})(Polltype);
