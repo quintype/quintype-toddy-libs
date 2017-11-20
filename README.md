@@ -96,6 +96,16 @@ const { Link } = require("quintype-toddy-libs/components/link");
 <Link href="/section/story-slug" otherLinkAttribute="value">Text here</Link>
 ```
 
+#### NavigationComponentBase
+
+This is a base component which *must* be subclassed, providing a navigateTo function.
+
+```javascript
+class SearchComponent extends require("quintype-toddy-libs/components/navigation-component-base") {
+  render() { return <a href="#" onClick={() => this.navigateTo("/some-page-here")}>Link</a>}
+}
+```
+
 #### ResponsiveImage
 This component takes an image, and resizes it to the correct aspect ratio using imgix or thumbor.
 
