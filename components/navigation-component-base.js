@@ -3,7 +3,7 @@ const propTypes = require("prop-types");
 
 class NavigationComponentBase extends React.Component {
   navigateTo(path) {
-    global.navigateToPage(this.context.store.dispatch, path);
+    global.app.navigateToPage(this.context.store.dispatch, path);
   }
 }
 NavigationComponentBase.contextTypes = {

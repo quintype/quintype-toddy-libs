@@ -32,6 +32,15 @@ export function maybeNavigateTo(path, store) {
     navigateToPage(store.dispatch, path, true);
 }
 
+export function maybeSetUrl(path, title) {
+  if(global.location.pathname == path)
+    return;
+  global.history.pushState && global.history.pushState(null, title, path);
+  global.document.title = title;
+}
+
+export let app = {navigateToPage, maybeNavigateTo, maybeSetUrl};
+
 export function renderComponent(clazz, container, store, props) {
   return ReactDOM.render(
     React.createElement(Provider, {store: store},

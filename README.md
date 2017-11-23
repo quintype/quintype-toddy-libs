@@ -88,6 +88,44 @@ const { ClientSideOnly } = require("quintype-toddy-libs/components/client-side-o
 </ClientSideOnly>
 ```
 
+#### InfiniteScroll
+
+This component can be used to implement InfiniteScroll. This is an internal component.
+
+#### InfiniteStoryBase
+
+This component can be used to implement InfiniteScroll on the story page. You will need to specify the function which renders the story (which will recieve props.index and props.story), and functions for triggering analytics.
+
+```javascript
+const React = require("react");
+
+const { BlankStory } = require("../story-templates/blank.jsx");
+const { InfiniteStoryBase } = require("quintype-toddy-libs/components/infinite-story-base");
+
+function StoryPageBase({index, story}) {
+  // Maybe render first card only if index > 0, and do a switch case on story-template
+  return <BlankStory story={story} index={index} />
+}
+
+const FIELDS = "id,headline,slug,url,hero-image-s3-key,hero-image-metadata,first-published-at,last-published-at,alternative,published-at,author-name,author-id,sections,story-template,cards";
+function storyPageLoadStories(pageNumber) {
+  // Replace this with your logic for loading stories
+  return global.superagent
+           .get("/api/v1/stories", {fields: FIELDS, limit:5, offset:5*pageNumber})
+           .then(response => response.body.stories);
+}
+
+function StoryPage(props) {
+  return <InfiniteStoryBase {...props}
+                            render={StoryPageBase}
+                            loadStories={storyPageLoadStories}
+                            onStoryFocus={(story) => console.log(`Story In View: ${story.headline}`)}
+                            onInitialStoryFocus={(story) => console.log(`Do Analytics ${story.headline}`)} />
+}
+
+exports.StoryPage = StoryPage;
+```
+
 #### Link
 This component generates an anchor tag. Instead of doing a browser page load, it will go to the next page via AJAX. Analytics scripts will be fired correctly (and if not, it's a bug)
 

@@ -17,7 +17,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
   return {
     navigateTo: function(url) {
-      global.navigateToPage(dispatch, url);
+      global.app.navigateToPage(dispatch, url);
     }
   };
 }
