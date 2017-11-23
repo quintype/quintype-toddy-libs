@@ -6,31 +6,31 @@ class InfiniteStoryBase extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      moreStories: [],
+      moreItems: [],
       loading: false,
       pageNumber: 0,
       seenStoryIds: [props.data.story.id]
     }
   }
 
-  allStories() {
-    return [this.props.data.story].concat(this.state.moreStories);
+  allItems() {
+    return [this.props.data].concat(this.state.moreItems);
   }
 
-  removeDuplicates(stories) {
-    const existingStoryIds = this.allStories().map(story => story.id);
-    return stories.filter(story => !existingStoryIds.includes(story.id));
+  removeDuplicates(items) {
+    const existingStoryIds = this.allItems().map(item => item.story.id);
+    return items.filter(item => !existingStoryIds.includes(item.story.id));
   }
 
   onFocus(index) {
-    const story = this.allStories()[index];
-    global.app.maybeSetUrl("/" + story.slug, story.headline);
+    const item = this.allItems()[index];
+    global.app.maybeSetUrl("/" + item.story.slug, item.story.headline);
 
-    this.props.onStoryFocus && this.props.onStoryFocus(story, index);
+    this.props.onItemFocus && this.props.onItemFocus(item, index);
 
-    if(!this.state.seenStoryIds.includes(story.id)) {
-      this.setState({seenStoryIds: this.state.seenStoryIds.concat([story.id])}, () => {
-        this.props.onInitialStoryFocus && this.props.onInitialStoryFocus(story, index);
+    if(!this.state.seenStoryIds.includes(item.story.id)) {
+      this.setState({seenStoryIds: this.state.seenStoryIds.concat([item.story.id])}, () => {
+        this.props.onInitialItemFocus && this.props.onInitialItemFocus(item, index);
       })
     }
   }
@@ -40,10 +40,10 @@ class InfiniteStoryBase extends React.Component {
       return;
     const pageNumber = this.state.pageNumber;
     this.setState({loading: true, pageNumber: pageNumber + 1}, () => {
-      this.props.loadStories(pageNumber).then((stories) => {
+      this.props.loadItems(pageNumber).then((items) => {
         this.setState({
           loading: false,
-          moreStories: this.state.moreStories.concat(this.removeDuplicates(stories))
+          moreItems: this.state.moreItems.concat(this.removeDuplicates(items))
         })
       })
     })
@@ -51,7 +51,7 @@ class InfiniteStoryBase extends React.Component {
 
   render() {
     return <InfiniteScroll render={this.props.render}
-                           items={this.allStories().map(story => ({story: story}))}
+                           items={this.allItems()}
                            loadNext={() => this.loadMore()}
                            loadMargin={this.props.loadMargin}
                            focusCallbackAt={this.props.focusCallbackAt || 20}
