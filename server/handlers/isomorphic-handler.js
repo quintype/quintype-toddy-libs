@@ -4,12 +4,8 @@ const urlLib = require("url");
 const {matchBestRoute} = require('../../isomorphic/match-best-route');
 const {IsomorphicComponent} = require("../../isomorphic/component");
 const {ApplicationException, NotFoundException} = require("../exceptions");
-
-const ReactDOMServer = require('react-dom/server');
-const React = require("react");
-
+const {renderReduxComponent} = require("../render");
 const {createStore} = require("redux");
-const {Provider} = require("react-redux");
 
 function fetchData(loadData, loadErrorData = () => Promise.resolve({}), pageType, params, config, client) {
   return loadData(pageType, params, config, client)
@@ -28,7 +24,10 @@ function fetchData(loadData, loadErrorData = () => Promise.resolve({}), pageType
 
 exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, {config, renderLayout}) {
   renderLayout(res.status(200), {
-    content: '<div class="app-loading"></div>'
+    content: '<div class="app-loading"></div>',
+    store: createStore((state) => state, {
+      qt: {config: config}
+    })
   });
 }
 
@@ -80,10 +79,8 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
         addCacheHeaders(res, result);
         renderLayout(res, {
           metadata: loadSeoData(config, result.pageType, result.data),
-          content: ReactDOMServer.renderToString(
-            React.createElement(Provider, {store: store},
-                React.createElement(IsomorphicComponent, {pickComponent: pickComponent}))
-          )
+          content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
+          store: store
         });
       }).catch(e => {
         console.trace(e);
@@ -92,7 +89,10 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
       }).finally(() => res.end());
   } else {
     renderLayout(res.status(404), {
-      content: "Not Found"
+      content: "Not Found",
+      store: createStore((state) => state, {
+        qt: {config: config}
+      })
     });
     return new Promise((resolve) => resolve());
   }
