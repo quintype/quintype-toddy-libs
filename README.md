@@ -133,6 +133,17 @@ const { Link } = require("quintype-toddy-libs/components/link");
 <Link href="/section/story-slug" otherLinkAttribute="value">Text here</Link>
 ```
 
+#### LoadingIndicator
+This component renders it's children when the app is moving between pages. It can be used to show a spinner. It always has the class "loading-indicator", and also "loading-indicator-loading" when loading.
+
+```javascript
+const { LoadingIndicator } = require("quintype-toddy-libs/components/loading-indicator");
+
+<LoadingIndicator>
+  <div className="spinner">Please Wait</div>
+</LoadingIndicator>
+```
+
 #### NavigationComponentBase
 
 This is a base component which *must* be subclassed, providing a navigateTo function.
