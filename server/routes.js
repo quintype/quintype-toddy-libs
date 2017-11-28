@@ -17,8 +17,10 @@ function withConfig(logError, f, staticParams) {
 exports.withConfig = withConfig;
 
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app) {
+  const host = config.sketches_host;
   const apiProxy = require("http-proxy").createProxyServer({
-    target: config.sketches_host
+    target: host,
+    ssl: host.startsWith("https") ? {servername: host.replace(/^https:\/\//, "")} : undefined
   });
 
   apiProxy.on('proxyReq', function(proxyReq, req, res, options) {
