@@ -1,5 +1,9 @@
 import { createStore, combineReducers } from 'redux';
-import { NAVIGATE_TO_PAGE, BREAKING_NEWS_UPDATED, CLIENT_SIDE_RENDERED } from './actions';
+import { NAVIGATE_TO_PAGE,
+  BREAKING_NEWS_UPDATED,
+  CLIENT_SIDE_RENDERED,
+  PAGE_LOADING,
+  PAGE_FINISHED_LOADING } from './actions';
 
 function internalReducers(state = {}, action) {
   switch (action.type) {
@@ -22,11 +26,21 @@ function clientSideRenderedReducer(state = false, action) {
   }
 }
 
+function pageLoadingReducer(state = false, action) {
+  switch (action.type) {
+    case PAGE_LOADING: return true;
+    case NAVIGATE_TO_PAGE: return false;
+    case PAGE_FINISHED_LOADING: return false;
+    default: return state;
+  }
+}
+
 export function createQtStore(customReducers, initialValue) {
   const reducers = combineReducers(Object.assign({
     qt: internalReducers,
     breakingNews: breakingNewsReducer,
-    clientSideRendered: clientSideRenderedReducer
+    clientSideRendered: clientSideRenderedReducer,
+    pageLoading: pageLoadingReducer
   }, customReducers));
   const initialState = Object.assign({currentPath: window.location.pathname}, initialValue);
   return createStore(reducers, {qt: initialState});

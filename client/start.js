@@ -6,7 +6,7 @@ import { createBrowserHistory } from 'history'
 
 import { IsomorphicComponent } from '../isomorphic/component'
 import { BreakingNews } from '../components/breaking-news'
-import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED } from '../store/actions';
+import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '../store/actions';
 
 export const history = createBrowserHistory();
 
@@ -16,6 +16,7 @@ export function getRouteData(path, opts) {
 }
 
 export function navigateToPage(dispatch, path, doNotPushPath) {
+  dispatch({type: PAGE_LOADING});
   getRouteData(path)
     .then((response) => dispatch({
       type: NAVIGATE_TO_PAGE,
