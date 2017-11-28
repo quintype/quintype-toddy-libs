@@ -26,9 +26,9 @@ function clientSideRenderedReducer(state = false, action) {
   }
 }
 
-function clientLoadingReducer(state = false, action) {
+function pageLoadingReducer(state = false, action) {
   switch (action.type) {
-    case PAGE_LOADING: return action.isAppLoading;
+    case PAGE_LOADING: return true;
     case NAVIGATE_TO_PAGE: return false;
     case PAGE_FINISHED_LOADING: return false;
     default: return state;
@@ -40,7 +40,7 @@ export function createQtStore(customReducers, initialValue) {
     qt: internalReducers,
     breakingNews: breakingNewsReducer,
     clientSideRendered: clientSideRenderedReducer,
-    clientLoading: clientLoadingReducer
+    pageLoading: pageLoadingReducer
   }, customReducers));
   const initialState = Object.assign({currentPath: window.location.pathname}, initialValue);
   return createStore(reducers, {qt: initialState});

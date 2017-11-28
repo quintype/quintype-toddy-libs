@@ -16,10 +16,7 @@ export function getRouteData(path, opts) {
 }
 
 export function navigateToPage(dispatch, path, doNotPushPath) {
-  dispatch({
-    type: PAGE_LOADING,
-    isAppLoading: true
-  })
+  dispatch({type: PAGE_LOADING});
   getRouteData(path)
     .then((response) => dispatch({
       type: NAVIGATE_TO_PAGE,
