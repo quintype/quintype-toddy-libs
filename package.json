@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/quintype/quintype-toddy-libs.git"
+    "url": "git+https://github.com/quintype/quintype-node-framework.git"
   },
   "keywords": [
     "quintype"
