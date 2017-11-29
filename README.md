@@ -73,7 +73,7 @@ This highlights the three important places to put stuff for an isomorphic app
 This component will automatically fetch breaking news every 30 seconds, and render the provided view.
 
 ```javascript
-import { renderBreakingNews } from 'quintype-toddy-libs/client/start';
+import { renderBreakingNews } from '@quintype/framework/client/start';
 const BreakingNewsView = (props) => <ul>{props.breakingNews.map((news) => <li key={news.id}>{news.headline}</li>)}</ul>
 renderBreakingNews('breaking-news-container', store, BreakingNewsView);
 ```
@@ -82,7 +82,7 @@ renderBreakingNews('breaking-news-container', store, BreakingNewsView);
 This component will be loaded by client, and bypassed when doing server side rendering.
 
 ```javascript
-const { ClientSideOnly } = require("quintype-toddy-libs/components/client-side-only");
+const { ClientSideOnly } = require("@quintype/framework/components/client-side-only");
 <ClientSideOnly>
   This will be shown only on the client side
 </ClientSideOnly>
@@ -100,7 +100,7 @@ This component can be used to implement InfiniteScroll on the story page. You wi
 const React = require("react");
 
 const { BlankStory } = require("../story-templates/blank.jsx");
-const { InfiniteStoryBase } = require("quintype-toddy-libs/components/infinite-story-base");
+const { InfiniteStoryBase } = require("@quintype/framework/components/infinite-story-base");
 
 function StoryPageBase({index, story, otherProp}) {
   // Can switch to a different template based story-template, or only show a spoiler if index > 0
@@ -129,7 +129,7 @@ exports.StoryPage = StoryPage;
 This component generates an anchor tag. Instead of doing a browser page load, it will go to the next page via AJAX. Analytics scripts will be fired correctly (and if not, it's a bug)
 
 ```javascript
-const { Link } = require("quintype-toddy-libs/components/link");
+const { Link } = require("@quintype/framework/components/link");
 <Link href="/section/story-slug" otherLinkAttribute="value">Text here</Link>
 ```
 
@@ -137,7 +137,7 @@ const { Link } = require("quintype-toddy-libs/components/link");
 This component renders it's children when the app is moving between pages. It can be used to show a spinner. It always has the class "loading-indicator", and also "loading-indicator-loading" when loading.
 
 ```javascript
-const { LoadingIndicator } = require("quintype-toddy-libs/components/loading-indicator");
+const { LoadingIndicator } = require("@quintype/framework/components/loading-indicator");
 
 <LoadingIndicator>
   <div className="spinner">Please Wait</div>
@@ -149,7 +149,7 @@ const { LoadingIndicator } = require("quintype-toddy-libs/components/loading-ind
 This is a base component which *must* be subclassed, providing a navigateTo function.
 
 ```javascript
-class SearchComponent extends require("quintype-toddy-libs/components/navigation-component-base") {
+class SearchComponent extends require("@quintype/framework/components/navigation-component-base") {
   render() { return <a href="#" onClick={() => this.navigateTo("/some-page-here")}>Link</a>}
 }
 ```
@@ -158,7 +158,7 @@ class SearchComponent extends require("quintype-toddy-libs/components/navigation
 This component takes an image, and resizes it to the correct aspect ratio using imgix or thumbor.
 
 ```javascript
-const { ResponsiveImage } = require("quintype-toddy-libs/components/responsive-image");
+const { ResponsiveImage } = require("@quintype/framework/components/responsive-image");
 <figure className="story-grid-item-image qt-image-16x9">
   <ResponsiveImage slug={props.story["hero-image-s3-key"]} metadata={props.story["hero-image-metadata"]}
     aspectRatio={[16,9]}
@@ -171,7 +171,7 @@ const { ResponsiveImage } = require("quintype-toddy-libs/components/responsive-i
 This component renders different types of story elements
 
 ```javascript
-const { StoryElement } = require("quintype-toddy-libs/components/story-element");
+const { StoryElement } = require("@quintype/framework/components/story-element");
 function StoryCard(props){
   return <div>
     {props.card['story-elements'].map((element, index) => <StoryElement element={element} key={index} story={props.story}></StoryElement>)}

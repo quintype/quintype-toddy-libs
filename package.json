@@ -16,9 +16,9 @@
   "author": "Quintype Developers <dev-core@quintype.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/quintype/quintype-toddy-libs/issues"
+    "url": "https://github.com/quintype/quintype-node-framework/issues"
   },
-  "homepage": "https://github.com/quintype/quintype-toddy-libs#readme",
+  "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
     "atob": "^2.0.3",
     "classnames": "^2.2.5",
