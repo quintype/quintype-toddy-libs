@@ -194,6 +194,15 @@ const { ResponsiveImage } = require("@quintype/framework/components/responsive-i
 </figure>
 ```
 
+#### Search box
+This component renders search box and maintains the search state
+
+```javascript
+const { SearchBox } = require("@quintype/framework/components/search-box");
+
+<SearchBox onSubmit={ (query) => { /* Submit handler code goes here */ }}/>
+```
+
 #### StoryElement
 This component renders different types of story elements
 
