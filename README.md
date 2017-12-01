@@ -88,6 +88,16 @@ const { ClientSideOnly } = require("@quintype/framework/components/client-side-o
 </ClientSideOnly>
 ```
 
+#### HamburgerButton
+This component can be used to trigger an action openening the Hamburger menu. The state can be accessed via state.hamburgerOpened
+
+```javascript
+const { HamburgerButton } = require("@quintype/framework/components/hamburger-button");
+<HamburgerButton>
+  <img src="/path/to/hamburger.png"/>
+</HamburgerButton>
+```
+
 #### InfiniteScroll
 
 This component can be used to implement InfiniteScroll. This is an internal component.
@@ -142,6 +152,22 @@ const { LoadingIndicator } = require("@quintype/framework/components/loading-ind
 <LoadingIndicator>
   <div className="spinner">Please Wait</div>
 </LoadingIndicator>
+```
+
+#### Menu
+This component can be used to render a menu from the menuItems in the editor. Children are prepended to the list of items. An extra class called active is applied if the menu item is the current url. By default, links will resolve via AJAX.
+
+```javascript
+const { Menu } = require("@quintype/framework/components/menu");
+
+<Menu className="menu-class" 
+              itemClassName="item-class" 
+              items={this.props.menuItems}
+              currentUrl={this.props.currentUrl}>
+  <li>
+    <a className="item-class" href="/"> होम </a>
+  </li>
+</Menu>
 ```
 
 #### NavigationComponentBase
