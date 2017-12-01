@@ -72,7 +72,12 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
     return fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
       .then((result) => {
         const store = createStore((state) => state, {
-          qt: {pageType: result.pageType, data: result.data, config: result.config}
+          qt: {
+            pageType: result.pageType,
+            data: result.data,
+            config: result.config,
+            currentPath: `${url.pathname}${url.search || ""}`
+          }
         });
 
         res.status(result.httpStatusCode || 200)
