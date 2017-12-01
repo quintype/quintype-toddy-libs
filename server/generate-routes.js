@@ -3,18 +3,18 @@
 // /sect, /sect/:storySlug, /sect/*/:storySlug
 const _ = require("lodash");
 
-exports.generateSectionPageRoutes = function generateSectionPageRoutes(config) {
+exports.generateSectionPageRoutes = function generateSectionPageRoutes(config, opts = {}) {
   const sectionsById = _(config.sections).reduce((acc, section) => {
     acc[section.id] = section;
     return acc;
   }, {});
 
   return _(config.sections)
-    .map((section) => sectionPageRoute(section, sectionsById))
+    .flatMap((section) => sectionPageRoute(section, sectionsById, opts))
     .value();
 }
 
-function sectionPageRoute(section, sectionsById) {
+function sectionPageRoute(section, sectionsById, opts) {
   var slug = section.slug;
 
   var currentSection = section;
@@ -24,8 +24,7 @@ function sectionPageRoute(section, sectionsById) {
     slug = `${currentSection.slug}/${slug}`;
   }
 
-  return {
-    path: `/${slug}`,
+  const commonParams = {
     pageType: "section-page",
     exact: true,
     params: {
@@ -33,6 +32,13 @@ function sectionPageRoute(section, sectionsById) {
       collectionSlug: section.collection ? section.collection.slug : null
     }
   };
+
+  const routes = [Object.assign({path: `/${slug}`}, commonParams)];
+  if(opts.addSectionPrefix) {
+    routes.push(Object.assign({path: `/section/${slug}`}, commonParams));
+  }
+
+  return routes;
 }
 
 exports.generateStoryPageRoutes = function generateStoryPageRoutes(config) {
