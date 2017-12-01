@@ -9,7 +9,11 @@ function HamburgerButtonBase({onClick, children}) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    onClick: (e) => {e.stopPropagation(); dispatch({type: HAMBURGER_CLICKED});}
+    onClick: (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      dispatch({type: HAMBURGER_CLICKED});
+    }
   };
 }
 
