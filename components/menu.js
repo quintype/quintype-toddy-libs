@@ -3,7 +3,8 @@ const URL = require("url");
 const { Link } = require("./link");
 const {connect} = require("react-redux");
 
-function MenuBase({children, className, itemClassName, items, currentUrl}) {
+function MenuBase({children, className, itemClassName, items, currentUrl, slice}) {
+  items = items.slice.apply(items, slice);
   return (
     <ul className={className}>
       {children}
