@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "1.7.0",
+  "version": "2.0.0",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -20,9 +20,8 @@
   },
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
+    "@quintype/components": "^1.0.7",
     "atob": "^2.0.3",
-    "bluebird": "^3.5.1",
-    "classnames": "^2.2.5",
     "cluster": "^0.7.7",
     "get-youtube-id": "^1.0.0",
     "http-proxy": "^1.16.2",
@@ -35,8 +34,6 @@
     "react-dom": "^16.1.1",
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",
-    "react-soundcloud-widget": "git://github.com/gja/react-soundcloud-widget",
-    "react-youtube": "^7.5.0",
     "redux": "^3.7.2",
     "sleep-promise": "^2.0.0",
     "url": "^0.11.0"

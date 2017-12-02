@@ -5,8 +5,8 @@ import {Provider} from 'react-redux';
 import { createBrowserHistory } from 'history'
 
 import { IsomorphicComponent } from '../isomorphic/component'
-import { BreakingNews } from '../components/breaking-news'
-import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '../store/actions';
+import { BreakingNews } from '@quintype/components'
+import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components/store/actions';
 
 export const history = createBrowserHistory();
 

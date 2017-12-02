@@ -2,6 +2,23 @@
 # yarn lockfile v1
 
 
+"@quintype/components@^1.0.7":
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/@quintype/components/-/components-1.0.7.tgz#d7ea86b54256a26bb63742fb4f0c92cf0f24742c"
+  dependencies:
+    classnames "^2.2.5"
+    get-youtube-id "^1.0.0"
+    lodash "^4.17.4"
+    prop-types "^15.6.0"
+    quintype-js "^0.1.6"
+    react "^16.2.0"
+    react-redux "^5.0.6"
+    react-soundcloud-widget "git://github.com/gja/react-soundcloud-widget"
+    react-youtube "^7.5.0"
+    redux "^3.7.2"
+    superagent-bluebird-promise "^4.2.0"
+    url "^0.11.0"
+
 acorn@^5.2.1:
   version "5.2.1"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.2.1.tgz#317ac7821826c22c702d66189ab8359675f135d7"
@@ -569,10 +586,6 @@ bcrypt-pbkdf@^1.0.0:
 bluebird@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.0.tgz#791420d7f551eea2897453a8a77653f96606d67c"
-
-bluebird@^3.5.1:
-  version "3.5.1"
-  resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.5.1.tgz#d9551f9de98f1fcda1e683d17ee91a0602ee2eb9"
 
 boom@2.x.x:
   version "2.10.1"
@@ -1218,9 +1231,9 @@ react-router@^4.2.0:
     prop-types "^15.5.4"
     warning "^3.0.0"
 
-"react-soundcloud-widget@git://github.com/gja/react-soundcloud-widget":
+"react-soundcloud-widget@git://github.com/gja/react-soundcloud-widget.git":
   version "2.0.4"
-  resolved "git://github.com/gja/react-soundcloud-widget#d42fab3c25cbab19aa38eab9dc33936acfed6ca8"
+  resolved "git://github.com/gja/react-soundcloud-widget.git#d42fab3c25cbab19aa38eab9dc33936acfed6ca8"
   dependencies:
     load-script "^1.0.0"
 
@@ -1235,6 +1248,15 @@ react-youtube@^7.5.0:
 react@^16.1.1:
   version "16.1.1"
   resolved "https://registry.yarnpkg.com/react/-/react-16.1.1.tgz#d5c4ef795507e3012282dd51261ff9c0e824fe1f"
+  dependencies:
+    fbjs "^0.8.16"
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    prop-types "^15.6.0"
+
+react@^16.2.0:
+  version "16.2.0"
+  resolved "https://registry.yarnpkg.com/react/-/react-16.2.0.tgz#a31bd2dab89bff65d42134fa187f24d054c273ba"
   dependencies:
     fbjs "^0.8.16"
     loose-envify "^1.1.0"
@@ -1406,6 +1428,10 @@ strip-ansi@^3.0.0:
   resolved "https://registry.yarnpkg.com/strip-ansi/-/strip-ansi-3.0.1.tgz#6a385fb8853d952d5ff05d0e8aaf94278dc63dcf"
   dependencies:
     ansi-regex "^2.0.0"
+
+superagent-bluebird-promise@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/superagent-bluebird-promise/-/superagent-bluebird-promise-4.2.0.tgz#0b6a6872cc830371cb9f4172dd0510751abd16b2"
 
 supports-color@4.4.0:
   version "4.4.0"
