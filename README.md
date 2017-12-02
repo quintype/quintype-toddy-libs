@@ -195,12 +195,15 @@ const { ResponsiveImage } = require("@quintype/framework/components/responsive-i
 ```
 
 #### Search box
-This component renders search box and maintains the search state
+This component provides a form with a search text box. On submit, the user is redirected to the search page via AJAX.
+
+Other buttons can be passed in via children
 
 ```javascript
 const { SearchBox } = require("@quintype/framework/components/search-box");
-
-<SearchBox onSubmit={ (query) => { /* Submit handler code goes here */ }}/>
+<SearchBox className="foobar" placeholder="search">
+  <input type="submit" className="round-search-button" />
+</SearchBox>
 ```
 
 #### StoryElement

@@ -1,6 +1,7 @@
 const React = require('react');
+const NavigationComponentBase = require("./navigation-component-base");
 
-class SearchBox extends React.Component {
+class SearchBox extends NavigationComponentBase {
   constructor(props) {
     super(props);
     this.state = {
@@ -10,16 +11,19 @@ class SearchBox extends React.Component {
 
   onSubmit(e) {
     e.preventDefault();
+    if(this.state.query != "")
+      this.navigateTo(`/search?q=${this.state.query}`)
     this.props.onSubmitHandler(this.state.query);
   }
 
   render() {
-    return <form role="search" action="/search" onSubmit={(e) => this.onSubmit(e)}>
+    return <form role="search" action="/search" onSubmit={(e) => this.onSubmit(e)} className={this.props.className}>
       <input type="search"
-            name="q"
-            placeholder="Search for anything..."
-            value={this.state.query}
-            onChange={(e) => this.setState({query: e.target.value})}/>
+              name="q"
+              placeholder={this.props.placeholder}
+              value={this.state.query}
+              onChange={(e) => this.setState({query: e.target.value})}/>
+      {this.props.children}
     </form>
   }
 
