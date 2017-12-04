@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
-    "@quintype/components": "^1.0.7",
+    "@quintype/components": "^1.0.18",
     "atob": "^2.0.3",
     "cluster": "^0.7.7",
     "get-youtube-id": "^1.0.0",
@@ -41,9 +41,12 @@
     "url": "^0.11.0"
   },
   "devDependencies": {
+    "@quintype/build": "^1.0.6",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-es2015-tree-shaking": "^1.0.1",
     "babel-preset-react": "^6.24.1",
+    "babel-register": "^6.26.0",
     "history": "^4.7.2",
     "mocha": "^4.0.1"
   }

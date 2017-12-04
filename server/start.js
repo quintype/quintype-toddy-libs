@@ -13,7 +13,9 @@ module.exports.startApp = function(appThunk, opts = {}) {
       cluster.fork();
     });
   } else {
-    require('node-jsx').install();
+    if(process.env.NODE_ENV != "production") {
+      require("@quintype/build")(opts)
+    }
     const app = appThunk();
     initializeAllClients()
       .then(app.listen(opts.port || 3000, () => console.log('Example app listening on port 3000!')))
