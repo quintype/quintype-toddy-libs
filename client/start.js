@@ -4,6 +4,7 @@ import {Provider} from 'react-redux';
 
 import { createBrowserHistory } from 'history'
 
+import { createQtStore } from '@quintype/framework/store/create-store';
 import { IsomorphicComponent } from '../isomorphic/component'
 import { BreakingNews } from '@quintype/components'
 import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components/store/actions';
@@ -56,4 +57,23 @@ export function renderIsomorphicComponent(container, store, pickComponent, props
 
 export function renderBreakingNews(container, store, view, props) {
   return renderComponent(BreakingNews, container, store, Object.assign({view}, props));
+}
+
+export function startApp(renderApplication, reducers, opts) {
+  global.Promise = global.Promise || require("bluebird");
+  global.superagent = require('superagent-promise')(require('superagent'), Promise);
+  global.app = app;
+
+  if(opts.enableServiceWorker && global.navigator.serviceWorker) {
+    global.navigator.serviceWorker.register("/service-worker.js");
+  }
+
+  const location = global.location;
+  return getRouteData(`${location.pathname}${location.search || ""}`, {config: true})
+    .then((result) => {
+      const store = createQtStore(reducers, result.body);
+
+      renderApplication(store);
+      history.listen(change => app.maybeNavigateTo(`${change.pathname}${change.search || ""}`, store));
+    });
 }
