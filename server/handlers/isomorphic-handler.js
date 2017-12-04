@@ -22,6 +22,13 @@ function fetchData(loadData, loadErrorData = () => Promise.resolve({}), pageType
     })
 }
 
+function matchRouteWithParams(url, routes) {
+  const match = matchBestRoute(url.pathname, routes);
+  if(match)
+    match.params = Object.assign({}, url.query, match.params);
+  return match;
+}
+
 exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, {config, renderLayout}) {
   renderLayout(res.status(200), {
     content: '<div class="app-loading"></div>',
@@ -43,8 +50,8 @@ function addCacheHeaders(res, result) {
 }
 
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData}) {
-  const url = urlLib.parse(req.query.path || "/");
-  const match = matchBestRoute(url.pathname, generateRoutes(config));
+  const url = urlLib.parse(req.query.path || "/", true);
+  const match = matchRouteWithParams(url, generateRoutes(config));
   res.setHeader("Content-Type", "application/json");
   if(match) {
     return fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
@@ -66,8 +73,8 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
 };
 
 exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, loadSeoData}) {
-  const url = urlLib.parse(req.url);
-  const match = matchBestRoute(url.pathname, generateRoutes(config));
+  const url = urlLib.parse(req.url, true);
+  const match = matchRouteWithParams(url, generateRoutes(config));
   if(match) {
     return fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
       .then((result) => {
