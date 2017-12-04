@@ -6,9 +6,10 @@ const {IsomorphicComponent} = require("../../isomorphic/component");
 const {ApplicationException, NotFoundException} = require("../exceptions");
 const {renderReduxComponent} = require("../render");
 const {createStore} = require("redux");
+const Promise = require("bluebird");
 
 function fetchData(loadData, loadErrorData = () => Promise.resolve({}), pageType, params, config, client) {
-  return loadData(pageType, params, config, client)
+  return Promise.resolve(loadData(pageType, params, config, client))
     .catch(error => {
       if (error instanceof NotFoundException) {
         return loadErrorData(error)

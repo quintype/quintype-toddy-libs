@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -22,6 +22,7 @@
   "dependencies": {
     "@quintype/components": "^1.0.18",
     "atob": "^2.0.3",
+    "bluebird": "^3.5.1",
     "cluster": "^0.7.7",
     "get-youtube-id": "^1.0.0",
     "http-proxy": "^1.16.2",
