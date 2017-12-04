@@ -75,5 +75,7 @@ export function startApp(renderApplication, reducers, opts) {
 
       renderApplication(store);
       history.listen(change => app.maybeNavigateTo(`${change.pathname}${change.search || ""}`, store));
+
+      return store;
     });
 }
