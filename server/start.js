@@ -14,10 +14,7 @@ module.exports.startApp = function(appThunk, opts = {}) {
     });
   } else {
     if(process.env.NODE_ENV != "production") {
-      require("babel-register")(Object.assign({
-        presets: ["react"],
-        plugins: ["transform-es2015-modules-commonjs"]
-      }, opts.babelOpts))
+      require("@quintype/build")(opts)
     }
     const app = appThunk();
     initializeAllClients()
