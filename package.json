@@ -4,9 +4,7 @@
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
-    "prepublishOnly": "git tag v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4)",
-    "postpublish": "git push --tags origin master",
-    "test": "mocha"
+    "prepublishOnly": "git tag v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4) && git push --tags origin master"
   },
   "repository": {
     "type": "git",
