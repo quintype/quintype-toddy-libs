@@ -4,7 +4,7 @@ import {Provider} from 'react-redux';
 
 import { createBrowserHistory } from 'history'
 
-import { createQtStore } from '@quintype/framework/store/create-store';
+import { createQtStore } from '../store/create-store';
 import { IsomorphicComponent } from '../isomorphic/component'
 import { BreakingNews } from '@quintype/components'
 import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components/store/actions';
