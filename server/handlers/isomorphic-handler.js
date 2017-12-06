@@ -96,7 +96,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
           store: store
         });
       }).catch(e => {
-        console.trace(e);
+        console.error(e);
         res.status(500);
         res.send(e.message);
       }).finally(() => res.end());
