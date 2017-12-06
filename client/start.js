@@ -56,7 +56,8 @@ export function renderComponent(clazz, container, store, props) {
 }
 
 export function renderIsomorphicComponent(container, store, pickComponent, props) {
-  return renderComponent(IsomorphicComponent, container, store, Object.assign({pickComponent}, props));
+  if(!global.disableIsomorphicComponent)
+    return renderComponent(IsomorphicComponent, container, store, Object.assign({pickComponent}, props));
 }
 
 export function renderBreakingNews(container, store, view, props) {

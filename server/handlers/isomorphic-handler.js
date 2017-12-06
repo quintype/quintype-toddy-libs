@@ -50,9 +50,9 @@ function addCacheHeaders(res, result) {
   return res;
 }
 
-exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData, logError}) {
+exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes}) {
   const url = urlLib.parse(req.query.path || "/", true);
-  const match = matchRouteWithParams(url, generateRoutes(config));
+  const match = matchRouteWithParams(url, staticRoutes.concat(generateRoutes(config)));
   res.setHeader("Content-Type", "application/json");
   if(match) {
     return fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
@@ -111,20 +111,16 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
   }
 };
 
-exports.handleStaticRoute = function handleStaticRoute(req, res, {route, config, client, logError, loadData, renderLayout, fetchParams, pageType, loadSeoData}) {
+exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, loadSeoData, renderParams}) {
   pageType = pageType || 'static-page';
-  var renderParams;
-  return Promise.resolve(fetchParams({config, client}))
-    .then(params => renderParams = params)
-    .then(params => fetchData(loadData, () => ({}), pageType, renderParams, config, client))
+  return fetchData(loadData, loadErrorData, pageType, renderParams, config, client)
     .then(result => {
       const store = createStore((state) => state, {
         qt: {
           pageType: result.pageType,
           data: result.data,
           config: result.config,
-          currentPath: route,
-          disableAjaxNavigation: true
+          currentPath: path
         }
       });
       res.status(result.httpStatusCode || 200)
@@ -132,6 +128,7 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, {route, config,
       renderLayout(res, Object.assign({
         store: store,
         metadata: loadSeoData(config, pageType, result.data),
+        disableIsomorphicComponent: true,
         disableAjaxNavigation: true
       }, renderParams));
     }).catch(e => {

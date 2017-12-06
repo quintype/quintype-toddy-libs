@@ -55,13 +55,14 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app) {
   app.all("/news_sitemap.xml", sketchesProxy);
 }
 
-exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logError, renderLayout, loadData, pickComponent, loadErrorData, loadSeoData}) {
+exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logError, renderLayout, loadData, pickComponent, loadErrorData, loadSeoData, staticRoutes = []}) {
   app.get("/service-worker.js", withConfig(logError, generateServiceWorker, {generateRoutes}));
   app.get("/shell.html", withConfig(logError, handleIsomorphicShell, {renderLayout}));
-  app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError}));
-  app.get("/*", withConfig(logError, handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, loadSeoData, logError}));
-}
+  app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes}));
 
-exports.staticRoutes = function staticRoute(app, opts) {
-  opts.routes.forEach(([route, fetchParams, routeOpts]) => app.get(route, withConfig(opts.logError, handleStaticRoute, Object.assign({route, fetchParams}, opts, routeOpts))))
+  staticRoutes.forEach(route => {
+    app.get(route.path, withConfig(logError, handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, loadSeoData}, route)))
+  });
+
+  app.get("/*", withConfig(logError, handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, loadSeoData, logError}));
 }
