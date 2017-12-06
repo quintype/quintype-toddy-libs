@@ -50,7 +50,7 @@ function addCacheHeaders(res, result) {
   return res;
 }
 
-exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData}) {
+exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData, logError}) {
   const url = urlLib.parse(req.query.path || "/", true);
   const match = matchRouteWithParams(url, generateRoutes(config));
   res.setHeader("Content-Type", "application/json");
@@ -61,7 +61,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
         addCacheHeaders(res, result);
         res.json(Object.assign({}, result, {data: _.omit(result.data, ["cacheKeys"])}));
       }).catch(e => {
-        console.trace(e);
+        logError(e);
         res.status(500);
         res.json({error: {message: e.message}});
       }).finally(() => res.end());
@@ -73,7 +73,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
   }
 };
 
-exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, loadSeoData}) {
+exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, loadSeoData, logError}) {
   const url = urlLib.parse(req.url, true);
   const match = matchRouteWithParams(url, generateRoutes(config));
   if(match) {
@@ -96,7 +96,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
           store: store
         });
       }).catch(e => {
-        console.error(e);
+        logError(e);
         res.status(500);
         res.send(e.message);
       }).finally(() => res.end());
@@ -110,3 +110,29 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
     return new Promise((resolve) => resolve());
   }
 };
+
+exports.handleStaticRoute = function handleStaticRoute(req, res, {route, config, client, logError, loadData, renderLayout, fetchParams, pageType, loadSeoData}) {
+  pageType = pageType || 'static-page';
+  var renderParams;
+  return Promise.resolve(fetchParams({config, client}))
+    .then(params => renderParams = params)
+    .then(params => fetchData(loadData, () => ({}), pageType, renderParams, config, client))
+    .then(result => {
+      const store = createStore((state) => state, {
+        qt: {
+          pageType: result.pageType,
+          data: result.data,
+          config: result.config,
+          currentPath: route,
+          disableAjaxNavigation: true
+        }
+      });
+      res.status(result.httpStatusCode || 200)
+      addCacheHeaders(res, result);
+      renderLayout(res, Object.assign({store, metadata: loadSeoData(config, pageType, result.data)}, renderParams));
+    }).catch(e => {
+      logError(e);
+      res.status(500);
+      res.send(e.message);
+    }).finally(() => res.end());
+}

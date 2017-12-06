@@ -2,7 +2,7 @@ const config = require("./publisher-config");
 const {getClient} = require("./api-client");
 
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
-const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute} = require("./handlers/isomorphic-handler");
+const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute} = require("./handlers/isomorphic-handler");
 
 function withConfig(logError, f, staticParams) {
   return function(req, res, opts) {
@@ -58,6 +58,10 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app) {
 exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logError, renderLayout, loadData, pickComponent, loadErrorData, loadSeoData}) {
   app.get("/service-worker.js", withConfig(logError, generateServiceWorker, {generateRoutes}));
   app.get("/shell.html", withConfig(logError, handleIsomorphicShell, {renderLayout}));
-  app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData}));
-  app.get("/*", withConfig(logError, handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, loadSeoData}));
+  app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError}));
+  app.get("/*", withConfig(logError, handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, loadSeoData, logError}));
+}
+
+exports.staticRoutes = function staticRoute(app, opts) {
+  opts.routes.forEach(([route, fetchParams, routeOpts]) => app.get(route, withConfig(opts.logError, handleStaticRoute, Object.assign({route, fetchParams}, opts, routeOpts))))
 }
