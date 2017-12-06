@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,7 @@
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.4",
     "node-jsx": "^0.13.3",
-    "quintype-backend": "^0.4.1",
+    "quintype-backend": "^0.4.3",
     "quintype-js": "^0.1.6",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
