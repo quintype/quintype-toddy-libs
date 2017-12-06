@@ -100,6 +100,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
         res.status(result.httpStatusCode || 200)
         addCacheHeaders(res, result);
         renderLayout(res, {
+          title: result.title,
           metadata: loadSeoData(config, result.pageType, result.data),
           content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
           store: store
@@ -136,9 +137,10 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, 
       res.status(result.httpStatusCode || 200)
       addCacheHeaders(res, result);
       renderLayout(res, Object.assign({
+        title: result.title,
         store: store,
         metadata: loadSeoData(config, pageType, result.data),
-        disableAjaxNavigation: true
+        disableAjaxNavigation: true,
       }, renderParams));
     }).catch(e => {
       logError(e);
