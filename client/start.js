@@ -17,6 +17,10 @@ export function getRouteData(path, opts) {
 }
 
 export function navigateToPage(dispatch, path, doNotPushPath) {
+  if(global.disableAjaxNavigation) {
+    global.location = path;
+  }
+
   dispatch({type: PAGE_LOADING});
   getRouteData(path)
     .then((response) => dispatch({
