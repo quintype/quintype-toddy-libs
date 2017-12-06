@@ -23,11 +23,17 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
 
   dispatch({type: PAGE_LOADING});
   getRouteData(path)
-    .then((response) => dispatch({
-      type: NAVIGATE_TO_PAGE,
-      page: response.body,
-      currentPath: path
-    })).then(() => {
+    .then((response) => {
+      if(response.disableIsomorphicComponent) {
+        global.location = path;
+      } else {
+        dispatch({
+          type: NAVIGATE_TO_PAGE,
+          page: response.body,
+          currentPath: path
+        });
+      }
+    }).then(() => {
       if(!doNotPushPath)
         history.push(path)
     });
