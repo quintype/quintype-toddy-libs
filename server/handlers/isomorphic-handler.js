@@ -51,15 +51,24 @@ function addCacheHeaders(res, result) {
 }
 
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes}) {
+  function matchStaticOrIsomorphicRoute(url) {
+    var match;
+    if(match = matchRouteWithParams(url, staticRoutes)) {
+      return Object.assign({jsonParams: {disableIsomorphicComponent: true}}, match)
+    } else {
+      return matchRouteWithParams(url, generateRoutes(config));
+    }
+  }
+
   const url = urlLib.parse(req.query.path || "/", true);
-  const match = matchRouteWithParams(url, staticRoutes.concat(generateRoutes(config)));
+  const match = matchStaticOrIsomorphicRoute(url)
   res.setHeader("Content-Type", "application/json");
   if(match) {
     return fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
       .then((result) => {
         res.status(200);
         addCacheHeaders(res, result);
-        res.json(Object.assign({}, result, {data: _.omit(result.data, ["cacheKeys"])}));
+        res.json(Object.assign({}, result, {data: _.omit(result.data, ["cacheKeys"])}, match.jsonParams));
       }).catch(e => {
         logError(e);
         res.status(500);
@@ -120,7 +129,8 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, 
           pageType: result.pageType,
           data: result.data,
           config: result.config,
-          currentPath: path
+          currentPath: path,
+          disableIsomorphicComponent: true
         }
       });
       res.status(result.httpStatusCode || 200)
@@ -128,7 +138,6 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, 
       renderLayout(res, Object.assign({
         store: store,
         metadata: loadSeoData(config, pageType, result.data),
-        disableIsomorphicComponent: true,
         disableAjaxNavigation: true
       }, renderParams));
     }).catch(e => {

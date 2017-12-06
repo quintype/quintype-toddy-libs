@@ -6,7 +6,7 @@ import { createBrowserHistory } from 'history'
 
 import { createQtStore } from '../store/create-store';
 import { IsomorphicComponent } from '../isomorphic/component'
-import { BreakingNews } from '@quintype/components'
+import { BreakingNews } from '@quintype/components';
 import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components/store/actions';
 
 export const history = createBrowserHistory();
@@ -56,8 +56,11 @@ export function renderComponent(clazz, container, store, props) {
 }
 
 export function renderIsomorphicComponent(container, store, pickComponent, props) {
-  if(!global.disableIsomorphicComponent)
+  if(!store.getState().qt.disableIsomorphicComponent) {
     return renderComponent(IsomorphicComponent, container, store, Object.assign({pickComponent}, props));
+  } else {
+    console && console.log("IsomorphicComponent is disabled");
+  }
 }
 
 export function renderBreakingNews(container, store, view, props) {
