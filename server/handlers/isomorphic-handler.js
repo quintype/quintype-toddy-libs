@@ -129,7 +129,11 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, {route, config,
       });
       res.status(result.httpStatusCode || 200)
       addCacheHeaders(res, result);
-      renderLayout(res, Object.assign({store, metadata: loadSeoData(config, pageType, result.data)}, renderParams));
+      renderLayout(res, Object.assign({
+        store: store,
+        metadata: loadSeoData(config, pageType, result.data),
+        disableAjaxNavigation: true
+      }, renderParams));
     }).catch(e => {
       logError(e);
       res.status(500);
