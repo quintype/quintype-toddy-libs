@@ -82,12 +82,16 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
   }
 };
 
-exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, loadSeoData, logError}) {
+exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError}) {
   const url = urlLib.parse(req.url, true);
   const match = matchRouteWithParams(url, generateRoutes(config));
   if(match) {
+    var result, seoTags;
     return fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
-      .then((result) => {
+      .then(r => result = r)
+      .then(() => seo && seo.getMetaTags(config, result.pageType || match.pageType, result))
+      .then(r => seoTags = r)
+      .then(() => {
         const store = createStore((state) => state, {
           qt: {
             pageType: result.pageType,
@@ -101,9 +105,9 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
         addCacheHeaders(res, result);
         renderLayout(res, {
           title: result.title,
-          metadata: loadSeoData(config, result.pageType, result.data),
           content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
-          store: store
+          store: store,
+          seoTags: seoTags
         });
       }).catch(e => {
         logError(e);
@@ -121,10 +125,14 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
   }
 };
 
-exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, loadSeoData, renderParams}) {
+exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams}) {
   pageType = pageType || 'static-page';
+  var result, seoTags;
   return fetchData(loadData, loadErrorData, pageType, renderParams, config, client)
-    .then(result => {
+    .then(r => result = r)
+    .then(() => seo && seo.getMetaTags(config, result.pageType || pageType, result))
+    .then(r => seoTags = r)
+    .then(() => {
       const store = createStore((state) => state, {
         qt: {
           pageType: result.pageType,
@@ -139,8 +147,8 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, 
       renderLayout(res, Object.assign({
         title: result.title,
         store: store,
-        metadata: loadSeoData(config, pageType, result.data),
         disableAjaxNavigation: true,
+        seoTags: seoTags
       }, renderParams));
     }).catch(e => {
       logError(e);
