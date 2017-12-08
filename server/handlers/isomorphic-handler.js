@@ -86,12 +86,9 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
   const url = urlLib.parse(req.url, true);
   const match = matchRouteWithParams(url, generateRoutes(config));
   if(match) {
-    var result, seoTags;
     return fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
-      .then(r => result = r)
-      .then(() => seo && seo.getMetaTags(config, result.pageType || match.pageType, result))
-      .then(r => seoTags = r)
-      .then(() => {
+      .then(result => {
+        const seoTags = seo && seo.getMetaTags(config, result.pageType || match.pageType, result, {url});
         const store = createStore((state) => state, {
           qt: {
             pageType: result.pageType,
@@ -127,12 +124,9 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
 
 exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams}) {
   pageType = pageType || 'static-page';
-  var result, seoTags;
   return fetchData(loadData, loadErrorData, pageType, renderParams, config, client)
-    .then(r => result = r)
-    .then(() => seo && seo.getMetaTags(config, result.pageType || pageType, result))
-    .then(r => seoTags = r)
-    .then(() => {
+    .then(result => {
+      const seoTags = seo && seo.getMetaTags(config, result.pageType || pageType, result, {url: urlLib.parse(path)});
       const store = createStore((state) => state, {
         qt: {
           pageType: result.pageType,
