@@ -71,6 +71,10 @@ This highlights the three important places to put stuff for an isomorphic app
 
 Please see https://github.com/quintype/quintype-node-components
 
+### Debugging
+
+* In order to use `assetify` function, please annotate the application-js with id="app-js". The hostname specified here is assumed to be the cdn
+
 ### References
 
 * This architecture is heavily influenced by the method described in this [video](https://www.youtube.com/watch?v=atUdVSuNRjA)
