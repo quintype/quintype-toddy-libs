@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "2.9.0",
+  "version": "2.10.0",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,6 @@
   "dependencies": {
     "@quintype/components": "^1.0.18",
     "atob": "^2.0.3",
-    "babel-plugin-transform-assets-import-to-string": "^1.0.1",
     "bluebird": "^3.5.1",
     "cluster": "^0.7.7",
     "get-youtube-id": "^1.0.0",
