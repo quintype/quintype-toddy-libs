@@ -23,10 +23,10 @@ function fetchData(loadData, loadErrorData = () => Promise.resolve({}), pageType
     })
 }
 
-function matchRouteWithParams(url, routes) {
+function matchRouteWithParams(url, routes, otherParams = {}) {
   const match = matchBestRoute(url.pathname, routes);
   if(match)
-    match.params = Object.assign({}, url.query, match.params);
+    match.params = Object.assign({}, url.query, otherParams, match.params);
   return match;
 }
 
@@ -53,10 +53,10 @@ function addCacheHeaders(res, result) {
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes}) {
   function matchStaticOrIsomorphicRoute(url) {
     var match;
-    if(match = matchRouteWithParams(url, staticRoutes)) {
+    if(match = matchRouteWithParams(url, staticRoutes, req.query)) {
       return Object.assign({jsonParams: {disableIsomorphicComponent: true}}, match)
     } else {
-      return matchRouteWithParams(url, generateRoutes(config));
+      return matchRouteWithParams(url, generateRoutes(config), req.query);
     }
   }
 

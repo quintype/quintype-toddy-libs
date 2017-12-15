@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
+import urlLib from 'url';
 
 import { createBrowserHistory } from 'history'
 
@@ -12,8 +13,8 @@ import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOA
 export const history = createBrowserHistory();
 
 export function getRouteData(path, opts) {
-  opts = opts || {};
-  return superagent.get('/route-data.json', Object.assign({path: path}, opts));
+  const url = urlLib.parse(path, true)
+  return superagent.get('/route-data.json', Object.assign({path: url.pathname}, url.query));
 }
 
 export function navigateToPage(dispatch, path, doNotPushPath) {
