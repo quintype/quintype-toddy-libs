@@ -57,7 +57,13 @@ export function maybeSetUrl(path, title) {
   global.document.title = title;
 }
 
-export let app = {navigateToPage, maybeNavigateTo, maybeSetUrl};
+function getAssetCdn() {
+  const script = global.document.getElementById("app-js");
+  if(script && script.src)
+    return urlLib.parse(script.src).host;
+}
+
+export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl, assetCdn: `//${getAssetCdn() || "fea.assettype.com"}`};
 
 export function renderComponent(clazz, container, store, props) {
   return ReactDOM.render(
