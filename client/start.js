@@ -2,8 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 import urlLib from 'url';
-
 import { createBrowserHistory } from 'history'
+
+require("../assetify/client")
 
 import { createQtStore } from '../store/create-store';
 import { IsomorphicComponent } from '../isomorphic/component'
@@ -57,13 +58,7 @@ export function maybeSetUrl(path, title) {
   global.document.title = title;
 }
 
-function getAssetCdn() {
-  const script = global.document.getElementById("app-js");
-  if(script && script.src)
-    return urlLib.parse(script.src).host;
-}
-
-export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl, assetCdn: `//${getAssetCdn() || "fea.assettype.com"}`};
+export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl};
 
 export function renderComponent(clazz, container, store, props) {
   return ReactDOM.render(
