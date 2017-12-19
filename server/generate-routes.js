@@ -24,13 +24,14 @@ function sectionPageRoute(section, sectionsById, opts) {
     slug = `${currentSection.slug}/${slug}`;
   }
 
+  const params = { sectionId: section.id };
+  if(section.collection)
+    params.collectionSlug = section.collection.slug
+
   const commonParams = {
     pageType: "section-page",
     exact: true,
-    params: {
-      sectionId: section.id,
-      collectionSlug: section.collection ? section.collection.slug : null
-    }
+    params: params
   };
 
   const routes = [Object.assign({path: `/${slug}`}, commonParams)];
@@ -41,9 +42,9 @@ function sectionPageRoute(section, sectionsById, opts) {
   return routes;
 }
 
-exports.generateStoryPageRoutes = function generateStoryPageRoutes(config) {
+exports.generateStoryPageRoutes = function generateStoryPageRoutes(config, {withoutParentSection} = {}) {
   return _(config.sections)
-    .filter((section) => !section["parent-id"])
+    .filter((section) => withoutParentSection || !section["parent-id"])
     .flatMap((section) => [storyPageRoute(`/${section.slug}/:storySlug`), storyPageRoute(`/${section.slug}/*/:storySlug`)])
     .value();
 }

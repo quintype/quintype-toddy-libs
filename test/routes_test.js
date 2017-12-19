@@ -55,6 +55,28 @@ describe('routes', function() {
       }))
     });
 
+    it("generates section routes correctly with section prefix", function() {
+      const expectedRoutes = [
+        {path: "/sect", pageType: "section-page", exact: true, params: {sectionId: 42}},
+        {path: "/section/sect", pageType: "section-page", exact: true, params: {sectionId: 42}},
+        {path: "/sect/sub-sect", pageType: "section-page", exact: true, params: {sectionId: 43}},
+        {path: "/section/sect/sub-sect", pageType: "section-page", exact: true, params: {sectionId: 43}},
+      ];
+      assert.deepEqual(expectedRoutes, generateSectionPageRoutes({
+        sections: [{id: 42, slug: "sect"}, {id: 43, slug: "sub-sect", "parent-id": 42}],
+      }, {addSectionPrefix: true}))
+    });
+
+    it("generates section with collection slug", function() {
+      const expectedRoutes = [
+        {path: "/sect", pageType: "section-page", exact: true, params: {sectionId: 42, collectionSlug: "sect"}},
+      ];
+      assert.deepEqual(expectedRoutes, generateSectionPageRoutes({
+        sections: [{id: 42, slug: "sect", collection: {slug: "sect"}}]
+      }))
+    });
+
+
     it("generates story routes correctly", function() {
       const expectedRoutes = [
         {path: "/sect/:storySlug", pageType: "story-page", exact: true},
@@ -63,6 +85,18 @@ describe('routes', function() {
       assert.deepEqual(expectedRoutes, generateStoryPageRoutes({
         sections: [{id: 42, slug: "sect"}, {id: 43, slug: "sub-sect", "parent-id": 42}]
       }))
+    });
+
+    it("adds routes for subsections when withoutParentSection is set", function() {
+      const expectedRoutes = [
+        {path: "/sect/:storySlug", pageType: "story-page", exact: true},
+        {path: "/sect/*/:storySlug", pageType: "story-page", exact: true},
+        {path: "/sub-sect/:storySlug", pageType: "story-page", exact: true},
+        {path: "/sub-sect/*/:storySlug", pageType: "story-page", exact: true},
+      ];
+      assert.deepEqual(expectedRoutes, generateStoryPageRoutes({
+        sections: [{id: 42, slug: "sect"}, {id: 43, slug: "sub-sect", "parent-id": 42}]
+      }, {withoutParentSection: true}))
     });
 
     it("does not go into infinite loop if sections are recursive", function() {
