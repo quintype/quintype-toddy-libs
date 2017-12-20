@@ -16,7 +16,7 @@ function withConfig(logError, f, staticParams) {
 
 exports.withConfig = withConfig;
 
-exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app) {
+exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app, {forwardAmp} = {}) {
   const host = config.sketches_host;
   const apiProxy = require("http-proxy").createProxyServer({
     target: host,
@@ -53,6 +53,10 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app) {
   app.all("/rss-feed", sketchesProxy);
   app.all("/stories.rss", sketchesProxy);
   app.all("/news_sitemap.xml", sketchesProxy);
+
+  if(forwardAmp) {
+    app.get("/amp", sketchesProxy);
+  }
 }
 
 exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logError, renderLayout, loadData, pickComponent, loadErrorData, seo, staticRoutes = []}) {
