@@ -55,7 +55,7 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app, {forwardAm
   app.all("/news_sitemap.xml", sketchesProxy);
 
   if(forwardAmp) {
-    app.get("/amp", sketchesProxy);
+    app.get("/amp/*", sketchesProxy);
   }
 }
 
