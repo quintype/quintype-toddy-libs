@@ -1,15 +1,32 @@
 const React = require("react");
 const {connect} = require("react-redux");
 
-function IsomorphicComponentBase(props) {
-  return React.createElement(props.pickComponent(props.pageType), props)
+class IsomorphicComponentBase extends React.Component {
+  constructor(props) {
+    super(props)
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.currentPath != prevProps.currentPath) {
+      window.scrollTo(0, 0);
+    }
+
+    if(this.props.title)
+      global.document.title = this.props.title;
+  }
+
+  render() {
+    return React.createElement(this.props.pickComponent(this.props.pageType), this.props)
+  }
 }
 
 function mapStateToProps(state) {
   return {
     pageType: state.qt.pageType,
     config: state.qt.config,
-    data: state.qt.data
+    data: state.qt.data,
+    currentPath: state.qt.currentPath,
+    title: state.qt.title || ''
   }
 }
 

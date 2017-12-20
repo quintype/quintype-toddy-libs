@@ -37,10 +37,7 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
         });
       }
       return page;
-    }).then(({title}) => {
-      if(title)
-        global.document.title = title;
-
+    }).then(() => {
       if(!doNotPushPath)
         history.push(path)
     });
