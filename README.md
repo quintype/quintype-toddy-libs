@@ -67,6 +67,21 @@ This highlights the three important places to put stuff for an isomorphic app
 * Load the Data Required for that `pageType`, typically in `app/server/load-data.js`. This returns a promise with required data.
 * Render the correct component for that `pageType`, typically in `app/isomorphic/pick-component.js`. This must be a pure component
 
+### Page Type Aliases
+
+Sometimes, a page will have the same SEO characteristics as another page, but required different data loading logic. For example, a particular section may have some extra data, and a completely different layout.
+
+In this case, the preferred solution is to use a different PAGE_TYPE, and the pass the following flags to the SEO module.
+
+```javascript
+new SEO({
+  pageTypeAliases: {
+    "awesome-page": "section-page"
+  }
+})
+```
+
+
 ### Useful Components
 
 Please see https://github.com/quintype/quintype-node-components
