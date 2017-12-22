@@ -10,6 +10,7 @@ import { createQtStore } from '../store/create-store';
 import { IsomorphicComponent } from '../isomorphic/component'
 import { BreakingNews } from '@quintype/components';
 import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components/store/actions';
+import { startAnalytics, registerPageView } from './analytics'
 
 export const history = createBrowserHistory();
 
@@ -37,9 +38,11 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
         });
       }
       return page;
-    }).then(() => {
-      if(!doNotPushPath)
-        history.push(path)
+    }).then(page => {
+      if(!doNotPushPath) {
+        history.push(path);
+        registerPageView(page, path);
+      }
     });
 }
 
@@ -81,6 +84,7 @@ export function startApp(renderApplication, reducers, opts) {
   global.Promise = global.Promise || require("bluebird");
   global.superagent = require('superagent-promise')(require('superagent'), Promise);
   global.app = app;
+  startAnalytics();
 
   if(opts.enableServiceWorker && global.navigator.serviceWorker) {
     global.navigator.serviceWorker.register("/service-worker.js");
@@ -93,6 +97,8 @@ export function startApp(renderApplication, reducers, opts) {
 
       renderApplication(store);
       history.listen(change => app.maybeNavigateTo(`${change.pathname}${change.search || ""}`, store));
+
+      registerPageView(store.getState().qt);
 
       return store;
     });
