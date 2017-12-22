@@ -30,19 +30,21 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
     .then(page => {
       if(page.disableIsomorphicComponent) {
         global.location = path;
-      } else {
-        dispatch({
-          type: NAVIGATE_TO_PAGE,
-          page: page,
-          currentPath: path
-        });
+        return;
       }
-      return page;
-    }).then(page => {
+
       if(!doNotPushPath) {
         history.push(path);
         registerPageView(page, path);
       }
+
+      dispatch({
+        type: NAVIGATE_TO_PAGE,
+        page: page,
+        currentPath: path
+      });
+
+      return page;
     });
 }
 
