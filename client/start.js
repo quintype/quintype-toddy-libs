@@ -58,7 +58,7 @@ export function maybeSetUrl(path, title) {
   global.document.title = title;
 }
 
-export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl};
+export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl, registerPageView};
 
 export function renderComponent(clazz, container, store, props) {
   return ReactDOM.render(
