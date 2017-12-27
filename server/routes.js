@@ -3,6 +3,7 @@ const {getClient} = require("./api-client");
 
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
 const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute} = require("./handlers/isomorphic-handler");
+const {oneSignalServiceWorker} = require("./handlers/one-signal");
 
 function withConfig(logError, f, staticParams) {
   return function(req, res, opts) {
@@ -69,4 +70,9 @@ exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logEr
   });
 
   app.get("/*", withConfig(logError, handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError}));
+}
+
+exports.oneSignalRoutes = function oneSignalRoutes(app) {
+  app.get("/OneSignalSDKWorker.js", oneSignalServiceWorker);
+  app.get("/OneSignalSDKUpdaterWorker.js", oneSignalServiceWorker);
 }

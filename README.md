@@ -86,6 +86,28 @@ new SEO({
 
 Please see https://github.com/quintype/quintype-node-components
 
+### OneSignal Integration
+
+OneSignal interferes with our service worker, so a few changes have to be made to enable PWA with OneSignal.
+
+```javascript
+// app/server/app.js
+
+import {oneSignalRoutes} from "@quintype/framework/server/routes";
+oneSignalRoutes(app);
+
+// app/client/app.js
+
+startApp(renderApplication, CUSTOM_REDUCERS, {
+  enableServiceWorker: false, // OneSignal will automatically register the service worker
+}).then(enableHotReload);
+
+// Register the combined service worker
+if ('serviceWorker' in navigator && !navigator.serviceWorker.controller) {
+  navigator.serviceWorker.register('/OneSignalSDKWorker.js');
+}
+```
+
 ### Debugging
 
 * In order to use `assetify` function, please annotate the application-js with id="app-js". The hostname specified here is assumed to be the cdn
