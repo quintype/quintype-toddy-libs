@@ -23,7 +23,7 @@ export function initializeQServiceWorker(self, params) {
   };
   const shellHandler = () => caches.match('/shell.html').then((r) => r || fetch(request));
 
-  const workbox = new WorkboxSW({clientsClaim: true});
+  const workbox = new WorkboxSW({clientsClaim: true, skipWaiting: true});
   workbox.precache(params.assets);
   workbox.router.registerRoute(routeMatcher, shellHandler);
   return workbox;
