@@ -94,7 +94,9 @@ OneSignal interferes with our service worker, so a few changes have to be made t
 // app/server/app.js
 
 import {oneSignalRoutes} from "@quintype/framework/server/routes";
-oneSignalRoutes(app);
+oneSignalRoutes(app, {
+  token: "v1" // Change me when you want to invalidate the service worker
+});
 
 // app/client/app.js
 

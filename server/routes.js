@@ -72,7 +72,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logEr
   app.get("/*", withConfig(logError, handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError}));
 }
 
-exports.oneSignalRoutes = function oneSignalRoutes(app) {
-  app.get("/OneSignalSDKWorker.js", oneSignalServiceWorker);
-  app.get("/OneSignalSDKUpdaterWorker.js", oneSignalServiceWorker);
+exports.oneSignalRoutes = function oneSignalRoutes(app, params = {}) {
+  app.get("/OneSignalSDKWorker.js", (req, res) => oneSignalServiceWorker(req, res, params));
+  app.get("/OneSignalSDKUpdaterWorker.js", (req, res) => oneSignalServiceWorker(req, res, params));
 }
