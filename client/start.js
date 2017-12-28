@@ -26,8 +26,8 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
 
   dispatch({type: PAGE_LOADING});
   getRouteData(path)
-    .then(response => response.body)
-    .then(page => {
+    .then(response => {
+      const page = response.body;
       if(page.disableIsomorphicComponent) {
         global.location = path;
         return;
@@ -94,13 +94,18 @@ export function startApp(renderApplication, reducers, opts) {
 
   const location = global.location;
   return getRouteData(`${location.pathname}${location.search || ""}`, {config: true})
-    .then((result) => {
-      const store = createQtStore(reducers, result.body);
+    .then((response) => {
+      const page = response.body;
+      const store = createQtStore(reducers, page);
 
       renderApplication(store);
       history.listen(change => app.maybeNavigateTo(`${change.pathname}${change.search || ""}`, store));
 
       registerPageView(store.getState().qt);
+
+      if(page.title) {
+        global.document.title = page.title;
+      }
 
       return store;
     });
