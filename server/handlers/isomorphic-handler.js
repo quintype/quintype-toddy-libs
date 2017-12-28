@@ -10,17 +10,7 @@ const Promise = require("bluebird");
 
 function fetchData(loadData, loadErrorData = () => Promise.resolve({}), pageType, params, config, client) {
   return Promise.resolve(loadData(pageType, params, config, client))
-    .catch(error => {
-      if (error instanceof NotFoundException) {
-        return loadErrorData(error)
-                .then(data => Object.assign({httpStatusCode : error.httpStatusCode, pageType: "not-found"}, data))
-                .catch((error) => Promise.resolve({}));
-      } else if (error instanceof ApplicationException) {
-        return Promise.resolve({httpStatusCode: error.httpStatusCode || 500, pageType: "error"});
-      } else {
-        throw error;
-      }
-    })
+    .catch(error => loadErrorData(error, config))
 }
 
 function matchRouteWithParams(url, routes, otherParams = {}) {
@@ -88,41 +78,42 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
 exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError}) {
   const url = urlLib.parse(req.url, true);
   const match = matchRouteWithParams(url, generateRoutes(config));
-  if(match) {
-    return fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
-      .then(result => {
-        const seoTags = seo && seo.getMetaTags(config, result.pageType || match.pageType, result, {url});
-        const store = createStore((state) => state, {
-          qt: {
-            pageType: result.pageType,
-            data: result.data,
-            config: result.config,
-            currentPath: `${url.pathname}${url.search || ""}`
-          }
-        });
 
-        res.status(result.httpStatusCode || 200)
-        addCacheHeaders(res, result);
-        renderLayout(res, {
-          title: seo ? seo.getTitle(config, result.pageType || match.pageType, result, {url}) : result.title,
-          content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
-          store: store,
-          seoTags: seoTags
-        });
-      }).catch(e => {
-        logError(e);
-        res.status(500);
-        res.send(e.message);
-      }).finally(() => res.end());
-  } else {
-    renderLayout(res.status(404), {
-      content: "Not Found",
-      store: createStore((state) => state, {
-        qt: {config: config}
-      })
-    });
-    return new Promise((resolve) => resolve());
-  }
+  const dataPromise = match
+                        ? fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
+                        : loadErrorData(new NotFoundException(), config);
+
+  return Promise.resolve(dataPromise)
+    .catch(e => {
+      logError(e);
+      return {httpStatusCode: 500, pageType: "not-found"}
+    })
+    .then(result => {
+      const statusCode = result.httpStatusCode || 200;
+      const seoTags = seo && seo.getMetaTags(config, result.pageType || match.pageType, result, {url});
+      const store = createStore((state) => state, {
+        qt: {
+          pageType: result.pageType,
+          data: result.data,
+          config: result.config,
+          currentPath: `${url.pathname}${url.search || ""}`,
+          disableIsomorphicComponent: statusCode != 200
+        }
+      });
+
+      res.status(statusCode)
+      addCacheHeaders(res, result);
+      renderLayout(res, {
+        title: result.title,
+        content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
+        store: store,
+        seoTags: seoTags
+      });
+    }).catch(e => {
+      logError(e);
+      res.status(500);
+      res.send(e.message);
+    }).finally(() => res.end());
 };
 
 exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams}) {
