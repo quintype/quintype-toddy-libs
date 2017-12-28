@@ -3,7 +3,7 @@ const {getClient} = require("./api-client");
 
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
 const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute} = require("./handlers/isomorphic-handler");
-const {oneSignalServiceWorker} = require("./handlers/one-signal");
+const {oneSignalImport} = require("./handlers/one-signal");
 
 function withConfig(logError, f, staticParams) {
   return function(req, res, opts) {
@@ -60,8 +60,14 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app, {forwardAm
   }
 }
 
-exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logError, renderLayout, loadData, pickComponent, loadErrorData, seo, staticRoutes = []}) {
+exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logError, renderLayout, loadData, pickComponent, loadErrorData, seo, oneSignalServiceWorkers, staticRoutes = []}) {
   app.get("/service-worker.js", withConfig(logError, generateServiceWorker, {generateRoutes}));
+
+  if(oneSignalServiceWorkers) {
+    app.get("/OneSignalSDKWorker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appendFn: oneSignalImport}));
+    app.get("/OneSignalSDKUpdaterWorker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appendFn: oneSignalImport}));
+  }
+
   app.get("/shell.html", withConfig(logError, handleIsomorphicShell, {renderLayout}));
   app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes}));
 
@@ -70,9 +76,4 @@ exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logEr
   });
 
   app.get("/*", withConfig(logError, handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError}));
-}
-
-exports.oneSignalRoutes = function oneSignalRoutes(app, params = {}) {
-  app.get("/OneSignalSDKWorker.js", (req, res) => oneSignalServiceWorker(req, res, params));
-  app.get("/OneSignalSDKUpdaterWorker.js", (req, res) => oneSignalServiceWorker(req, res, params));
 }
