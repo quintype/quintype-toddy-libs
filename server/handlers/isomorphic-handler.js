@@ -50,7 +50,7 @@ function addCacheHeaders(res, result) {
   return res;
 }
 
-exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes}) {
+exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo}) {
   function matchStaticOrIsomorphicRoute(url) {
     var match;
     if(match = matchRouteWithParams(url, staticRoutes, req.query)) {
@@ -68,7 +68,10 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
       .then((result) => {
         res.status(200);
         addCacheHeaders(res, result);
-        res.json(Object.assign({}, result, {data: _.omit(result.data, ["cacheKeys"])}, match.jsonParams));
+        res.json(Object.assign({}, result, {
+          data: _.omit(result.data, ["cacheKeys"]),
+          title: seo ? seo.getTitle(config, result.pageType || match.pageType, result) : result.title,
+        }, match.jsonParams));
       }).catch(e => {
         logError(e);
         res.status(500);
@@ -101,7 +104,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
         res.status(result.httpStatusCode || 200)
         addCacheHeaders(res, result);
         renderLayout(res, {
-          title: result.title,
+          title: seo ? seo.getTitle(config, result.pageType || match.pageType, result, {url}) : result.title,
           content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
           store: store,
           seoTags: seoTags
@@ -139,7 +142,7 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, 
       res.status(result.httpStatusCode || 200)
       addCacheHeaders(res, result);
       renderLayout(res, Object.assign({
-        title: result.title,
+        title: seo ? seo.getTitle(config, result.pageType || match.pageType, result, {url}) : result.title,
         store: store,
         disableAjaxNavigation: true,
         seoTags: seoTags

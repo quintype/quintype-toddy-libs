@@ -69,7 +69,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logEr
   }
 
   app.get("/shell.html", withConfig(logError, handleIsomorphicShell, {renderLayout}));
-  app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes}));
+  app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo}));
 
   staticRoutes.forEach(route => {
     app.get(route.path, withConfig(logError, handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, seo}, route)))

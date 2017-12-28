@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "2.18.1",
+  "version": "2.19.0",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -53,6 +53,6 @@
     "superagent-promise": "^1.1.0"
   },
   "peerDependencies": {
-    "@quintype/seo": "^1.0.0"
+    "@quintype/seo": "^1.4.1"
   }
 }
