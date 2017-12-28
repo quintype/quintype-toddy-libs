@@ -56,7 +56,8 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
   if(match) {
     return fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
       .then((result) => {
-        res.status(200);
+        const statusCode = result.httpStatusCode || 200;
+        res.status(statusCode < 500 ? 200 : 500);
         addCacheHeaders(res, result);
         res.json(Object.assign({}, result, {
           data: _.omit(result.data, ["cacheKeys"]),
