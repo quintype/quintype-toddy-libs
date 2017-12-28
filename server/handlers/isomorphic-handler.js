@@ -87,7 +87,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
   return Promise.resolve(dataPromise)
     .catch(e => {
       logError(e);
-      return {httpStatusCode: 500, pageType: "not-found"}
+      return {httpStatusCode: 500, pageType: "error"}
     })
     .then(result => {
       const statusCode = result.httpStatusCode || 200;
