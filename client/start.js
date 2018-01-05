@@ -33,16 +33,16 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
         return;
       }
 
-      if(!doNotPushPath) {
-        history.push(path);
-        registerPageView(page, path);
-      }
-
       dispatch({
         type: NAVIGATE_TO_PAGE,
         page: page,
         currentPath: path
       });
+
+      if(!doNotPushPath) {
+        history.push(path);
+        registerPageView(page, path);
+      }
 
       return page;
     });
