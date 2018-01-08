@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "2.21.6",
+  "version": "2.22.0",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -25,10 +25,14 @@
     "atob": "^2.0.3",
     "bluebird": "^3.5.1",
     "cluster": "^0.7.7",
+    "compression": "^1.7.1",
+    "ejs": "^2.5.7",
+    "express": "^4.16.2",
     "get-youtube-id": "^1.0.0",
     "http-proxy": "^1.16.2",
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.4",
+    "morgan": "^1.9.0",
     "node-jsx": "^0.13.3",
     "quintype-backend": "^1.1.1",
     "quintype-js": "^0.1.6",
@@ -38,7 +42,8 @@
     "react-router": "^4.2.0",
     "redux": "^3.7.2",
     "sleep-promise": "^2.0.0",
-    "url": "^0.11.0"
+    "url": "^0.11.0",
+    "winston": "^3.0.0-rc1"
   },
   "devDependencies": {
     "@quintype/build": "^1.2.0",

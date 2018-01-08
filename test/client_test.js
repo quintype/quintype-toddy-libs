@@ -19,6 +19,11 @@ describe('client', function() {
       assert.equal("https://foo.staging.quintype.io", client.hostname);
     });
 
+    it('creates a temporary client if it matches a string with a .', function() {
+      const client = getClientImpl({host_to_automatic_api_host: [".madrid"]}, {}, ClientStub, "foo.madrid.quintype.io");
+      assert.equal("https://foo.quintype.io", client.hostname);
+    });
+
     it("returns null if no client is found", function() {
       const client = getClientImpl({host_to_automatic_api_host: ["-web"]}, {}, ClientStub, "www.unknown.com");
       assert.equal(null, client);
