@@ -8,9 +8,12 @@ const {renderReduxComponent} = require("../render");
 const {createStore} = require("redux");
 const Promise = require("bluebird");
 
-function fetchData(loadData, loadErrorData = () => Promise.resolve({}), pageType, params, config, client) {
+function fetchData(loadData, loadErrorData = () => Promise.resolve({}), pageType, params, {config, client, logError}) {
   return Promise.resolve(loadData(pageType, params, config, client))
-    .catch(error => loadErrorData(error, config))
+    .catch(error => {
+      logError(error);
+      return loadErrorData(error, config)
+    });
 }
 
 function matchRouteWithParams(url, routes, otherParams = {}) {
@@ -54,7 +57,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
   const match = matchStaticOrIsomorphicRoute(url)
   res.setHeader("Content-Type", "application/json");
   if(match) {
-    return fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
+    return fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError})
       .then((result) => {
         const statusCode = result.httpStatusCode || 200;
         res.status(statusCode < 500 ? 200 : 500);
@@ -81,7 +84,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
   const match = matchRouteWithParams(url, generateRoutes(config));
 
   const dataPromise = match
-                        ? fetchData(loadData, loadErrorData, match.pageType, match.params, config, client)
+                        ? fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError})
                         : loadErrorData(new NotFoundException(), config);
 
   return Promise.resolve(dataPromise)
@@ -120,7 +123,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
 exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams}) {
   const url = urlLib.parse(path);
   pageType = pageType || 'static-page';
-  return fetchData(loadData, loadErrorData, pageType, renderParams, config, client)
+  return fetchData(loadData, loadErrorData, pageType, renderParams, {config, client, logError})
     .then(result => {
       const seoTags = seo && seo.getMetaTags(config, result.pageType || pageType, result, {url});
       const store = createStore((state) => state, {
