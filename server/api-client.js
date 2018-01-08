@@ -7,7 +7,7 @@ const cachedSecondaryClients = {};
 const {getClientImpl} = require("./api-client-impl");
 
 function getClient(hostname) {
-  return getClientImpl(config, cachedSecondaryClients, Client, hostname) || defaultClient;
+  return getClientImpl(config, cachedSecondaryClients, hostname) || defaultClient;
 }
 
 function initializeAllClients() {
