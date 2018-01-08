@@ -1,10 +1,10 @@
 {
   "name": "@quintype/framework",
-  "version": "2.21.5",
+  "version": "2.21.6",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
-    "prepublishOnly": "npm install && git diff --quiet && git tag v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4) && git push --tags origin master",
+    "prepublishOnly": "npm install && npm test && git diff --quiet && git tag v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4) && git push --tags origin master",
     "test": "mocha"
   },
   "repository": {

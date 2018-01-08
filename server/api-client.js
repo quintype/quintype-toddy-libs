@@ -4,14 +4,10 @@ const config = require("./publisher-config");
 const defaultClient = new Client(config.sketches_host);
 const cachedSecondaryClients = {};
 
-function getClient(hostname) {
-  return cachedSecondaryClients[hostname] || createTemporaryClient(hostname) || defaultClient;
-}
+const {getClientImpl} = require("./api-client-impl");
 
-function createTemporaryClient(hostname) {
-  const matchedString = (config.host_to_automatic_api_host || []).find(str => hostname.includes(str));
-  if(matchedString)
-    return new Client(`https://${hostname.replace(matchedString, "")}`, true);
+function getClient(hostname) {
+  return getClientImpl(config, cachedSecondaryClients, Client, hostname) || defaultClient;
 }
 
 function initializeAllClients() {
