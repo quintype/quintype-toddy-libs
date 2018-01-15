@@ -89,7 +89,7 @@ export function startApp(renderApplication, reducers, opts) {
   startAnalytics();
 
   if(opts.enableServiceWorker && global.navigator.serviceWorker) {
-    global.navigator.serviceWorker.register("/service-worker.js");
+    global.navigator.serviceWorker.register(opts.serviceWorkerLocation || "/service-worker.js");
   }
 
   const location = global.location;

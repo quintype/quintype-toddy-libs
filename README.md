@@ -103,13 +103,9 @@ isomorphicRoutes(app, {
 // app/client/app.js
 
 startApp(renderApplication, CUSTOM_REDUCERS, {
-  enableServiceWorker: false, // OneSignal will automatically register the service worker
+  enableServiceWorker: true,
+  serviceWorkerLocation: "/OneSignalSDKWorker.js", // OneSignal will automatically register the service worker
 }).then(enableHotReload);
-
-// Register the combined service worker
-if ('serviceWorker' in navigator && !navigator.serviceWorker.controller) {
-  navigator.serviceWorker.register('/OneSignalSDKWorker.js');
-}
 ```
 
 ### Debugging
