@@ -105,7 +105,40 @@ isomorphicRoutes(app, {
 startApp(renderApplication, CUSTOM_REDUCERS, {
   enableServiceWorker: true,
   serviceWorkerLocation: "/OneSignalSDKWorker.js", // OneSignal will automatically register the service worker
-}).then(enableHotReload);
+})
+```
+
+### Forcing Updates
+
+Since is difficult to force Service Workers to update, there is a provision to do such a thing. Add the following to the correct places. Whenever a change is to be forcefully pushed, update the version in app-version.js. The next AJAX page load via `/route-data.json` will force the service worker to update in the background (and the next refresh will have changes).
+
+Ideally, you will have to push this after purging caches on /shell.html and the service worker.
+
+```javascript
+// app/isomorphic/app-version.js
+
+module.exports = 1;
+
+// app/server/app.js
+import {isomorphicRoutes} from "@quintype/framework/server/routes";
+isomorphicRoutes(app, {
+  ...
+  appVersion: require("../isomorphic/app-version")
+  ...
+});
+
+// app/client/app.js
+startApp(renderApplication, CUSTOM_REDUCERS, {
+  ...
+  appVersion: require("../isomorphic/app-version")
+  ...
+});
+
+// views/js/service-worker.ejs
+const REQUIRED_ASSETS = [
+  {url: '/shell.html', revision: '<%= appVersion %>'},
+  ...
+];
 ```
 
 ### Debugging

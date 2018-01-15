@@ -60,16 +60,16 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app, {forwardAm
   }
 }
 
-exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logError, renderLayout, loadData, pickComponent, loadErrorData, seo, oneSignalServiceWorkers, staticRoutes = []}) {
-  app.get("/service-worker.js", withConfig(logError, generateServiceWorker, {generateRoutes}));
+exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logError, renderLayout, loadData, pickComponent, loadErrorData, seo, oneSignalServiceWorkers, staticRoutes = [], appVersion = 1}) {
+  app.get("/service-worker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion}));
 
   if(oneSignalServiceWorkers) {
-    app.get("/OneSignalSDKWorker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appendFn: oneSignalImport}));
-    app.get("/OneSignalSDKUpdaterWorker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appendFn: oneSignalImport}));
+    app.get("/OneSignalSDKWorker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion, appendFn: oneSignalImport}));
+    app.get("/OneSignalSDKUpdaterWorker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion, appendFn: oneSignalImport}));
   }
 
   app.get("/shell.html", withConfig(logError, handleIsomorphicShell, {renderLayout}));
-  app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo}));
+  app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}));
 
   staticRoutes.forEach(route => {
     app.get(route.path, withConfig(logError, handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, seo}, route)))

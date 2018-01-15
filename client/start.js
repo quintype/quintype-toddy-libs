@@ -16,7 +16,15 @@ export const history = createBrowserHistory();
 
 export function getRouteData(path, opts) {
   const url = urlLib.parse(path, true)
-  return superagent.get('/route-data.json', Object.assign({path: url.pathname}, url.query));
+  return superagent.get('/route-data.json', Object.assign({path: url.pathname}, url.query))
+    .then(response => {
+      const page = response.body || {};
+      if(page.appVersion && app.getAppVersion && app.getAppVersion() < page.appVersion) {
+        console && console.log("Updating the Service Worker");
+        app.updateServiceWorker && app.updateServiceWorker();
+      }
+      return response;
+    });
 }
 
 export function navigateToPage(dispatch, path, doNotPushPath) {
@@ -86,10 +94,16 @@ export function startApp(renderApplication, reducers, opts) {
   global.Promise = global.Promise || require("bluebird");
   global.superagent = require('superagent-promise')(require('superagent'), Promise);
   global.app = app;
+
   startAnalytics();
 
+  global.app.getAppVersion = () => opts.appVersion || 1;
   if(opts.enableServiceWorker && global.navigator.serviceWorker) {
-    global.navigator.serviceWorker.register(opts.serviceWorkerLocation || "/service-worker.js");
+    global.navigator.serviceWorker.register(opts.serviceWorkerLocation || "/service-worker.js")
+      .then(registration => {
+        if(registration && registration.update)
+          global.app.updateServiceWorker = () => registration.update()
+      })
   }
 
   const location = global.location;

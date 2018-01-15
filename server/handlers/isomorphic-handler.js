@@ -43,7 +43,7 @@ function addCacheHeaders(res, result) {
   return res;
 }
 
-exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo}) {
+exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}) {
   function matchStaticOrIsomorphicRoute(url) {
     var match;
     if(match = matchRouteWithParams(url, staticRoutes, req.query)) {
@@ -63,6 +63,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
         res.status(statusCode < 500 ? 200 : 500);
         addCacheHeaders(res, result);
         res.json(Object.assign({}, result, {
+          appVersion: appVersion,
           data: _.omit(result.data, ["cacheKeys"]),
           title: seo ? seo.getTitle(config, result.pageType || match.pageType, result) : result.title,
         }, match.jsonParams));
