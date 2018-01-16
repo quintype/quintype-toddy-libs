@@ -86,29 +86,7 @@ new SEO({
 
 Please see https://github.com/quintype/quintype-node-components
 
-### OneSignal Integration
-
-OneSignal interferes with our service worker, so a few changes have to be made to enable PWA with OneSignal.
-
-```javascript
-// app/server/app.js
-
-import {isomorphicRoutes} from "@quintype/framework/server/routes";
-isomorphicRoutes(app, {
-  ...
-  oneSignalServiceWorkers: true
-  ...
-});
-
-// app/client/app.js
-
-startApp(renderApplication, CUSTOM_REDUCERS, {
-  enableServiceWorker: true,
-  serviceWorkerLocation: "/OneSignalSDKWorker.js", // OneSignal will automatically register the service worker
-})
-```
-
-### Forcing Updates
+## Forcing Updates
 
 Since is difficult to force Service Workers to update, there is a provision to do such a thing. Add the following to the correct places. Whenever a change is to be forcefully pushed, update the version in app-version.js. The next AJAX page load via `/route-data.json` will force the service worker to update in the background (and the next refresh will have changes).
 
@@ -141,11 +119,57 @@ const REQUIRED_ASSETS = [
 ];
 ```
 
-### Debugging
+## Structure of the /route-data.json
+
+The response of the /route-data.json will look like the following:
+
+```javascript
+{
+  appVersion: 42,
+  title: "This is the title of the page",
+  // your loadData function is responsible for loading this entire data
+  data: {
+    pageType: "story-page",
+    story: {}
+  }
+}
+```
+
+## Debugging
 
 * In order to use `assetify` function, please annotate the application-js with id="app-js". The hostname specified here is assumed to be the cdn
+* All code related to the browser loading the service worker can be found in [load-service-worker.js](client/load-service-worker.js)
+* All code related to the service worker itself is found in [service-worker-helper.js](client/service-worker-helper.js)
 
-### References
+## Miscellaneous
+
+### OneSignal Integration
+
+OneSignal interferes with our service worker, so a few changes have to be made to enable PWA with OneSignal.
+
+```javascript
+// app/server/app.js
+
+import {isomorphicRoutes} from "@quintype/framework/server/routes";
+isomorphicRoutes(app, {
+  ...
+  oneSignalServiceWorkers: true
+  ...
+});
+
+// app/client/app.js
+
+startApp(renderApplication, CUSTOM_REDUCERS, {
+  enableServiceWorker: true,
+  serviceWorkerLocation: "/OneSignalSDKWorker.js", // OneSignal will automatically register the service worker
+})
+```
+
+### Using Assets in JS and CSS
+
+(to be documented)
+
+## References
 
 * This architecture is heavily influenced by the method described in this [video](https://www.youtube.com/watch?v=atUdVSuNRjA)
 * Code for the available video is available [here](https://github.com/gja/pwa-clojure)

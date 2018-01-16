@@ -11,18 +11,18 @@ import { IsomorphicComponent } from '../isomorphic/component'
 import { BreakingNews } from '@quintype/components';
 import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components/store/actions';
 import { startAnalytics, registerPageView } from './analytics'
+import { registerServiceWorker, setupServiceWorkerUpdates, checkForServiceWorkerUpdates } from './load-service-worker';
 
 export const history = createBrowserHistory();
+
+// App gets two more functions: updateServiceWorker and getAppVersion later
+export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl, registerPageView};
 
 export function getRouteData(path, opts) {
   const url = urlLib.parse(path, true)
   return superagent.get('/route-data.json', Object.assign({path: url.pathname}, url.query))
     .then(response => {
       const page = response.body || {};
-      if(page.appVersion && app.getAppVersion && app.getAppVersion() < page.appVersion) {
-        console && console.log("Updating the Service Worker");
-        app.updateServiceWorker && app.updateServiceWorker();
-      }
       return response;
     });
 }
@@ -36,6 +36,9 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
   getRouteData(path)
     .then(response => {
       const page = response.body;
+
+      checkForServiceWorkerUpdates(app, page);
+
       if(page.disableIsomorphicComponent) {
         global.location = path;
         return;
@@ -68,8 +71,6 @@ export function maybeSetUrl(path, title) {
   global.document.title = title;
 }
 
-export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl, registerPageView};
-
 export function renderComponent(clazz, container, store, props) {
   return ReactDOM.render(
     React.createElement(Provider, {store: store},
@@ -91,26 +92,23 @@ export function renderBreakingNews(container, store, view, props) {
 }
 
 export function startApp(renderApplication, reducers, opts) {
+  app.getAppVersion = () => opts.appVersion || 1;
   global.Promise = global.Promise || require("bluebird");
   global.superagent = require('superagent-promise')(require('superagent'), Promise);
   global.app = app;
 
   startAnalytics();
 
-  global.app.getAppVersion = () => opts.appVersion || 1;
-  if(opts.enableServiceWorker && global.navigator.serviceWorker) {
-    global.navigator.serviceWorker.register(opts.serviceWorkerLocation || "/service-worker.js")
-      .then(registration => {
-        if(registration && registration.update)
-          global.app.updateServiceWorker = () => registration.update()
-      })
-  }
+  const serviceWorkerPromise = registerServiceWorker(opts);
 
   const location = global.location;
+
   return getRouteData(`${location.pathname}${location.search || ""}`, {config: true})
-    .then((response) => {
+    .then(response => {
       const page = response.body;
       const store = createQtStore(reducers, page);
+
+      setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page)
 
       renderApplication(store);
       history.listen(change => app.maybeNavigateTo(`${change.pathname}${change.search || ""}`, store));

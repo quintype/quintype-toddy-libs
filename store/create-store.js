@@ -1,5 +1,5 @@
 import { createStore, combineReducers } from 'redux';
-import { NAVIGATE_TO_PAGE } from '@quintype/components/store/actions';
+import { NAVIGATE_TO_PAGE, SERVICE_WORKER_UPDATED } from '@quintype/components/store/actions';
 import { ComponentReducers } from '@quintype/components/store/reducers';
 
 function internalReducers(state = {}, action) {
@@ -9,9 +9,20 @@ function internalReducers(state = {}, action) {
   }
 }
 
+function serviceWorkerStatusReducer(state = {updated: false}, action) {
+  switch (action.type) {
+    case SERVICE_WORKER_UPDATED:
+      console && console.log("Service Worker Has Updated");
+      return Object.assign({}, state, {updated: true});
+    default:
+      return state;
+  }
+}
+
 export function createQtStore(customReducers, initialValue) {
   const reducers = combineReducers(Object.assign({
-    qt: internalReducers
+    qt: internalReducers,
+    serviceWorkerStatus: serviceWorkerStatusReducer,
   }, ComponentReducers, customReducers));
   const initialState = Object.assign({currentPath: window.location.pathname}, initialValue);
   return createStore(reducers, {qt: initialState});
