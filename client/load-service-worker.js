@@ -14,12 +14,8 @@ export function setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page
       if(!registration)
         return;
 
-      const dispatchServiceWorkerUpdated = () => store.dispatch({type: SERVICE_WORKER_UPDATED});
-
-      registration.onupdatefound = dispatchServiceWorkerUpdated;
-
       if(registration.update) {
-        app.updateServiceWorker = () => registration.update().then(dispatchServiceWorkerUpdated);
+        app.updateServiceWorker = () => registration.update().then(() => store.dispatch({type: SERVICE_WORKER_UPDATED}));
       }
 
       checkForServiceWorkerUpdates(app, page);
