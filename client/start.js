@@ -99,10 +99,10 @@ export function startApp(renderApplication, reducers, opts) {
 
   startAnalytics();
 
+  const serviceWorkerPromise = registerServiceWorker(opts);
+
   if(global.staticPageStoreContent)
     return Promise.resolve(doStartApp(global.staticPageStoreContent["qt"]))
-
-  const serviceWorkerPromise = registerServiceWorker(opts);
 
   const location = global.location;
 
