@@ -9,6 +9,9 @@ export function registerServiceWorker({enableServiceWorker = false, serviceWorke
 }
 
 export function setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page) {
+  if(!serviceWorkerPromise)
+    return;
+
   serviceWorkerPromise
     .then(registration => {
       if(!registration)

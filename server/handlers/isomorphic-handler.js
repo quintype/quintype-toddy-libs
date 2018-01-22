@@ -121,7 +121,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
     }).finally(() => res.end());
 };
 
-exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams}) {
+exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams, disableIsomorphicComponent}) {
   const url = urlLib.parse(path);
   pageType = pageType || 'static-page';
   return fetchData(loadData, loadErrorData, pageType, renderParams, {config, client, logError})
@@ -133,7 +133,7 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, 
           data: result.data,
           config: result.config,
           currentPath: path,
-          disableIsomorphicComponent: true
+          disableIsomorphicComponent: disableIsomorphicComponent === undefined ? true : disableIsomorphicComponent
         }
       });
       res.status(result.httpStatusCode || 200)

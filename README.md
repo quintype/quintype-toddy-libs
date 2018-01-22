@@ -165,6 +165,20 @@ startApp(renderApplication, CUSTOM_REDUCERS, {
 })
 ```
 
+### Skipping loading data from /route-data.json
+
+This can be used where `/route-data.json` is not accessible (example preview).
+
+Add the following:
+
+```html
+<script type="text/javascript">
+  var staticPageStoreContent = <%- JSON.stringify(store.getState()) -%>;
+</script>
+```
+
+The store will be initialized from staticPageStoreContent
+
 ### Using Assets in JS and CSS
 
 (to be documented)

@@ -99,26 +99,31 @@ export function startApp(renderApplication, reducers, opts) {
 
   startAnalytics();
 
+  if(global.staticPageStoreContent)
+    return Promise.resolve(doStartApp(global.staticPageStoreContent["qt"]))
+
   const serviceWorkerPromise = registerServiceWorker(opts);
 
   const location = global.location;
 
   return getRouteData(`${location.pathname}${location.search || ""}`, {config: true})
-    .then(response => {
-      const page = response.body;
-      const store = createQtStore(reducers, page);
+    .then(response => doStartApp(response.body));
 
-      setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page)
 
-      renderApplication(store);
-      history.listen(change => app.maybeNavigateTo(`${change.pathname}${change.search || ""}`, store));
+  function doStartApp(page){
+    const store = createQtStore(reducers, page);
 
-      registerPageView(store.getState().qt);
+    setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page)
 
-      if(page.title) {
-        global.document.title = page.title;
-      }
+    renderApplication(store);
+    history.listen(change => app.maybeNavigateTo(`${change.pathname}${change.search || ""}`, store));
 
-      return store;
-    });
+    registerPageView(store.getState().qt);
+
+    if(page.title) {
+      global.document.title = page.title;
+    }
+
+    return store;
+  };
 }
