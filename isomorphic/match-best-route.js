@@ -2,7 +2,7 @@ const {matchPath} = require("react-router");
 
 function matchBestRoute(path, routes) {
   // Sure there is some construct to do these two lines
-    if (!path.startsWith('/')) {
+  if (!path.startsWith('/')) {
     path = "/" + path;
   }
 

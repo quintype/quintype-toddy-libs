@@ -22,8 +22,8 @@ describe('client', function() {
     });
 
     it("returns null if no client is found", function() {
-      const client = getClientImpl({host_to_automatic_api_host: ["-web"]}, {}, "www.unknown.com");
+      const client = getClientImpl({}, {}, "www.unknown.com");
       assert.equal(null, client);
-    })
+    });
   });
 });

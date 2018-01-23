@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "prepublishOnly": "npm install && npm test && git diff --quiet && git tag v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4) && git push --tags origin master",
-    "test": "mocha"
+    "test": "mocha",
+    "coverage": "nyc --all npm test"
   },
   "repository": {
     "type": "git",
@@ -33,7 +34,6 @@
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.4",
     "morgan": "^1.9.0",
-    "node-jsx": "^0.13.3",
     "quintype-backend": "^1.2.0",
     "quintype-js": "^0.1.6",
     "react": "^16.1.1",
@@ -54,6 +54,7 @@
     "babel-register": "^6.26.0",
     "history": "^4.7.2",
     "mocha": "^4.0.1",
+    "nyc": "^11.4.1",
     "superagent": "^3.8.1",
     "superagent-promise": "^1.1.0"
   },

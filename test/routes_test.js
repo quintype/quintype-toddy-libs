@@ -41,7 +41,11 @@ describe('routes', function() {
 
     it('returns undefined if there is no match', function() {
       assert(!matchBestRoute("/not-found", routes));
-    })
+    });
+
+    it('matches even if there is no /', function() {
+      assert.equal("section-page", matchBestRoute("sect/sub-sect", routes).pageType);
+    });
   });
 
   describe('generateRoutes', function() {
@@ -107,5 +111,14 @@ describe('routes', function() {
         sections: [{id: 42, slug: "sect", "parent-id": 42}]
       }));
     });
+
+    it("handles missing parents correctly", function() {
+      const expectedRoutes = [
+        {path: "/invalid/sect", pageType: "section-page", exact: true, params: {sectionId: 42}}
+      ];
+      assert.deepEqual(expectedRoutes, generateSectionPageRoutes({
+        sections: [{id: 42, slug: "sect", "parent-id": 1}]
+      }));
+    })
   });
 });
