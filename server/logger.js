@@ -42,4 +42,23 @@ function createLogger() {
   return process.env.NODE_ENV == 'production' ? createProdLogger() : createDevLogger();
 }
 
-module.exports = createLogger();
+function truncateStack(message) {
+  if(message.length > 1024) {
+    return `${message.substring(0, 1024)}... (truncated)`
+  } else {
+    return message;
+  }
+}
+
+const logger = createLogger();
+const errorFn = logger.error.bind(logger);
+
+logger.error = function(e) {
+  if(e && e.stack) {
+    errorFn({message: e.message, stack: truncateStack(e.stack)})
+  } else {
+    errorFn(e)
+  }
+}
+
+module.exports = logger;
