@@ -1,7 +1,7 @@
 var assert = require('assert');
 
 const { Client } = require("quintype-backend")
-const {getClientImpl} = require("../server/impl/api-client-impl");
+const {getClientImpl} = require("../../server/impl/api-client-impl");
 
 describe('client', function() {
   describe('getClient', function() {

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prepublishOnly": "npm install && npm test && git diff --quiet && git tag v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4) && git push --tags origin master",
-    "test": "mocha",
+    "test": "mocha --recursive",
     "coverage": "nyc --all npm test"
   },
   "repository": {

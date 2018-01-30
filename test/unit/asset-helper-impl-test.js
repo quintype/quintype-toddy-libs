@@ -1,6 +1,6 @@
 var assert = require('assert');
 
-const { AssetHelperImpl } = require("../server/impl/asset-helper-impl")
+const { AssetHelperImpl } = require("../../server/impl/asset-helper-impl")
 
 describe('AssetHelperImpl', function() {
   describe('assetPath', function() {
