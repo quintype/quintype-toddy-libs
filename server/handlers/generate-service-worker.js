@@ -7,6 +7,7 @@ function generateServiceWorker(req, res, {config, generateRoutes, appVersion, ap
       assetHash: assetHelper.assetHash,
       routes: generateRoutes(config).filter(route => !route.skipPWA),
     }, (err, content) => {
+      // istanbul ignore if
       if(err) {
         console.error(err);
         res.status(500).end();
