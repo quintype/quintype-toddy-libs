@@ -1,3 +1,5 @@
+// istanbul ignore file
+
 const urlLib = require("url");
 const {setAssetifyFn} = require("../assetify");
 
