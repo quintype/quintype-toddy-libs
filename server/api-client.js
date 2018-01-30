@@ -4,7 +4,7 @@ const config = require("./publisher-config");
 const defaultClient = new Client(config.sketches_host);
 const cachedSecondaryClients = {};
 
-const {getClientImpl} = require("./api-client-impl");
+const {getClientImpl} = require("./impl/api-client-impl");
 
 function getClient(hostname) {
   return getClientImpl(config, cachedSecondaryClients, hostname) || defaultClient;

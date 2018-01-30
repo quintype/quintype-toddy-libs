@@ -1,4 +1,4 @@
-const {assetPath, readAsset} = require("../asset-helper");
+const {assetPath, readAsset, assetHash} = require("../asset-helper");
 const serviceWorkerContents = readAsset("serviceWorkerHelper.js");
 
 function generateServiceWorker(req, res, {config, generateRoutes, appVersion, appendFn}) {
@@ -8,6 +8,7 @@ function generateServiceWorker(req, res, {config, generateRoutes, appVersion, ap
     assetPath: assetPath,
     hostname: req.hostname,
     appVersion: appVersion,
+    assetHash: assetHash,
   }, (err, content) => {
     if(err) {
       console.error(err);
