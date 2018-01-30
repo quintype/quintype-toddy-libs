@@ -62,22 +62,31 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 
                                                       // The below are primarily for testing
                                                       assetHelper = require("./asset-helper"),
-                                                      withConfig = require("./with-config"),
+                                                      getClient = require("./api-client").getClient,
                                                       renderServiceWorker = (res, layout, params, callback) => res.render(layout, params, callback)
                                                     }) {
-  app.get("/service-worker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion, assetHelper, renderServiceWorker}));
-
-  if(oneSignalServiceWorkers) {
-    app.get("/OneSignalSDKWorker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
-    app.get("/OneSignalSDKUpdaterWorker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
+  function withConfig(f, staticParams) {
+    return function(req, res, opts) {
+      const client = getClient(req.hostname);
+      return client.getConfig()
+        .then(c => f(req, res, Object.assign({}, opts, staticParams, {config: c, client: client})))
+        .catch(logError);
+    }
   }
 
-  app.get("/shell.html", withConfig(logError, handleIsomorphicShell, {renderLayout, assetHelper}));
-  app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}));
+  app.get("/service-worker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, assetHelper, renderServiceWorker}));
+
+  if(oneSignalServiceWorkers) {
+    app.get("/OneSignalSDKWorker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
+    app.get("/OneSignalSDKUpdaterWorker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
+  }
+
+  app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper}));
+  app.get("/route-data.json", withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}));
 
   staticRoutes.forEach(route => {
-    app.get(route.path, withConfig(logError, handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, seo}, route)))
+    app.get(route.path, withConfig(handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, seo}, route)))
   });
 
-  app.get("/*", withConfig(logError, handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError}));
+  app.get("/*", withConfig(handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError}));
 }

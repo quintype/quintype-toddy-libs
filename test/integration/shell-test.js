@@ -4,9 +4,10 @@ const express = require("express");
 const { isomorphicRoutes } = require("../../server/routes");
 const supertest = require("supertest");
 
-function withConfigStub(logError, f, staticParams) {
-  return function(req, res, opts) {
-    return f(req, res, Object.assign({}, staticParams, opts, {config: {foo: "bar"}}))
+function getClientStub(logError, f, staticParams) {
+  return {
+    getHostname: () => hostname,
+    getConfig: () => Promise.resolve({foo: "bar"})
   }
 }
 
@@ -22,7 +23,7 @@ describe('ShellHandler', function() {
   const app = express();
   isomorphicRoutes(app, {
     assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null},
-    withConfig: withConfigStub,
+    getClient: getClientStub,
     renderLayout: renderLayoutStub
   })
 

@@ -4,9 +4,10 @@ const express = require("express");
 const { isomorphicRoutes } = require("../../server/routes");
 const supertest = require("supertest");
 
-function withConfigStub(logError, f, staticParams) {
-  return function(req, res, opts) {
-    return f(req, res, Object.assign({}, staticParams, opts, {config: {sections: [{slug: "news"}]}}))
+function getClientStub(hostname) {
+  return {
+    getHostname: () => hostname,
+    getConfig: () => Promise.resolve({sections: [{slug: "news"}]})
   }
 }
 
@@ -30,7 +31,7 @@ describe('ServiceWorker Generator', function() {
       serviceWorkerContents: () => "service-worker-contents",
       assetPath: (file) => `//cdn/${file}`,
     },
-    withConfig: withConfigStub,
+    getClient: getClientStub,
     renderServiceWorker: renderLayoutStub,
     generateRoutes: (config) => config.sections.map(section => ({path: `/${section.slug}`})).concat([{skipPWA: true, path: "/skip"}]),
     oneSignalServiceWorkers: true,
