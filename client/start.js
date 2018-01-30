@@ -4,7 +4,7 @@ import {Provider} from 'react-redux';
 import urlLib from 'url';
 import { createBrowserHistory } from 'history'
 
-require("../assetify/client")
+require("../assetify/client")();
 
 import { createQtStore } from '../store/create-store';
 import { IsomorphicComponent } from '../isomorphic/component'

@@ -1,3 +1,5 @@
+// istanbul ignore file
+
 const { AssetHelperImpl } = require("./impl/asset-helper-impl");
 const fs = require("fs");
 

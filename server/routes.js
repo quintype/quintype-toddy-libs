@@ -57,6 +57,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       oneSignalServiceWorkers = false,
                                                       staticRoutes = [],
                                                       appVersion = 1,
+
+                                                      // The below are primarily for testing
                                                       assetHelper = require("./asset-helper"),
                                                       withConfig = require("./with-config"),
                                                       renderServiceWorker = (res, layout, params, callback) => res.render(layout, params, callback)

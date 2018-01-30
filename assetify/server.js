@@ -1,4 +1,5 @@
 const {setAssetifyFn} = require("../assetify");
-const {assetPath} = require("../server/asset-helper");
 
-setAssetifyFn(assetPath);
+module.exports = function(assetHelper = require("../server/asset-helper")) {
+  setAssetifyFn(assetHelper.assetPath)
+}

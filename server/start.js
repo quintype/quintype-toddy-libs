@@ -17,7 +17,7 @@ module.exports.startApp = function(appThunk, opts = {}) {
     if(process.env.NODE_ENV != "production") {
       require("@quintype/build")(opts)
     }
-    require("../assetify/server");
+    require("../assetify/server")();
     const app = appThunk();
     initializeAllClients()
       .then(() => app.listen(opts.port || 3000, () => console.log('Example app listening on port 3000!')))

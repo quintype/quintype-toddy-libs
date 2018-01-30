@@ -1,3 +1,3 @@
-const {matchBestRoute} = require("../isomorphic/match-best-route");
+// istanbul ignore file
 
-exports.matchBestRoute = matchBestRoute;
+module.exports = "You probably wanted to require something"
