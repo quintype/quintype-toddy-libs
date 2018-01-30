@@ -1,3 +1,6 @@
+// istanbul ignore file
+// This is the start file, to be called from your start.js
+
 var cluster = require('cluster');
 var process = require("process");
 const {initializeAllClients} = require("./api-client");
