@@ -48,14 +48,20 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
   }
 }
 
+// istanbul ignore next
+function renderServiceWorkerFn(res, layout, params, callback) {
+  return res.render(layout, params, callback);
+}
+
 exports.isomorphicRoutes = function isomorphicRoutes(app,
-                                                     {generateRoutes = () => [],
-                                                      logError = (err) => console.error(err),
-                                                      renderLayout = (res) => res.end(),
-                                                      loadData = () => Promise.resolve({}),
-                                                      pickComponent = () => [],
-                                                      loadErrorData = () => Promise.resolve({}),
-                                                      seo = null,
+                                                     {generateRoutes,
+                                                      renderLayout,
+                                                      loadData,
+                                                      pickComponent,
+                                                      loadErrorData,
+                                                      seo,
+
+                                                      logError = require("./logger").error,
                                                       oneSignalServiceWorkers = false,
                                                       staticRoutes = [],
                                                       appVersion = 1,
@@ -63,7 +69,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       // The below are primarily for testing
                                                       assetHelper = require("./asset-helper"),
                                                       getClient = require("./api-client").getClient,
-                                                      renderServiceWorker = (res, layout, params, callback) => res.render(layout, params, callback)
+                                                      renderServiceWorker = renderServiceWorkerFn
                                                     }) {
   function withConfig(f, staticParams) {
     return function(req, res, opts) {
