@@ -1,10 +1,10 @@
-const { Client, Story, Author, Member, Collection } = require("quintype-backend");
+// istanbul ignore file
+
 const config = require("./publisher-config");
+const {getClientImpl, Client, Story, Author, Member, Collection} = require("./impl/api-client-impl");
 
 const defaultClient = new Client(config.sketches_host);
 const cachedSecondaryClients = {};
-
-const {getClientImpl} = require("./impl/api-client-impl");
 
 function getClient(hostname) {
   return getClientImpl(config, cachedSecondaryClients, hostname) || defaultClient;
@@ -30,19 +30,3 @@ module.exports = {
   getClient: getClient,
   initializeAllClients: initializeAllClients
 };
-
-// Patching functions for caching related. Ideally should happen elsewhere
-const _ = require("lodash");
-const { storyToCacheKey, collectionToCacheKey, authorToCacheKey } = require("./caching");
-
-Collection.prototype.cacheKeys = function(publisherId) {
-  return [collectionToCacheKey(publisherId, this)]
-           .concat(this.items
-                       .filter(item => item["type"] == "story")
-                       .map(item => storyToCacheKey(publisherId, item.story)));
-};
-
-Story.prototype.cacheKeys = function(publisherId) {
-  return [storyToCacheKey(publisherId, this)]
-    .concat((this.authors || []).map(author => authorToCacheKey(publisherId, author)));
-}
