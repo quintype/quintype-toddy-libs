@@ -28,7 +28,11 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, {config
     return res.status(503)
               .send("Requested Shell Is Not Current");
 
-  res.status(200).setHeader("Cache-Control", "public,max-age=900");
+  res.status(200);
+  res.setHeader("Content-Type", "text/html");
+  res.setHeader("Cache-Control", "public,max-age=900");
+  res.setHeader("Vary", "Accept-Encoding");
+
   renderLayout(res, {
     content: '<div class="app-loading"></div>',
     store: createStore((state) => state, {

@@ -56,7 +56,8 @@
     "mocha": "^4.0.1",
     "nyc": "^11.4.1",
     "superagent": "^3.8.1",
-    "superagent-promise": "^1.1.0"
+    "superagent-promise": "^1.1.0",
+    "supertest": "^3.0.0"
   },
   "peerDependencies": {
     "@quintype/seo": "^1.4.1"
