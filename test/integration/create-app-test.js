@@ -4,7 +4,7 @@ const supertest = require("supertest");
 const fs = require("fs");
 
 describe('createApp', function() {
-  const app = createApp({disableLogging: true});
+  const app = createApp();
   app.get("/foo", (req, res) => {
     res.setHeader("Content-Type", "application/json");
     res.send(fs.readFileSync("package.json"));

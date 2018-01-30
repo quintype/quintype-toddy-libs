@@ -14,6 +14,16 @@ function trimNewline() {
   };
 }
 
+function createTestLogger() {
+  return new winston.createLogger({
+    format: combine(timestamp(), trimNewline(), winston.format.json()),
+    transports: [
+      new winston.transports.File({
+        filename: '/dev/null'
+      })]
+  });
+}
+
 function createDevLogger() {
   return new winston.createLogger({
     format: combine(timestamp(), trimNewline(), winston.format.json()),
@@ -41,7 +51,11 @@ function createProdLogger() {
 }
 
 function createLogger() {
-  return process.env.NODE_ENV == 'production' ? createProdLogger() : createDevLogger();
+  switch(process.env.NODE_ENV) {
+    case 'production': return createProdLogger();
+    case 'test': return createTestLogger();
+    default: return createDevLogger();
+  }
 }
 
 function truncateStack(message) {
