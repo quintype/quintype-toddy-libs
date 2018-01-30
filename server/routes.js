@@ -58,12 +58,14 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       staticRoutes = [],
                                                       appVersion = 1,
                                                       assetHelper = require("./asset-helper"),
-                                                      withConfig = require("./with-config")}) {
-  app.get("/service-worker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion, assetHelper}));
+                                                      withConfig = require("./with-config"),
+                                                      renderServiceWorker = (res, layout, params, callback) => res.render(layout, params, callback)
+                                                    }) {
+  app.get("/service-worker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion, assetHelper, renderServiceWorker}));
 
   if(oneSignalServiceWorkers) {
-    app.get("/OneSignalSDKWorker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion, appendFn: oneSignalImport}));
-    app.get("/OneSignalSDKUpdaterWorker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion, appendFn: oneSignalImport}));
+    app.get("/OneSignalSDKWorker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
+    app.get("/OneSignalSDKUpdaterWorker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
   }
 
   app.get("/shell.html", withConfig(logError, handleIsomorphicShell, {renderLayout, assetHelper}));
