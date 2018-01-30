@@ -1,3 +1,5 @@
+// istanbul ignore file
+
 const process = require("process");
 const winston = require("winston");
 const {combine, timestamp } = winston.format;
