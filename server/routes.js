@@ -2,8 +2,10 @@ const {generateServiceWorker} = require("./handlers/generate-service-worker");
 const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute} = require("./handlers/isomorphic-handler");
 const {oneSignalImport} = require("./handlers/one-signal");
 
-exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app, {forwardAmp, config} = {}) {
-  config = config || require("./publisher-config");
+exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
+                                                                 {forwardAmp = false,
+                                                                  config = require("./publisher-config"),
+                                                                  getClient = require("./api-client").getClient} = {}) {
   const host = config.sketches_host;
   const apiProxy = require("http-proxy").createProxyServer({
     target: host,
