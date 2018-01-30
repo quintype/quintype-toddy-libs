@@ -16,7 +16,8 @@ function renderLayoutStub(res, layout, params, callback) {
     jsPath: params.assetPath("app.js"),
     hostname: params.hostname,
     assetHash: params.assetHash("app.js"),
-    routes: params.routes
+    routes: params.routes,
+    layout: layout,
   });
   return callback(null, content);
 }
@@ -41,11 +42,12 @@ describe('ServiceWorker Generator', function() {
       .expect("Content-Type", /javascript/)
       .expect(200)
       .then(res => {
-        const {serviceWorkerHelper, jsPath, hostname, assetHash} = JSON.parse(res.text);
+        const {serviceWorkerHelper, jsPath, hostname, assetHash, layout} = JSON.parse(res.text);
         assert.equal('service-worker-contents', serviceWorkerHelper);
         assert.equal('//cdn/app.js', jsPath);
         assert.equal('127.0.0.1', hostname);
         assert.equal('abcdef', assetHash);
+        assert.equal("js/service-worker", layout);
       })
       .then(done);
   })
