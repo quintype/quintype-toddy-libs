@@ -24,7 +24,7 @@ class AssetHelperImpl {
     const path = this.assets[asset];
     if(path) {
       const match = /\-([0-9a-fA-F]+)\./.exec(path);
-      return match && match[1];
+      return match ? match[1] : '1';
     }
   }
 }

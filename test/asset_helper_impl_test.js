@@ -39,8 +39,8 @@ describe('AssetHelperImpl', function() {
       assert.equal("03e7de595a129bb1ce20", assetHash("app.js"));
     })
 
-    it("returns null if the asset has no hash", function() {
-      assert.equal(null, assetHash("dev.js"));
+    it("returns 1 if the asset has no hash", function() {
+      assert.equal('1', assetHash("dev.js"));
     })
   })
 });
