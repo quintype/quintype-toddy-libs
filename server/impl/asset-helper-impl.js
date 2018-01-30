@@ -6,7 +6,8 @@ class AssetHelperImpl {
 
     this.assetPath = this.assetPath.bind(this);
     this.readAsset = this.readAsset.bind(this);
-    this.assetHash = this.assetHash.bind(this)
+    this.assetHash = this.assetHash.bind(this);
+    this.serviceWorkerContents = this.serviceWorkerContents.bind(this);
   }
 
   assetPath(asset) {
@@ -18,6 +19,11 @@ class AssetHelperImpl {
 
   readAsset(asset) {
     return this.readFileSync("public" + this.assets[asset]);
+  }
+
+  serviceWorkerContents() {
+    this._serviceWorkerContents = this._serviceWorkerContents || this.readAsset("serviceWorkerHelper.js");
+    return this._serviceWorkerContents;
   }
 
   assetHash(asset) {

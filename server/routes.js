@@ -1,23 +1,9 @@
-const config = require("./publisher-config");
-const {getClient} = require("./api-client");
-
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
 const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute} = require("./handlers/isomorphic-handler");
 const {oneSignalImport} = require("./handlers/one-signal");
 
-function withConfig(logError, f, staticParams) {
-  return function(req, res, opts) {
-    opts = Object.assign({}, opts, staticParams);
-    const client = getClient(req.hostname);
-    return client.getConfig()
-      .then(c => f(req, res, Object.assign({}, opts, {config: c, client: client})))
-      .catch(logError);
-  }
-}
-
-exports.withConfig = withConfig;
-
-exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app, {forwardAmp} = {}) {
+exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app, {forwardAmp, config} = {}) {
+  config = config || require("./publisher-config");
   const host = config.sketches_host;
   const apiProxy = require("http-proxy").createProxyServer({
     target: host,
@@ -60,15 +46,27 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app, {forwardAm
   }
 }
 
-exports.isomorphicRoutes = function isomorphicRoutes(app, {generateRoutes, logError, renderLayout, loadData, pickComponent, loadErrorData, seo, oneSignalServiceWorkers, staticRoutes = [], appVersion = 1}) {
-  app.get("/service-worker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion}));
+exports.isomorphicRoutes = function isomorphicRoutes(app,
+                                                     {generateRoutes,
+                                                      logError,
+                                                      renderLayout,
+                                                      loadData,
+                                                      pickComponent,
+                                                      loadErrorData,
+                                                      seo,
+                                                      oneSignalServiceWorkers,
+                                                      staticRoutes = [],
+                                                      appVersion = 1,
+                                                      assetHelper = require("./asset-helper"),
+                                                      withConfig = require("./with-config")}) {
+  app.get("/service-worker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion, assetHelper}));
 
   if(oneSignalServiceWorkers) {
     app.get("/OneSignalSDKWorker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion, appendFn: oneSignalImport}));
     app.get("/OneSignalSDKUpdaterWorker.js", withConfig(logError, generateServiceWorker, {generateRoutes, appVersion, appendFn: oneSignalImport}));
   }
 
-  app.get("/shell.html", withConfig(logError, handleIsomorphicShell, {renderLayout}));
+  app.get("/shell.html", withConfig(logError, handleIsomorphicShell, {renderLayout, assetHelper}));
   app.get("/route-data.json", withConfig(logError, handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}));
 
   staticRoutes.forEach(route => {

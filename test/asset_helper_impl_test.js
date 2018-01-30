@@ -17,12 +17,18 @@ describe('AssetHelperImpl', function() {
   });
 
   describe("readAsset", function() {
-    const {readAsset} = new AssetHelperImpl({asset_host: "//my-cdn"},
-                                            {"app.js": "/toddy/assets/app-03e7de595a129bb1ce20.js"},
-                                            {readFileSync: path => path == "public/toddy/assets/app-03e7de595a129bb1ce20.js" ? "success" : null})
+    const {readAsset, serviceWorkerContents} = new AssetHelperImpl({asset_host: "//my-cdn"},
+                                            {"app.js": "/app.js",
+                                             "serviceWorkerHelper.js": "/serviceWorkerHelper.js"},
+                                            {readFileSync: path => `Contents of ${path}`})
 
     it("can read assets from the disk", function() {
-      assert.equal("success", readAsset("app.js"));
+      assert.equal("Contents of public/app.js", readAsset("app.js"));
+    })
+
+    it("can read assets from the disk", function() {
+      assert.equal("Contents of public/serviceWorkerHelper.js", serviceWorkerContents());
+      assert.equal("Contents of public/serviceWorkerHelper.js", serviceWorkerContents());
     })
   });
 
