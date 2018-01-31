@@ -9,7 +9,7 @@ const {createStore} = require("redux");
 const Promise = require("bluebird");
 
 function fetchData(loadData, loadErrorData = () => Promise.resolve({}), pageType, params, {config, client, logError}) {
-  return Promise.resolve(loadData(pageType, params, config, client))
+  return new Promise((resolve) => resolve(loadData(pageType, params, config, client)))
     .catch(error => {
       logError(error);
       return loadErrorData(error, config)
@@ -54,17 +54,23 @@ function addCacheHeaders(res, result) {
 
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}) {
   function matchStaticOrIsomorphicRoute(url) {
-    var match;
-    if(match = matchRouteWithParams(url, staticRoutes, req.query)) {
-      return Object.assign({jsonParams: {disableIsomorphicComponent: true}}, match)
-    } else {
-      return matchRouteWithParams(url, generateRoutes(config), req.query);
+    try {
+      var match;
+      if(match = matchRouteWithParams(url, staticRoutes, req.query)) {
+        return Object.assign({jsonParams: {disableIsomorphicComponent: true}}, match)
+      } else {
+        return matchRouteWithParams(url, generateRoutes(config), req.query);
+      }
+    } catch(e) {
+      logError(e);
     }
   }
 
   const url = urlLib.parse(req.query.path || "/", true);
   const match = matchStaticOrIsomorphicRoute(url)
+
   res.setHeader("Content-Type", "application/json");
+
   if(match) {
     return fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError})
       .then((result) => {

@@ -4,7 +4,7 @@ const express = require("express");
 const { isomorphicRoutes } = require("../../server/routes");
 const supertest = require("supertest");
 
-function getClientStub(logError, f, staticParams) {
+function getClientStub(hostname) {
   return {
     getHostname: () => hostname,
     getConfig: () => Promise.resolve({foo: "bar"})
