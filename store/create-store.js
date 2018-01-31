@@ -19,11 +19,11 @@ function serviceWorkerStatusReducer(state = {updated: false}, action) {
   }
 }
 
-export function createQtStore(customReducers, initialValue) {
+export function createQtStore(customReducers, initialValue, {location = global.location}) {
   const reducers = combineReducers(Object.assign({
     qt: internalReducers,
     serviceWorkerStatus: serviceWorkerStatusReducer,
   }, ComponentReducers, customReducers));
-  const initialState = Object.assign({currentPath: window.location.pathname}, initialValue);
+  const initialState = Object.assign({currentPath: location.pathname}, initialValue);
   return createStore(reducers, {qt: initialState});
 }

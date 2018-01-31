@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "prepublishOnly": "npm install && npm test && git diff --quiet && git tag v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4) && git push --tags origin master",
-    "test": "NODE_ENV=test mocha --recursive",
+    "test": "NODE_ENV=test mocha --recursive --require ./test/babel",
     "coverage": "nyc --all npm test",
     "coverage-html": "nyc --all --reporter=html npm test"
   },
@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "@quintype/build": "^1.2.0",
+    "babel-plugin-quintype-assets": "^1.0.2",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-es2015-tree-shaking": "^1.0.1",
