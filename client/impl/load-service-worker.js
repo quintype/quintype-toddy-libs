@@ -1,9 +1,8 @@
 import { SERVICE_WORKER_UPDATED } from '@quintype/components/store/actions';
 
-// istanbul ignore next
-export function registerServiceWorker({enableServiceWorker = false, serviceWorkerLocation = "/service-worker.js"}) {
-  if(enableServiceWorker && global.navigator.serviceWorker) {
-    return global.navigator.serviceWorker.register(serviceWorkerLocation)
+export function registerServiceWorker({enableServiceWorker = false, serviceWorkerLocation = "/service-worker.js", navigator = global.navigator}) {
+  if(enableServiceWorker && navigator.serviceWorker) {
+    return navigator.serviceWorker.register(serviceWorkerLocation)
   } else {
     return Promise.resolve(null)
   }
@@ -11,9 +10,9 @@ export function registerServiceWorker({enableServiceWorker = false, serviceWorke
 
 export function setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page) {
   if(!serviceWorkerPromise)
-    return;
+    return Promise.resolve();
 
-  serviceWorkerPromise
+  return serviceWorkerPromise
     .then(registration => {
       if(!registration)
         return;
@@ -23,6 +22,8 @@ export function setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page
       }
 
       checkForServiceWorkerUpdates(app, page);
+
+      return registration;
     });
 }
 
