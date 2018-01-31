@@ -63,5 +63,13 @@
   },
   "peerDependencies": {
     "@quintype/seo": "^1.4.1"
+  },
+  "nyc": {
+    "exclude": ["coverage", "test", "client"],
+    "check-coverage": true,
+    "per-file": true,
+    "lines": 99,
+    "statements": 99,
+    "functions": 99
   }
 }
