@@ -30,6 +30,10 @@ describe('AssetHelperImpl', function() {
       assert.equal("Contents of public/serviceWorkerHelper.js", serviceWorkerContents());
       assert.equal("Contents of public/serviceWorkerHelper.js", serviceWorkerContents());
     })
+
+    it("returns undefined for any file that doesn't exist", function() {
+      assert.equal(undefined, readAsset("unknown.js"));
+    })
   });
 
   describe("get asset hash", function() {

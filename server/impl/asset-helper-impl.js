@@ -18,7 +18,10 @@ class AssetHelperImpl {
   }
 
   readAsset(asset) {
-    return this.readFileSync("public" + this.assets[asset]);
+    const path = this.assets[asset];
+    if (path) {
+      return this.readFileSync("public" + path);
+    }
   }
 
   serviceWorkerContents() {
