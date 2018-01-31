@@ -68,8 +68,8 @@
     "exclude": ["coverage", "test", "client/*.js"],
     "check-coverage": true,
     "per-file": true,
-    "lines": 99,
-    "statements": 99,
-    "functions": 99
+    "lines": 100,
+    "statements": 100,
+    "functions": 100
   }
 }
