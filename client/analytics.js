@@ -1,5 +1,6 @@
 import {get} from 'lodash'
 
+// istanbul ignore next
 export function startAnalytics() {
   global.qlitics=global.qlitics||function(){(qlitics.q=qlitics.q||[]).push(arguments);};
   global.qlitics('init');

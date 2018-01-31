@@ -1,5 +1,6 @@
 import { SERVICE_WORKER_UPDATED } from '@quintype/components/store/actions';
 
+// istanbul ignore next
 export function registerServiceWorker({enableServiceWorker = false, serviceWorkerLocation = "/service-worker.js"}) {
   if(enableServiceWorker && global.navigator.serviceWorker) {
     return global.navigator.serviceWorker.register(serviceWorkerLocation)

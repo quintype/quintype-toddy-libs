@@ -65,7 +65,7 @@
     "@quintype/seo": "^1.4.1"
   },
   "nyc": {
-    "exclude": ["coverage", "test", "client"],
+    "exclude": ["coverage", "test", "client/*.js"],
     "check-coverage": true,
     "per-file": true,
     "lines": 99,

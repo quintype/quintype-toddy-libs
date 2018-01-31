@@ -1,3 +1,5 @@
+// istanbul ignore file: Needs to be run as a service worker
+
 const workboxVersion = '2.1.1';
 
 import {matchBestRoute} from '../isomorphic/match-best-route';

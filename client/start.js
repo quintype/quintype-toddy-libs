@@ -11,7 +11,7 @@ import { IsomorphicComponent } from '../isomorphic/component'
 import { BreakingNews } from '@quintype/components';
 import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components/store/actions';
 import { startAnalytics, registerPageView } from './analytics'
-import { registerServiceWorker, setupServiceWorkerUpdates, checkForServiceWorkerUpdates } from './load-service-worker';
+import { registerServiceWorker, setupServiceWorkerUpdates, checkForServiceWorkerUpdates } from './impl/load-service-worker';
 
 export const history = createBrowserHistory();
 
