@@ -183,6 +183,16 @@ The store will be initialized from staticPageStoreContent
 
 (to be documented)
 
+## Minimizing Page Load Speed
+
+Make sure you do all of the following techniques to reduce page load time (notes to document these later)
+
+### Inline CSS
+
+### Add a window.initialFetch to do a fetch in the background
+
+### Add a window.initialPage to preRender chrome such as the menu without waiting for AJAX responses
+
 ## References
 
 * This architecture is heavily influenced by the method described in this [video](https://www.youtube.com/watch?v=atUdVSuNRjA)

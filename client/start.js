@@ -106,14 +106,18 @@ export function startApp(renderApplication, reducers, opts) {
   if(global.staticPageStoreContent)
     return Promise.resolve(doStartApp(global.staticPageStoreContent["qt"]))
 
-  const location = global.location;
+  const store = createQtStore(reducers, global.initialPage || {}, {});
 
-  return getRouteData(`${location.pathname}${location.search || ""}`, {existingFetch: global.initialFetch})
+  opts.preRenderApplication && opts.preRenderApplication(store);
+
+  const location = global.location;
+  const path = `${location.pathname}${location.search || ""}`;
+  return getRouteData(path, {existingFetch: global.initialFetch})
     .then(page => doStartApp(page));
 
 
   function doStartApp(page){
-    const store = createQtStore(reducers, page, {});
+    store.dispatch({ type: NAVIGATE_TO_PAGE, page: page, currentPath: path });
 
     setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page)
 

@@ -24,7 +24,8 @@ describe('ShellHandler', function() {
   isomorphicRoutes(app, {
     assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null},
     getClient: getClientStub,
-    renderLayout: renderLayoutStub
+    renderLayout: renderLayoutStub,
+    loadData: (pageType, _, config, client) => ({config: Object.assign({pageType: pageType}, config)})
   })
 
   it("returns the shell if the workbox prechaching matches", function(done) {
@@ -36,6 +37,7 @@ describe('ShellHandler', function() {
         const {content, store} = JSON.parse(res.text);
         assert.equal('<div class="app-loading"></div>', content);
         assert.equal("bar", store.qt.config.foo)
+        assert.equal("shell", store.qt.config.pageType)
       }).then(done);
   });
 
@@ -50,5 +52,5 @@ describe('ShellHandler', function() {
       .get("/shell.html")
       .expect("Content-Type", /html/)
       .expect(200, done);
-  })
+  });
 });

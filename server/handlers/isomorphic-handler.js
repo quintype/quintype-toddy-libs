@@ -23,22 +23,26 @@ function matchRouteWithParams(url, routes, otherParams = {}) {
   return match;
 }
 
-exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, {config, renderLayout, assetHelper}) {
+exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError}) {
   if(req.query["_workbox-precaching"] && req.query["_workbox-precaching"] != assetHelper.assetHash("app.js"))
     return res.status(503)
               .send("Requested Shell Is Not Current");
 
-  res.status(200);
-  res.setHeader("Content-Type", "text/html");
-  res.setHeader("Cache-Control", "public,max-age=900");
-  res.setHeader("Vary", "Accept-Encoding");
 
-  renderLayout(res, {
-    content: '<div class="app-loading"></div>',
-    store: createStore((state) => state, {
-      qt: {config: config}
+  fetchData(loadData, loadErrorData, "shell", {}, {config, client, logError})
+    .then(result => {
+      res.status(200);
+      res.setHeader("Content-Type", "text/html");
+      res.setHeader("Cache-Control", "public,max-age=900");
+      res.setHeader("Vary", "Accept-Encoding");
+
+      renderLayout(res, {
+        content: '<div class="app-loading"></div>',
+        store: createStore((state) => state, {
+          qt: {config: result.config}
+        })
+      });
     })
-  });
 }
 
 function addCacheHeaders(res, result) {
