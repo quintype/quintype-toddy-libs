@@ -57,7 +57,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
     try {
       var match;
       if(match = matchRouteWithParams(url, staticRoutes, req.query)) {
-        return Object.assign({jsonParams: {disableIsomorphicComponent: true}}, match)
+        return Object.assign({}, match, {pageType: match.pageType || "static-page", jsonParams: {disableIsomorphicComponent: true}})
       } else {
         return matchRouteWithParams(url, generateRoutes(config), req.query);
       }
