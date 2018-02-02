@@ -110,6 +110,11 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
     })
     .then(result => {
       const statusCode = result.httpStatusCode || 200;
+
+      if(statusCode == 301 && result.data && result.data.location) {
+        return res.redirect(301, result.data.location);
+      }
+
       const seoTags = seo && seo.getMetaTags(config, result.pageType || match.pageType, result, {url});
       const store = createStore((state) => state, {
         qt: {

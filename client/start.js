@@ -18,12 +18,17 @@ export const history = createBrowserHistory();
 // App gets two more functions: updateServiceWorker and getAppVersion later
 export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl, registerPageView};
 
-export function getRouteData(path, opts) {
+export function getRouteData(path, {location = global.location}) {
   const url = urlLib.parse(path, true)
   return superagent.get('/route-data.json', Object.assign({path: url.pathname}, url.query))
     .then(response => {
       const page = response.body || {};
-      return response;
+
+      // This next line aborts the entire load
+      if(page.httpStatusCode == 301 && page.data && page.data.location)
+        location.href = page.data.location;
+
+      return page;
     });
 }
 
@@ -33,10 +38,8 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
   }
 
   dispatch({type: PAGE_LOADING});
-  getRouteData(path)
-    .then(response => {
-      const page = response.body;
-
+  getRouteData(path, {})
+    .then(page => {
       checkForServiceWorkerUpdates(app, page);
 
       if(page.disableIsomorphicComponent) {
@@ -106,12 +109,12 @@ export function startApp(renderApplication, reducers, opts) {
 
   const location = global.location;
 
-  return getRouteData(`${location.pathname}${location.search || ""}`, {config: true})
-    .then(response => doStartApp(response.body));
+  return getRouteData(`${location.pathname}${location.search || ""}`, {})
+    .then(page => doStartApp(page));
 
 
   function doStartApp(page){
-    const store = createQtStore(reducers, page);
+    const store = createQtStore(reducers, page, {});
 
     setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page)
 
