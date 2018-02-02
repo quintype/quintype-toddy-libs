@@ -46,6 +46,32 @@ describe('Isomorphic Data Load', function() {
       }).then(done);
   });
 
+  it("passes url parameters to the load data function", function(done) {
+    const app = createApp((pageType, params, config, client) => Promise.resolve({ data: { text: params.text } }));
+
+    supertest(app)
+      .get("/route-data.json?path=%2F&text=foobar")
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then(res => {
+        const response = JSON.parse(res.text);
+        assert.equal("foobar", response.data.text);
+      }).then(done);
+  });
+
+  it("loads data for the homepage if no path is passed in", function(done) {
+    const app = createApp((pageType, params, config, client) => Promise.resolve({ data: {pageType} }));
+
+    supertest(app)
+      .get("/route-data.json")
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then(res => {
+        const response = JSON.parse(res.text);
+        assert.equal("home-page", response.data.pageType);
+      }).then(done);
+  });
+
   it("returns an appVersion on every response", function(done) {
     const app = createApp((pageType, params, config, client) => Promise.resolve({}));
 
@@ -157,6 +183,14 @@ describe('Isomorphic Data Load', function() {
           assert.equal("foobar", response.error);
         })
         .then(done);
+    });
+
+    it("has a default loadErrorData", function(done) {
+      const app = createApp((pageType, params, config, client) => {throw "foobar"}, {pageType: "home-page", path: "/"});
+      supertest(app)
+        .get("/route-data.json?path=%2F")
+        .expect("Content-Type", /json/)
+        .expect(500, done);
     });
   });
 });

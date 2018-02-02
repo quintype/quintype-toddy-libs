@@ -8,7 +8,7 @@ const {renderReduxComponent} = require("../render");
 const {createStore} = require("redux");
 const Promise = require("bluebird");
 
-function fetchData(loadData, loadErrorData = () => Promise.resolve({}), pageType, params, {config, client, logError}) {
+function fetchData(loadData, loadErrorData = () => Promise.resolve({httpStatusCode: 500}), pageType, params, {config, client, logError}) {
   return new Promise((resolve) => resolve(loadData(pageType, params, config, client)))
     .catch(error => {
       logError(error);
@@ -101,9 +101,9 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
 
   const dataPromise = match
                         ? fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError})
-                        : loadErrorData(new NotFoundException(), config);
+                        : new Promise(resolve => resolve(loadErrorData(new NotFoundException(), config)));
 
-  return Promise.resolve(dataPromise)
+  return dataPromise
     .catch(e => {
       logError(e);
       return {httpStatusCode: 500, pageType: "error"}
@@ -146,6 +146,12 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, 
   pageType = pageType || 'static-page';
   return fetchData(loadData, loadErrorData, pageType, renderParams, {config, client, logError})
     .then(result => {
+      const statusCode = result.httpStatusCode || 200;
+
+      if(statusCode == 301 && result.data && result.data.location) {
+        return res.redirect(301, result.data.location);
+      }
+
       const seoTags = seo && seo.getMetaTags(config, result.pageType || pageType, result, {url});
       const store = createStore((state) => state, {
         qt: {
@@ -156,7 +162,7 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, 
           disableIsomorphicComponent: disableIsomorphicComponent === undefined ? true : disableIsomorphicComponent
         }
       });
-      res.status(result.httpStatusCode || 200)
+      res.status(statusCode)
       addCacheHeaders(res, result);
       renderLayout(res, Object.assign({
         title: seo ? seo.getTitle(config, result.pageType || match.pageType, result, {url}) : result.title,
