@@ -11,15 +11,15 @@ function getClientStub(hostname) {
   }
 }
 
-function createApp(loadData, route = {path: "/", pageType: "home-page"}) {
+function createApp(loadData, route = {path: "/", pageType: "home-page"}, opts = {}) {
   const app = express();
-  isomorphicRoutes(app, {
+  isomorphicRoutes(app, Object.assign({
     assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null},
     getClient: getClientStub,
     generateRoutes: () => [route],
     loadData: loadData,
     appVersion: 42
-  });
+  }, opts));
 
   return app;
 }
@@ -126,12 +126,37 @@ describe('Isomorphic Data Load', function() {
         .expect(404, done);
     });
 
-    // it("returns 503 if loadData throws an exception", function(done) {
-    //   const app = createApp((pageType, params, config, client) => {throw "foobar"});
-    //   supertest(app)
-    //     .get("/route-data.json?path=%2F")
-    //     .expect("Content-Type", /json/)
-    //     .expect(404, done);
-    // });
+    it("returns 404 if generate routes throws an exception", function(done) {
+      const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {pageType: "home-page", path: "/"}, {generateRoutes: () => {throw "foobar"}});
+      supertest(app)
+        .get("/route-data.json?path=%2F")
+        .expect("Content-Type", /json/)
+        .expect(404, done);
+    });
+
+    it("return 500 if loadData and loadErrorData both throw exceptions", function(done) {
+      const app = createApp((pageType, params, config, client) => {throw "foobar"}, {pageType: "home-page", path: "/"}, {
+        loadErrorData: () => {throw "exception2"; }
+      });
+      supertest(app)
+        .get("/route-data.json?path=%2F")
+        .expect("Content-Type", /json/)
+        .expect(500, done);
+    });
+
+    it("loads error data if loadData throws an exceptions", function(done) {
+      const app = createApp((pageType, params, config, client) => {throw "foobar"}, {pageType: "home-page", path: "/"}, {
+        loadErrorData: (error, config) => Promise.resolve({error})
+      });
+      supertest(app)
+        .get("/route-data.json?path=%2F")
+        .expect("Content-Type", /json/)
+        .expect(200)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.equal("foobar", response.error);
+        })
+        .then(done);
+    });
   });
 });
