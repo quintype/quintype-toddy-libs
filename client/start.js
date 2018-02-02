@@ -18,12 +18,11 @@ export const history = createBrowserHistory();
 // App gets two more functions: updateServiceWorker and getAppVersion later
 export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl, registerPageView};
 
-export function getRouteData(path, {location = global.location}) {
-  const url = urlLib.parse(path, true)
-  return superagent.get('/route-data.json', Object.assign({path: url.pathname}, url.query))
-    .then(response => {
-      const page = response.body || {};
-
+export function getRouteData(path, {location = global.location, existingFetch}) {
+  const url = urlLib.parse(path)
+  return (existingFetch || fetch(`/route-data.json?path=${encodeURIComponent(url.pathname)}${url.query ? "&" + url.query : ""}`, {credentials: 'same-origin'}))
+    .then(response => response.json())
+    .then(page => {
       // This next line aborts the entire load
       if(page.httpStatusCode == 301 && page.data && page.data.location)
         location.href = page.data.location;
@@ -109,7 +108,7 @@ export function startApp(renderApplication, reducers, opts) {
 
   const location = global.location;
 
-  return getRouteData(`${location.pathname}${location.search || ""}`, {})
+  return getRouteData(`${location.pathname}${location.search || ""}`, {existingFetch: global.initialFetch})
     .then(page => doStartApp(page));
 
 
