@@ -91,7 +91,7 @@ describe('Isomorphic Handler', function() {
       }).then(done);
   });
 
-  it("Throws a 500 if loadData and loadErrorData both crash doesn't work", function(done) {
+  it("Throws a 500 if loadData and loadErrorData both crash", function(done) {
     const app = createApp((pageType, params, config, client) => {throw "exception"}, [{pageType: "home-page"}], {
       loadErrorData: (err, config) => {throw "foobar"}
     });
