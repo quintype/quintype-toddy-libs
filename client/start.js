@@ -73,17 +73,17 @@ export function maybeSetUrl(path, title) {
   global.document.title = title;
 }
 
-export function renderComponent(clazz, container, store, props) {
+export function renderComponent(clazz, container, store, props, callback) {
   return ReactDOM.render(
     React.createElement(Provider, {store: store},
       React.createElement(clazz, props || {})),
     document.getElementById(container),
-  () => store.dispatch({type: CLIENT_SIDE_RENDERED}));
+    callback);
 }
 
 export function renderIsomorphicComponent(container, store, pickComponent, props) {
   if(!store.getState().qt.disableIsomorphicComponent) {
-    return renderComponent(IsomorphicComponent, container, store, Object.assign({pickComponent}, props));
+    return renderComponent(IsomorphicComponent, container, store, Object.assign({pickComponent}, props), () => store.dispatch({type: CLIENT_SIDE_RENDERED}));
   } else {
     console && console.log("IsomorphicComponent is disabled");
   }
