@@ -95,6 +95,47 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
   }
 };
 
+function htmlResponse(res, result, {storeParams, layoutParamsFn, pageType, url, config, disableIsomorphicComponent, seo, renderLayout}) {
+  console.log(result);
+  const statusCode = result.httpStatusCode || 200;
+  console.log("Status Code:", statusCode);
+
+  if(statusCode == 301 && result.data && result.data.location) {
+    return res.redirect(301, result.data.location);
+  }
+
+  const seoTags = seo && seo.getMetaTags(config, pageType, result, {url});
+  const store = createStore((state) => state, {
+    qt: {
+      pageType: pageType,
+      data: result.data,
+      config: result.config,
+      currentPath: `${url.pathname}${url.search || ""}`,
+      disableIsomorphicComponent: disableIsomorphicComponent
+    }
+  });
+
+  const layoutParams = layoutParamsFn(store);
+
+  console.log("About to set status", layoutParams);
+
+  console.log("Status Code:", statusCode);
+  res.status(statusCode)
+  addCacheHeaders(res, result);
+  renderLayout(res, Object.assign({
+    title: seo ? seo.getTitle(config, pageType, result, {url}) : result.title,
+    store: store,
+    seoTags: seoTags,
+  }, layoutParams));
+}
+
+function handleHtmlException(res, e) {
+  console.log("The exception is", e);
+  logError(e);
+  res.status(500);
+  res.send(e.message);
+}
+
 exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError}) {
   const url = urlLib.parse(req.url, true);
   const match = matchRouteWithParams(url, generateRoutes(config));
@@ -108,37 +149,14 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
       logError(e);
       return {httpStatusCode: 500, pageType: "error"}
     })
-    .then(result => {
-      const statusCode = result.httpStatusCode || 200;
-
-      if(statusCode == 301 && result.data && result.data.location) {
-        return res.redirect(301, result.data.location);
+    .then(result =>
+      htmlResponse(res, result, {
+        seo, url, config, renderLayout,
+        pageType: result.pageType || match.pageType,
+        disableIsomorphicComponent: (result.httpStatusCode || 200) != 200,
+        layoutParamsFn: (store) => ({content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent})})
       }
-
-      const seoTags = seo && seo.getMetaTags(config, result.pageType || match.pageType, result, {url});
-      const store = createStore((state) => state, {
-        qt: {
-          pageType: result.pageType,
-          data: result.data,
-          config: result.config,
-          currentPath: `${url.pathname}${url.search || ""}`,
-          disableIsomorphicComponent: statusCode != 200
-        }
-      });
-
-      res.status(statusCode)
-      addCacheHeaders(res, result);
-      renderLayout(res, {
-        title: result.title,
-        content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
-        store: store,
-        seoTags: seoTags
-      });
-    }).catch(e => {
-      logError(e);
-      res.status(500);
-      res.send(e.message);
-    }).finally(() => res.end());
+    )).catch(e => handleHtmlException(res, e)).finally(() => res.end());
 };
 
 exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams, disableIsomorphicComponent}) {
