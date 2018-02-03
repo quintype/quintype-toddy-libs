@@ -193,6 +193,10 @@ Make sure you do all of the following techniques to reduce page load time (notes
 
 ### Add a window.initialPage to preRender chrome such as the menu without waiting for AJAX responses
 
+### Never require lodash directly. Always do lodash/get
+
+### Do not use moment. Use date-fns
+
 ## References
 
 * This architecture is heavily influenced by the method described in this [video](https://www.youtube.com/watch?v=atUdVSuNRjA)

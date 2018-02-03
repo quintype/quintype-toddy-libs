@@ -95,8 +95,6 @@ export function renderBreakingNews(container, store, view, props) {
 
 export function startApp(renderApplication, reducers, opts) {
   app.getAppVersion = () => opts.appVersion || 1;
-  global.Promise = global.Promise || require("bluebird");
-  global.superagent = require('superagent-promise')(require('superagent'), Promise);
   global.app = app;
 
   startAnalytics();
