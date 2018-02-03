@@ -53,4 +53,16 @@ describe('AssetHelperImpl', function() {
       assert.equal('1', assetHash("dev.js"));
     })
   })
+
+  describe("get all asset files", function() {
+    const {assetFiles} = new AssetHelperImpl({asset_host: "//my-cdn"},
+                                             {"app.js": "/toddy/assets/app-03e7de595a129bb1ce20.js",
+                                              "dev.js": "/toddy/assets/dev.js"});
+
+    it("returns a set of all files", function() {
+      const files = assetFiles();
+      assert.equal(true, files.has("/toddy/assets/app-03e7de595a129bb1ce20.js"));
+      assert.equal(false, files.has("app.js"));
+    });
+  })
 });

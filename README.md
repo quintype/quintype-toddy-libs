@@ -197,6 +197,10 @@ Make sure you do all of the following techniques to reduce page load time (notes
 
 ### Do not use moment. Use date-fns
 
+### LazyLoad Images
+
+### Separate polyfills
+
 ## References
 
 * This architecture is heavily influenced by the method described in this [video](https://www.youtube.com/watch?v=atUdVSuNRjA)

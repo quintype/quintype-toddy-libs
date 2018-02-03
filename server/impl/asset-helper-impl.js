@@ -7,6 +7,7 @@ class AssetHelperImpl {
     this.assetPath = this.assetPath.bind(this);
     this.readAsset = this.readAsset.bind(this);
     this.assetHash = this.assetHash.bind(this);
+    this.assetFiles = this.assetFiles.bind(this);
     this.serviceWorkerContents = this.serviceWorkerContents.bind(this);
   }
 
@@ -35,6 +36,10 @@ class AssetHelperImpl {
       const match = /\-([0-9a-fA-F]+)\./.exec(path);
       return match ? match[1] : '1';
     }
+  }
+
+  assetFiles() {
+    return new Set(Object.values(this.assets));
   }
 }
 
