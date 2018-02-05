@@ -114,7 +114,7 @@ describe('Isomorphic Data Load', function() {
     supertest(app)
       .get("/route-data.json?path=%2F")
       .expect("Content-Type", /json/)
-      .expect("Cache-Control", "public,max-age=15")
+      .expect("Cache-Control", "public,max-age=15,must-revalidate")
       .expect("Vary", "Accept-Encoding")
       .expect("Surrogate-Control", /public/)
       .expect("Surrogate-Key", "foo bar")
