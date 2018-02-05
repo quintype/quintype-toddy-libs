@@ -201,6 +201,10 @@ Make sure you do all of the following techniques to reduce page load time (notes
 
 ### Separate polyfills
 
+### Use Link headers to do HTTP2 server push to prioritize important requests
+
+Preloading app.js and /route-data.json can be triggered by passing preloadJS true, and preloadRouteData true to isomorphic handler
+
 ## References
 
 * This architecture is heavily influenced by the method described in this [video](https://www.youtube.com/watch?v=atUdVSuNRjA)

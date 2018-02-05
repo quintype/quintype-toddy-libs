@@ -65,6 +65,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       oneSignalServiceWorkers = false,
                                                       staticRoutes = [],
                                                       appVersion = 1,
+                                                      preloadJs = false,
+                                                      preloadRouteData = false,
 
                                                       // The below are primarily for testing
                                                       assetHelper = require("./asset-helper"),
@@ -94,5 +96,5 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
     app.get(route.path, withConfig(handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, seo}, route)))
   });
 
-  app.get("/*", withConfig(handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError}));
+  app.get("/*", withConfig(handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
 }

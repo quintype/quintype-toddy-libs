@@ -19,7 +19,7 @@ function pickComponent(pageType) {
 function createApp(loadData, routes, opts = {}) {
   const app = express();
   isomorphicRoutes(app, Object.assign({
-    assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null},
+    assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null, assetPath: (file) => `/assets/${file}`},
     getClient: getClientStub,
     generateRoutes: () => routes,
     loadData: loadData,
@@ -58,6 +58,32 @@ describe('Isomorphic Handler', function() {
         assert.equal("foobar", response.store.qt.data.text);
       }).then(done);
   });
+
+  describe("preloading", function() {
+    it("preloads the app.js", function(done) {
+      const app = createApp((pageType, params, config, client) => Promise.resolve({pageType, data: {text: "foobar"}}), [{pageType: 'home-page', path: '/'}], {
+        preloadJs: true,
+      });
+
+      supertest(app)
+        .get("/?foo=bar")
+        .expect("Content-Type", /html/)
+        .expect("Link", '</assets/app.js>; rel=preload; as=script;')
+        .expect(200, done);
+    })
+
+    it("preloads the route-data", function(done) {
+      const app = createApp((pageType, params, config, client) => Promise.resolve({pageType, data: {text: "foobar"}}), [{pageType: 'home-page', path: '/'}], {
+        preloadRouteData: true,
+      });
+
+      supertest(app)
+        .get("/?foo=bar")
+        .expect("Content-Type", /html/)
+        .expect("Link", '</route-data.json?path=%2F&foo=bar>; rel=preload; as=fetch;')
+        .expect(200, done);
+    })
+  })
 
   it("Throws a 404 if the route is not matched", function(done) {
     const app = createApp((pageType, params, config, client) => Promise.resolve(), [{pageType: 'home-page', path: '/', exact: true}], {

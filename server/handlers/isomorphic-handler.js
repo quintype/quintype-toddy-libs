@@ -99,7 +99,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
   }
 };
 
-exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError}) {
+exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, assetHelper, preloadJs, preloadRouteData}) {
   const url = urlLib.parse(req.url, true);
   const match = matchRouteWithParams(url, generateRoutes(config));
 
@@ -132,6 +132,15 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
 
       res.status(statusCode)
       addCacheHeaders(res, result);
+
+      if(preloadJs) {
+        res.append("Link", `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`);
+      }
+
+      if(preloadRouteData) {
+        res.append("Link", `</route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? `&${url.search.substr(1)}` : ""}>; rel=preload; as=fetch;`);
+      }
+
       renderLayout(res, {
         title: result.title,
         content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
@@ -166,8 +175,10 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, 
           disableIsomorphicComponent: disableIsomorphicComponent === undefined ? true : disableIsomorphicComponent
         }
       });
+
       res.status(statusCode)
       addCacheHeaders(res, result);
+
       renderLayout(res, Object.assign({
         title: seo ? seo.getTitle(config, result.pageType || match.pageType, result, {url}) : result.title,
         store: store,
