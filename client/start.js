@@ -97,21 +97,21 @@ export function startApp(renderApplication, reducers, opts) {
   app.getAppVersion = () => opts.appVersion || 1;
   global.app = app;
 
-  startAnalytics();
+  const location = global.location;
+  const path = `${location.pathname}${location.search || ""}`;
+  const dataPromise = global.staticPageStoreContent
+    ? Promise.resolve(global.staticPageStoreContent["qt"])
+    : getRouteData(path, {existingFetch: global.initialFetch})
 
   const serviceWorkerPromise = registerServiceWorker(opts);
 
-  if(global.staticPageStoreContent)
-    return Promise.resolve(doStartApp(global.staticPageStoreContent["qt"]))
+  startAnalytics();
 
   const store = createQtStore(reducers, global.initialPage || {}, {});
 
   opts.preRenderApplication && opts.preRenderApplication(store);
 
-  const location = global.location;
-  const path = `${location.pathname}${location.search || ""}`;
-  return getRouteData(path, {existingFetch: global.initialFetch})
-    .then(page => doStartApp(page));
+  return dataPromise.then(page => doStartApp(page));
 
 
   function doStartApp(page){
