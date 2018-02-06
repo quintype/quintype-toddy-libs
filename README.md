@@ -191,7 +191,17 @@ Make sure you do all of the following techniques to reduce page load time (notes
 
 ### Add a window.initialFetch to do a fetch in the background
 
-### Add a window.initialPage to preRender chrome such as the menu without waiting for AJAX responses
+### Add a initial-page to preRender chrome such as the menu without waiting for AJAX responses
+
+```html
+<script type="application/json" id="initial-page">{"config": {}}</script>
+```
+
+### Use static-page to show a full page (this will prevent fetchData from calling)
+
+```html
+<script type="application/json" id="static-page">{"config": {}}</script>
+```
 
 ### Never require lodash directly. Always do lodash/get
 

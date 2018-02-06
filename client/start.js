@@ -93,21 +93,28 @@ export function renderBreakingNews(container, store, view, props) {
   return renderComponent(BreakingNews, container, store, Object.assign({view}, props));
 }
 
+function getJsonContent(id) {
+  const element = global.document.getElementById(id);
+  if(element)
+    return JSON.parse(element.textContent);
+}
+
 export function startApp(renderApplication, reducers, opts) {
   app.getAppVersion = () => opts.appVersion || 1;
   global.app = app;
 
   const location = global.location;
   const path = `${location.pathname}${location.search || ""}`;
-  const dataPromise = global.staticPageStoreContent
-    ? Promise.resolve(global.staticPageStoreContent["qt"])
+  const staticData = global.staticPageStoreContent || getJsonContent('static-page');
+  const dataPromise = staticData
+    ? Promise.resolve(staticData["qt"])
     : getRouteData(path, {existingFetch: global.initialFetch})
 
   const serviceWorkerPromise = registerServiceWorker(opts);
 
   startAnalytics();
 
-  const store = createQtStore(reducers, global.initialPage || {}, {});
+  const store = createQtStore(reducers, global.initialPage || getJsonContent('initial-page') || {}, {});
 
   opts.preRenderApplication && opts.preRenderApplication(store);
 
