@@ -40,7 +40,8 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, {config
         content: '<div class="app-loading"></div>',
         store: createStore((state) => state, {
           qt: {config: result.config}
-        })
+        }),
+        shell: true
       });
     })
 }

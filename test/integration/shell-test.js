@@ -14,7 +14,8 @@ function getClientStub(hostname) {
 function renderLayoutStub(res, params) {
   const content = JSON.stringify({
     content: params.content,
-    store: params.store.getState()
+    store: params.store.getState(),
+    shell: params.shell,
   });
   return res.send(content);
 }
@@ -34,10 +35,11 @@ describe('ShellHandler', function() {
       .expect("Content-Type", /html/)
       .expect(200)
       .then(res => {
-        const {content, store} = JSON.parse(res.text);
+        const {content, store, shell} = JSON.parse(res.text);
         assert.equal('<div class="app-loading"></div>', content);
         assert.equal("bar", store.qt.config.foo)
         assert.equal("shell", store.qt.config.pageType)
+        assert.equal(true, shell)
       }).then(done);
   });
 
