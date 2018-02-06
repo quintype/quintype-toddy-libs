@@ -80,7 +80,7 @@ describe('Isomorphic Handler', function() {
       supertest(app)
         .get("/?foo=bar")
         .expect("Content-Type", /html/)
-        .expect("Link", '</route-data.json?path=%2F&foo=bar>; rel=preload; as=fetch; nopush')
+        .expect("Link", '</route-data.json?path=%2F&foo=bar>; rel=preload; as=fetch;')
         .expect(200, done);
     })
   })
