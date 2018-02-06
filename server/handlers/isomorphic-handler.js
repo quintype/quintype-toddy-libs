@@ -138,7 +138,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
       }
 
       if(preloadRouteData) {
-        res.append("Link", `</route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? `&${url.search.substr(1)}` : ""}>; rel=preload; as=fetch;`);
+        res.append("Link", `</route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? `&${url.search.substr(1)}` : ""}>; rel=preload; as=fetch; nopush`);
       }
 
       renderLayout(res, {
