@@ -80,6 +80,32 @@ describe('routes', function() {
       }))
     });
 
+    it("generates extra sub section route when secWithoutParentPrefix is true", function() {
+      const expectedRoutes = [
+        {path: "/sect", pageType: "section-page", exact: true, params: {sectionId: 42}},
+        {path: "/sub-sect", pageType: "section-page", exact: true, params: {sectionId: 43}},
+        {path: "/sect/sub-sect", pageType: "section-page", exact: true, params: {sectionId: 43}},
+      ];
+      assert.deepEqual(expectedRoutes, generateSectionPageRoutes({
+        sections: [{id: 42, slug: "sect"}, {id: 43, slug: "sub-sect", "parent-id": 42}]
+      }, {secWithoutParentPrefix: true}))
+    });
+
+    it("generates extra sub section route and with section prefix when both secWithoutParentPrefix and addSectionPrefix is true", function() {
+      const expectedRoutes = [
+        {path: "/sect", pageType: "section-page", exact: true, params: {sectionId: 42}},
+        {path: "/section/sect", pageType: "section-page", exact: true, params: {sectionId: 42}},
+        {path: "/sub-sect", pageType: "section-page", exact: true, params: {sectionId: 43}},
+        {path: "/section/sub-sect", pageType: "section-page", exact: true, params: {sectionId: 43}},
+        {path: "/sect/sub-sect", pageType: "section-page", exact: true, params: {sectionId: 43}},
+        {path: "/section/sect/sub-sect", pageType: "section-page", exact: true, params: {sectionId: 43}},
+      ];
+
+      assert.deepEqual(expectedRoutes, generateSectionPageRoutes({
+        sections: [{id: 42, slug: "sect"}, {id: 43, slug: "sub-sect", "parent-id": 42}]
+      }, {secWithoutParentPrefix: true, addSectionPrefix: true}))
+    });
+
 
     it("generates story routes correctly", function() {
       const expectedRoutes = [

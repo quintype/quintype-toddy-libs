@@ -10,27 +10,16 @@ exports.generateSectionPageRoutes = function generateSectionPageRoutes(config, o
   }, {});
 
   return _(config.sections)
-    .flatMap((section) => sectionPageRoute(section, sectionsById, opts))
+    .flatMap((section) => generateSectionPageRoute(section, sectionsById, opts))
     .value();
 }
 
-function sectionPageRoute(section, sectionsById, opts) {
+function generateSectionPageRoute(section, sectionsById, opts) {
   const params = { sectionId: section.id };
   if(section.collection)
     params.collectionSlug = section.collection.slug
 
-  const commonParams = {
-    pageType: "section-page",
-    exact: true,
-    params: params
-  };
-
   var slug = section.slug;
-
-  const routes = [Object.assign({path: `/${slug}`}, commonParams)];
-  if(opts.addSectionPrefix) {
-    routes.push(Object.assign({path: `/section/${slug}`}, commonParams));
-  }
 
   if(section["parent-id"]) {
     var currentSection = section;
@@ -39,14 +28,33 @@ function sectionPageRoute(section, sectionsById, opts) {
       currentSection = sectionsById[currentSection["parent-id"]] || {slug: 'invalid'};
       slug = `${currentSection.slug}/${slug}`;
     }
-
-    routes.push(Object.assign({path: `/${slug}`}, commonParams));
-    if(opts.addSectionPrefix) {
-      routes.push(Object.assign({path: `/section/${slug}`}, commonParams));
-    }
   }
 
+  let routes = [];
+  if(section["parent-id"] && opts.secWithoutParentPrefix)
+    routes = [section.slug, slug];
+  else
+    routes = [slug];
+
+  if(opts.addSectionPrefix)
+    routes = _.flatMap(routes, route => [sectionPageRoute(route, params), addSectionPrefix(route, params)]);
+  else
+    routes = _.flatMap(routes, route => [sectionPageRoute(route, params)]);
+
   return routes;
+}
+
+function addSectionPrefix(route, params) {
+  return sectionPageRoute(`section/${route}`, params);
+}
+
+function sectionPageRoute(route, params) {
+  return {
+    pageType: "section-page",
+    exact: true,
+    path: `/${route}`,
+    params: params
+  }
 }
 
 exports.generateStoryPageRoutes = function generateStoryPageRoutes(config, {withoutParentSection} = {}) {
