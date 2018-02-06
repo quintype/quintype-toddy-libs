@@ -15,15 +15,6 @@ exports.generateSectionPageRoutes = function generateSectionPageRoutes(config, o
 }
 
 function sectionPageRoute(section, sectionsById, opts) {
-  var slug = section.slug;
-
-  var currentSection = section;
-  var depth = 0;
-  while (currentSection["parent-id"] && depth++ < 5) {
-    currentSection = sectionsById[currentSection["parent-id"]] || {slug: 'invalid'};
-    slug = `${currentSection.slug}/${slug}`;
-  }
-
   const params = { sectionId: section.id };
   if(section.collection)
     params.collectionSlug = section.collection.slug
@@ -34,9 +25,25 @@ function sectionPageRoute(section, sectionsById, opts) {
     params: params
   };
 
+  var slug = section.slug;
+
   const routes = [Object.assign({path: `/${slug}`}, commonParams)];
   if(opts.addSectionPrefix) {
     routes.push(Object.assign({path: `/section/${slug}`}, commonParams));
+  }
+
+  if(section["parent-id"]) {
+    var currentSection = section;
+    var depth = 0;
+    while (currentSection["parent-id"] && depth++ < 5) {
+      currentSection = sectionsById[currentSection["parent-id"]] || {slug: 'invalid'};
+      slug = `${currentSection.slug}/${slug}`;
+    }
+
+    routes.push(Object.assign({path: `/${slug}`}, commonParams));
+    if(opts.addSectionPrefix) {
+      routes.push(Object.assign({path: `/section/${slug}`}, commonParams));
+    }
   }
 
   return routes;
