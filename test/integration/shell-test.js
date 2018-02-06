@@ -23,10 +23,11 @@ function renderLayoutStub(res, params) {
 describe('ShellHandler', function() {
   const app = express();
   isomorphicRoutes(app, {
-    assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null},
+    assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null, assetPath: (file) => `/assets/${file}`},
     getClient: getClientStub,
     renderLayout: renderLayoutStub,
-    loadData: (pageType, _, config, client) => ({config: Object.assign({pageType: pageType}, config)})
+    loadData: (pageType, _, config, client) => ({config: Object.assign({pageType: pageType}, config)}),
+    preloadJs: true,
   })
 
   it("returns the shell if the workbox prechaching matches", function(done) {
@@ -55,4 +56,12 @@ describe('ShellHandler', function() {
       .expect("Content-Type", /html/)
       .expect(200, done);
   });
+
+  it("sets a header for preloading script", function(done) {
+    supertest(app)
+      .get("/shell.html?_workbox-precaching=abcdef")
+      .expect("Content-Type", /html/)
+      .expect("Link", '</assets/app.js>; rel=preload; as=script;')
+      .expect(200, done);
+  })
 });

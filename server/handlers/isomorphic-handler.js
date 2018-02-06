@@ -23,7 +23,7 @@ function matchRouteWithParams(url, routes, otherParams = {}) {
   return match;
 }
 
-exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError}) {
+exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs}) {
   if(req.query["_workbox-precaching"] && req.query["_workbox-precaching"] != assetHelper.assetHash("app.js"))
     return res.status(503)
               .send("Requested Shell Is Not Current");
@@ -35,6 +35,10 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, {config
       res.setHeader("Content-Type", "text/html");
       res.setHeader("Cache-Control", "public,max-age=900");
       res.setHeader("Vary", "Accept-Encoding");
+
+      if(preloadJs) {
+        res.append("Link", `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`);
+      }
 
       renderLayout(res, {
         content: '<div class="app-loading"></div>',
