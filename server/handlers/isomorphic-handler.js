@@ -97,10 +97,17 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
         res.json({error: {message: e.message}});
       }).finally(() => res.end());
   } else {
-    res.status(404).json({
-      error: {message: "Not Found"}
-    });
-    return Promise.resolve();
+    return new Promise(resolve => resolve(loadErrorData(new NotFoundException(), config)))
+      .then(result => {
+        res.setHeader("Cache-Control", "public,max-age=15");
+        res.setHeader("Vary", "Accept-Encoding");
+        res.status(result.httpStatusCode || 404);
+        res.json(result)
+      }).catch(e => {
+        logError(e);
+        res.status(500);
+        res.json({error: {message: e.message}});
+      }).finally(() => res.end());;
   }
 };
 

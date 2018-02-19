@@ -145,15 +145,24 @@ describe('Isomorphic Data Load', function() {
 
   describe("failure scenarios", function(done) {
     it("returns 404 if the path is not matched", function(done) {
-      const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {pageType: "home-page", path: "/foobar"});
+      const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {pageType: "home-page", path: "/foobar"}, {
+        loadErrorData: (e) => ({foo: "bar"})
+      });
       supertest(app)
         .get("/route-data.json?path=%2F")
         .expect("Content-Type", /json/)
-        .expect(404, done);
+        .expect(404)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.equal("bar", response.foo);
+        }).then(done);
     });
 
     it("returns 404 if generate routes throws an exception", function(done) {
-      const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {pageType: "home-page", path: "/"}, {generateRoutes: () => {throw "foobar"}});
+      const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {pageType: "home-page", path: "/"}, {
+        generateRoutes: () => {throw "foobar"},
+        loadErrorData: (e) => ({foo: "bar"})
+      });
       supertest(app)
         .get("/route-data.json?path=%2F")
         .expect("Content-Type", /json/)
