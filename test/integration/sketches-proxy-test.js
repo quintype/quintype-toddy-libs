@@ -20,6 +20,7 @@ describe('Sketches Proxy', function() {
         config: {sketches_host: `http://127.0.0.1:${upstreamServer.address().port}`},
         getClient: host => ({getHostname: () => host.toUpperCase()}),
         forwardAmp: true,
+        forwardFavicon: true
       })
       return app;
     }
@@ -62,6 +63,17 @@ describe('Sketches Proxy', function() {
         .then((res) => {
           const {url} = JSON.parse(res.text);
           assert.equal("/amp/story/foo", url);
+        })
+        .then(done);
+    })
+
+    it("gets favicon", function(done) {
+      supertest(buildApp())
+        .get("/favicon.ico")
+        .expect(200)
+        .then((res) => {
+          const {url} = JSON.parse(res.text);
+          assert.equal("/favicon.ico", url);
         })
         .then(done);
     })

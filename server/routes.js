@@ -4,6 +4,7 @@ const {oneSignalImport} = require("./handlers/one-signal");
 
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
                                                                  {forwardAmp = false,
+                                                                  forwardFavicon = false,
                                                                   config = require("./publisher-config"),
                                                                   getClient = require("./api-client").getClient} = {}) {
   const host = config.sketches_host;
@@ -45,6 +46,9 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
 
   if(forwardAmp) {
     app.get("/amp/*", sketchesProxy);
+  }
+  if(forwardFavicon) {
+    app.get("/favicon.ico", sketchesProxy);
   }
 }
 
