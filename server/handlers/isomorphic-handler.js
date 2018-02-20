@@ -40,12 +40,13 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, {config
         res.append("Link", `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`);
       }
 
-      renderLayout(res, {
+      return renderLayout(res, {
+        config: config,
         content: '<div class="app-loading"></div>',
         store: createStore((state) => state, {
           qt: {config: result.config}
         }),
-        shell: true
+        shell: true,
       });
     })
 }
@@ -153,11 +154,12 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
         res.append("Link", `</route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? `&${url.search.substr(1)}` : ""}>; rel=preload; as=fetch;`);
       }
 
-      renderLayout(res, {
+      return renderLayout(res, {
+        config: config,
         title: result.title,
         content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
         store: store,
-        seoTags: seoTags
+        seoTags: seoTags,
       });
     }).catch(e => {
       logError(e);
@@ -191,7 +193,8 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, 
       res.status(statusCode)
       addCacheHeaders(res, result);
 
-      renderLayout(res, Object.assign({
+      return renderLayout(res, Object.assign({
+        config: config,
         title: seo ? seo.getTitle(config, result.pageType || match.pageType, result, {url}) : result.title,
         store: store,
         disableAjaxNavigation: true,
