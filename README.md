@@ -215,6 +215,14 @@ Make sure you do all of the following techniques to reduce page load time (notes
 
 Preloading app.js and /route-data.json can be triggered by passing preloadJS true, and preloadRouteData true to isomorphic handler
 
+## Options
+
+### manifest-fn
+
+### forwardAmp
+
+### forwardFavicon
+
 ## References
 
 * This architecture is heavily influenced by the method described in this [video](https://www.youtube.com/watch?v=atUdVSuNRjA)

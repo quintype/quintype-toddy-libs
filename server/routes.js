@@ -1,6 +1,7 @@
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
 const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute} = require("./handlers/isomorphic-handler");
 const {oneSignalImport} = require("./handlers/one-signal");
+const {handleManifest} = require("./handlers/manifest");
 
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
                                                                  {forwardAmp = false,
@@ -64,6 +65,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       pickComponent,
                                                       loadErrorData,
                                                       seo,
+                                                      manifestFn,
 
                                                       logError = require("./logger").error,
                                                       oneSignalServiceWorkers = false,
@@ -95,6 +97,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 
   app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper, loadData, loadErrorData, logError, preloadJs}));
   app.get("/route-data.json", withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}));
+
+  if(manifestFn) {
+    app.get("/manifest.json", withConfig(handleManifest, {manifestFn, logError}))
+  }
 
   staticRoutes.forEach(route => {
     app.get(route.path, withConfig(handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, seo}, route)))
