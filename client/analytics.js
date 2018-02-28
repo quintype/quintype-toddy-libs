@@ -34,7 +34,12 @@ export function registerPageView(page, newPath) {
   }
 
   if(newPath && global.ga) {
-    global.ga('set', 'page', newPath);
-    global.ga('send', 'pageview');
+    global.ga(function(tracker) {
+      tracker = tracker || global.ga.getByName("gtm1");
+      if(!tracker)
+        return;
+      tracker.set('page', newPath);
+      tracker.send('pageview');
+    })
   }
 }

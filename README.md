@@ -47,7 +47,7 @@ These routes are exposed via the `generateRoutes` function, and matched using th
 
 * Server, for server side rendering
 * The Service Worker, for deciding which pages are part of the PWA
-* The Client js,
+* The Client js
 
 ## Implementing a new page
 
@@ -80,7 +80,9 @@ new SEO({
   }
 })
 ```
+### Analytics
 
+Currently, we trigger both Quintype analytics and GA when the page changes. The GA tracker looks for the default tracker, then looks for the tracker called `gtm1`
 
 ### Useful Components
 
