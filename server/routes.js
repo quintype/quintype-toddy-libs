@@ -2,6 +2,7 @@ const {generateServiceWorker} = require("./handlers/generate-service-worker");
 const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute, notFoundHandler} = require("./handlers/isomorphic-handler");
 const {oneSignalImport} = require("./handlers/one-signal");
 const {handleManifest} = require("./handlers/manifest");
+const {redirectStory} = require("./handlers/story-redirect");
 
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
                                                                  {forwardAmp = false,
@@ -74,6 +75,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       preloadJs = false,
                                                       preloadRouteData = false,
                                                       handleNotFound = true,
+                                                      redirectRootLevelStories = false,
 
                                                       // The below are primarily for testing
                                                       assetHelper = require("./asset-helper"),
@@ -108,6 +110,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   });
 
   app.get("/*", withConfig(handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
+
+  if(redirectRootLevelStories) {
+    app.get("/:storySlug", withConfig(redirectStory, {logError}));
+  }
 
   if(handleNotFound) {
     app.get("/*", withConfig(notFoundHandler, {renderLayout, pickComponent, loadErrorData, logError, assetHelper}));

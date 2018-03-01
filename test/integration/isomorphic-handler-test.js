@@ -84,22 +84,6 @@ describe('Isomorphic Handler', function() {
         .expect(200, done);
     })
   })
-
-  // it("Redirects to a story from a naked route.", function(done) {
-  //   const app = createApp((pageType, params, config, client) => Promise.resolve(), [], {
-  //     redirectRootLevelStories: true
-  //   });
-  // 
-  //   supertest(app)
-  //     .get("/not-found")
-  //     .expect("Content-Type", /html/)
-  //     .expect(404)
-  //     .then(res => {
-  //       const response = JSON.parse(res.text);
-  //       assert.equal('<div data-page-type="not-found" data-reactroot="">foobar</div>', response.content);
-  //       assert.equal(true, response.store.qt.disableIsomorphicComponent);
-  //     }).then(done);
-  // });
   
   it("Throws a 404 if the route is not matched", function(done) {
     const app = createApp((pageType, params, config, client) => Promise.resolve(), [{pageType: 'home-page', path: '/', exact: true}], {
