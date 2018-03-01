@@ -10,7 +10,7 @@ describe('Sketches Proxy', function() {
   before(function(next) {
     const upstreamApp = express();
     upstreamApp.all("/*", (req, res) => res.send(JSON.stringify({method: req.method, url: req.url, host: req.headers.host})))
-    upstreamServer = upstreamApp.listen(next());
+    upstreamServer = upstreamApp.listen(next);
   });
 
   describe("forwarding requests", function() {
