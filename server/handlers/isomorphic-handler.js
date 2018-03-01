@@ -112,15 +112,51 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
   }
 };
 
+exports.notFoundHandler = function notFoundHandler(req, res, next, {config, client, loadErrorData, renderLayout, pickComponent, logError}) {
+  const url = urlLib.parse(req.url, true);
+
+  return new Promise(resolve => resolve(loadErrorData(new NotFoundException(), config)))
+    .catch(e => {
+      logError(e);
+      return {pageType: "error"}
+    })
+    .then(result => {
+      const statusCode = result.httpStatusCode || 404;
+
+      const store = createStore((state) => state, {
+        qt: {
+          pageType: result.pageType || 'not-found',
+          data: result.data,
+          config: result.config,
+          currentPath: `${url.pathname}${url.search || ""}`,
+          disableIsomorphicComponent: true,
+        }
+      });
+
+      res.status(statusCode)
+
+      return renderLayout(res, {
+        config: config,
+        title: result.title,
+        content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
+        store: store,
+      });
+    }).catch(e => {
+      logError(e);
+      res.status(500);
+      res.send(e.message);
+    }).finally(() => res.end());
+}
+
 exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, assetHelper, preloadJs, preloadRouteData}) {
   const url = urlLib.parse(req.url, true);
   const match = matchRouteWithParams(url, generateRoutes(config));
 
-  const dataPromise = match
-                        ? fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError})
-                        : new Promise(resolve => resolve(loadErrorData(new NotFoundException(), config)));
+  if (!match) {
+    return next();
+  }
 
-  return dataPromise
+  return fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError})
     .catch(e => {
       logError(e);
       return {httpStatusCode: 500, pageType: "error"}

@@ -1,5 +1,5 @@
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
-const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute} = require("./handlers/isomorphic-handler");
+const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute, notFoundHandler} = require("./handlers/isomorphic-handler");
 const {oneSignalImport} = require("./handlers/one-signal");
 const {handleManifest} = require("./handlers/manifest");
 
@@ -81,7 +81,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       renderServiceWorker = renderServiceWorkerFn
                                                     }) {
   function withConfig(f, staticParams) {
-    return function(req, res, next) {      
+    return function(req, res, next) {
       const client = getClient(req.hostname);
       return client.getConfig()
         .then(c => f(req, res, next, Object.assign({}, staticParams, {config: c, client: client})))
@@ -108,4 +108,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   });
 
   app.get("/*", withConfig(handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
+
+  if(handleNotFound) {
+    app.get("/*", withConfig(notFoundHandler, {renderLayout, pickComponent, loadErrorData, logError, assetHelper}));
+  }
 }
