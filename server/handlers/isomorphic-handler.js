@@ -23,7 +23,7 @@ function matchRouteWithParams(url, routes, otherParams = {}) {
   return match;
 }
 
-exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs}) {
+exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs}) {
   if(req.query["_workbox-precaching"] && req.query["_workbox-precaching"] != assetHelper.assetHash("app.js"))
     return res.status(503)
               .send("Requested Shell Is Not Current");
@@ -62,7 +62,7 @@ function addCacheHeaders(res, result) {
   return res;
 }
 
-exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}) {
+exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, next, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}) {
   function matchStaticOrIsomorphicRoute(url) {
     try {
       var match;
@@ -112,7 +112,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, {
   }
 };
 
-exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, assetHelper, preloadJs, preloadRouteData}) {
+exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, assetHelper, preloadJs, preloadRouteData}) {
   const url = urlLib.parse(req.url, true);
   const match = matchRouteWithParams(url, generateRoutes(config));
 
@@ -168,7 +168,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, {config
     }).finally(() => res.end());
 };
 
-exports.handleStaticRoute = function handleStaticRoute(req, res, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams, disableIsomorphicComponent}) {
+exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams, disableIsomorphicComponent}) {
   const url = urlLib.parse(path);
   pageType = pageType || 'static-page';
   return fetchData(loadData, loadErrorData, pageType, renderParams, {config, client, logError})

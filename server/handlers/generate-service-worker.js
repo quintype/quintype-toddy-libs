@@ -1,4 +1,4 @@
-function generateServiceWorker(req, res, {config, generateRoutes, appVersion, appendFn, assetHelper, renderServiceWorker}) {
+function generateServiceWorker(req, res, next, {config, generateRoutes, appVersion, appendFn, assetHelper, renderServiceWorker}) {
   return new Promise(resolve => {
     renderServiceWorker(res, "js/service-worker", {
       serviceWorkerHelper: assetHelper.serviceWorkerContents(),

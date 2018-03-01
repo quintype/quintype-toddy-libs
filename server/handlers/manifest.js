@@ -1,6 +1,6 @@
 const get = require("lodash/get");
 
-exports.handleManifest = function handleManifest(req, res, {config, logError, manifestFn}) {
+exports.handleManifest = function handleManifest(req, res, next, {config, logError, manifestFn}) {
   manifestFn(config)
     .then(result => {
       res.setHeader("Cache-Control", "public,max-age=300");

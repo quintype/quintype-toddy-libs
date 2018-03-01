@@ -73,6 +73,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       appVersion = 1,
                                                       preloadJs = false,
                                                       preloadRouteData = false,
+                                                      handleNotFound = true,
 
                                                       // The below are primarily for testing
                                                       assetHelper = require("./asset-helper"),
@@ -80,10 +81,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       renderServiceWorker = renderServiceWorkerFn
                                                     }) {
   function withConfig(f, staticParams) {
-    return function(req, res, opts) {
+    return function(req, res, next) {      
       const client = getClient(req.hostname);
       return client.getConfig()
-        .then(c => f(req, res, Object.assign({}, opts, staticParams, {config: c, client: client})))
+        .then(c => f(req, res, next, Object.assign({}, staticParams, {config: c, client: client})))
         .catch(logError);
     }
   }
