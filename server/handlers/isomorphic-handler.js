@@ -62,6 +62,17 @@ function addCacheHeaders(res, result) {
   return res;
 }
 
+function createStoreFromResult(url, result, opts = {}) {
+  return createStore((state) => state, {
+    qt: Object.assign({}, opts, {
+      pageType: result.pageType || opts.defaultPageType,
+      data: result.data,
+      config: result.config,
+      currentPath: `${url.pathname}${url.search || ""}`,
+    })
+  });
+}
+
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, next, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}) {
   function matchStaticOrIsomorphicRoute(url) {
     try {
@@ -123,14 +134,9 @@ exports.notFoundHandler = function notFoundHandler(req, res, next, {config, clie
     .then(result => {
       const statusCode = result.httpStatusCode || 404;
 
-      const store = createStore((state) => state, {
-        qt: {
-          pageType: result.pageType || 'not-found',
-          data: result.data,
-          config: result.config,
-          currentPath: `${url.pathname}${url.search || ""}`,
-          disableIsomorphicComponent: true,
-        }
+      const store = createStoreFromResult(url, result, {
+        disableIsomorphicComponent: true,
+        defaultPageType: 'not-found',
       });
 
       res.status(statusCode)
@@ -169,14 +175,8 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
       }
 
       const seoTags = seo && seo.getMetaTags(config, result.pageType || match.pageType, result, {url});
-      const store = createStore((state) => state, {
-        qt: {
-          pageType: result.pageType,
-          data: result.data,
-          config: result.config,
-          currentPath: `${url.pathname}${url.search || ""}`,
-          disableIsomorphicComponent: statusCode != 200
-        }
+      const store = createStoreFromResult(url, result, {
+        disableIsomorphicComponent: statusCode != 200,
       });
 
       res.status(statusCode)
@@ -216,14 +216,8 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, co
       }
 
       const seoTags = seo && seo.getMetaTags(config, result.pageType || pageType, result, {url});
-      const store = createStore((state) => state, {
-        qt: {
-          pageType: result.pageType,
-          data: result.data,
-          config: result.config,
-          currentPath: path,
-          disableIsomorphicComponent: disableIsomorphicComponent === undefined ? true : disableIsomorphicComponent
-        }
+      const store = createStoreFromResult(url, result, {
+        disableIsomorphicComponent: disableIsomorphicComponent === undefined ? true : disableIsomorphicComponent,
       });
 
       res.status(statusCode)
