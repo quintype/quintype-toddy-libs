@@ -1,7 +1,8 @@
 const get = require("lodash/get");
+const Promise = require("bluebird");
 
 exports.handleManifest = function handleManifest(req, res, next, {config, logError, manifestFn}) {
-  manifestFn(config)
+  return Promise.resolve(manifestFn(config))
     .then(result => {
       res.setHeader("Cache-Control", "public,max-age=300");
       res.setHeader("Vary", "Accept-Encoding");
