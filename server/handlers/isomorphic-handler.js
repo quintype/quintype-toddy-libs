@@ -98,7 +98,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
         const statusCode = result.httpStatusCode || 200;
         res.status(statusCode < 500 ? 200 : 500);
         addCacheHeaders(res, result);
-        const seoConfig = seo(config);
+        const seoConfig = seo ? seo(config) : null;
         res.json(Object.assign({}, result, {
           appVersion: appVersion,
           data: _.omit(result.data, ["cacheKeys"]),
@@ -175,7 +175,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
         return res.redirect(301, result.data.location);
       }
 
-      const seoConfig = seo(config);
+      const seoConfig = seo ? seo(config) : null;
       const seoTags = seoConfig && seoConfig.getMetaTags(config, result.pageType || match.pageType, result, {url});
       const store = createStoreFromResult(url, result, {
         disableIsomorphicComponent: statusCode != 200,
@@ -217,7 +217,7 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, co
         return res.redirect(301, result.data.location);
       }
 
-      const seoConfig = seo(config);
+      const seoConfig = seo ? seo(config) : null;
       const seoTags = seoConfig && seoConfig.getMetaTags(config, result.pageType || pageType, result, {url});
       const store = createStoreFromResult(url, result, {
         disableIsomorphicComponent: disableIsomorphicComponent === undefined ? true : disableIsomorphicComponent,
