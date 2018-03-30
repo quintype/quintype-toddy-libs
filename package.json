@@ -48,6 +48,7 @@
   "devDependencies": {
     "@quintype/build": "^1.2.0",
     "babel-plugin-quintype-assets": "^1.0.2",
+    "babel-plugin-react-css-modules": "^3.3.3",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-es2015-tree-shaking": "^1.0.1",
