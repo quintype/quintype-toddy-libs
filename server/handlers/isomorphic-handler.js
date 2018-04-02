@@ -23,6 +23,10 @@ function matchRouteWithParams(url, routes, otherParams = {}) {
   return match;
 }
 
+function getSeoInstance(seo, config) {
+  return (typeof seo == 'function') ? seo(config) : seo; 
+}
+
 exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs}) {
   if(req.query["_workbox-precaching"] && req.query["_workbox-precaching"] != assetHelper.assetHash("app.js"))
     return res.status(503)
@@ -98,11 +102,11 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
         const statusCode = result.httpStatusCode || 200;
         res.status(statusCode < 500 ? 200 : 500);
         addCacheHeaders(res, result);
-        const seoConfig = seo ? seo(config) : null;
+        const seoInstance = getSeoInstance(seo, config);
         res.json(Object.assign({}, result, {
           appVersion: appVersion,
           data: _.omit(result.data, ["cacheKeys"]),
-          title: seoConfig ? seoConfig.getTitle(config, result.pageType || match.pageType, result) : result.title,
+          title: seoInstance ? seoInstance.getTitle(config, result.pageType || match.pageType, result) : result.title,
         }, match.jsonParams));
       }).catch(e => {
         logError(e);
@@ -175,8 +179,8 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
         return res.redirect(301, result.data.location);
       }
 
-      const seoConfig = seo ? seo(config) : null;
-      const seoTags = seoConfig && seoConfig.getMetaTags(config, result.pageType || match.pageType, result, {url});
+      const seoInstance = getSeoInstance(seo, config);
+      const seoTags = seoInstance && seoInstance.getMetaTags(config, result.pageType || match.pageType, result, {url});
       const store = createStoreFromResult(url, result, {
         disableIsomorphicComponent: statusCode != 200,
       });
@@ -217,8 +221,8 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, co
         return res.redirect(301, result.data.location);
       }
 
-      const seoConfig = seo ? seo(config) : null;
-      const seoTags = seoConfig && seoConfig.getMetaTags(config, result.pageType || pageType, result, {url});
+      const seoInstance = getSeoInstance(seo, config);
+      const seoTags = seoInstance && seoInstance.getMetaTags(config, result.pageType || pageType, result, {url});
       const store = createStoreFromResult(url, result, {
         disableIsomorphicComponent: disableIsomorphicComponent === undefined ? true : disableIsomorphicComponent,
       });
@@ -228,7 +232,7 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, co
 
       return renderLayout(res, Object.assign({
         config: config,
-        title: seoConfig ? seoConfig.getTitle(config, result.pageType || match.pageType, result, {url}) : result.title,
+        title: seoInstance ? seoInstance.getTitle(config, result.pageType || match.pageType, result, {url}) : result.title,
         store: store,
         disableAjaxNavigation: true,
         seoTags: seoTags
