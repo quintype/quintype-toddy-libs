@@ -16,6 +16,18 @@ function pickComponent(pageType) {
   return ({data}) => <div data-page-type={pageType}>{data.text}</div>;
 }
 
+const seo = {
+  getTitle() {
+    return "mock test"
+  },
+
+  getMetaTags() {
+    return [{ name: 'keywords',
+      content: 'karnataka, kannada, news, latest news, ' 
+    }]
+  }
+}
+
 function createApp(loadData, routes, opts = {}) {
   const app = express();
   isomorphicRoutes(app, Object.assign({
@@ -23,6 +35,7 @@ function createApp(loadData, routes, opts = {}) {
     getClient: getClientStub,
     generateRoutes: () => routes,
     loadData: loadData,
+    seo: seo,
     pickComponent: pickComponent,
     renderLayout: (res, {store, title, content}) => res.send(JSON.stringify({store: store.getState(), title, content}))
   }, opts));
