@@ -200,6 +200,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
         config: config,
         title: result.title,
         content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
+        component: result.component,
         store: store,
         seoTags: seoTags,
       });
