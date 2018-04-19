@@ -11,10 +11,10 @@ class AssetHelperImpl {
     this.serviceWorkerContents = this.serviceWorkerContents.bind(this);
   }
 
-  assetPath(asset) {
+  assetPath(asset, host = this.config.asset_host) {
     const path = this.assets[asset];
     if (path) {
-      return [this.config.asset_host, path].join("");
+      return [host, path].join("");
     }
   }
 

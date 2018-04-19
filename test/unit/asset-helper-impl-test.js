@@ -14,6 +14,10 @@ describe('AssetHelperImpl', function() {
     it("returns nil for unknown assets", function() {
       assert.equal(null, assetPath("unknown.js"));
     })
+
+    it("overwrites asset path", function() {
+      assert.equal("/toddy/assets/app-03e7de595a129bb1ce20.js", assetPath("app.js", ''))
+    })
   });
 
   describe("readAsset", function() {
