@@ -72,6 +72,33 @@ describe('Isomorphic Data Load', function() {
       }).then(done);
   });
 
+  it("omits card details when loading home page data", function(done) {
+    const app = createApp((pageType, params, config, client) => Promise.resolve({
+      data: {
+        orderedCollectionBulk: [
+          {
+            items: [
+              {
+                story: {
+                  cards: ["abc", "def"]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }));
+
+    supertest(app)
+      .get("/route-data.json?path=%2F")
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then(res => {
+        const response = JSON.parse(res.text);
+        assert.equal(Object.keys(response.data.orderedCollectionBulk[0].items[0].story).indexOf("cards"), -1);
+      }).then(done);
+  })
+
   it("returns an appVersion on every response", function(done) {
     const app = createApp((pageType, params, config, client) => Promise.resolve({}));
 
