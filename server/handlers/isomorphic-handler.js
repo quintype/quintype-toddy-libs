@@ -91,6 +91,21 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
     }
   }
 
+  function omitCardDetails(data) {
+    const result = data.orderedCollectionBulk.map(function(collection) {
+      const items = collection.items.map(function(item) {
+        return Object.assign({}, item, {
+          story: _.omit(item.story, ["cards"])
+        })
+      })
+      return Object.assign({}, collection, {items})
+    })
+
+    return Object.assign({}, data, {
+      orderedCollectionBulk: result
+    }) 
+  }
+
   const url = urlLib.parse(req.query.path || "/", true);
   const match = matchStaticOrIsomorphicRoute(url)
 
@@ -102,6 +117,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
         const statusCode = result.httpStatusCode || 200;
         res.status(statusCode < 500 ? 200 : 500);
         addCacheHeaders(res, result);
+        result.data = omitCardDetails(result.data)
         const seoInstance = getSeoInstance(seo, config);
         res.json(Object.assign({}, result, {
           appVersion: appVersion,
