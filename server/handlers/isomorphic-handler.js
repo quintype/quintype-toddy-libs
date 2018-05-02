@@ -91,7 +91,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
     }
   }
 
-  function omitCardDetails(data) {
+  function omitCardDetails(data = {}) {
     if (!data.orderedCollectionBulk) return data;
 
     const modifiedCollectionBulk = data.orderedCollectionBulk.map(function(collection) {
