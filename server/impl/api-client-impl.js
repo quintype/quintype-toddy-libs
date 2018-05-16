@@ -12,11 +12,17 @@ function createTemporaryClient(config, hostname) {
     return new Client(`https://${hostname.replace(matchedString, "")}`, true);
 }
 
+function itemToCacheKey(publisherId, item) {
+  switch(item.type) {
+    case "story": return [storyToCacheKey(publisherId, item.story)];
+    case "collection": return Collection.build(item).cacheKeys(publisherId).slice(0, 5);
+    default: return [];
+  }
+}
+
 Collection.prototype.cacheKeys = function(publisherId) {
   return [collectionToCacheKey(publisherId, this)]
-           .concat(this.items
-                       .filter(item => item["type"] == "story")
-                       .map(item => storyToCacheKey(publisherId, item.story)));
+           .concat(_.flatMap(this.items, item => itemToCacheKey(publisherId, item)));
 };
 
 Story.prototype.cacheKeys = function(publisherId) {
