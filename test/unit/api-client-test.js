@@ -40,12 +40,12 @@ describe('ApiClient', function() {
       assert.deepEqual(["c/1/42", "s/1/264f46f9"], collection.cacheKeys(1));
     })
 
-    it("skips non story items in the cache keys", function() {
+    it("adds nested collections", function() {
       const collection = Collection.build({
         id: "42",
-        items: [{type: "collection"}]
+        items: [{type: "collection", id: "500", items: [{type: 'story', story: {id: "abcdef12"}}]}]
       });
-      assert.deepEqual(["c/1/42"], collection.cacheKeys(1));
+      assert.deepEqual(["c/1/42", "c/1/500", "s/1/abcdef12"], collection.cacheKeys(1));
     })
 
     it("can also find the cache key for a sorter", function() {
