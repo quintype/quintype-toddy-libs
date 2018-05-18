@@ -29,7 +29,7 @@ function createApp(loadData, staticRoutes, opts = {}) {
 describe('Static Routes', function() {
   describe("route-data.json", function() {
     it("Loads the data for the static route", function(done) {
-      const app = createApp((pageType, params, config, client) => Promise.resolve({data: {pageType, params}}), [{path: "/about-us", pageType: 'about-us', renderParams: {contentTemplate: "./about-us"}}]);
+      const app = createApp((pageType, params, config, client, {host}) => Promise.resolve({data: {pageType, params, host}}), [{path: "/about-us", pageType: 'about-us', renderParams: {contentTemplate: "./about-us"}}]);
 
       supertest(app)
         .get("/route-data.json?path=%2Fabout-us")
@@ -38,6 +38,7 @@ describe('Static Routes', function() {
         .then(res => {
           const response = JSON.parse(res.text);
           assert.equal("about-us", response.data.pageType);
+          assert.equal("127.0.0.1", response.data.host);
           assert.equal(true, response.disableIsomorphicComponent);
         }).then(done);
     });

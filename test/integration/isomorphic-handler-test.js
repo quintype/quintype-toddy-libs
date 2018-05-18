@@ -32,7 +32,7 @@ function createApp(loadData, routes, opts = {}) {
 
 describe('Isomorphic Handler', function() {
   it("Renders the page if the route matches", function(done) {
-    const app = createApp((pageType, params, config, client) => Promise.resolve({pageType, data: {text: "foobar"}}), [{pageType: 'home-page', path: '/'}]);
+    const app = createApp((pageType, params, config, client, {host}) => Promise.resolve({pageType, data: {text: "foobar", host: host}}), [{pageType: 'home-page', path: '/'}]);
 
     supertest(app)
       .get("/")
@@ -42,6 +42,7 @@ describe('Isomorphic Handler', function() {
         const response = JSON.parse(res.text);
         assert.equal("<div data-page-type=\"home-page\" data-reactroot=\"\">foobar</div>", response.content);
         assert.equal("foobar", response.store.qt.data.text);
+        assert.equal("127.0.0.1", response.store.qt.data.host);
         assert.equal("home-page", response.store.qt.pageType);
       }).then(done);
   });
@@ -84,10 +85,10 @@ describe('Isomorphic Handler', function() {
         .expect(200, done);
     })
   })
-  
+
   it("Throws a 404 if the route is not matched", function(done) {
     const app = createApp((pageType, params, config, client) => Promise.resolve(), [{pageType: 'home-page', path: '/', exact: true}], {
-      loadErrorData: (err, config) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar"}})
+      loadErrorData: (err, config, client, {host}) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar", host: host}})
     });
 
     supertest(app)
@@ -98,6 +99,7 @@ describe('Isomorphic Handler', function() {
         const response = JSON.parse(res.text);
         assert.equal('<div data-page-type="not-found" data-reactroot="">foobar</div>', response.content);
         assert.equal(true, response.store.qt.disableIsomorphicComponent);
+        assert.equal("127.0.0.1", response.store.qt.data.host);
       }).then(done);
   });
 
