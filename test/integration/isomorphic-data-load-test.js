@@ -26,11 +26,12 @@ function createApp(loadData, route = {path: "/", pageType: "home-page"}, opts = 
 
 describe('Isomorphic Data Load', function() {
   it("returns data given by the load data function", function(done) {
-    const app = createApp((pageType, params, config, client) => Promise.resolve({
+    const app = createApp((pageType, params, config, client, {host}) => Promise.resolve({
       data: {
         pageType: pageType,
         config: config,
-        clientHost: client.getHostname()
+        clientHost: client.getHostname(),
+        host: host
       }
     }));
 
@@ -43,6 +44,7 @@ describe('Isomorphic Data Load', function() {
         assert.equal("home-page", response.data.pageType);
         assert.equal("bar", response.data.config.foo);
         assert.equal("demo.quintype.io", response.data.clientHost);
+        assert.equal("127.0.0.1", response.data.host);
       }).then(done);
   });
 

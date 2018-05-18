@@ -8,11 +8,11 @@ const {renderReduxComponent} = require("../render");
 const {createStore} = require("redux");
 const Promise = require("bluebird");
 
-function fetchData(loadData, loadErrorData = () => Promise.resolve({httpStatusCode: 500}), pageType, params, {config, client, logError}) {
-  return new Promise((resolve) => resolve(loadData(pageType, params, config, client)))
+function fetchData(loadData, loadErrorData = () => Promise.resolve({httpStatusCode: 500}), pageType, params, {config, client, logError, host}) {
+  return new Promise((resolve) => resolve(loadData(pageType, params, config, client, {host})))
     .catch(error => {
       logError(error);
-      return loadErrorData(error, config)
+      return loadErrorData(error, config, client, {host})
     });
 }
 
@@ -24,7 +24,7 @@ function matchRouteWithParams(url, routes, otherParams = {}) {
 }
 
 function getSeoInstance(seo, config) {
-  return (typeof seo == 'function') ? seo(config) : seo; 
+  return (typeof seo == 'function') ? seo(config) : seo;
 }
 
 exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs}) {
@@ -33,7 +33,7 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {
               .send("Requested Shell Is Not Current");
 
 
-  fetchData(loadData, loadErrorData, "shell", {}, {config, client, logError})
+  fetchData(loadData, loadErrorData, "shell", {}, {config, client, logError, host: req.hostname})
     .then(result => {
       res.status(200);
       res.setHeader("Content-Type", "text/html");
@@ -97,7 +97,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
   res.setHeader("Content-Type", "application/json");
 
   if(match) {
-    return fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError})
+    return fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError, host: req.hostname})
       .then((result) => {
         const statusCode = result.httpStatusCode || 200;
         res.status(statusCode < 500 ? 200 : 500);
@@ -131,7 +131,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
 exports.notFoundHandler = function notFoundHandler(req, res, next, {config, client, loadErrorData, renderLayout, pickComponent, logError}) {
   const url = urlLib.parse(req.url, true);
 
-  return new Promise(resolve => resolve(loadErrorData(new NotFoundException(), config)))
+  return new Promise(resolve => resolve(loadErrorData(new NotFoundException(), config, client, {host: req.hostname})))
     .catch(e => {
       logError(e);
       return {pageType: "error"}
@@ -167,7 +167,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
     return next();
   }
 
-  return fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError})
+  return fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError, host: req.hostname})
     .catch(e => {
       logError(e);
       return {httpStatusCode: 500, pageType: "error"}
@@ -213,7 +213,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
 exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams, disableIsomorphicComponent}) {
   const url = urlLib.parse(path);
   pageType = pageType || 'static-page';
-  return fetchData(loadData, loadErrorData, pageType, renderParams, {config, client, logError})
+  return fetchData(loadData, loadErrorData, pageType, renderParams, {config, client, logError, host: req.hostname})
     .then(result => {
       const statusCode = result.httpStatusCode || 200;
 
