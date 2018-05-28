@@ -47,6 +47,10 @@ function createProdLogger() {
         filename: 'log/production.log'
       })
     ],
+    exceptionHandlers: [
+      new winston.transports.Console()
+    ],  
+    exitOnError: false
   });
 }
 
