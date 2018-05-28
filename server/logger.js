@@ -48,7 +48,7 @@ function createProdLogger() {
       })
     ],
     exceptionHandlers: [
-      new winston.transports.File({ filename: 'log/exception.log' })
+      new winston.transports.Console()
     ],  
     exitOnError: false
   });
