@@ -43,7 +43,7 @@
     "redux": "^3.7.2",
     "sleep-promise": "^2.0.0",
     "url": "^0.11.0",
-    "winston": "^3.0.0-rc1"
+    "winston": "3.0.0-rc1"
   },
   "devDependencies": {
     "@quintype/build": "^1.2.0",
