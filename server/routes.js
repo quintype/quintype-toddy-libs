@@ -3,6 +3,7 @@ const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, h
 const {oneSignalImport} = require("./handlers/one-signal");
 const {handleManifest} = require("./handlers/manifest");
 const {redirectStory} = require("./handlers/story-redirect");
+const {simpleJsonHandler} = require("./handlers/simple-json-handler");
 
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
                                                                  {forwardAmp = false,
@@ -59,6 +60,19 @@ function renderServiceWorkerFn(res, layout, params, callback) {
   return res.render(layout, params, callback);
 }
 
+// istanbul ignore next
+function toFunction(value, toRequire) {
+  if(value === true) {
+    value = require(toRequire);
+  }
+
+  if (typeof(value) == 'function') {
+    return value;
+  } else {
+    return () => value;
+  }
+}
+
 exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                      {generateRoutes,
                                                       renderLayout,
@@ -80,7 +94,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       // The below are primarily for testing
                                                       assetHelper = require("./asset-helper"),
                                                       getClient = require("./api-client").getClient,
-                                                      renderServiceWorker = renderServiceWorkerFn
+                                                      renderServiceWorker = renderServiceWorkerFn,
+                                                      templateOptions = false,
                                                     }) {
   function withConfig(f, staticParams) {
     return function(req, res, next) {
@@ -103,6 +118,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 
   if(manifestFn) {
     app.get("/manifest.json", withConfig(handleManifest, {manifestFn, logError}))
+  }
+
+  if(templateOptions) {
+    app.get('/template-options.json', withConfig(simpleJsonHandler, {jsonData: toFunction(templateOptions, "./template-options")}))
   }
 
   staticRoutes.forEach(route => {
