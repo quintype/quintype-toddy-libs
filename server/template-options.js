@@ -1,7 +1,7 @@
 // istanbul ignore file
 
-import fs from 'fs';
-import yaml from 'js-yaml';
+const fs = require('fs');
+const yaml = require('js-yaml');
 
 function addLazyOptions(templateOptions) {
   const collectionLayouts = templateOptions["collection-layouts"].map(template => {
