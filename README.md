@@ -137,6 +137,14 @@ The response of the /route-data.json will look like the following:
 }
 ```
 
+## Configuration
+
+Any yaml file you add to config is available as follows:
+
+```javascript
+const {some_config} = require('@quintype/framework/server/static-configuration')
+```
+
 ## Debugging
 
 * In order to use `assetify` function, please annotate the application-js with id="app-js". The hostname specified here is assumed to be the cdn
