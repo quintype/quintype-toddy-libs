@@ -33,5 +33,24 @@ export function checkForServiceWorkerUpdates(app, page) {
     app.updateServiceWorker && app.updateServiceWorker();
   }
 
+  /* Check if the config is updated and update the service worker if true */
+
+  caches && caches.match('/route-data.json', {'ignoreSearch': true})
+    .then((response) => {
+      if (response) {
+        return response.json()
+      }
+    })
+    .then((cachedData = {}) => {
+      const {config: {'theme-attributes': cacheThemeAttributes = {}} = {}} = cachedData;
+      const {config: {'theme-attributes': pageThemeAttributes = {}} = {}} = page;
+      const cacheConfigTime = new Date(cacheThemeAttributes['cache-burst']) || 0;
+      const pageConfigTime = new Date(pageThemeAttributes['cache-burst']) || 0;
+      if((pageConfigTime - cacheConfigTime) > 0) {
+        app.updateServiceWorker && app.updateServiceWorker();
+      }
+
+    });
+
   return page;
 }
