@@ -44,8 +44,8 @@ export function checkForServiceWorkerUpdates(app, page) {
     .then((cachedData = {}) => {
       const {config: {'theme-attributes': cacheThemeAttributes = {}} = {}} = cachedData;
       const {config: {'theme-attributes': pageThemeAttributes = {}} = {}} = page;
-      const cacheConfigTime = new Date(cacheThemeAttributes['cache-burst']) || 0;
-      const pageConfigTime = new Date(pageThemeAttributes['cache-burst']) || 0;
+      const cacheConfigTime = cacheThemeAttributes['cache-burst'] ? new Date(cacheThemeAttributes['cache-burst']) : 0;
+      const pageConfigTime = pageThemeAttributes['cache-burst'] ? new Date(pageThemeAttributes['cache-burst']) : 0;
       if((pageConfigTime - cacheConfigTime) > 0) {
         app.updateServiceWorker && app.updateServiceWorker();
       }
