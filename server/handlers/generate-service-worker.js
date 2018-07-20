@@ -6,6 +6,7 @@ function generateServiceWorker(req, res, next, {config, generateRoutes, appVersi
       hostname: req.hostname,
       assetHash: assetHelper.assetHash,
       routes: generateRoutes(config).filter(route => !route.skipPWA),
+      themeAttributes: config['config']['theme-attributes']
     }, (err, content) => {
       // istanbul ignore if
       if(err) {
