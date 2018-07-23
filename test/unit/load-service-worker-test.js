@@ -46,6 +46,17 @@ describe('LoadServiceWorker', function() {
 
 
   describe("updating ServiceWorker", function() {
+
+    beforeEach(() => {
+      this.jsdom = require('jsdom-global')();
+      window.qtVersion = {};
+      window.qtVersion.configVersion = 1532332716946;
+    });
+
+    afterEach(() => {
+      this.jsdom()
+    });
+
     it("updates the service worker if the page's appVersion is more than the app's version", function(done) {
       const serviceWorkerPromise = registerServiceWorker({enableServiceWorker: true, navigator: NAVIGATOR_STUB});
       const store = createQtStore({}, {}, {location: {pathname: "/"}});
@@ -60,7 +71,29 @@ describe('LoadServiceWorker', function() {
     it("doesn't update the service worker if the page's app version and the main app version are the same", function(done) {
       const serviceWorkerPromise = registerServiceWorker({enableServiceWorker: true, navigator: NAVIGATOR_STUB});
       const store = createQtStore({}, {}, {location: {pathname: "/"}});
-      setupServiceWorkerUpdates(serviceWorkerPromise, {getAppVersion: () => 2}, store, {pageType: "home-page", appVersion: 2})
+      setupServiceWorkerUpdates(serviceWorkerPromise, {getAppVersion: () => 1}, store, {pageType: "home-page", appVersion: 1})
+        .then((registration) => {
+          assert.equal(false, store.getState().serviceWorkerStatus.updated);
+          assert.equal(0, registration.getUpdateCount());
+        })
+        .then(done);
+    });
+
+    it("updates service worker if the config timestamp is greater than the global timestamp", done => {
+      const serviceWorkerPromise = registerServiceWorker({enableServiceWorker: true, navigator: NAVIGATOR_STUB});
+      const store = createQtStore({}, {}, {location: {pathname: "/"}});
+      setupServiceWorkerUpdates(serviceWorkerPromise, {getAppVersion: () => 1}, store, {pageType: "home-page", appVersion: 1, config:{'theme-attributes': {'cache-burst': 1532332717946}}})
+        .then((registration) => {
+          assert.equal(true, store.getState().serviceWorkerStatus.updated);
+          assert.equal(1, registration.getUpdateCount());
+        })
+        .then(done);
+    });
+
+    it("does not update service worker if the config timestamp is lesser than the global timestamp", done => {
+      const serviceWorkerPromise = registerServiceWorker({enableServiceWorker: true, navigator: NAVIGATOR_STUB});
+      const store = createQtStore({}, {}, {location: {pathname: "/"}});
+      setupServiceWorkerUpdates(serviceWorkerPromise, {getAppVersion: () => 1}, store, {pageType: "home-page", appVersion: 1, config:{'theme-attributes': {'cache-burst': 1532332715946}}})
         .then((registration) => {
           assert.equal(false, store.getState().serviceWorkerStatus.updated);
           assert.equal(0, registration.getUpdateCount());

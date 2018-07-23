@@ -35,8 +35,7 @@ export function checkForServiceWorkerUpdates(app, page = {}) {
   }
 
   /* Check if the config is updated and update the service worker if true */
-
-  if(window.qtVersion) {
+  else if(window && window.qtVersion) {
     const {qtVersion: {configVersion = 0} = {}} = window;
     const {config:{'theme-attributes': pageThemeAttributes = {}} = {}} = page;
     if((pageThemeAttributes['cache-burst'] || 0) > parseInt(configVersion)) {
@@ -44,6 +43,7 @@ export function checkForServiceWorkerUpdates(app, page = {}) {
       app.updateServiceWorker && app.updateServiceWorker();
     }
   }
+
 
   return page;
 }
