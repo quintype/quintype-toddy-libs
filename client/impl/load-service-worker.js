@@ -27,11 +27,23 @@ export function setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page
     });
 }
 
-export function checkForServiceWorkerUpdates(app, page) {
-  if(page.appVersion && app.getAppVersion && app.getAppVersion() < page.appVersion) {
+export function checkForServiceWorkerUpdates(app, page = {}) {
+
+  if((page.appVersion && app.getAppVersion && app.getAppVersion() < page.appVersion)) {
     console && console.log("Updating the Service Worker");
     app.updateServiceWorker && app.updateServiceWorker();
   }
+
+  /* Check if the config is updated and update the service worker if true */
+  else if(global && global.qtVersion) {
+    const {qtVersion: {configVersion = 0} = {}} = global;
+    const {config:{'theme-attributes': pageThemeAttributes = {}} = {}} = page;
+    if((pageThemeAttributes['cache-burst'] || 0) > parseInt(configVersion)) {
+      console.log(`updating service worker due to config change`);
+      app.updateServiceWorker && app.updateServiceWorker();
+    }
+  }
+
 
   return page;
 }
