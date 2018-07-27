@@ -49,8 +49,8 @@ describe('LoadServiceWorker', function() {
 
     beforeEach(() => {
       this.jsdom = require('jsdom-global')();
-      window.qtVersion = {};
-      window.qtVersion.configVersion = 1532332716946;
+      global.qtVersion = {};
+      global.qtVersion.configVersion = 1532332716946;
     });
 
     afterEach(() => {
