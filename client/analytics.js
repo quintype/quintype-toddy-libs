@@ -25,12 +25,16 @@ function pageTypeToQliticsPageType(pageType) {
   }
 }
 
+export function registerStoryView(storyContentId) {
+  global.qlitics('track', 'story-view', {
+    'story-content-id': storyContentId,
+  });
+}
+
 export function registerPageView(page, newPath) {
   global.qlitics('track', 'page-view', {"page-type": pageTypeToQliticsPageType(page.pageType)})
   if(page.pageType == 'story-page') {
-    global.qlitics('track', 'story-view', {
-      'story-content-id': get(page.data, ["story", "id"])
-    });
+    registerStoryView(get(page.data, ["story", "id"]));
   }
 
   if(newPath && global.ga) {
@@ -42,4 +46,16 @@ export function registerPageView(page, newPath) {
       tracker.send('pageview');
     })
   }
+}
+
+export function setMemberId(memberId) {
+  global.qlitics('set', 'member-id', memberId);
+}
+
+export function registerStoryShare(storyContentId, socialMediaType, storyUrl) {
+  global.qlitics('track', 'story-share', {
+    'story-content-id': storyContentId,
+    'social-media-type': socialMediaType,
+    'url': storyUrl,
+  });
 }
