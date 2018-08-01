@@ -1,12 +1,12 @@
 function generateServiceWorker(req, res, next, {config, generateRoutes, appVersion, appendFn, assetHelper, renderServiceWorker}) {
-  const {'theme-attributes': {'cache-burst': cacheburst = 0 } = {}} = config || {};
+  const {'theme-attributes': {'cache-burst': cacheBurst = 0 } = {}} = config || {};
   return new Promise(resolve => {
     renderServiceWorker(res, "js/service-worker", {
       serviceWorkerHelper: assetHelper.serviceWorkerContents(),
       assetPath: assetHelper.assetPath,
       hostname: req.hostname,
       assetHash: assetHelper.assetHash,
-      configVersion: cacheburst,
+      configVersion: cacheBurst,
       routes: generateRoutes(config).filter(route => !route.skipPWA)
     }, (err, content) => {
       // istanbul ignore if
