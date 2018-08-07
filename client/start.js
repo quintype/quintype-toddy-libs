@@ -73,12 +73,15 @@ export function maybeSetUrl(path, title) {
   global.document.title = title;
 }
 
-export function renderComponent(clazz, container, store, props, callback) {
-  return ReactDOM.render(
-    React.createElement(Provider, {store: store},
-      React.createElement(clazz, props || {})),
-    document.getElementById(container),
-    callback);
+export function renderComponent(clazz, container, store, props = {}, callback) {
+  const component = React.createElement(Provider, {store: store},
+                      React.createElement(clazz, props || {}));
+
+  if(props.hydrate) {
+    return ReactDOM.hydrate(component, document.getElementById(container), callback);
+  } else {
+    return ReactDOM.render(component, document.getElementById(container), callback);
+  }
 }
 
 export function renderIsomorphicComponent(container, store, pickComponent, props) {
