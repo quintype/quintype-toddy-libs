@@ -125,9 +125,9 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
     app.get('/template-options.json', withConfig(simpleJsonHandler, {jsonData: toFunction(templateOptions, "./template-options")}))
   }
 
-  // staticRoutes.forEach(route => {
-  //   app.get(route.path, withConfig(handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, seo}, route)))
-  // });
+  staticRoutes.forEach(route => {
+    app.get(route.path, withConfig(handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, seo}, route)))
+  });
 
   app.get("/*", withConfig(handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
 
