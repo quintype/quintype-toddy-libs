@@ -213,7 +213,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
 exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams, disableIsomorphicComponent}) {
   const url = urlLib.parse(path);
   pageType = pageType || 'static-page';
-  return fetchData(loadData, loadErrorData, pageType, renderParams, {config, client, logError, host: req.hostname})
+  return fetchData(loadData, loadErrorData, pageType, Object.assign({}, renderParams, { customSlug: req.params[0] }}, {config, client, logError, host: req.hostname})
     .then(result => {
       const statusCode = result.httpStatusCode || 200;
 
