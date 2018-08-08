@@ -135,8 +135,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
     app.get("/:storySlug", withConfig(redirectStory, {logError}));
   }
 
-  app.get(customStaticRoute.path, withConfig(handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, seo}, customStaticRoute)))
-
+  if(customStaticRoute) {
+    app.get(customStaticRoute.path, withConfig(handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, seo}, customStaticRoute)))
+  }
+  
   if(handleNotFound) {
     app.get("/*", withConfig(notFoundHandler, {renderLayout, pickComponent, loadErrorData, logError, assetHelper}));
   }
