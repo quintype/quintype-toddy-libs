@@ -137,6 +137,15 @@ The response of the /route-data.json will look like the following:
 }
 ```
 
+### Special Responses of /route-data.json
+
+The response codes of /route-data.json are listed below
+
+* 404 - Route data did not match either an isomorphic handler or a defined static page handler
+* 200, but page.data.httpStatusCode = 301 - The server wants you to redirect
+* 200, but page.data.httpStatusCode = 404 - The isomorphic handler cannot handle this route. Please reload (and bypass sw)
+* 200 - This is an isomorphic page
+
 ## Configuration
 
 Any yaml file you add to config is available as follows:
