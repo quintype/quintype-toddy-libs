@@ -21,22 +21,30 @@ export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl, registerPageVi
 function getRouteData(path, {location = global.location, existingFetch}) {
   const url = urlLib.parse(path)
   return (existingFetch || fetch(`/route-data.json?path=${encodeURIComponent(url.pathname)}${url.query ? "&" + url.query : ""}`, {credentials: 'same-origin'}))
-    .then(response => response.json())
-    .then(page => {
-      // This next line aborts the entire load
-      if(page.httpStatusCode == 301 && page.data && page.data.location) {
-        location.href = page.data.location;
+    .then(response => {
+      if(response.status == 404) {
+        // There is a chance this might abort
+        maybeBypassServiceWorker();
       }
 
-      // For some reason, if isomorphic handler accepted the route, but returned a 404,
-      // reload without service worker
-      if(page.httpStatusCode == 404 && location.hash != '#bypass-sw') {
-        location.href = url.href.replace(url.hash, "") + '#bypass-sw';
-        location.reload();
-      }
+      return response.json();
+    }).then(maybeRedirect);
 
-      return page;
-    });
+  function maybeRedirect(page) {
+    // This next line aborts the entire load
+    if(page.httpStatusCode == 301 && page.data && page.data.location) {
+      location.href = page.data.location;
+    }
+
+    return page;
+  }
+
+  function maybeBypassServiceWorker(e) {
+    if(`${location.pathname}${location.search}${location.hash}` != `${path}#bypass-sw`) {
+      location.href = `${path}#bypass-sw`;
+      location.reload();
+    }
+  }
 }
 
 export function navigateToPage(dispatch, path, doNotPushPath) {

@@ -141,7 +141,6 @@ The response of the /route-data.json will look like the following:
 
 The response codes of /route-data.json are listed below
 
-<<<<<<< HEAD
 * 404 - Route data did not match something that loadData could handle. Either no route matched, or the route matched but loadData aborted. Possibly try bypassing the service worker to find a redirect or custom-url from server side.
 * 200, but page.data. httpStatusCode = 301 - The server wants you to redirect (do window.location)
 * 200 - This is an isomorphic page
