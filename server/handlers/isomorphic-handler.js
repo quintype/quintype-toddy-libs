@@ -83,6 +83,21 @@ function createStoreFromResult(url, result, opts = {}) {
 }
 
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, next, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}) {
+  const url = urlLib.parse(req.query.path || "/", true);
+  const match = matchStaticOrIsomorphicRoute(url)
+
+  if(match) {
+    return fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError, host: req.hostname})
+      .then((result) => {
+        if(result && result[ABORT_HANDLER]) {
+          return returnNotFound();
+        }
+        return returnJson(result)
+      }, handleException)
+  } else {
+    return returnNotFound();
+  }
+
   function matchStaticOrIsomorphicRoute(url) {
     try {
       var match;
@@ -96,40 +111,38 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
     }
   }
 
-  const url = urlLib.parse(req.query.path || "/", true);
-  const match = matchStaticOrIsomorphicRoute(url)
 
-  res.setHeader("Content-Type", "application/json");
+  function handleException(e) {
+    logError(e);
+    res.status(500);
+    return res.json({error: {message: e.message}});
+  }
 
-  if(match) {
-    return fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError, host: req.hostname})
-      .then((result) => {
-        const statusCode = result.httpStatusCode || 200;
-        res.status(statusCode < 500 ? 200 : 500);
-        addCacheHeaders(res, result);
-        const seoInstance = getSeoInstance(seo, config);
-        res.json(Object.assign({}, result, {
-          appVersion: appVersion,
-          data: _.omit(result.data, ["cacheKeys"]),
-          title: seoInstance ? seoInstance.getTitle(config, result.pageType || match.pageType, result) : result.title,
-        }, match.jsonParams));
-      }).catch(e => {
-        logError(e);
-        res.status(500);
-        res.json({error: {message: e.message}});
-      }).finally(() => res.end());
-  } else {
+  function returnJson(result) {
+    return new Promise(() => {
+      const statusCode = result.httpStatusCode || 200;
+      res.status(statusCode < 500 ? 200 : 500);
+      res.setHeader("Content-Type", "application/json");
+      addCacheHeaders(res, result);
+      const seoInstance = getSeoInstance(seo, config);
+      res.json(Object.assign({}, result, {
+        appVersion: appVersion,
+        data: _.omit(result.data, ["cacheKeys"]),
+        title: seoInstance ? seoInstance.getTitle(config, result.pageType || match.pageType, result) : result.title,
+      }, match.jsonParams));
+    }).catch(handleException).finally(() => res.end());
+  }
+
+  function returnNotFound() {
     return new Promise(resolve => resolve(loadErrorData(new NotFoundException(), config)))
+      .catch(e => console.log("Exception", e))
       .then(result => {
-        res.setHeader("Cache-Control", "public,max-age=15");
-        res.setHeader("Vary", "Accept-Encoding");
         res.status(result.httpStatusCode || 404);
+        res.setHeader("Content-Type", "application/json");
+        res.setHeader("Cache-Control", "public,max-age=15,s-maxage=120");
+        res.setHeader("Vary", "Accept-Encoding");
         res.json(result)
-      }).catch(e => {
-        logError(e);
-        res.status(500);
-        res.json({error: {message: e.message}});
-      }).finally(() => res.end());;
+      }).catch(handleException).finally(() => res.end());;
   }
 };
 

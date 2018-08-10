@@ -141,9 +141,9 @@ The response of the /route-data.json will look like the following:
 
 The response codes of /route-data.json are listed below
 
-* 404 - Route data did not match either an isomorphic handler or a defined static page handler
-* 200, but page.data.httpStatusCode = 301 - The server wants you to redirect
-* 200, but page.data.httpStatusCode = 404 - The isomorphic handler cannot handle this route. Please reload (and bypass sw)
+<<<<<<< HEAD
+* 404 - Route data did not match something that loadData could handle. Either no route matched, or the route matched but loadData aborted. Possibly try bypassing the service worker to find a redirect or custom-url from server side.
+* 200, but page.data. httpStatusCode = 301 - The server wants you to redirect (do window.location)
 * 200 - This is an isomorphic page
 
 ## Configuration
