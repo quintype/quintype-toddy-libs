@@ -161,20 +161,39 @@ describe('Isomorphic Handler', function() {
       .expect(500, done);
   });
 
+  describe("aborting the data loader", () => {
     it("Throws a 404 if load data decides not to handle the request", function(done) {
-    const app = createApp((pageType, params, config, client, {next}) => next(), [{pageType: 'home-page', path: '/skip', exact: true}], {
-      loadErrorData: (err, config, client, {host}) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar", host: host}})
+      const app = createApp((pageType, params, config, client, {next}) => next(), [{pageType: 'home-page', path: '/skip', exact: true}], {
+        loadErrorData: (err, config, client, {host}) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar", host: host}})
+      });
+
+      supertest(app)
+        .get("/skip")
+        .expect("Content-Type", /html/)
+        .expect(404)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.equal('<div data-page-type="not-found" data-reactroot="">foobar</div>', response.content);
+          assert.equal(true, response.store.qt.disableIsomorphicComponent);
+          assert.equal("127.0.0.1", response.store.qt.data.host);
+        }).then(done);
     });
 
-    supertest(app)
-      .get("/skip")
-      .expect("Content-Type", /html/)
-      .expect(404)
-      .then(res => {
-        const response = JSON.parse(res.text);
-        assert.equal('<div data-page-type="not-found" data-reactroot="">foobar</div>', response.content);
-        assert.equal(true, response.store.qt.disableIsomorphicComponent);
-        assert.equal("127.0.0.1", response.store.qt.data.host);
-      }).then(done);
-  });
+    it("Allows bypassing even data.abort is set", function(done) {
+      const app = createApp((pageType, params, config, client, {next}) => next().then(n => ({data: n})), [{pageType: 'home-page', path: '/skip', exact: true}], {
+        loadErrorData: (err, config, client, {host}) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar", host: host}})
+      });
+
+      supertest(app)
+        .get("/skip")
+        .expect("Content-Type", /html/)
+        .expect(404)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.equal('<div data-page-type="not-found" data-reactroot="">foobar</div>', response.content);
+          assert.equal(true, response.store.qt.disableIsomorphicComponent);
+          assert.equal("127.0.0.1", response.store.qt.data.host);
+        }).then(done);
+    });
+  })
 });

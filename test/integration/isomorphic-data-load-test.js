@@ -123,19 +123,36 @@ describe('Isomorphic Data Load', function() {
       .expect(200, done)
   });
 
-  it("returns a 200 with a not-found if the load data decides to abort", function(done) {
-    const app = createApp((pageType, params, config, client, {next}) => next(), {}, {
-      loadErrorData: (e) => ({foo: "bar"})
+  describe("aborting the data loader", () => {
+    it("returns a 200 with a not-found if the load data decides to abort", function(done) {
+      const app = createApp((pageType, params, config, client, {next}) => next(), {}, {
+        loadErrorData: (e) => ({foo: "bar"})
+      });
+
+      supertest(app)
+        .get("/route-data.json?path=%2F")
+        .expect("Content-Type", /json/)
+        .expect(404)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.equal("bar", response.foo);
+        }).then(done);
     });
 
-    supertest(app)
-      .get("/route-data.json?path=%2F")
-      .expect("Content-Type", /json/)
-      .expect(404)
-      .then(res => {
-        const response = JSON.parse(res.text);
-        assert.equal("bar", response.foo);
-      }).then(done);
+    it("returns a 200 with a not-found if the load data decides to abort", function(done) {
+      const app = createApp((pageType, params, config, client, {next}) => next().then(n => ({data: n})), {}, {
+        loadErrorData: (e) => ({foo: "bar"})
+      });
+
+      supertest(app)
+        .get("/route-data.json?path=%2F")
+        .expect("Content-Type", /json/)
+        .expect(404)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.equal("bar", response.foo);
+        }).then(done);
+    });
   })
 
   describe("status codes", function() {

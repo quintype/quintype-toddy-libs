@@ -92,6 +92,11 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
         if(result && result[ABORT_HANDLER]) {
           return returnNotFound();
         }
+
+        if(result && result.data && result.data[ABORT_HANDLER]) {
+          return returnNotFound();
+        }
+
         return returnJson(result)
       }, handleException)
   } else {
@@ -192,6 +197,10 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
     })
     .then(result => {
       if(result && result[ABORT_HANDLER]) {
+        return next();
+      }
+
+      if(result && result.data && result.data[ABORT_HANDLER]) {
         return next();
       }
 
