@@ -40,10 +40,6 @@ export function checkForServiceWorkerUpdates(app, page = {}) {
     const {config:{'theme-attributes': pageThemeAttributes = {}} = {}} = page;
     if((pageThemeAttributes['cache-burst'] || 0) > parseInt(configVersion)) {
       console.log(`updating service worker due to config change`);
-      global.caches && global.caches.keys().then(cacheField => {
-        console.log('Deleting cache files');
-        cacheField.forEach(c=>caches.delete(c));
-      });
       app.updateServiceWorker && app.updateServiceWorker();
     }
   }
