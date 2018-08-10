@@ -8,8 +8,13 @@ const {renderReduxComponent} = require("../render");
 const {createStore} = require("redux");
 const Promise = require("bluebird");
 
+const ABORT_HANDLER = "__ABORT__";
+function abortHandler() {
+  return Promise.resolve({pageType: ABORT_HANDLER, [ABORT_HANDLER]: true});
+}
+
 function fetchData(loadData, loadErrorData = () => Promise.resolve({httpStatusCode: 500}), pageType, params, {config, client, logError, host}) {
-  return new Promise((resolve) => resolve(loadData(pageType, params, config, client, {host})))
+  return new Promise((resolve) => resolve(loadData(pageType, params, config, client, {host, next: abortHandler})))
     .catch(error => {
       logError(error);
       return loadErrorData(error, config, client, {host})
@@ -173,41 +178,51 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
       return {httpStatusCode: 500, pageType: "error"}
     })
     .then(result => {
-      const statusCode = result.httpStatusCode || 200;
-
-      if(statusCode == 301 && result.data && result.data.location) {
-        return res.redirect(301, result.data.location);
+      if(result && result[ABORT_HANDLER]) {
+        return next();
       }
 
-      const seoInstance = getSeoInstance(seo, config);
-      const seoTags = seoInstance && seoInstance.getMetaTags(config, result.pageType || match.pageType, result, {url});
-      const store = createStoreFromResult(url, result, {
-        disableIsomorphicComponent: statusCode != 200,
-      });
+      return new Promise(resolve => resolve(writeResponse(result)))
+        .catch(e => {
+          logError(e);
+          res.status(500);
+          res.send(e.message);
+        }).finally(() => res.end())
+    });
 
-      res.status(statusCode)
-      addCacheHeaders(res, result);
 
-      if(preloadJs) {
-        res.append("Link", `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`);
-      }
+  function writeResponse(result) {
+    const statusCode = result.httpStatusCode || 200;
 
-      if(preloadRouteData) {
-        res.append("Link", `</route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? `&${url.search.substr(1)}` : ""}>; rel=preload; as=fetch;`);
-      }
+    if(statusCode == 301 && result.data && result.data.location) {
+      return res.redirect(301, result.data.location);
+    }
 
-      return renderLayout(res, {
-        config: config,
-        title: result.title,
-        content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
-        store: store,
-        seoTags: seoTags,
-      });
-    }).catch(e => {
-      logError(e);
-      res.status(500);
-      res.send(e.message);
-    }).finally(() => res.end());
+    const seoInstance = getSeoInstance(seo, config);
+    const seoTags = seoInstance && seoInstance.getMetaTags(config, result.pageType || match.pageType, result, {url});
+    const store = createStoreFromResult(url, result, {
+      disableIsomorphicComponent: statusCode != 200,
+    });
+
+    res.status(statusCode)
+    addCacheHeaders(res, result);
+
+    if(preloadJs) {
+      res.append("Link", `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`);
+    }
+
+    if(preloadRouteData) {
+      res.append("Link", `</route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? `&${url.search.substr(1)}` : ""}>; rel=preload; as=fetch;`);
+    }
+
+    return renderLayout(res, {
+      config: config,
+      title: result.title,
+      content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
+      store: store,
+      seoTags: seoTags,
+    });
+  };
 };
 
 exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams, disableIsomorphicComponent}) {

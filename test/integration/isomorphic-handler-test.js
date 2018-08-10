@@ -159,5 +159,22 @@ describe('Isomorphic Handler', function() {
     supertest(app)
       .get("/")
       .expect(500, done);
-  })
+  });
+
+    it("Throws a 404 if load data decides not to handle the request", function(done) {
+    const app = createApp((pageType, params, config, client, {next}) => next(), [{pageType: 'home-page', path: '/skip', exact: true}], {
+      loadErrorData: (err, config, client, {host}) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar", host: host}})
+    });
+
+    supertest(app)
+      .get("/skip")
+      .expect("Content-Type", /html/)
+      .expect(404)
+      .then(res => {
+        const response = JSON.parse(res.text);
+        assert.equal('<div data-page-type="not-found" data-reactroot="">foobar</div>', response.content);
+        assert.equal(true, response.store.qt.disableIsomorphicComponent);
+        assert.equal("127.0.0.1", response.store.qt.data.host);
+      }).then(done);
+  });
 });
