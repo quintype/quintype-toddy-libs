@@ -40,7 +40,7 @@ function getRouteData(path, {location = global.location, existingFetch}) {
   }
 
   function maybeBypassServiceWorker(e) {
-    if(`${location.pathname}${location.search}${location.hash}` != `${path}#bypass-sw`) {
+    if(global.qtLoadedFromShell || `${location.pathname}${location.search}${location.hash}` != `${path}#bypass-sw`) {
       location.href = `${path}#bypass-sw`;
       location.reload();
     }

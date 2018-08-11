@@ -31,7 +31,7 @@ This is a set of libraries that is to be used to build a Quintype Node App. This
 
 1. Service Workers act as a proxy between your browser, and all network requests (including XHR, Assets, etc...). A service worker is registered by the `app.js`
 2. When the service worker gets registered, it downloads a minimum set of files for offline use. Typically, this includes [/shell.html, app.js, app.css] and others
-3. When you go to a page in the browser, the service worker wakes up. It decides if it can handle the request (by matching against the same routes), and renders the shell.html if possible
+3. When you go to a page in the browser, the service worker wakes up. It decides if it can handle the request (by matching against the same routes), and renders the shell.html if possible. If shell.html is rendered, then global.qtLoadedFromShell is set to true
 4. If the shell was rendered, the JS will wake up and continue with the client flow from step 4
 5. If no shell was rendered, the call will fallback to the server, and proceed normally.
 

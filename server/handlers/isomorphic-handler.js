@@ -51,7 +51,7 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {
 
       return renderLayout(res, {
         config: config,
-        content: '<div class="app-loading"></div>',
+        content: '<div class="app-loading"><script type="text/javascript">window.qtLoadedFromShell = true</script></div>',
         store: createStore((state) => state, {
           qt: {config: result.config}
         }),
