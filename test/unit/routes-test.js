@@ -1,6 +1,6 @@
 var assert = require('assert');
 
-const {matchBestRoute} = require("../../isomorphic/match-best-route");
+const {matchBestRoute, matchAllRoutes} = require("../../isomorphic/match-best-route");
 const {generateSectionPageRoutes, generateStoryPageRoutes} = require("../../server/generate-routes");
 
 describe('routes', function() {
@@ -147,4 +147,15 @@ describe('routes', function() {
       }));
     })
   });
+
+  describe("matchAllRoutes", function() {
+    it("matches all routes in order", function() {
+      const routes = [
+        {path: "/sect/sub-sect", pageType: "section-page", exact: true},
+        {path: "/sect/:storySlug", pageType: "story-page", exact: true}
+      ];
+
+      assert.deepEqual(['section-page', 'story-page'], matchAllRoutes("/sect/sub-sect", routes).map(m => m.pageType));
+    });
+  })
 });
