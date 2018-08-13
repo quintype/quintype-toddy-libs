@@ -1,7 +1,7 @@
 const _ = require("lodash");
 
 const urlLib = require("url");
-const {matchBestRoute} = require('../../isomorphic/match-best-route');
+const {matchBestRoute, matchAllRoutes} = require('../../isomorphic/match-best-route');
 const {IsomorphicComponent} = require("../../isomorphic/component");
 const {ApplicationException, NotFoundException} = require("../exceptions");
 const {renderReduxComponent} = require("../render");
@@ -11,6 +11,31 @@ const Promise = require("bluebird");
 const ABORT_HANDLER = "__ABORT__";
 function abortHandler() {
   return Promise.resolve({pageType: ABORT_HANDLER, [ABORT_HANDLER]: true});
+}
+
+function loadDataForIsomorphicRoute(loadData, loadErrorData, url, routes, {config, client, host, logError}) {
+  return loadDataForEachRoute()
+    .catch(error => {
+      logError(error);
+      return loadErrorData(error, config, client, {host})
+    });
+
+
+  // Using async because this for loop reads really really well
+  async function loadDataForEachRoute() {
+    for(const match of matchAllRoutes(url.pathname, routes)) {
+      const params = Object.assign({}, url.query, match.params)
+      const result = await loadData(match.pageType, params, config, client, {host, next: abortHandler});
+
+      if(result && result[ABORT_HANDLER])
+        continue;
+
+      if(result && result.data && result.data[ABORT_HANDLER])
+        continue;
+
+      return result;
+    }
+  }
 }
 
 function fetchData(loadData, loadErrorData = () => Promise.resolve({httpStatusCode: 500}), pageType, params, {config, client, logError, host}) {
@@ -184,23 +209,14 @@ exports.notFoundHandler = function notFoundHandler(req, res, next, {config, clie
 
 exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, assetHelper, preloadJs, preloadRouteData}) {
   const url = urlLib.parse(req.url, true);
-  const match = matchRouteWithParams(url, generateRoutes(config));
 
-  if (!match) {
-    return next();
-  }
-
-  return fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError, host: req.hostname})
+  return loadDataForIsomorphicRoute(loadData, loadErrorData, url, generateRoutes(config), {config, client, logError, host: req.hostname, logError})
     .catch(e => {
       logError(e);
       return {httpStatusCode: 500, pageType: "error"}
     })
     .then(result => {
-      if(result && result[ABORT_HANDLER]) {
-        return next();
-      }
-
-      if(result && result.data && result.data[ABORT_HANDLER]) {
+      if(!result) {
         return next();
       }
 
