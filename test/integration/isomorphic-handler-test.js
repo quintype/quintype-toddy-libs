@@ -195,5 +195,24 @@ describe('Isomorphic Handler', function() {
           assert.equal("127.0.0.1", response.store.qt.data.host);
         }).then(done);
     });
+
+    it("Allows you to chain one loader to the next if two routes overlap", function(done) {
+      const overlappingRoutes = [{pageType: "skip", path: "/"}, {pageType: 'home-page', path: '/'}];
+      const dataLoader = (pageType, _1, _2, _3, {host, next}) => pageType == 'skip' ? next() : Promise.resolve({pageType, data: {text: "foobar", host: host}})
+
+      const app = createApp(dataLoader,  overlappingRoutes);
+
+      supertest(app)
+        .get("/")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.equal("<div data-page-type=\"home-page\" data-reactroot=\"\">foobar</div>", response.content);
+          assert.equal("foobar", response.store.qt.data.text);
+          assert.equal("127.0.0.1", response.store.qt.data.host);
+          assert.equal("home-page", response.store.qt.pageType);
+        }).then(done);
+    })
   })
 });
