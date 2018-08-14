@@ -1,7 +1,7 @@
 const _ = require("lodash");
 
 const urlLib = require("url");
-const {matchBestRoute} = require('../../isomorphic/match-best-route');
+const {matchBestRoute, matchAllRoutes} = require('../../isomorphic/match-best-route');
 const {IsomorphicComponent} = require("../../isomorphic/component");
 const {ApplicationException, NotFoundException} = require("../exceptions");
 const {renderReduxComponent} = require("../render");
@@ -13,19 +13,37 @@ function abortHandler() {
   return Promise.resolve({pageType: ABORT_HANDLER, [ABORT_HANDLER]: true});
 }
 
-function fetchData(loadData, loadErrorData = () => Promise.resolve({httpStatusCode: 500}), pageType, params, {config, client, logError, host}) {
+function loadDataForIsomorphicRoute(loadData, loadErrorData, url, routes, {otherParams, config, client, host, logError}) {
+  return loadDataForEachRoute()
+    .catch(error => {
+      logError(error);
+      return loadErrorData(error, config, client, {host})
+    });
+
+
+  // Using async because this for loop reads really really well
+  async function loadDataForEachRoute() {
+    for(const match of matchAllRoutes(url.pathname, routes)) {
+      const params = Object.assign({}, url.query, otherParams, match.params);
+      const result = await loadData(match.pageType, params, config, client, {host, next: abortHandler});
+
+      if(result && result[ABORT_HANDLER])
+        continue;
+
+      if(result && result.data && result.data[ABORT_HANDLER])
+        continue;
+
+      return result;
+    }
+  }
+}
+
+function loadDataForPageType(loadData, loadErrorData = () => Promise.resolve({httpStatusCode: 500}), pageType, params, {config, client, logError, host}) {
   return new Promise((resolve) => resolve(loadData(pageType, params, config, client, {host, next: abortHandler})))
     .catch(error => {
       logError(error);
       return loadErrorData(error, config, client, {host})
     });
-}
-
-function matchRouteWithParams(url, routes, otherParams = {}) {
-  const match = matchBestRoute(url.pathname, routes);
-  if(match)
-    match.params = Object.assign({}, url.query, otherParams, match.params);
-  return match;
 }
 
 function getSeoInstance(seo, config) {
@@ -38,7 +56,7 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {
               .send("Requested Shell Is Not Current");
 
 
-  fetchData(loadData, loadErrorData, "shell", {}, {config, client, logError, host: req.hostname})
+  loadDataForPageType(loadData, loadErrorData, "shell", {}, {config, client, logError, host: req.hostname})
     .then(result => {
       res.status(200);
       res.setHeader("Content-Type", "text/html");
@@ -84,36 +102,42 @@ function createStoreFromResult(url, result, opts = {}) {
 
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, next, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}) {
   const url = urlLib.parse(req.query.path || "/", true);
-  const match = matchStaticOrIsomorphicRoute(url)
 
-  if(match) {
-    return fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError, host: req.hostname})
-      .then((result) => {
-        if(result && result[ABORT_HANDLER]) {
-          return returnNotFound();
-        }
+  const dataLoader = staticDataLoader() || isomorphicDataLoader();
 
-        if(result && result.data && result.data[ABORT_HANDLER]) {
-          return returnNotFound();
-        }
+  return dataLoader
+    .then(result => {
+      if(!result) {
+        return returnNotFound();
+      }
+      return returnJson(result);
+    }, handleException);
 
-        return returnJson(result)
-      }, handleException)
-  } else {
-    return returnNotFound();
+  function staticDataLoader() {
+    const match = matchBestRoute(url.pathname, staticRoutes);
+
+    if(match) {
+      const params = Object.assign({}, url.query, req.query, match.params)
+      const pageType = match.pageType || "static-page";
+      return loadDataForPageType(loadData, loadErrorData, pageType, params, {config, client, logError, host: req.hostname})
+        .then(result => Object.assign({pageType: pageType, disableIsomorphicComponent: true}, result))
+    }
   }
 
-  function matchStaticOrIsomorphicRoute(url) {
+  function allRoutes() {
     try {
-      var match;
-      if(match = matchRouteWithParams(url, staticRoutes, req.query)) {
-        return Object.assign({}, match, {pageType: match.pageType || "static-page", jsonParams: {disableIsomorphicComponent: true}})
-      } else {
-        return matchRouteWithParams(url, generateRoutes(config), req.query);
-      }
+      return generateRoutes(config)
     } catch(e) {
-      logError(e);
+      return [];
     }
+  }
+
+  function isomorphicDataLoader() {
+    return loadDataForIsomorphicRoute(loadData, loadErrorData, url, allRoutes(), {config, client, logError, host: req.hostname, logError, otherParams: req.query})
+      .catch(e => {
+        logError(e);
+        return {httpStatusCode: 500, pageType: "error"}
+      });
   }
 
 
@@ -133,8 +157,8 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
       res.json(Object.assign({}, result, {
         appVersion: appVersion,
         data: _.omit(result.data, ["cacheKeys"]),
-        title: seoInstance ? seoInstance.getTitle(config, result.pageType || match.pageType, result) : result.title,
-      }, match.jsonParams));
+        title: seoInstance ? seoInstance.getTitle(config, result.pageType, result) : result.title,
+      }));
     }).catch(handleException).finally(() => res.end());
   }
 
@@ -184,23 +208,14 @@ exports.notFoundHandler = function notFoundHandler(req, res, next, {config, clie
 
 exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, assetHelper, preloadJs, preloadRouteData}) {
   const url = urlLib.parse(req.url, true);
-  const match = matchRouteWithParams(url, generateRoutes(config));
 
-  if (!match) {
-    return next();
-  }
-
-  return fetchData(loadData, loadErrorData, match.pageType, match.params, {config, client, logError, host: req.hostname})
+  return loadDataForIsomorphicRoute(loadData, loadErrorData, url, generateRoutes(config), {config, client, logError, host: req.hostname, logError})
     .catch(e => {
       logError(e);
       return {httpStatusCode: 500, pageType: "error"}
     })
     .then(result => {
-      if(result && result[ABORT_HANDLER]) {
-        return next();
-      }
-
-      if(result && result.data && result.data[ABORT_HANDLER]) {
+      if(!result) {
         return next();
       }
 
@@ -250,7 +265,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
 exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams, disableIsomorphicComponent}) {
   const url = urlLib.parse(path);
   pageType = pageType || 'static-page';
-  return fetchData(loadData, loadErrorData, pageType, Object.assign({}, renderParams, { customSlug: req.params[0] }), {config, client, logError, host: req.hostname})
+  return loadDataForPageType(loadData, loadErrorData, pageType, renderParams, {config, client, logError, host: req.hostname})
     .then(result => {
       const statusCode = result.httpStatusCode || 200;
 
