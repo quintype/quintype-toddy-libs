@@ -37,7 +37,7 @@ describe('ShellHandler', function() {
       .expect(200)
       .then(res => {
         const {content, store, shell} = JSON.parse(res.text);
-        assert.equal('<div class="app-loading"></div>', content);
+        assert.equal('<div class="app-loading"><script type="text/javascript">window.qtLoadedFromShell = true</script></div>', content);
         assert.equal("bar", store.qt.config.foo)
         assert.equal("shell", store.qt.config.pageType)
         assert.equal(true, shell)
