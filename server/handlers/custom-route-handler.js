@@ -8,7 +8,7 @@ exports.handleCustomRoute = function handleCustomRoute(req, res, next, { config,
 
   Static.getStaticData(client, req.params[0])
     .then(response => {
-      if(!response) {
+      if(!response || !response.page || response.page["status-code"] == 404) {
         next();
       }
       if(response.page.type === 'redirect') { 
