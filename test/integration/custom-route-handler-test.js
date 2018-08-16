@@ -9,19 +9,17 @@ function getClientStub(hostname) {
   return {
     getHostname: () => "demo.quintype.io",
     getConfig: () => Promise.resolve({foo: "bar"}),
-    getStaticData: () => Promise.resolve({"type":"redirect","status-code":301,"destination-path":"/foobar"}),
+    getStaticData: () => Promise.resolve({"page":{"type":"redirect","status-code":301,"destination-path":"/foobar"}}),
   }
 }
 
 function createApp(loadData, routes, opts = {}) {
   const app = express();
   isomorphicRoutes(app, Object.assign({
-    //assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null, assetPath: (file) => `/assets/${file}`},
+    assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null, assetPath: (file) => `/assets/${file}`},
     getClient: getClientStub,
     generateRoutes: () => routes,
     loadData: loadData,
-    //pickComponent: pickComponent,
-    //renderLayout: (res, {store, title, content}) => res.send(JSON.stringify({store: store.getState(), title, content}))
   }, opts));
   
   return app;
@@ -31,9 +29,13 @@ function createApp(loadData, routes, opts = {}) {
 describe('Custom Route Handler', function() {
   it("Redirects with proper status code if API has a redirection setup", function(done) {
     const app = createApp((pageType, params, config, client, {host, next}) => next(), [{pageType: 'story-page', path: '/*'}]);
-      supertest(app)
+    supertest(app)
         .get("/no-longer-here")
-        .expect("Location", "/foobar")
+        // .expect("Location", "/foobar")
         .expect(301, done);
+        // .then(response => {
+        //     console.log('hiihiihiiii', response);
+        // })
+        // .then(done);
   });
 })

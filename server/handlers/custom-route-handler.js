@@ -6,9 +6,9 @@ exports.handleCustomRoute = function handleCustomRoute(req, res, next, { config,
   const url = urlLib.parse(req.url, true);
   return StaticPage.getStaticData(client, req.params[0])
     .then(page => {
-      console.log('page', page);
-      if(!page || page == {})
-        return next();      
+      if(!page || page == {}) {
+        return next();
+      }
       
       if(page.type === 'redirect') { 
         return res.redirect(page["status-code"], page["destination-path"]);
