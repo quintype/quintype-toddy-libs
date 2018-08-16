@@ -30,12 +30,8 @@ describe('Custom Route Handler', function() {
   it("Redirects with proper status code if API has a redirection setup", function(done) {
     const app = createApp((pageType, params, config, client, {host, next}) => next(), [{pageType: 'story-page', path: '/*'}]);
     supertest(app)
-        .get("/no-longer-here")
-        // .expect("Location", "/foobar")
-        .expect(301, done);
-        // .then(response => {
-        //     console.log('hiihiihiiii', response);
-        // })
-        // .then(done);
+      .get("/no-longer-here")
+      .expect("Location", "/foobar")
+      .expect(301, done);
   });
 })
