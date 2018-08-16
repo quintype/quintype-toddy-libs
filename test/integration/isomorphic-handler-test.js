@@ -136,10 +136,11 @@ describe('Isomorphic Handler', function() {
     supertest(app)
       .get("/")
       .expect("Content-Type", /html/)
-      .expect("Cache-Control", "public,max-age=15,must-revalidate")
+      .expect("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
       .expect("Vary", "Accept-Encoding")
       .expect("Surrogate-Control", /public/)
       .expect("Surrogate-Key", "foo bar")
+      .expect("Cache-Tag", "foo,bar")
       .expect(200, done);
   });
 
