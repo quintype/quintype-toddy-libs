@@ -9,7 +9,7 @@ function getClientStub(hostname) {
   return {
     getHostname: () => "demo.quintype.io",
     getConfig: () => Promise.resolve({foo: "bar"}),
-    getStaticData: () => Promise.resolve({"page":{"type":"redirect","status-code":301,"destination-path":"/foobar"}}),
+    getCustomPathData: () => Promise.resolve({"page":{"type":"redirect","status-code":301,"destination-path":"/foobar"}}),
   }
 }
 

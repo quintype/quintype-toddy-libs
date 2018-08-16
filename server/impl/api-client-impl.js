@@ -1,4 +1,4 @@
-const { Client, Story, Author, StaticPage, Member, Collection, Entity } = require("quintype-backend");
+const { Client, Story, Author, CustomPath, Member, Collection, Entity } = require("quintype-backend");
 const { storyToCacheKey, collectionToCacheKey, authorToCacheKey, sorterToCacheKey } = require("../caching");
 const _ = require("lodash");
 
@@ -32,4 +32,4 @@ Story.prototype.cacheKeys = function(publisherId) {
 
 Story.sorterToCacheKey = sorterToCacheKey;
 
-module.exports = {getClientImpl, Client, Story, Author, StaticPage, Member, Collection, Entity};
+module.exports = {getClientImpl, Client, Story, Author, CustomPath, Member, Collection, Entity};

@@ -1,10 +1,10 @@
 const urlLib = require("url");
 
-const { StaticPage } = require("../impl/api-client-impl");
+const { CustomPath } = require("../impl/api-client-impl");
 
 exports.handleCustomRoute = function handleCustomRoute(req, res, next, { config, client, renderLayout }) {
   const url = urlLib.parse(req.url, true);
-  return StaticPage.getStaticData(client, req.params[0])
+  return CustomPath.getCustomPathData(client, req.params[0])
     .then(page => {
       if(!page || page == {}) {
         return next();

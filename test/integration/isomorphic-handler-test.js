@@ -9,7 +9,7 @@ function getClientStub(hostname) {
   return {
     getHostname: () => "demo.quintype.io",
     getConfig: () => Promise.resolve({foo: "bar"}),
-    getStaticData: () => Promise.resolve({}),
+    getCustomPathData: () => Promise.resolve({}),
   }
 }
 
