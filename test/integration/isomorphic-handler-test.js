@@ -8,7 +8,8 @@ const supertest = require("supertest");
 function getClientStub(hostname) {
   return {
     getHostname: () => "demo.quintype.io",
-    getConfig: () => Promise.resolve({foo: "bar"})
+    getConfig: () => Promise.resolve({foo: "bar"}),
+    getStaticData: () => Promise.resolve({}),
   }
 }
 

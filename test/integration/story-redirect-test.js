@@ -28,7 +28,8 @@ describe('Redirect Handler', function() {
     const app = createApp({
       getClient: (hostname) => ({
         getConfig: () => Promise.resolve({foo: "bar"}),
-        getStoryBySlug: (slug) => Promise.resolve({story: {slug: `section/${slug}`}})
+        getStoryBySlug: (slug) => Promise.resolve({story: {slug: `section/${slug}`}}),
+        getStaticData: () => Promise.resolve({}),
       })
     });
 
@@ -56,7 +57,8 @@ describe('Redirect Handler', function() {
     const app = createApp({
       getClient: (hostname) => ({
         getConfig: () => Promise.resolve({foo: "bar"}),
-        getStoryBySlug: (slug) => Promise.reject({message: "Not Found"})
+        getStoryBySlug: (slug) => Promise.reject({message: "Not Found"}),
+        getStaticData: () => Promise.resolve({}),
       })
     });
 

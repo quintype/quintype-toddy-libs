@@ -1,6 +1,7 @@
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
 const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute, notFoundHandler} = require("./handlers/isomorphic-handler");
 const {oneSignalImport} = require("./handlers/one-signal");
+const {handleCustomRoute} = require("./handlers/custom-route-handler");
 const {handleManifest} = require("./handlers/manifest");
 const {redirectStory} = require("./handlers/story-redirect");
 const {simpleJsonHandler} = require("./handlers/simple-json-handler");
