@@ -11,10 +11,10 @@ function getClientStub(hostname) {
     getConfig: () => Promise.resolve({foo: "bar"}),
     getCustomPathData: (path) => {
       switch(path) {
-        case '/moved-p':
-          return Promise.resolve({"page":{"type":"redirect","status-code":301,"destination-path":"/moved-p-path"}});
-        case '/moved-t':
-          return Promise.resolve({"page":{"type":"redirect","status-code":302,"destination-path":"/moved-t-path"}});
+        case '/moved-permanently':
+          return Promise.resolve({"page":{"type":"redirect","status-code":301,"destination-path":"/permanent-location"}});
+        case '/moved-temporarily':
+          return Promise.resolve({"page":{"type":"redirect","status-code":302,"destination-path":"/temporary-location"}});
         default:
           return Promise.resolve({"page":null,"status-code":404});               
       }
@@ -37,19 +37,19 @@ function createApp(loadData, routes, opts = {}) {
 
 
 describe('Custom Route Handler', function() {
-  it("Redirects with status code 301 if API has a redirection setup", function(done) {
+  it("Redirects with status code 301 if API has 301 redirection setup", function(done) {
     const app = createApp((pageType, params, config, client, {host, next}) => next(), [{pageType: 'story-page', path: '/*'}]);
     supertest(app)
-      .get("/moved-p")
-      .expect("Location", "/moved-p-path")
+      .get("/moved-permanently")
+      .expect("Location", "/permanent-location")
       .expect(301, done);
   });
 
-  it("Redirects with status code 302 if API has a redirection setup", function(done) {
+  it("Redirects with status code 302 if API has 302 redirection setup", function(done) {
     const app = createApp((pageType, params, config, client, {host, next}) => next(), [{pageType: 'story-page', path: '/*'}]);
     supertest(app)
-      .get("/moved-t")
-      .expect("Location", "/moved-t-path")
+      .get("/moved-temporarily")
+      .expect("Location", "/temporary-location")
       .expect(302, done);
   });
 
