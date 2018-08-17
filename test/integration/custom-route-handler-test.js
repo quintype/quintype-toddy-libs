@@ -18,8 +18,8 @@ function getClientStub(hostname) {
         default:
           return Promise.resolve({"page":null,"status-code":404});               
       }
-    },
-  }
+    }
+  };
 }
 
 function createApp(loadData, routes, opts = {}) {
