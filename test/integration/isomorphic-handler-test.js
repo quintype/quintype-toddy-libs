@@ -8,8 +8,7 @@ const supertest = require("supertest");
 function getClientStub(hostname) {
   return {
     getHostname: () => "demo.quintype.io",
-    getConfig: () => Promise.resolve({foo: "bar"}),
-    getCustomPathData: () => Promise.resolve({}),
+    getConfig: () => Promise.resolve({foo: "bar"})
   }
 }
 
@@ -25,7 +24,8 @@ function createApp(loadData, routes, opts = {}) {
     generateRoutes: () => routes,
     loadData: loadData,
     pickComponent: pickComponent,
-    renderLayout: (res, {store, title, content}) => res.send(JSON.stringify({store: store.getState(), title, content}))
+    renderLayout: (res, {store, title, content}) => res.send(JSON.stringify({store: store.getState(), title, content})),
+    handleCustomRoute: false
   }, opts));
 
   return app;

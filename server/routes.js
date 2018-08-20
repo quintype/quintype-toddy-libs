@@ -1,7 +1,7 @@
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
 const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute, notFoundHandler} = require("./handlers/isomorphic-handler");
 const {oneSignalImport} = require("./handlers/one-signal");
-const {handleCustomRoute} = require("./handlers/custom-route-handler");
+const {customRouteHandler} = require("./handlers/custom-route-handler");
 const {handleManifest} = require("./handlers/manifest");
 const {redirectStory} = require("./handlers/story-redirect");
 const {simpleJsonHandler} = require("./handlers/simple-json-handler");
@@ -89,6 +89,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       appVersion = 1,
                                                       preloadJs = false,
                                                       preloadRouteData = false,
+                                                      handleCustomRoute = true,
                                                       handleNotFound = true,
                                                       redirectRootLevelStories = false,
 
@@ -134,8 +135,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   if(redirectRootLevelStories) {
     app.get("/:storySlug", withConfig(redirectStory, {logError}));
   }
-
-  app.get("/*", withConfig(handleCustomRoute, {logError}));
+  
+  if(handleCustomRoute) {
+    app.get("/*", withConfig(customRouteHandler, {logError}));
+  }
   
   if(handleNotFound) {
     app.get("/*", withConfig(notFoundHandler, {renderLayout, pickComponent, loadErrorData, logError, assetHelper}));

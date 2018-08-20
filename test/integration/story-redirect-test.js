@@ -17,7 +17,8 @@ function createApp(opts = {}) {
     pickComponent: pickComponent,
     loadErrorData: (err, config) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar"}}),
     renderLayout: (res, {store, title, content}) => res.send(JSON.stringify({store: store.getState(), title, content})),
-    redirectRootLevelStories: true
+    redirectRootLevelStories: true,
+    handleCustomRoute: false
   }, opts));
 
   return app;
@@ -28,8 +29,7 @@ describe('Redirect Handler', function() {
     const app = createApp({
       getClient: (hostname) => ({
         getConfig: () => Promise.resolve({foo: "bar"}),
-        getStoryBySlug: (slug) => Promise.resolve({story: {slug: `section/${slug}`}}),
-        getCustomPathData: () => Promise.resolve({}),
+        getStoryBySlug: (slug) => Promise.resolve({story: {slug: `section/${slug}`}})
       })
     });
 
@@ -57,8 +57,7 @@ describe('Redirect Handler', function() {
     const app = createApp({
       getClient: (hostname) => ({
         getConfig: () => Promise.resolve({foo: "bar"}),
-        getStoryBySlug: (slug) => Promise.reject({message: "Not Found"}),
-        getCustomPathData: () => Promise.resolve({}),
+        getStoryBySlug: (slug) => Promise.reject({message: "Not Found"})
       })
     });
 
