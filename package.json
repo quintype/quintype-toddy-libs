@@ -34,7 +34,7 @@
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.4",
     "morgan": "^1.9.0",
-    "quintype-backend": "1.10.0-testing2",
+    "quintype-backend": "^1.11.0",
     "quintype-js": "^0.1.6",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
