@@ -1,7 +1,7 @@
 // istanbul ignore file
 
 const config = require("./publisher-config");
-const {getClientImpl, Client, Story, Author, Member, Collection, Entity} = require("./impl/api-client-impl");
+const {getClientImpl, Client, Story, Author, CustomPath, Member, Collection, Entity} = require("./impl/api-client-impl");
 
 const defaultClient = new Client(config.sketches_host);
 const cachedSecondaryClients = {};
@@ -23,6 +23,7 @@ function initializeAllClients() {
 module.exports = {
   Story: Story,
   Author: Author,
+  CustomPath: CustomPath,
   Collection: Collection,
   Member: Member,
   Entity: Entity,
