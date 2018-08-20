@@ -6,7 +6,7 @@ exports.handleCustomRoute = function handleCustomRoute(req, res, next, { config,
   const url = urlLib.parse(req.url, true);
   return CustomPath.getCustomPathData(client, req.params[0])
     .then(page => {
-      if(!page || page == {}) {
+      if(!page) {
         return next();
       }
       
