@@ -1,4 +1,5 @@
 const urlLib = require("url");
+const {createStore} = require("redux");
 
 const { CustomPath } = require("../impl/api-client-impl");
 
@@ -20,14 +21,14 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
             qt: {
               pageType: page.type,
               data: page,
-              config: config,
-              currentPath: `${url.pathname}${url.search || ""}`
+              config: config.config,
+              currentPath: `${url.pathname}${url.search || ""}`,
+              disableIsomorphicComponent: true
             }
           });
-
           return renderLayout(res, {
-              contentTemplate: './custom-static-page',
-              store: store
+            contentTemplate: './custom-static-page',
+            store: store
           });
         }
         return res.send(page.content);
