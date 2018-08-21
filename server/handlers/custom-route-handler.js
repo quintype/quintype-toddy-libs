@@ -39,7 +39,7 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
           res.setHeader('Cache-Tag', cacheKey);
           // Fastly Header
           res.setHeader('Surrogate-Control', "public,max-age=240,stale-while-revalidate=300,stale-if-error=14400");
-          res.setHeader('Surrogate-Key', cacheKeys);
+          res.setHeader('Surrogate-Key', cacheKey);
 
           res.status(page["status-code"]);
 
