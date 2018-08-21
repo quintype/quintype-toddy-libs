@@ -17,11 +17,13 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
 
       if(page.type === 'static-page') {
         if(page.metadata.header || page.metadata.footer) {
+          const modifiedThemeAttributes = Object.assign({}, config.config["theme-attributes"], { hide_breaking_news: true });
+          const updatedConfig = Object.assign({}, config.config, { "theme-attributes": modifiedThemeAttributes });
           const store = createStore((state) => state, {
             qt: {
               pageType: page.type,
               data: page,
-              config: config.config,
+              config: updatedConfig,
               currentPath: `${url.pathname}${url.search || ""}`,
               disableIsomorphicComponent: true
             }
