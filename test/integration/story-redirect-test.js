@@ -28,13 +28,15 @@ describe('Redirect Handler', function() {
   it("Redirects to a story on the root level", function(done) {
     const app = createApp({
       getClient: (hostname) => ({
-        getConfig: () => Promise.resolve({foo: "bar"}),
-        getStoryBySlug: (slug) => Promise.resolve({story: {slug: `section/${slug}`}})
+        getConfig: () => Promise.resolve({"publisher-id": 42}),
+        getStoryBySlug: (slug) => Promise.resolve({story: {slug: `section/${slug}`, id: "abcdefgh-blah"}})
       })
     });
 
     supertest(app)
       .get("/story-slug")
+      .expect("Cache-Control", /public/)
+      .expect("Cache-Tag", "s/42/abcdefgh")
       .expect("Location", "/section/story-slug")
       .expect(301, done);
   });
@@ -42,13 +44,15 @@ describe('Redirect Handler', function() {
   it("Redirects to a story on the root level even if there is a trailing /", function(done) {
     const app = createApp({
       getClient: (hostname) => ({
-        getConfig: () => Promise.resolve({foo: "bar"}),
-        getStoryBySlug: (slug) => Promise.resolve({story: {slug: `section/${slug}`}})
+        getConfig: () => Promise.resolve({"publisher-id": 42}),
+        getStoryBySlug: (slug) => Promise.resolve({story: {slug: `section/${slug}`, id: "abcdefgh-blah"}})
       })
     });
 
     supertest(app)
       .get("/story-slug/")
+      .expect("Cache-Control", /public/)
+      .expect("Cache-Tag", "s/42/abcdefgh")
       .expect("Location", "/section/story-slug")
       .expect(301, done);
   });
