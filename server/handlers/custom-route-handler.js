@@ -4,7 +4,7 @@ const {createStore} = require("redux");
 const { CustomPath } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 
-exports.customRouteHandler = function customRouteHandler(req, res, next, { config, client, renderLayout, logError, seo}) {
+exports.customRouteHandler = function customRouteHandler(req, res, next, { config, client, renderLayout, logError, seo, getNavigationMenuArray}) {
   const url = urlLib.parse(req.url, true);
   return CustomPath.getCustomPathData(client, req.params[0])
     .then(page => {
@@ -23,7 +23,7 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
           const store = createStore((state) => state, {
             qt: {
               pageType: page.type,
-              data: page,
+              data: Object.assign({}, page.page, {navigationMenu: getNavigationMenuArray(updatedConfig.layout.menu, updatedConfig.sections)}),
               config: updatedConfig,
               currentPath: `${url.pathname}${url.search || ""}`,
               disableIsomorphicComponent: true
