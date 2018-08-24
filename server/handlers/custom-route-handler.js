@@ -5,13 +5,11 @@ const { CustomPath } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 
 function writeStaticPageResponse(res, page, { config, renderLayout, seo, getNavigationMenuArray }) {
-  const modifiedThemeAttributes = Object.assign({}, config.config["theme-attributes"], { hide_breaking_news: true });
-  const updatedConfig = Object.assign({}, config.config, { "theme-attributes": modifiedThemeAttributes });
   const store = createStore((state) => state, {
     qt: {
       pageType: page.type,
-      data: Object.assign({}, page.page, {navigationMenu: getNavigationMenuArray(updatedConfig.layout.menu, updatedConfig.sections)}),
-      config: updatedConfig,
+      data: Object.assign({}, page.page, {navigationMenu: getNavigationMenuArray(config.layout.menu, config.sections)}),
+      config: config.config,
       currentPath: `${url.pathname}${url.search || ""}`,
       disableIsomorphicComponent: true
     }
