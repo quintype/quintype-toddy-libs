@@ -41,7 +41,8 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
           return renderLayout(res, {
             contentTemplate: './custom-static-page',
             store: store,
-            seoTags: seoTags
+            seoTags: seoTags,
+            disableAjaxNavigation: true,
           });
         }
         return res.send(page.content);
