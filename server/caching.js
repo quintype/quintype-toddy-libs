@@ -11,5 +11,9 @@ exports.collectionToCacheKey = function collectionToCacheKey(publisherId, collec
 }
 
 exports.sorterToCacheKey = function sorterToCacheKey(publisherId, storyGroup, sectionId) {
-  return `q/${publisherId}/${storyGroup}/${sectionId ? `section-${sectionId}` : "home"}`
+  return `q/${publisherId}/${storyGroup}/${sectionId ? `section-${sectionId}` : "home"}`;
+}
+
+exports.customUrlToCacheKey = function customUrlToCacheKey(publisherId, currentPath) {
+  return `u/${publisherId}/${currentPath}`;
 }

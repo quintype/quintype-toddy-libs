@@ -3,6 +3,7 @@ const {createStore} = require("redux");
 
 const { CustomPath } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
+const { customUrlToCacheKey } = require("../caching");
 
 function writeStaticPageResponse(res, page, { config, renderLayout, seo, getNavigationMenuArray }) {
   const store = createStore((state) => state, {
@@ -17,11 +18,8 @@ function writeStaticPageResponse(res, page, { config, renderLayout, seo, getNavi
 
   const seoInstance = (typeof seo == 'function') ? seo(config) : seo;
   const seoTags = seoInstance && seoInstance.getMetaTags(config, page.type, {}, {url});
-  
-  const cacheKeys = ["static"];
-  addCacheHeadersToResult(res, cacheKeys);
 
-  res.status(page["status-code"]);
+  res.status(page["status-code"] || 200);
 
   return renderLayout(res, {
     contentTemplate: './custom-static-page',
@@ -39,6 +37,8 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
         return next();
       }
       
+      addCacheHeadersToResult(res, [customUrlToCacheKey(config["publisher-id"], url["pathname"])]);
+
       if(page.type === 'redirect') {
         if(!page["status-code"] || !page["destination-path"]) {
           logError('Defaulting the status-code to 302 with destination-path as home-page');
