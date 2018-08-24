@@ -1,15 +1,18 @@
 const urlLib = require("url");
 const {createStore} = require("redux");
+const get = require("lodash/get");
 
 const { CustomPath } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 const { customUrlToCacheKey } = require("../caching");
 
-function writeStaticPageResponse(res, page, { config, renderLayout, seo, getNavigationMenuArray }) {
+function writeStaticPageResponse(res, url, page, { config, renderLayout, seo, getNavigationMenuArray }) {
+  const menu = get(config, ["layout", "menu"], []);
+  const sections = get(config, ["sections"], []);
   const store = createStore((state) => state, {
     qt: {
       pageType: page.type,
-      data: Object.assign({}, page.page, {navigationMenu: getNavigationMenuArray(config.layout.menu, config.sections)}),
+      data: Object.assign({}, page, {navigationMenu: getNavigationMenuArray(menu, sections)}),
       config: config.config,
       currentPath: `${url.pathname}${url.search || ""}`,
       disableIsomorphicComponent: true
@@ -20,7 +23,7 @@ function writeStaticPageResponse(res, page, { config, renderLayout, seo, getNavi
   const seoTags = seoInstance && seoInstance.getMetaTags(config, page.type, {}, {url});
 
   res.status(page["status-code"] || 200);
-
+  
   return renderLayout(res, {
     contentTemplate: './custom-static-page',
     store: store,
@@ -49,7 +52,7 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
 
       if(page.type === 'static-page') {
         if(page.metadata.header || page.metadata.footer) {
-          writeStaticPageResponse(res, page, { config, renderLayout, seo, getNavigationMenuArray });
+          return writeStaticPageResponse(res, url, page, { config, renderLayout, seo, getNavigationMenuArray });
         }
         return res.send(page.content);
       }

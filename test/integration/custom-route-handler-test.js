@@ -34,6 +34,7 @@ function createApp(loadData, routes, opts = {}) {
     generateRoutes: () => routes,
     loadData: loadData,
     renderLayout: (res, {contentTemplate, store}) => res.send(JSON.stringify({contentTemplate, store: store.getState()})),
+    getNavigationMenuArray: () => [],
     handleNotFound: false
   }, opts));
   
