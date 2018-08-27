@@ -2,14 +2,23 @@ const urlLib = require("url");
 const {createStore} = require("redux");
 const Promise = require("bluebird");
 const get = require("lodash/get");
+const ejs = require("ejs");
+const fs = require("fs");
+const path = require("path");
+const staticPageTemplateStr = fs.readFileSync(path.join(__dirname, "../views/static-page.ejs"), {encoding: "utf-8"});
+const staticPageTemplate = ejs.compile(staticPageTemplateStr);
 
 const { CustomPath } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 const { customUrlToCacheKey } = require("../caching");
 
+function renderStaticPageContent(store, content) {
+  const renderedContent = staticPageTemplate({store, content});
+
+  return renderedContent;
+}
+
 function writeStaticPageResponse(res, url, page, data, { config, renderLayout, seo }) {
-  // const menu = get(config, ["layout", "menu"], []);
-  // const sections = get(config, ["sections"], []);
   const store = createStore((state) => state, {
     qt: {
       pageType: page.type,
@@ -26,7 +35,7 @@ function writeStaticPageResponse(res, url, page, data, { config, renderLayout, s
   res.status(page["status-code"] || 200);
   
   return renderLayout(res, {
-    content: page.content,
+    content: renderStaticPageContent(store, page.content),
     store: store,
     seoTags: seoTags,
     disableAjaxNavigation: true,
@@ -53,13 +62,9 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
 
       if(page.type === 'static-page') {
         if(page.metadata.header || page.metadata.footer) {
-          return loadData('custom-static-page', {}, config, client)
+          return loadData('custom-static-page', {}, config, client, {host: req.hostname})
             .then(response => {
               return writeStaticPageResponse(res, url, page.page, response.data, { config, renderLayout, seo });
-            })
-            .catch(error => {
-              logError(error);
-              return loadErrorData(error, config, client);
             });
         }
         return res.send(page.content);
