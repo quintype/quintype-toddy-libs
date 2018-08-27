@@ -19,12 +19,13 @@ function renderStaticPageContent(store, content) {
 }
 
 function writeStaticPageResponse(res, url, page, data, { config, renderLayout, seo }) {
+  const currentPath = `${url.pathname}${url.search || ""}`;
   const store = createStore((state) => state, {
     qt: {
       pageType: page.type,
       data: Object.assign({}, page, data.data),
       config: data.config,
-      currentPath: `${url.pathname}${url.search || ""}`,
+      currentPath,
       disableIsomorphicComponent: true
     }
   });
@@ -33,7 +34,7 @@ function writeStaticPageResponse(res, url, page, data, { config, renderLayout, s
   const seoTags = seoInstance && seoInstance.getMetaTags(config, page.type, {}, {url});
 
   res.status(page["status-code"] || 200);
-  addCacheHeadersToResult(res, [customUrlToCacheKey(config["publisher-id"], url["pathname"])]);
+  addCacheHeadersToResult(res, [customUrlToCacheKey(config["publisher-id"], currentPath)]);
 
   return renderLayout(res, {
     title: page.title,
@@ -46,7 +47,8 @@ function writeStaticPageResponse(res, url, page, data, { config, renderLayout, s
 
 exports.customRouteHandler = function customRouteHandler(req, res, next, { config, client, loadData, loadErrorData, renderLayout, logError, seo }) {
   const url = urlLib.parse(req.url, true);
-  return CustomPath.getCustomPathData(client, req.params[0])
+  const path = req.params[0];
+  return CustomPath.getCustomPathData(client, path)
     .then(page => {
       if(!page) {
         return next();
@@ -56,7 +58,7 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
         if(!page["status-code"] || !page["destination-path"]) {
           logError('Defaulting the status-code to 302 with destination-path as home-page');
         }
-        addCacheHeadersToResult(res, [customUrlToCacheKey(config["publisher-id"], url["pathname"])]);
+        addCacheHeadersToResult(res, [customUrlToCacheKey(config["publisher-id"], path)]);
 
         return res.redirect(page["status-code"] || 302, page["destination-path"] || "/");
       }
