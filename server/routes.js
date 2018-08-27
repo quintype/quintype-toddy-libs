@@ -82,7 +82,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       loadErrorData,
                                                       seo,
                                                       manifestFn,
-                                                      getNavigationMenuArray,
 
                                                       logError = require("./logger").error,
                                                       oneSignalServiceWorkers = false,
@@ -138,7 +137,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   }
   
   if(handleCustomRoute) {
-    app.get("/*", withConfig(customRouteHandler, {loadData, loadErrorData, renderLayout, logError, seo}));
+    app.get("/*", withConfig(customRouteHandler, {loadData, renderLayout, logError, seo}));
   }
   
   if(handleNotFound) {
