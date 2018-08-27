@@ -138,7 +138,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   }
   
   if(handleCustomRoute) {
-    app.get("/*", withConfig(customRouteHandler, {renderLayout, logError, seo, getNavigationMenuArray}));
+    app.get("/*", withConfig(customRouteHandler, {loadData, loadErrorData, renderLayout, logError, seo}));
   }
   
   if(handleNotFound) {

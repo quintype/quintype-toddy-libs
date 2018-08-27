@@ -1,18 +1,19 @@
 const urlLib = require("url");
 const {createStore} = require("redux");
+const Promise = require("bluebird");
 const get = require("lodash/get");
 
 const { CustomPath } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 const { customUrlToCacheKey } = require("../caching");
 
-function writeStaticPageResponse(res, url, page, { config, renderLayout, seo, getNavigationMenuArray }) {
-  const menu = get(config, ["layout", "menu"], []);
-  const sections = get(config, ["sections"], []);
+function writeStaticPageResponse(res, url, page, data, { config, renderLayout, seo }) {
+  // const menu = get(config, ["layout", "menu"], []);
+  // const sections = get(config, ["sections"], []);
   const store = createStore((state) => state, {
     qt: {
       pageType: page.type,
-      data: Object.assign({}, page, {navigationMenu: getNavigationMenuArray(menu, sections)}),
+      data: Object.assign({}, page, data),
       config: config.config,
       currentPath: `${url.pathname}${url.search || ""}`,
       disableIsomorphicComponent: true
@@ -25,14 +26,14 @@ function writeStaticPageResponse(res, url, page, { config, renderLayout, seo, ge
   res.status(page["status-code"] || 200);
   
   return renderLayout(res, {
-    contentTemplate: './custom-static-page',
+    content: page.content,
     store: store,
     seoTags: seoTags,
     disableAjaxNavigation: true,
   });
 }
 
-exports.customRouteHandler = function customRouteHandler(req, res, next, { config, client, renderLayout, logError, seo, getNavigationMenuArray}) {
+exports.customRouteHandler = function customRouteHandler(req, res, next, { config, client, loadData, loadErrorData, renderLayout, logError, seo }) {
   const url = urlLib.parse(req.url, true);
   return CustomPath.getCustomPathData(client, req.params[0])
     .then(page => {
@@ -52,7 +53,14 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
 
       if(page.type === 'static-page') {
         if(page.metadata.header || page.metadata.footer) {
-          return writeStaticPageResponse(res, url, page, { config, renderLayout, seo, getNavigationMenuArray });
+          return loadData('custom-static-page', {}, config, client)
+            .then(response => {
+              return writeStaticPageResponse(res, url, page.page, response.data, { config, renderLayout, seo });
+            })
+            .catch(error => {
+              logError(error);
+              return loadErrorData(error, config, client);
+            });
         }
         return res.send(page.content);
       }
