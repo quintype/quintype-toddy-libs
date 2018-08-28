@@ -8,7 +8,7 @@ const supertest = require("supertest");
 function getClientStub(hostname) {
   return {
     getHostname: () => "demo.quintype.io",
-    getConfig: () => Promise.resolve({config: {foo: "bar", "theme-attributes": {}}}),
+    getConfig: () => Promise.resolve({config: {foo: "bar", "theme-attributes": {}}, "publisher-id": 42}),
     getCustomPathData: (path) => {
       switch(path) {
         case '/moved-permanently':
@@ -33,6 +33,7 @@ function createApp(loadData, routes, opts = {}) {
     getClient: getClientStub,
     generateRoutes: () => routes,
     loadData: loadData,
+    logError: (e) => console.log(e),
     renderLayout: (res, {contentTemplate, store}) => res.send(JSON.stringify({contentTemplate, store: store.getState()})),
     handleNotFound: false
   }, opts));
@@ -46,6 +47,11 @@ describe('Custom Route Handler', function() {
     supertest(app)
       .get("/moved-permanently")
       .expect("Location", "/permanent-location")
+      .expect("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
+      // .expect("Vary", "Accept-Encoding")
+      .expect("Surrogate-Control", /public/)
+      .expect("Surrogate-Key", "u/42/%2Fmoved-permanently")
+      .expect("Cache-Tag", "u/42/%2Fmoved-permanently")
       .expect(301, done);
   });
 
@@ -54,6 +60,11 @@ describe('Custom Route Handler', function() {
     supertest(app)
       .get("/moved-temporarily")
       .expect("Location", "/temporary-location")
+      .expect("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
+      // .expect("Vary", "Accept-Encoding")
+      .expect("Surrogate-Control", /public/)
+      .expect("Surrogate-Key", "u/42/%2Fmoved-temporarily")
+      .expect("Cache-Tag", "u/42/%2Fmoved-temporarily")
       .expect(302, done);
   });
 
@@ -62,6 +73,11 @@ describe('Custom Route Handler', function() {
     supertest(app)
       .get("/static-with-header-footer")
       .expect("Content-Type", /html/)
+      .expect("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
+      .expect("Vary", "Accept-Encoding")
+      .expect("Surrogate-Control", /public/)
+      .expect("Surrogate-Key", "u/42/%2Fstatic-with-header-footer")
+      .expect("Cache-Tag", "u/42/%2Fstatic-with-header-footer")
       .expect(200)
       .then(res => {
         const response = JSON.parse(res.text);
@@ -75,6 +91,11 @@ describe('Custom Route Handler', function() {
     supertest(app)
       .get("/static-without-header-footer")
       .expect("Content-Type", /html/)
+      .expect("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
+      .expect("Vary", "Accept-Encoding")
+      .expect("Surrogate-Control", /public/)
+      .expect("Surrogate-Key", "u/42/%2Fstatic-without-header-footer")
+      .expect("Cache-Tag", "u/42/%2Fstatic-without-header-footer")
       .expect(200)
       .then(res => {
         assert.equal("<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>", res.text);
@@ -86,5 +107,30 @@ describe('Custom Route Handler', function() {
     supertest(app)
       .get("/does-not-exist")
       .expect(404, done);
+  });
+
+  it("DisableIsomorphicComponent is set to true", function(done) {
+    const app = createApp((pageType, params, config, client, {host, next}) => pageType === "custom-static-page" ? Promise.resolve({}) : next(), [{pageType: 'story-page', path: '/*'}]);
+    supertest(app)
+      .get("/static-with-header-footer")
+      .expect("Content-Type", /html/)
+      .expect(200)
+      .then(res => {
+        const response = JSON.parse(res.text);
+        assert.equal(true, response.store.qt.disableIsomorphicComponent);
+      }).then(done);
+  });
+
+  it("Store reads config and data from data-loader response", function(done) {
+    const app = createApp((pageType, params, config, client, {host, next}) => pageType === "custom-static-page" ? Promise.resolve({data: {navigationMenu: []}, config: {}}) : next(), [{pageType: 'story-page', path: '/*'}]);
+    supertest(app)
+      .get("/static-with-header-footer")
+      .expect("Content-Type", /html/)
+      .expect(200)
+      .then(res => {
+        const response = JSON.parse(res.text);
+        assert.deepEqual({}, response.store.qt.config);
+        assert.deepEqual([], response.store.qt.data.navigationMenu);
+      }).then(done);
   });
 })
