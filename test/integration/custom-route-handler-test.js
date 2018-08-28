@@ -33,7 +33,6 @@ function createApp(loadData, routes, opts = {}) {
     getClient: getClientStub,
     generateRoutes: () => routes,
     loadData: loadData,
-    logError: (e) => console.log(e),
     renderLayout: (res, {contentTemplate, store}) => res.send(JSON.stringify({contentTemplate, store: store.getState()})),
     handleNotFound: false
   }, opts));
@@ -48,7 +47,7 @@ describe('Custom Route Handler', function() {
       .get("/moved-permanently")
       .expect("Location", "/permanent-location")
       .expect("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
-      // .expect("Vary", "Accept-Encoding")
+      .expect("Vary", /Accept\-Encoding/)
       .expect("Surrogate-Control", /public/)
       .expect("Surrogate-Key", "u/42/%2Fmoved-permanently")
       .expect("Cache-Tag", "u/42/%2Fmoved-permanently")
@@ -61,7 +60,7 @@ describe('Custom Route Handler', function() {
       .get("/moved-temporarily")
       .expect("Location", "/temporary-location")
       .expect("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
-      // .expect("Vary", "Accept-Encoding")
+      .expect("Vary", /Accept\-Encoding/)
       .expect("Surrogate-Control", /public/)
       .expect("Surrogate-Key", "u/42/%2Fmoved-temporarily")
       .expect("Cache-Tag", "u/42/%2Fmoved-temporarily")
