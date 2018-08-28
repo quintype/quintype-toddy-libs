@@ -19,13 +19,12 @@ function renderStaticPageContent(store, content) {
 }
 
 function writeStaticPageResponse(res, url, page, data, { config, renderLayout, seo }) {
-  const currentPath = `${url.pathname}${url.search || ""}`;
   const store = createStore((state) => state, {
     qt: {
       pageType: page.type,
       data: Object.assign({}, page, data.data),
       config: data.config,
-      currentPath,
+      currentPath: `${url.pathname}${url.search || ""}`,
       disableIsomorphicComponent: true
     }
   });
@@ -34,7 +33,6 @@ function writeStaticPageResponse(res, url, page, data, { config, renderLayout, s
   const seoTags = seoInstance && seoInstance.getMetaTags(config, page.type, {}, {url});
 
   res.status(page["status-code"] || 200);
-  addCacheHeadersToResult(res, [customUrlToCacheKey(config["publisher-id"], currentPath)]);
 
   return renderLayout(res, {
     title: page.title,
@@ -64,6 +62,8 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
       }
 
       if(page.type === 'static-page') {
+        addCacheHeadersToResult(res, [customUrlToCacheKey(config["publisher-id"], path)]);
+
         if(page.metadata.header || page.metadata.footer) {
           return loadData('custom-static-page', {}, config, client, {host: req.hostname})
             .then(response => {
