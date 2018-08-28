@@ -34,7 +34,6 @@ function createApp(loadData, routes, opts = {}) {
     generateRoutes: () => routes,
     loadData: loadData,
     renderLayout: (res, {contentTemplate, store}) => res.send(JSON.stringify({contentTemplate, store: store.getState()})),
-    getNavigationMenuArray: () => [],
     handleNotFound: false
   }, opts));
   
@@ -59,14 +58,14 @@ describe('Custom Route Handler', function() {
   });
 
   it("Renders the page in the normal flow if it's a static page and either header or footer is enabled", function(done) {
-    const app = createApp((pageType, params, config, client, {host, next}) => next(), [{pageType: 'story-page', path: '/*'}]);
+    const app = createApp((pageType, params, config, client, {host, next}) => pageType === "custom-static-page" ? Promise.resolve({}) : next(), [{pageType: 'story-page', path: '/*'}]);
     supertest(app)
       .get("/static-with-header-footer")
       .expect("Content-Type", /html/)
       .expect(200)
       .then(res => {
         const response = JSON.parse(res.text);
-        assert.equal("<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>", response.store.qt.data.page.content);
+        assert.equal("<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>", response.store.qt.data.content);
         assert.equal("static-page", response.store.qt.pageType);
       }).then(done);
   });
