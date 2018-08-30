@@ -16,7 +16,8 @@ class IsomorphicComponentBase extends React.Component {
   }
 
   render() {
-    return React.createElement(this.props.pickComponent(this.props.pageType), this.props)
+    const props = Object.assign({}, this.props, { key: this.props.currentPath || "" });
+    return React.createElement(this.props.pickComponent(this.props.pageType), props);
   }
 }
 
