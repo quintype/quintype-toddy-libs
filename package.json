@@ -7,7 +7,8 @@
     "prepublishOnly": "npm install && npm test && git diff --quiet && git tag v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4) && git push --tags origin master",
     "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha --recursive --require ./test/babel",
     "coverage": "nyc --all npm test",
-    "coverage-html": "nyc --all --reporter=html npm test"
+    "coverage-html": "nyc --all --reporter=html npm test",
+    "sync-files-to": "npx onchange --verbose --wait --await-write-finish 'client/*' 'server/*' 'isomorphic/*' -- ./bin-dev-scripts/sync-to.sh "
   },
   "repository": {
     "type": "git",
@@ -59,6 +60,7 @@
     "jsdom-global": "3.0.2",
     "mocha": "^4.0.1",
     "nyc": "^11.4.1",
+    "onchange": "^4.1.0",
     "supertest": "^3.0.0"
   },
   "peerDependencies": {
