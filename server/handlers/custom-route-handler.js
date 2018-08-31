@@ -78,5 +78,5 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
       logError(e);
       res.status(500);
       res.send(e.message);
-    }).finally(() => res.end());
+    });
 }
