@@ -8,7 +8,7 @@
     "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha --recursive --require ./test/babel",
     "coverage": "nyc --all npm test",
     "coverage-html": "nyc --all --reporter=html npm test",
-    "sync-files-to": "npx onchange --verbose --wait --await-write-finish 'client/*' 'server/*' 'isomorphic/*' -- ./bin-dev-scripts/sync-to.sh "
+    "sync-files-to": "npx onchange --verbose --wait --await-write-finish 'client/**/*' 'server/**/*' 'isomorphic/**/*' -- ./bin-dev-scripts/sync-to.sh "
   },
   "repository": {
     "type": "git",
