@@ -266,9 +266,8 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
 
 exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams, disableIsomorphicComponent}) {
   const url = urlLib.parse(path);
-  const params = Object.assign({}, renderParams, { url: url.pathname });
   pageType = pageType || 'static-page';
-  return loadDataForPageType(loadData, loadErrorData, pageType, params, {config, client, logError, host: req.hostname})
+  return loadDataForPageType(loadData, loadErrorData, pageType, renderParams, {config, client, logError, host: req.hostname})
     .then(result => {
       if(!result) {
         return next();
