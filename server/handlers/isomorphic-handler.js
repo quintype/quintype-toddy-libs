@@ -40,7 +40,7 @@ function loadDataForIsomorphicRoute(loadData, loadErrorData, url, routes, {other
 }
 
 function loadDataForPageType(loadData, loadErrorData = () => Promise.resolve({httpStatusCode: 500}), pageType, params, {config, client, logError, host}) {
-  return loadData(pageType, params, config, client, {host, next: abortHandler})
+  return new Promise((resolve) => resolve(loadData(pageType, params, config, client, {host, next: abortHandler})))
     .then(result => {
       if(result && result.data && result.data[ABORT_HANDLER]) {
         return null;
