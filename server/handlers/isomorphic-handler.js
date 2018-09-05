@@ -40,7 +40,13 @@ function loadDataForIsomorphicRoute(loadData, loadErrorData, url, routes, {other
 }
 
 function loadDataForPageType(loadData, loadErrorData = () => Promise.resolve({httpStatusCode: 500}), pageType, params, {config, client, logError, host}) {
-  return new Promise((resolve) => resolve(loadData(pageType, params, config, client, {host, next: abortHandler})))
+  return loadData(pageType, params, config, client, {host, next: abortHandler})
+    .then(result => {
+      if(result && result.data && result.data[ABORT_HANDLER]) {
+        return null;
+      }
+      return result;
+    })
     .catch(error => {
       logError(error);
       return loadErrorData(error, config, client, {host})
@@ -263,6 +269,10 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, co
   pageType = pageType || 'static-page';
   return loadDataForPageType(loadData, loadErrorData, pageType, renderParams, {config, client, logError, host: req.hostname})
     .then(result => {
+      if(!result) {
+        return next();
+      }
+
       const statusCode = result.httpStatusCode || 200;
 
       if(statusCode == 301 && result.data && result.data.location) {
@@ -289,5 +299,5 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, co
       logError(e);
       res.status(500);
       res.send(e.message);
-    }).finally(() => res.end());
+    });
 }
