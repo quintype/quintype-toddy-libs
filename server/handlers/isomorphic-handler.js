@@ -40,7 +40,13 @@ function loadDataForIsomorphicRoute(loadData, loadErrorData, url, routes, {other
 }
 
 function loadDataForPageType(loadData, loadErrorData = () => Promise.resolve({httpStatusCode: 500}), pageType, params, {config, client, logError, host}) {
-  return new Promise((resolve) => resolve(loadData(pageType, params, config, client, {host, next: abortHandler})))
+  return loadData(pageType, params, config, client, {host, next: abortHandler})
+    .then(result => {
+      if(result && result.data[ABORT_HANDLER]) {
+        return null;
+      }
+      return result;
+    })
     .catch(error => {
       logError(error);
       return loadErrorData(error, config, client, {host})
@@ -260,17 +266,18 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
 
 exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, config, client, logError, loadData, loadErrorData, renderLayout, pageType, seo, renderParams, disableIsomorphicComponent}) {
   const url = urlLib.parse(path);
+  const params = Object.assign({}, renderParams, { url: url.pathname });
   pageType = pageType || 'static-page';
-  return loadDataForPageType(loadData, loadErrorData, pageType, renderParams, {config, client, logError, host: req.hostname})
+  return loadDataForPageType(loadData, loadErrorData, pageType, params, {config, client, logError, host: req.hostname})
     .then(result => {
+      if(!result) {
+        return next();
+      }
+
       const statusCode = result.httpStatusCode || 200;
 
       if(statusCode == 301 && result.data && result.data.location) {
         return res.redirect(301, result.data.location);
-      }
-
-      if(!result.data.staticPageHTML) {
-        return next();
       }
 
       const seoInstance = getSeoInstance(seo, config);
