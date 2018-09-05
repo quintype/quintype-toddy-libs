@@ -269,6 +269,10 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, co
         return res.redirect(301, result.data.location);
       }
 
+      if(!result.data.staticPageHTML) {
+        return next();
+      }
+
       const seoInstance = getSeoInstance(seo, config);
       const seoTags = seoInstance && seoInstance.getMetaTags(config, result.pageType || pageType, result, {url});
       const store = createStoreFromResult(url, result, {
@@ -289,5 +293,5 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, co
       logError(e);
       res.status(500);
       res.send(e.message);
-    }).finally(() => res.end());
+    });
 }
