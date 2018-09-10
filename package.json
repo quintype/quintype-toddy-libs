@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "2.68.0",
+  "version": "2.69.0",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -33,7 +33,7 @@
     "get-youtube-id": "^1.0.0",
     "http-proxy": "^1.16.2",
     "js-yaml": "^3.10.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.10",
     "morgan": "^1.9.0",
     "quintype-backend": "^1.12.1",
     "quintype-js": "^0.1.6",
