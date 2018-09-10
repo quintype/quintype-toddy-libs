@@ -2,7 +2,7 @@ const {generateServiceWorker} = require("./handlers/generate-service-worker");
 const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute, notFoundHandler} = require("./handlers/isomorphic-handler");
 const {oneSignalImport} = require("./handlers/one-signal");
 const {customRouteHandler} = require("./handlers/custom-route-handler");
-const {handleManifest} = require("./handlers/manifest");
+const {handleManifest, handleAssetLink} = require("./handlers/json-manifest-handlers");
 const {redirectStory} = require("./handlers/story-redirect");
 const {simpleJsonHandler} = require("./handlers/simple-json-handler");
 
@@ -82,6 +82,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       loadErrorData,
                                                       seo,
                                                       manifestFn,
+                                                      assetLinkFn,
 
                                                       logError = require("./logger").error,
                                                       oneSignalServiceWorkers = false,
@@ -122,6 +123,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
     app.get("/manifest.json", withConfig(handleManifest, {manifestFn, logError}))
   }
 
+  if(assetLinkFn) {
+    app.get("/.well-known/assetlinks.json", withConfig(handleAssetLink, {assetLinkFn, logError}))
+  }
+
   if(templateOptions) {
     app.get('/template-options.json', withConfig(simpleJsonHandler, {jsonData: toFunction(templateOptions, "./template-options")}))
   }
@@ -135,11 +140,11 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   if(redirectRootLevelStories) {
     app.get("/:storySlug", withConfig(redirectStory, {logError}));
   }
-  
+
   if(handleCustomRoute) {
     app.get("/*", withConfig(customRouteHandler, {loadData, renderLayout, logError, seo}));
   }
-  
+
   if(handleNotFound) {
     app.get("/*", withConfig(notFoundHandler, {renderLayout, pickComponent, loadErrorData, logError, assetHelper}));
   }
