@@ -4,7 +4,7 @@
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
-    "prepublishOnly": "npm install && npm test && git diff --quiet && git tag v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4) && git push --tags origin master",
+    "prepublishOnly": "npm install && npm test && git diff --quiet && git tag -m '' -a v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4) && git push --follow-tags origin",
     "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha --recursive --require ./test/babel",
     "coverage": "nyc --all npm test",
     "coverage-html": "nyc --all --reporter=html npm test",
