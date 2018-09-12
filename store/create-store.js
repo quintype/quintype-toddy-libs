@@ -1,6 +1,6 @@
 import { createStore, combineReducers } from 'redux';
-import { NAVIGATE_TO_PAGE, SERVICE_WORKER_UPDATED } from '@quintype/components/store/actions';
-import { ComponentReducers } from '@quintype/components/store/reducers';
+import { NAVIGATE_TO_PAGE, SERVICE_WORKER_UPDATED } from '@quintype/components';
+import { ComponentReducers } from '@quintype/components';
 
 function internalReducers(state = {}, action) {
   switch (action.type) {
