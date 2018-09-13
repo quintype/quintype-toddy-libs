@@ -1,7 +1,7 @@
 // The below code dynamically generates routes based on the config
 // A section sect will generate three urls:
 // /sect, /sect/:storySlug, /sect/*/:storySlug
-var flatMap = require('array.prototype.flatmap');
+const flatMap = require('array.prototype.flatmap');
 
 exports.generateSectionPageRoutes = function generateSectionPageRoutes(config, opts = {}) {
   const sectionsById = config.sections.reduce((acc, section) => {
@@ -9,7 +9,7 @@ exports.generateSectionPageRoutes = function generateSectionPageRoutes(config, o
     return acc;
   }, {});
 
-  return flatMap(config.sections, section => generateSectionPageRoute(section, sectionsById, opts))
+  return flatMap(config.sections || [], section => generateSectionPageRoute(section, sectionsById, opts))
 }
 
 function generateSectionPageRoute(section, sectionsById, opts) {

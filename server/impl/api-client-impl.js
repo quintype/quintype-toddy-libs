@@ -1,6 +1,7 @@
 const { Client, Story, Author, CustomPath, Member, Collection, Entity } = require("quintype-backend");
 const { storyToCacheKey, collectionToCacheKey, authorToCacheKey, sorterToCacheKey } = require("../caching");
-var flatMap = require('array.prototype.flatmap');
+const flatMap = require('array.prototype.flatmap');
+
 
 function getClientImpl(config, cachedSecondaryClients, hostname) {
   return cachedSecondaryClients[hostname] || createTemporaryClient(config, hostname);
@@ -22,7 +23,7 @@ function itemToCacheKey(publisherId, item) {
 
 Collection.prototype.cacheKeys = function(publisherId) {
   return [collectionToCacheKey(publisherId, this)]
-           .concat(flatMap(this.items, item => itemToCacheKey(publisherId, item)));
+           .concat(flatMap(this.items || [], item => itemToCacheKey(publisherId, item)));
 };
 
 Story.prototype.cacheKeys = function(publisherId) {

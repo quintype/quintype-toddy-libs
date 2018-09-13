@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "2.70.0-beta.1",
+  "version": "2.70.0-beta.2",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
-    "@quintype/components": "^1.33.0-beta.1",
+    "@quintype/components": "^1.33.0-beta.4",
     "array.prototype.flatmap": "^1.2.1",
     "atob": "^2.0.3",
     "cluster": "^0.7.7",
