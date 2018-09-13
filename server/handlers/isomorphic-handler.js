@@ -1,5 +1,4 @@
-const omit = require("object.omit");
-const { get } = require("dot-prop-immutable");
+const _ = require("lodash");
 
 const urlLib = require("url");
 const {matchBestRoute, matchAllRoutes} = require('../../isomorphic/match-best-route');
@@ -89,7 +88,7 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {
 
 
 function addCacheHeaders(res, result) {
-  return addCacheHeadersToResult(res, get(result, ["data", "cacheKeys"]))
+  return addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]))
 }
 
 function createStoreFromResult(url, result, opts = {}) {
@@ -159,7 +158,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
       const seoInstance = getSeoInstance(seo, config);
       res.json(Object.assign({}, result, {
         appVersion: appVersion,
-        data: omit(result.data, ["cacheKeys"]),
+        data: _.omit(result.data, ["cacheKeys"]),
         title: seoInstance ? seoInstance.getTitle(config, result.pageType, result) : result.title,
       }));
     }).catch(handleException).finally(() => res.end());

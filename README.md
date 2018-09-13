@@ -221,6 +221,8 @@ Make sure you do all of the following techniques to reduce page load time (notes
 <script type="application/json" id="static-page">{"config": {}}</script>
 ```
 
+### Never require lodash directly. Always do lodash/get
+
 ### Do not use moment. Use date-fns
 
 ### LazyLoad Images
