@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
-import urlLib from 'url';
 import { get } from 'dot-prop-immutable';
 import { createBrowserHistory } from 'history'
 
@@ -20,8 +19,8 @@ export const history = createBrowserHistory();
 export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl, registerPageView, registerStoryShare, setMemberId};
 
 function getRouteData(path, {location = global.location, existingFetch}) {
-  const url = urlLib.parse(path)
-  return (existingFetch || fetch(`/route-data.json?path=${encodeURIComponent(url.pathname)}${url.query ? "&" + url.query : ""}`, {credentials: 'same-origin'}))
+  const url = new URL(path, location.origin);
+  return (existingFetch || fetch(`/route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? "&" + url.search.slice(1) : ""}`, {credentials: 'same-origin'}))
     .then(response => {
       if(response.status == 404) {
         // There is a chance this might abort
