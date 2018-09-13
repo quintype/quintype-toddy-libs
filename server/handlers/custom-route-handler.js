@@ -1,7 +1,7 @@
 const urlLib = require("url");
 const {createStore} = require("redux");
 const Promise = require("bluebird");
-const get = require("lodash/get");
+const { get } = require("dot-prop-immutable");
 const ejs = require("ejs");
 const fs = require("fs");
 const path = require("path");

@@ -1,4 +1,4 @@
-const get = require("lodash/get");
+const { get } = require("dot-prop-immutable");
 const Promise = require("bluebird");
 
 exports.handleManifest = function handleManifest(req, res, next, {config, logError, manifestFn}) {

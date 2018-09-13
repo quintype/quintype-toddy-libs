@@ -1,17 +1,15 @@
 // The below code dynamically generates routes based on the config
 // A section sect will generate three urls:
 // /sect, /sect/:storySlug, /sect/*/:storySlug
-const _ = require("lodash");
+var flatMap = require('array.prototype.flatmap');
 
 exports.generateSectionPageRoutes = function generateSectionPageRoutes(config, opts = {}) {
-  const sectionsById = _(config.sections).reduce((acc, section) => {
+  const sectionsById = config.sections.reduce((acc, section) => {
     acc[section.id] = section;
     return acc;
   }, {});
 
-  return _(config.sections)
-    .flatMap((section) => generateSectionPageRoute(section, sectionsById, opts))
-    .value();
+  return flatMap(config.sections, section => generateSectionPageRoute(section, sectionsById, opts))
 }
 
 function generateSectionPageRoute(section, sectionsById, opts) {
@@ -37,9 +35,9 @@ function generateSectionPageRoute(section, sectionsById, opts) {
     routes = [slug];
 
   if(opts.addSectionPrefix)
-    routes = _.flatMap(routes, route => [sectionPageRoute(route, params), addSectionPrefix(route, params)]);
+    routes = flatMap(routes, route => [sectionPageRoute(route, params), addSectionPrefix(route, params)]);
   else
-    routes = _.flatMap(routes, route => [sectionPageRoute(route, params)]);
+    routes = flatMap(routes, route => [sectionPageRoute(route, params)]);
 
   return routes;
 }
@@ -58,10 +56,8 @@ function sectionPageRoute(route, params) {
 }
 
 exports.generateStoryPageRoutes = function generateStoryPageRoutes(config, {withoutParentSection} = {}) {
-  return _(config.sections)
-    .filter((section) => withoutParentSection || !section["parent-id"])
-    .flatMap((section) => [storyPageRoute(`/${section.slug}/:storySlug`), storyPageRoute(`/${section.slug}/*/:storySlug`)])
-    .value();
+  const parentSections = config.sections.filter((section) => withoutParentSection || !section["parent-id"]);
+  return flatMap(parentSections, (section) => [storyPageRoute(`/${section.slug}/:storySlug`), storyPageRoute(`/${section.slug}/*/:storySlug`)]);
 }
 
 function storyPageRoute(path) {

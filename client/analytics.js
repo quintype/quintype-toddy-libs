@@ -1,4 +1,4 @@
-import get from 'lodash/get'
+import { get } from 'dot-prop-immutable'
 
 // istanbul ignore next
 export function startAnalytics() {

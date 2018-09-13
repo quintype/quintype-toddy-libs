@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 import urlLib from 'url';
-import get from 'lodash/get';
+import { get } from 'dot-prop-immutable';
 import { createBrowserHistory } from 'history'
 
 require("../assetify/client")();
