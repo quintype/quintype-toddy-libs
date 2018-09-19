@@ -3,7 +3,7 @@ const _ = require("lodash");
 const urlLib = require("url");
 const {matchBestRoute, matchAllRoutes} = require('../../isomorphic/match-best-route');
 const {IsomorphicComponent} = require("../../isomorphic/component");
-const {addCacheHeadersToResult, addNoCacheHeaders} = require("./cdn-caching");
+const {addCacheHeadersToResult, defaultCacheHeaders} = require("./cdn-caching");
 const {ApplicationException, NotFoundException} = require("../exceptions");
 const {renderReduxComponent} = require("../render");
 const {createStore} = require("redux");
@@ -89,7 +89,7 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {
 
 function addCacheHeaders(res, result) {
   const cacheKeys = _.get(result, ["data", "cacheKeys"]);
-  return cacheKeys ? addCacheHeadersToResult(res, cacheKeys) : addNoCacheHeaders(res);
+  return cacheKeys ? addCacheHeadersToResult(res, cacheKeys) : defaultCacheHeaders(res);
 }
 
 function createStoreFromResult(url, result, opts = {}) {

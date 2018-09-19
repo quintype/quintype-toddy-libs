@@ -1,6 +1,6 @@
 const _ = require("lodash");
 
-exports.addNoCacheHeaders = function addNoCacheHeaders(res){
+exports.defaultCacheHeaders = function defaultCacheHeaders(res){
   res.setHeader('Cache-Control', "no-cache, no-store,max-age=0,s-maxage=0,must-revalidate");
   res.setHeader('Vary', "Accept-Encoding");
   res.setHeader('Surrogate-Control', "no-cache, no-store, must-revalidate");
