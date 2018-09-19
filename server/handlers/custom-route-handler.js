@@ -61,20 +61,13 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
         if(!page["status-code"] || !page["destination-path"]) {
           logError('Defaulting the status-code to 302 with destination-path as home-page');
         }
-        if(path){
-          addCacheHeaders(res,config,path);
-        }else {
-          addCacheHeaders(res,config,"redirect");
-        }
+        addCacheHeaders(res,config,path || "redirect");
+       
         return res.redirect(page["status-code"] || 302, page["destination-path"] || "/");
       }
 
       if(page.type === 'static-page') {
-        if(path){
-          addCacheHeaders(res,config,path);
-        }else {
-          addCacheHeaders(res,config,"static");
-        }
+        addCacheHeaders(res,config,path || "static");
 
         if(page.metadata.header || page.metadata.footer) {
           return loadData('custom-static-page', {}, config, client, {host: req.hostname})
