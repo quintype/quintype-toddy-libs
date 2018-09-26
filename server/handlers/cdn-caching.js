@@ -2,7 +2,7 @@ const _ = require("lodash");
 
 exports.addCacheHeadersToResult = function addCacheHeadersToResult(res, cacheKeys) {
   if(cacheKeys) {
-    if(cacheKeys === 'PRIVATE'){
+    if(cacheKeys === 'DO_NOT_CACHE'){
       res.setHeader('Cache-Control', "private,no-cache,no-store,max-age=0");
       res.setHeader('Vary', "Accept-Encoding");
       res.setHeader('Surrogate-Control', "private,no-cache,no-store,max-age=0");
