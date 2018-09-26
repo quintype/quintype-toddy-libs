@@ -1,10 +1,10 @@
 {
   "name": "@quintype/framework",
-  "version": "2.69.0",
+  "version": "2.70.0",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
-    "prepublishOnly": "npm install && npm test && git diff --quiet && git tag v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4) && git push --tags origin master",
+    "prepublishOnly": "npm install && npm test && git diff --quiet && git tag -m '' -a v$(cat package.json | grep version | head -n1  | cut -d \\\" -f 4) && git push --follow-tags origin",
     "test": "NODE_ENV=test ./node_modules/mocha/bin/mocha --recursive --require ./test/babel",
     "coverage": "nyc --all npm test",
     "coverage-html": "nyc --all --reporter=html npm test",
@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
-    "@quintype/components": "^1.24.0",
+    "@quintype/components": "^1.35.0",
     "atob": "^2.0.3",
     "cluster": "^0.7.7",
     "compression": "^1.7.1",
@@ -36,14 +36,12 @@
     "lodash": "^4.17.10",
     "morgan": "^1.9.0",
     "quintype-backend": "^1.12.1",
-    "quintype-js": "^0.1.6",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
     "react-redux": "^5.0.6",
     "react-router": "^4.2.0",
     "redux": "^3.7.2",
     "sleep-promise": "^2.0.0",
-    "url": "^0.11.0",
     "winston": "3.0.0-rc1"
   },
   "devDependencies": {
