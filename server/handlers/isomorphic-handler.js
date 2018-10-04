@@ -8,6 +8,7 @@ const {ApplicationException, NotFoundException} = require("../exceptions");
 const {renderReduxComponent} = require("../render");
 const {createStore} = require("redux");
 const Promise = require("bluebird");
+const { customUrlToCacheKey } = require("../caching");
 
 const ABORT_HANDLER = "__ABORT__";
 function abortHandler() {
@@ -86,11 +87,6 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {
 }
 
 
-
-function addCacheHeaders(res, result) {
-  return addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]))
-}
-
 function createStoreFromResult(url, result, opts = {}) {
   return createStore((state) => state, {
     qt: Object.assign({}, opts, {
@@ -154,7 +150,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
       const statusCode = result.httpStatusCode || 200;
       res.status(statusCode < 500 ? 200 : 500);
       res.setHeader("Content-Type", "application/json");
-      addCacheHeaders(res, result);
+      addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]));
       const seoInstance = getSeoInstance(seo, config);
       res.json(Object.assign({}, result, {
         appVersion: appVersion,
@@ -234,6 +230,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
     const statusCode = result.httpStatusCode || 200;
 
     if(statusCode == 301 && result.data && result.data.location) {
+      addCacheHeadersToResult(res, [customUrlToCacheKey(config["publisher-id"], "redirect")]);
       return res.redirect(301, result.data.location);
     }
 
@@ -244,7 +241,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
     });
 
     res.status(statusCode)
-    addCacheHeaders(res, result);
+    addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]));
 
     if(preloadJs) {
       res.append("Link", `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`);
@@ -286,7 +283,7 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, co
       });
 
       res.status(statusCode)
-      addCacheHeaders(res, result);
+      addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"],['static']));
 
       return renderLayout(res, Object.assign({
         config: config,

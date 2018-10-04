@@ -9,7 +9,7 @@ const staticPageTemplateStr = fs.readFileSync(path.join(__dirname, "../views/sta
 const staticPageTemplate = ejs.compile(staticPageTemplateStr);
 
 const { CustomPath } = require("../impl/api-client-impl");
-const { addCacheHeadersToResult } = require("./cdn-caching");
+const {addCacheHeadersToResult} = require("./cdn-caching");
 const { customUrlToCacheKey } = require("../caching");
 
 function renderStaticPageContent(store, content) {
@@ -43,6 +43,11 @@ function writeStaticPageResponse(res, url, page, data, { config, renderLayout, s
   });
 }
 
+function addCacheHeaders(res, config, path) {
+  return addCacheHeadersToResult(res, [customUrlToCacheKey(config["publisher-id"], path)]);
+}
+
+
 exports.customRouteHandler = function customRouteHandler(req, res, next, { config, client, loadData, loadErrorData, renderLayout, logError, seo }) {
   const url = urlLib.parse(req.url, true);
   const path = req.params[0];
@@ -56,13 +61,13 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
         if(!page["status-code"] || !page["destination-path"]) {
           logError('Defaulting the status-code to 302 with destination-path as home-page');
         }
-        addCacheHeadersToResult(res, [customUrlToCacheKey(config["publisher-id"], path)]);
-
+        addCacheHeaders(res,config,path || "redirect");
+       
         return res.redirect(page["status-code"] || 302, page["destination-path"] || "/");
       }
 
       if(page.type === 'static-page') {
-        addCacheHeadersToResult(res, [customUrlToCacheKey(config["publisher-id"], path)]);
+        addCacheHeaders(res,config,path || "static");
 
         if(page.metadata.header || page.metadata.footer) {
           return loadData('custom-static-page', {}, config, client, {host: req.hostname})
