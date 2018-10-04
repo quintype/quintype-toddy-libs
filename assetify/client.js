@@ -1,12 +1,11 @@
 // istanbul ignore file
 
-const urlLib = require("url");
 const {setAssetifyFn} = require("../assetify");
 
 function getAssetCdn() {
   const script = global.document.getElementById("app-js");
   if(script && script.src)
-    return urlLib.parse(script.src).host;
+    return new URL(script.src).host;
 }
 
 const assetCdn = `//${getAssetCdn() || "fea.assettype.com"}`;

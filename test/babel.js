@@ -7,9 +7,6 @@ require("babel-register")({
     "quintype-assets",
   ],
   ignore(file) {
-    if (file.startsWith(ROOT_PATH + '/node_modules/@quintype/components/store')) {
-      return false;
-    }
     return file.startsWith(ROOT_PATH + '/node_modules');
   }
 });

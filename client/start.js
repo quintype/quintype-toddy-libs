@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
-import urlLib from 'url';
 import get from 'lodash/get';
 import { createBrowserHistory } from 'history'
 
@@ -10,7 +9,7 @@ require("../assetify/client")();
 import { createQtStore } from '../store/create-store';
 import { IsomorphicComponent } from '../isomorphic/component'
 import { BreakingNews } from '@quintype/components';
-import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components/store/actions';
+import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components';
 import { startAnalytics, registerPageView, registerStoryShare, setMemberId } from './analytics';
 import { registerServiceWorker, setupServiceWorkerUpdates, checkForServiceWorkerUpdates } from './impl/load-service-worker';
 
@@ -20,8 +19,8 @@ export const history = createBrowserHistory();
 export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl, registerPageView, registerStoryShare, setMemberId};
 
 function getRouteData(path, {location = global.location, existingFetch}) {
-  const url = urlLib.parse(path)
-  return (existingFetch || fetch(`/route-data.json?path=${encodeURIComponent(url.pathname)}${url.query ? "&" + url.query : ""}`, {credentials: 'same-origin'}))
+  const url = new URL(path, location.origin);
+  return (existingFetch || fetch(`/route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? "&" + url.search.slice(1) : ""}`, {credentials: 'same-origin'}))
     .then(response => {
       if(response.status == 404) {
         // There is a chance this might abort
