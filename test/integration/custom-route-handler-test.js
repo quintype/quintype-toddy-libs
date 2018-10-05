@@ -12,13 +12,13 @@ function getClientStub(hostname) {
     getCustomPathData: (path) => {
       switch(path) {
         case '/moved-permanently':
-          return Promise.resolve({"page":{"type":"redirect","status-code":301,"destination-path":"/permanent-location"}});
+          return Promise.resolve({"page":{"id": 101, "type":"redirect","status-code":301,"destination-path":"/permanent-location"}});
         case '/moved-temporarily':
-          return Promise.resolve({"page":{"type":"redirect","status-code":302,"destination-path":"/temporary-location"}});
+          return Promise.resolve({"page":{"id": 102, "type":"redirect","status-code":302,"destination-path":"/temporary-location"}});
         case '/static-with-header-footer':
-          return Promise.resolve({"page":{"title":"Testing","content":"<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>","metadata":{"header":true,"footer":false},"type":"static-page","status-code":200}});
+          return Promise.resolve({"page":{"id": 103, "title":"Testing","content":"<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>","metadata":{"header":true,"footer":false},"type":"static-page","status-code":200}});
         case '/static-without-header-footer':
-          return Promise.resolve({"page":{"title":"Testing","content":"<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>","metadata":{"header":false,"footer":false},"type":"static-page","status-code":200}});
+          return Promise.resolve({"page":{"id": 104, "title":"Testing","content":"<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>","metadata":{"header":false,"footer":false},"type":"static-page","status-code":200}});
         default:
           return Promise.resolve({"page":null,"status-code":404});               
       }
@@ -49,8 +49,8 @@ describe('Custom Route Handler', function() {
       .expect("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
       .expect("Vary", /Accept\-Encoding/)
       .expect("Surrogate-Control", /public/)
-      .expect("Surrogate-Key", "u/42/%2Fmoved-permanently")
-      .expect("Cache-Tag", "u/42/%2Fmoved-permanently")
+      .expect("Surrogate-Key", "u/42/101")
+      .expect("Cache-Tag", "u/42/101")
       .expect(301, done);
   });
 
@@ -62,8 +62,8 @@ describe('Custom Route Handler', function() {
       .expect("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
       .expect("Vary", /Accept\-Encoding/)
       .expect("Surrogate-Control", /public/)
-      .expect("Surrogate-Key", "u/42/%2Fmoved-temporarily")
-      .expect("Cache-Tag", "u/42/%2Fmoved-temporarily")
+      .expect("Surrogate-Key", "u/42/102")
+      .expect("Cache-Tag", "u/42/102")
       .expect(302, done);
   });
 
@@ -75,8 +75,8 @@ describe('Custom Route Handler', function() {
       .expect("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
       .expect("Vary", "Accept-Encoding")
       .expect("Surrogate-Control", /public/)
-      .expect("Surrogate-Key", "u/42/%2Fstatic-with-header-footer")
-      .expect("Cache-Tag", "u/42/%2Fstatic-with-header-footer")
+      .expect("Surrogate-Key", "u/42/103")
+      .expect("Cache-Tag", "u/42/103")
       .expect(200)
       .then(res => {
         const response = JSON.parse(res.text);
@@ -93,8 +93,8 @@ describe('Custom Route Handler', function() {
       .expect("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
       .expect("Vary", "Accept-Encoding")
       .expect("Surrogate-Control", /public/)
-      .expect("Surrogate-Key", "u/42/%2Fstatic-without-header-footer")
-      .expect("Cache-Tag", "u/42/%2Fstatic-without-header-footer")
+      .expect("Surrogate-Key", "u/42/104")
+      .expect("Cache-Tag", "u/42/104")
       .expect(200)
       .then(res => {
         assert.equal("<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>", res.text);
