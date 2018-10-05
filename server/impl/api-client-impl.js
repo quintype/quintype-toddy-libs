@@ -32,8 +32,9 @@ Story.prototype.cacheKeys = function(publisherId) {
 
 Story.sorterToCacheKey = sorterToCacheKey;
 
-Author.prototype.cacheKeys = function(publisherId, author) {
-  return [authorToCacheKey(publisherId, author)];
+Author.prototype.cacheKeys = function(publisherId) {
+  const author = this.author;
+  return author && author.id ? [authorToCacheKey(publisherId, author)] : null;
 }
 
 module.exports = {getClientImpl, Client, Story, Author, CustomPath, Member, Collection, Entity};

@@ -53,4 +53,17 @@ describe('ApiClient', function() {
       assert.equal("q/1/top/section-15", Story.sorterToCacheKey(1, "top", 15));
     })
   })
+
+  describe("Author", function() {
+    it("returns cache keys", function() {
+      const author = Author.build({ "id": 101 });
+      assert.deepStrictEqual(["a/1/101"], author.cacheKeys(1));
+    })
+
+    it("returns cache keys as null if author is invalid", function() {
+      const author = Author.build({});
+      assert.deepStrictEqual(null, author.cacheKeys(1));
+    })
+  })
+
 });
