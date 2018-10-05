@@ -1,5 +1,5 @@
 const { Client, Story, Author, CustomPath, Member, Collection, Entity } = require("quintype-backend");
-const { storyToCacheKey, collectionToCacheKey, authorToCacheKey, sorterToCacheKey } = require("../caching");
+const { storyToCacheKey, collectionToCacheKey, authorToCacheKey, sorterToCacheKey, customUrlToCacheKey } = require("../caching");
 const _ = require("lodash");
 
 function getClientImpl(config, cachedSecondaryClients, hostname) {
@@ -31,5 +31,15 @@ Story.prototype.cacheKeys = function(publisherId) {
 }
 
 Story.sorterToCacheKey = sorterToCacheKey;
+
+Author.prototype.cacheKeys = function(publisherId) {
+  const author = this.author;
+  return author && author.id ? [authorToCacheKey(publisherId, author)] : null;
+}
+
+CustomPath.prototype.cacheKeys = function(publisherId) {
+  const page = this.page;
+  return page && page.id ? [customUrlToCacheKey(publisherId, page)] : null;
+}
 
 module.exports = {getClientImpl, Client, Story, Author, CustomPath, Member, Collection, Entity};

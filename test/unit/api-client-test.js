@@ -1,6 +1,6 @@
 var assert = require('assert');
 
-const {getClientImpl, Client, Story, Author, Member, Collection} = require("../../server/impl/api-client-impl");
+const {getClientImpl, Client, Story, Author, Member, Collection, CustomPath} = require("../../server/impl/api-client-impl");
 
 describe('ApiClient', function() {
   describe('getClient', function() {
@@ -53,4 +53,29 @@ describe('ApiClient', function() {
       assert.equal("q/1/top/section-15", Story.sorterToCacheKey(1, "top", 15));
     })
   })
+
+  describe("Author", function() {
+    it("returns cache keys", function() {
+      const author = Author.build({ "id": 101 });
+      assert.deepStrictEqual(["a/1/101"], author.cacheKeys(1));
+    })
+
+    it("returns cache keys as null if author is invalid", function() {
+      const author = Author.build({});
+      assert.deepStrictEqual(null, author.cacheKeys(1));
+    })
+  })
+
+  describe("Custom urls", function() {
+    it("returns cache keys", function() {
+      const page = CustomPath.build({"id": 101});
+      assert.deepStrictEqual(["u/1/101"], page.cacheKeys(1));
+    })
+
+    it("returns cache keys as null if page is invalid", function() {
+      const page = CustomPath.build({});
+      assert.deepStrictEqual(null, page.cacheKeys(1));
+    })
+  })
+
 });

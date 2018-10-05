@@ -14,7 +14,6 @@ exports.sorterToCacheKey = function sorterToCacheKey(publisherId, storyGroup, se
   return `q/${publisherId}/${storyGroup}/${sectionId ? `section-${sectionId}` : "home"}`;
 }
 
-exports.customUrlToCacheKey = function customUrlToCacheKey(publisherId, currentPath) {
-  const path = currentPath.startsWith('/') ? currentPath : "/" + currentPath;
-  return `u/${publisherId}/${encodeURIComponent(path)}`;
+exports.customUrlToCacheKey = function customUrlToCacheKey(publisherId, page) {
+  return `u/${publisherId}/${page['id']}`;
 }
