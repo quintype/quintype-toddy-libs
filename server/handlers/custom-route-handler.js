@@ -43,8 +43,8 @@ function writeStaticPageResponse(res, url, page, data, { config, renderLayout, s
   });
 }
 
-function addCacheHeaders(res, config, path) {
-  return addCacheHeadersToResult(res, [customUrlToCacheKey(config["publisher-id"], path)]);
+function addCacheHeaders(res, config, page) {
+  return addCacheHeadersToResult(res, [customUrlToCacheKey(config["publisher-id"], page)]);
 }
 
 
@@ -61,13 +61,13 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
         if(!page["status-code"] || !page["destination-path"]) {
           logError('Defaulting the status-code to 302 with destination-path as home-page');
         }
-        addCacheHeaders(res,config,path || "redirect");
+        addCacheHeaders(res, config, page.page);
        
         return res.redirect(page["status-code"] || 302, page["destination-path"] || "/");
       }
 
       if(page.type === 'static-page') {
-        addCacheHeaders(res,config,path || "static");
+        addCacheHeaders(res, config, page.page);
 
         if(page.metadata.header || page.metadata.footer) {
           return loadData('custom-static-page', {}, config, client, {host: req.hostname})
