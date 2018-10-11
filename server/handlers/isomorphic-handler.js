@@ -189,7 +189,10 @@ exports.notFoundHandler = function notFoundHandler(req, res, next, {config, clie
         defaultPageType: 'not-found',
       });
 
-      res.status(statusCode)
+      res.status(statusCode);
+      res.setHeader("Cache-Control", "public,max-age=15,s-maxage=60, stale-while-revalidate=150,stale-if-error=3600");
+      res.setHeader("Vary", "Accept-Encoding");
+      res.setHeader("Content-Type", "text/html; charset=utf-8");
 
       return renderLayout(res, {
         config: config,

@@ -19,9 +19,9 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult(res, cacheKey
     }
 
   } else {
-    res.setHeader('Cache-Control', "public,max-age=15,s-maxage=60");
+    res.setHeader('Cache-Control', "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600");
     res.setHeader('Vary', "Accept-Encoding");
-    res.setHeader('Surrogate-Control', "public,max-age=15,s-maxage=60");
+    res.setHeader('Surrogate-Control', "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600");
   }
   return res;
 }
