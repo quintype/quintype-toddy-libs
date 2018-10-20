@@ -55,7 +55,7 @@
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
     "history": "^4.7.2",
-    "jsdom": "11.11.0",
+    "jsdom": "^12.2.0",
     "jsdom-global": "3.0.2",
     "mocha": "^4.0.1",
     "nyc": "^11.4.1",
