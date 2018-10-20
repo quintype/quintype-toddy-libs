@@ -1,4 +1,4 @@
-const { Client, Story, Author, CustomPath, Member, Collection, Entity } = require("quintype-backend");
+const { Client, Story, Author, CustomPath, Member, Collection, Entity } = require("@quintype/backend");
 const { storyToCacheKey, collectionToCacheKey, authorToCacheKey, sorterToCacheKey, customUrlToCacheKey } = require("../caching");
 const _ = require("lodash");
 
