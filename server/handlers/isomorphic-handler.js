@@ -201,6 +201,7 @@ exports.notFoundHandler = function notFoundHandler(req, res, next, {config, clie
             title: result.title,
             content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
             store: store,
+            pageType: store.getState().qt.pageType,
           })
         );
     }).catch(e => {
@@ -265,6 +266,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
           content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
           store: store,
           seoTags: seoTags,
+          pageType: store.getState().qt.pageType,
         })
       );
   };
