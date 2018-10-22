@@ -12,6 +12,7 @@ import { BreakingNews } from '@quintype/components';
 import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components';
 import { startAnalytics, registerPageView, registerStoryShare, setMemberId } from './analytics';
 import { registerServiceWorker, setupServiceWorkerUpdates, checkForServiceWorkerUpdates } from './impl/load-service-worker';
+import { makePickComponentSync } from '../isomorphic/make-pick-component-sync';
 
 export const history = createBrowserHistory();
 
@@ -102,7 +103,9 @@ export function renderComponent(clazz, container, store, props = {}, callback) {
 
 export function renderIsomorphicComponent(container, store, pickComponent, props) {
   if(!store.getState().qt.disableIsomorphicComponent) {
-    return renderComponent(IsomorphicComponent, container, store, Object.assign({pickComponent}, props), () => store.dispatch({type: CLIENT_SIDE_RENDERED}));
+    pickComponent = makePickComponentSync(pickComponent);
+    return pickComponent.preloadComponent(store.getState().qt.pageType)
+      .then(() => renderComponent(IsomorphicComponent, container, store, Object.assign({pickComponent}, props), () => store.dispatch({type: CLIENT_SIDE_RENDERED})))
   } else {
     console && console.log("IsomorphicComponent is disabled");
   }
