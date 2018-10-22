@@ -23,7 +23,7 @@ function createApp(loadData, routes, opts = {}) {
     getClient: getClientStub,
     generateRoutes: () => routes,
     loadData: loadData,
-    pickComponent: pickComponent,
+    pickComponent: opts.pickComponent || pickComponent,
     renderLayout: (res, {store, title, content}) => res.send(JSON.stringify({store: store.getState(), title, content})),
     handleCustomRoute: false
   }, opts));
@@ -45,6 +45,21 @@ describe('Isomorphic Handler', function() {
         assert.equal("foobar", response.store.qt.data.text);
         assert.equal("127.0.0.1", response.store.qt.data.host);
         assert.equal("home-page", response.store.qt.pageType);
+      }).then(done);
+  });
+
+  it('Accepts an async pickComponent function', function(done) {
+    const app = createApp((pageType, params, config, client, {host}) => Promise.resolve({pageType, data: {text: "foobar"}}), [{pageType: 'home-page', path: '/'}], {
+      pickComponent: (pageType) => Promise.resolve(pickComponent(pageType))
+    });
+
+    supertest(app)
+      .get("/")
+      .expect("Content-Type", /html/)
+      .expect(200)
+      .then(res => {
+        const response = JSON.parse(res.text);
+        assert.equal("<div data-page-type=\"home-page\" data-reactroot=\"\">foobar</div>", response.content);
       }).then(done);
   });
 
@@ -216,5 +231,5 @@ describe('Isomorphic Handler', function() {
           assert.equal("home-page", response.store.qt.pageType);
         }).then(done);
     })
-  })
+  });
 });
