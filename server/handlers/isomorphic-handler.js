@@ -194,12 +194,16 @@ exports.notFoundHandler = function notFoundHandler(req, res, next, {config, clie
       res.setHeader("Vary", "Accept-Encoding");
       res.setHeader("Content-Type", "text/html; charset=utf-8");
 
-      return renderLayout(res, {
-        config: config,
-        title: result.title,
-        content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
-        store: store,
-      });
+      return pickComponent.preloadComponent(store.getState().qt.pageType)
+        .then(() =>
+          renderLayout(res, {
+            config: config,
+            title: result.title,
+            content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
+            store: store,
+            pageType: store.getState().qt.pageType,
+          })
+        );
     }).catch(e => {
       logError(e);
       res.status(500);
@@ -254,13 +258,17 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
       res.append("Link", `</route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? `&${url.search.substr(1)}` : ""}>; rel=preload; as=fetch;`);
     }
 
-    return renderLayout(res, {
-      config: config,
-      title: result.title,
-      content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
-      store: store,
-      seoTags: seoTags,
-    });
+    return pickComponent.preloadComponent(store.getState().qt.pageType)
+      .then(() =>
+        renderLayout(res, {
+          config: config,
+          title: result.title,
+          content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
+          store: store,
+          seoTags: seoTags,
+          pageType: store.getState().qt.pageType,
+        })
+      );
   };
 };
 

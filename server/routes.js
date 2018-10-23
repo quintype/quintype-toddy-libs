@@ -5,6 +5,7 @@ const {customRouteHandler} = require("./handlers/custom-route-handler");
 const {handleManifest, handleAssetLink} = require("./handlers/json-manifest-handlers");
 const {redirectStory} = require("./handlers/story-redirect");
 const {simpleJsonHandler} = require("./handlers/simple-json-handler");
+const {makePickComponentSync} = require("../isomorphic/make-pick-component-sync");
 
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
                                                                  {forwardAmp = false,
@@ -108,6 +109,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
         .catch(logError);
     }
   }
+
+  pickComponent = makePickComponentSync(pickComponent);
 
   app.get("/service-worker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, assetHelper, renderServiceWorker}));
 

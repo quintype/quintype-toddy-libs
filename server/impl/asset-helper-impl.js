@@ -8,6 +8,8 @@ class AssetHelperImpl {
     this.readAsset = this.readAsset.bind(this);
     this.assetHash = this.assetHash.bind(this);
     this.assetFiles = this.assetFiles.bind(this);
+    this.getChunk = this.getChunk.bind(this);
+    this.getAllChunks = this.getAllChunks.bind(this);
     this.serviceWorkerContents = this.serviceWorkerContents.bind(this);
   }
 
@@ -23,6 +25,20 @@ class AssetHelperImpl {
     if (path) {
       return this.readFileSync("public" + path);
     }
+  }
+
+  getChunk(chunk) {
+    const regex = RegExp(`~${chunk}.*\.js$`);
+    const dependantAssets = Object.keys(this.assets).filter(asset => regex.test(asset)).map(asset => this.assetPath(asset));
+    return {
+      cssPath: this.assetPath(`${chunk}.css`),
+      cssContent: this.readAsset(`${chunk}.css`),
+      jsPaths: [this.assetPath(`${chunk}.js`), ...dependantAssets]
+    };
+  }
+
+  getAllChunks() {
+    return Array.from(arguments).map(this.getChunk);
   }
 
   serviceWorkerContents() {
