@@ -69,4 +69,35 @@ describe('AssetHelperImpl', function() {
       assert.equal(false, files.has("app.js"));
     });
   })
+
+  describe("get files for a chunk", function() {
+    const {getChunk} = new AssetHelperImpl(
+      {asset_host: "//my-cdn"},
+      {
+        "list.css": "/toddy/assets/list-abcd.css",
+        "list.js": "/toddy/assets/list-abcd.js",
+        "list.js.map": "/toddy/assets/list-abcd.js.map",
+        "story.js": "/toddy/assets/story-abcd.js",
+        "vendors~list.js": "/toddy/assets/vendors~list-abcd.js",
+        "vendors~story.js": "/toddy/assets/vendors~story-abcd.js",
+      },
+      {readFileSync: path => `Contents of ${path}`});
+
+    it("has a css-path and css-content", function() {
+      const chunk = getChunk('list');
+      assert.equal('//my-cdn/toddy/assets/list-abcd.css', chunk.cssPath);
+      assert.equal('Contents of public/toddy/assets/list-abcd.css', chunk.cssContent);
+    })
+
+    it("has js-paths with related dependencies", function() {
+      const { jsPaths } = getChunk('list');
+      assert.equal(false, jsPaths.includes("//my-cdn/toddy/assets/list-abcd.css")) // not JS
+      assert.equal(true, jsPaths.includes("//my-cdn/toddy/assets/list-abcd.js"))
+      assert.equal(true, jsPaths.includes("//my-cdn/toddy/assets/vendors~list-abcd.js"))
+      assert.equal(false, jsPaths.includes("//my-cdn/toddy/assets/list-abcd.js.map")) // Map file
+      assert.equal(false, jsPaths.includes("//my-cdn/toddy/assets/story-abcd.js")) // different chunk
+      assert.equal(false, jsPaths.includes("//my-cdn/toddy/assets/vendors~story-abcd.js")) // different chunk
+    })
+
+  })
 });
