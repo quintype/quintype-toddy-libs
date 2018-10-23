@@ -71,14 +71,18 @@ describe('AssetHelperImpl', function() {
   })
 
   describe("get files for a chunk", function() {
-    const {getChunk} = new AssetHelperImpl(
+    const {getChunk, getAllChunks} = new AssetHelperImpl(
       {asset_host: "//my-cdn"},
       {
         "list.css": "/toddy/assets/list-abcd.css",
+        "story.css": "/toddy/assets/story-abcd.css",
         "list.js": "/toddy/assets/list-abcd.js",
         "list.js.map": "/toddy/assets/list-abcd.js.map",
         "story.js": "/toddy/assets/story-abcd.js",
         "vendors~list.js": "/toddy/assets/vendors~list-abcd.js",
+        "vendors~list~story.js": "/toddy/assets/vendors~list~story-abcd.js",
+        "vendors~story~list.js": "/toddy/assets/vendors~story~list-abcd.js",
+        "vendors~list.js.map": "/toddy/assets/vendors~list-abcd.js.map",
         "vendors~story.js": "/toddy/assets/vendors~story-abcd.js",
       },
       {readFileSync: path => `Contents of ${path}`});
@@ -91,12 +95,21 @@ describe('AssetHelperImpl', function() {
 
     it("has js-paths with related dependencies", function() {
       const { jsPaths } = getChunk('list');
-      assert.equal(false, jsPaths.includes("//my-cdn/toddy/assets/list-abcd.css")) // not JS
       assert.equal(true, jsPaths.includes("//my-cdn/toddy/assets/list-abcd.js"))
       assert.equal(true, jsPaths.includes("//my-cdn/toddy/assets/vendors~list-abcd.js"))
+      assert.equal(true, jsPaths.includes("//my-cdn/toddy/assets/vendors~list~story-abcd.js"))
+      assert.equal(true, jsPaths.includes("//my-cdn/toddy/assets/vendors~story~list-abcd.js"))
       assert.equal(false, jsPaths.includes("//my-cdn/toddy/assets/list-abcd.js.map")) // Map file
       assert.equal(false, jsPaths.includes("//my-cdn/toddy/assets/story-abcd.js")) // different chunk
       assert.equal(false, jsPaths.includes("//my-cdn/toddy/assets/vendors~story-abcd.js")) // different chunk
+      assert.equal(false, jsPaths.includes("//my-cdn/toddy/assets/vendors~list-abcd.js.map")) // Map file
+      assert.equal(false, jsPaths.includes("//my-cdn/toddy/assets/list-abcd.css")) // not JS
+    });
+
+    it("returns all the chunks", function() {
+      const [listChunks, storyChunks] = getAllChunks('list', 'story');
+      assert.equal('//my-cdn/toddy/assets/list-abcd.css', listChunks.cssPath);
+      assert.equal('//my-cdn/toddy/assets/story-abcd.css', storyChunks.cssPath);
     })
 
   })
