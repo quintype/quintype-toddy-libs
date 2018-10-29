@@ -111,9 +111,9 @@ describe('AssetHelperImpl', function() {
     });
 
     it("returns all the chunks", function() {
-      const [listChunks, storyChunks] = getAllChunks('list', 'story');
-      assert.equal('//my-cdn/toddy/assets/list-abcd.css', listChunks.cssFiles[0].path);
-      assert.equal('//my-cdn/toddy/assets/story-abcd.css', storyChunks.cssFiles[0].path);
+      const {list, story} = getAllChunks('list', 'story');
+      assert.equal('//my-cdn/toddy/assets/list-abcd.css', list.cssFiles[0].path);
+      assert.equal('//my-cdn/toddy/assets/story-abcd.css', story.cssFiles[0].path);
     })
   })
 });

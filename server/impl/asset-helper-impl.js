@@ -46,7 +46,10 @@ class AssetHelperImpl {
   }
 
   getAllChunks() {
-    return Array.from(arguments).map(this.getChunk);
+    return Array.from(arguments).reduce((acc, arg) => {
+      acc[arg] = this.getChunk(arg);
+      return acc;
+    }, {});
   }
 
   serviceWorkerContents() {
