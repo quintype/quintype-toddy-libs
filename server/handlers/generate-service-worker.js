@@ -7,6 +7,7 @@ function generateServiceWorker(req, res, next, {config, generateRoutes, appVersi
       hostname: req.hostname,
       assetHash: assetHelper.assetHash,
       configVersion: cacheBurst,
+      getFilesForChunks: assetHelper.getFilesForChunks,
       routes: generateRoutes(config).filter(route => !route.skipPWA)
     }, (err, content) => {
       // istanbul ignore if

@@ -1,3 +1,6 @@
+const flatMap = require('lodash/flatMap');
+const uniq = require('lodash/uniq');
+
 class AssetHelperImpl {
   constructor(config, assets, {readFileSync} = {}) {
     this.config = config;
@@ -10,6 +13,7 @@ class AssetHelperImpl {
     this.assetFiles = this.assetFiles.bind(this);
     this.getChunk = this.getChunk.bind(this);
     this.getAllChunks = this.getAllChunks.bind(this);
+    this.getFilesForChunks = this.getFilesForChunks.bind(this);
     this.serviceWorkerContents = this.serviceWorkerContents.bind(this);
   }
 
@@ -30,8 +34,11 @@ class AssetHelperImpl {
   getChunk(chunk) {
     const getDependentFiles = (ext) => {
       const regex = RegExp(`(${chunk}~|~${chunk}).*\.${ext}$`);
-      return [`${chunk}.${ext}`, ...Object.keys(this.assets).filter(asset => regex.test(asset))]
-        .filter(x => x); // remove any nulls or undefined
+      const assets = this.assets[`${chunk}.${ext}`]
+        ? [`${chunk}.${ext}`]
+        : []
+
+      return assets.concat(Object.keys(this.assets).filter(asset => regex.test(asset)));
     }
 
     return {
@@ -50,6 +57,11 @@ class AssetHelperImpl {
       acc[arg] = this.getChunk(arg);
       return acc;
     }, {});
+  }
+
+  getFilesForChunks() {
+    const chunks = this.getAllChunks.apply(this, arguments);
+    return uniq(flatMap(Object.values(chunks), ({ cssFiles, jsPaths }) => jsPaths.concat(cssFiles.map(x => x.path))));
   }
 
   serviceWorkerContents() {

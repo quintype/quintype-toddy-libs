@@ -71,7 +71,7 @@ describe('AssetHelperImpl', function() {
   })
 
   describe("get files for a chunk", function() {
-    const {getChunk, getAllChunks} = new AssetHelperImpl(
+    const {getChunk, getAllChunks, getFilesForChunks} = new AssetHelperImpl(
       {asset_host: "//my-cdn"},
       {
         "list.css": "/toddy/assets/list-abcd.css",
@@ -114,6 +114,13 @@ describe('AssetHelperImpl', function() {
       const {list, story} = getAllChunks('list', 'story');
       assert.equal('//my-cdn/toddy/assets/list-abcd.css', list.cssFiles[0].path);
       assert.equal('//my-cdn/toddy/assets/story-abcd.css', story.cssFiles[0].path);
+    })
+
+    it("returns all the assets", function() {
+      const files = getFilesForChunks('app', 'list', 'story');
+      assert.equal(true, files.includes("//my-cdn/toddy/assets/list-abcd.js"));
+      assert.equal(true, files.includes("//my-cdn/toddy/assets/list-abcd.css"));
+      assert.equal(true, files.includes("//my-cdn/toddy/assets/story-abcd.js"));
     })
   })
 });
