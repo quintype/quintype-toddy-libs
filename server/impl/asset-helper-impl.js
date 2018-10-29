@@ -28,13 +28,21 @@ class AssetHelperImpl {
   }
 
   getChunk(chunk) {
-    const regex = RegExp(`~${chunk}.*\.js$`);
-    const dependantAssets = Object.keys(this.assets).filter(asset => regex.test(asset)).map(asset => this.assetPath(asset));
+    const getDependentFiles = (ext) => {
+      const regex = RegExp(`(${chunk}~|~${chunk}).*\.${ext}$`);
+      return [`${chunk}.${ext}`, ...Object.keys(this.assets).filter(asset => regex.test(asset))]
+        .filter(x => x); // remove any nulls or undefined
+    }
+
     return {
-      cssPath: this.assetPath(`${chunk}.css`),
-      cssContent: this.readAsset(`${chunk}.css`),
-      jsPaths: [this.assetPath(`${chunk}.js`), ...dependantAssets]
+      cssFiles: getDependentFiles('css').map(file => ({
+        path: this.assetPath(file),
+        content: this.readAsset(file)
+      })),
+      jsPaths: getDependentFiles('js').map(file => this.assetPath(file))
     };
+
+
   }
 
   getAllChunks() {
