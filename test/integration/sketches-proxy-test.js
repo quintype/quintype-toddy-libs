@@ -1,15 +1,23 @@
-var assert = require('assert');
+var assert = require("assert");
 const express = require("express");
 
 const { upstreamQuintypeRoutes } = require("../../server/routes");
 const supertest = require("supertest");
 
-describe('Sketches Proxy', function() {
+describe("Sketches Proxy", function() {
   var upstreamServer;
 
   before(function(next) {
     const upstreamApp = express();
-    upstreamApp.all("/*", (req, res) => res.send(JSON.stringify({method: req.method, url: req.url, host: req.headers.host})))
+    upstreamApp.all("/*", (req, res) =>
+      res.send(
+        JSON.stringify({
+          method: req.method,
+          url: req.url,
+          host: req.headers.host
+        })
+      )
+    );
     upstreamServer = upstreamApp.listen(next);
   });
 
@@ -17,11 +25,13 @@ describe('Sketches Proxy', function() {
     function buildApp() {
       const app = express();
       upstreamQuintypeRoutes(app, {
-        config: {sketches_host: `http://127.0.0.1:${upstreamServer.address().port}`},
-        getClient: host => ({getHostname: () => host.toUpperCase()}),
+        config: {
+          sketches_host: `http://127.0.0.1:${upstreamServer.address().port}`
+        },
+        getClient: host => ({ getHostname: () => host.toUpperCase() }),
         forwardAmp: true,
         forwardFavicon: true
-      })
+      });
       return app;
     }
 
@@ -29,63 +39,65 @@ describe('Sketches Proxy', function() {
       supertest(buildApp())
         .get("/api/v1/config")
         .expect(200)
-        .then((res) => {
-          const {method, url, host} = JSON.parse(res.text);
+        .then(res => {
+          const { method, url, host } = JSON.parse(res.text);
           assert.equal("GET", method);
           assert.equal("/api/v1/config", url);
           assert.equal("127.0.0.1", host);
         })
         .then(done);
-    })
+    });
 
     it("grabs the hostname from the client", function(done) {
       supertest(buildApp())
         .get("/amp/story/foo")
         .set("Host", "foobar.com")
         .expect(200)
-        .then((res) => {
-          const {host} = JSON.parse(res.text);
+        .then(res => {
+          const { host } = JSON.parse(res.text);
           assert.equal("FOOBAR.COM", host);
         })
         .then(done);
-    })
+    });
 
     it("does not forward unknown requests", function(done) {
       supertest(buildApp())
         .get("/unknown")
         .expect(404, done);
-    })
+    });
 
     it("forwards amp requests", function(done) {
       supertest(buildApp())
         .get("/amp/story/foo")
         .expect(200)
-        .then((res) => {
-          const {url} = JSON.parse(res.text);
+        .then(res => {
+          const { url } = JSON.parse(res.text);
           assert.equal("/amp/story/foo", url);
         })
         .then(done);
-    })
+    });
 
     it("gets favicon", function(done) {
       supertest(buildApp())
         .get("/favicon.ico")
         .expect(200)
-        .then((res) => {
-          const {url} = JSON.parse(res.text);
+        .then(res => {
+          const { url } = JSON.parse(res.text);
           assert.equal("/favicon.ico", url);
         })
         .then(done);
-    })
-  })
+    });
+  });
 
   describe("ping check", function() {
     function buildApp(getConfig) {
       const app = express();
       upstreamQuintypeRoutes(app, {
-        config: {sketches_host: `http://127.0.0.1:${upstreamServer.address().port}`},
-        getClient: host => ({getConfig: getConfig}),
-      })
+        config: {
+          sketches_host: `http://127.0.0.1:${upstreamServer.address().port}`
+        },
+        getClient: host => ({ getConfig: getConfig })
+      });
       return app;
     }
 
@@ -99,7 +111,7 @@ describe('Sketches Proxy', function() {
       supertest(buildApp(() => Promise.reject({})))
         .get("/ping")
         .expect(503, done);
-    })
+    });
   });
 
   after(function() {

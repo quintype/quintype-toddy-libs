@@ -1,8 +1,8 @@
-const flatMap = require('lodash/flatMap');
-const uniq = require('lodash/uniq');
+const flatMap = require("lodash/flatMap");
+const uniq = require("lodash/uniq");
 
 class AssetHelperImpl {
-  constructor(config, assets, {readFileSync} = {}) {
+  constructor(config, assets, { readFileSync } = {}) {
     this.config = config;
     this.assets = assets;
     this.readFileSync = readFileSync || require("fs").readFileSync;
@@ -32,24 +32,22 @@ class AssetHelperImpl {
   }
 
   getChunk(chunk) {
-    const getDependentFiles = (ext) => {
+    const getDependentFiles = ext => {
       const regex = RegExp(`(${chunk}~|~${chunk}).*\.${ext}$`);
-      const assets = this.assets[`${chunk}.${ext}`]
-        ? [`${chunk}.${ext}`]
-        : []
+      const assets = this.assets[`${chunk}.${ext}`] ? [`${chunk}.${ext}`] : [];
 
-      return assets.concat(Object.keys(this.assets).filter(asset => regex.test(asset)));
-    }
+      return assets.concat(
+        Object.keys(this.assets).filter(asset => regex.test(asset))
+      );
+    };
 
     return {
-      cssFiles: getDependentFiles('css').map(file => ({
+      cssFiles: getDependentFiles("css").map(file => ({
         path: this.assetPath(file),
         content: this.readAsset(file)
       })),
-      jsPaths: getDependentFiles('js').map(file => this.assetPath(file))
+      jsPaths: getDependentFiles("js").map(file => this.assetPath(file))
     };
-
-
   }
 
   getAllChunks() {
@@ -61,19 +59,24 @@ class AssetHelperImpl {
 
   getFilesForChunks() {
     const chunks = this.getAllChunks.apply(this, arguments);
-    return uniq(flatMap(Object.values(chunks), ({ cssFiles, jsPaths }) => jsPaths.concat(cssFiles.map(x => x.path))));
+    return uniq(
+      flatMap(Object.values(chunks), ({ cssFiles, jsPaths }) =>
+        jsPaths.concat(cssFiles.map(x => x.path))
+      )
+    );
   }
 
   serviceWorkerContents() {
-    this._serviceWorkerContents = this._serviceWorkerContents || this.readAsset("serviceWorkerHelper.js");
+    this._serviceWorkerContents =
+      this._serviceWorkerContents || this.readAsset("serviceWorkerHelper.js");
     return this._serviceWorkerContents;
   }
 
   assetHash(asset) {
     const path = this.assets[asset];
-    if(path) {
+    if (path) {
       const match = /\-([0-9a-fA-F]+)\./.exec(path);
-      return match ? match[1] : '1';
+      return match ? match[1] : "1";
     }
   }
 

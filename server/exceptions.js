@@ -1,7 +1,7 @@
 class ApplicationException extends Error {
   constructor(httpStatusCode, message) {
     super(message);
-    this.name = 'ApplicationException';
+    this.name = "ApplicationException";
     this.httpStatusCode = httpStatusCode;
   }
 }
@@ -9,11 +9,11 @@ class ApplicationException extends Error {
 class NotFoundException extends ApplicationException {
   constructor(message) {
     super(404, message);
-    this.name = 'NotFoundException';
+    this.name = "NotFoundException";
   }
 }
 
 module.exports = {
-  ApplicationException : ApplicationException,
-  NotFoundException : NotFoundException
+  ApplicationException: ApplicationException,
+  NotFoundException: NotFoundException
 };

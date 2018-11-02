@@ -3,43 +3,48 @@
 // /sect, /sect/:storySlug, /sect/*/:storySlug
 const _ = require("lodash");
 
-exports.generateSectionPageRoutes = function generateSectionPageRoutes(config, opts = {}) {
+exports.generateSectionPageRoutes = function generateSectionPageRoutes(
+  config,
+  opts = {}
+) {
   const sectionsById = _(config.sections).reduce((acc, section) => {
     acc[section.id] = section;
     return acc;
   }, {});
 
   return _(config.sections)
-    .flatMap((section) => generateSectionPageRoute(section, sectionsById, opts))
+    .flatMap(section => generateSectionPageRoute(section, sectionsById, opts))
     .value();
-}
+};
 
 function generateSectionPageRoute(section, sectionsById, opts) {
   const params = { sectionId: section.id };
-  if(section.collection)
-    params.collectionSlug = section.collection.slug
+  if (section.collection) params.collectionSlug = section.collection.slug;
 
   var slug = section.slug;
 
-  if(section["parent-id"]) {
+  if (section["parent-id"]) {
     var currentSection = section;
     var depth = 0;
     while (currentSection["parent-id"] && depth++ < 5) {
-      currentSection = sectionsById[currentSection["parent-id"]] || {slug: 'invalid'};
+      currentSection = sectionsById[currentSection["parent-id"]] || {
+        slug: "invalid"
+      };
       slug = `${currentSection.slug}/${slug}`;
     }
   }
 
   let routes = [];
-  if(section["parent-id"] && opts.secWithoutParentPrefix)
+  if (section["parent-id"] && opts.secWithoutParentPrefix)
     routes = [section.slug, slug];
-  else
-    routes = [slug];
+  else routes = [slug];
 
-  if(opts.addSectionPrefix)
-    routes = _.flatMap(routes, route => [sectionPageRoute(route, params), addSectionPrefix(route, params)]);
-  else
-    routes = _.flatMap(routes, route => [sectionPageRoute(route, params)]);
+  if (opts.addSectionPrefix)
+    routes = _.flatMap(routes, route => [
+      sectionPageRoute(route, params),
+      addSectionPrefix(route, params)
+    ]);
+  else routes = _.flatMap(routes, route => [sectionPageRoute(route, params)]);
 
   return routes;
 }
@@ -54,20 +59,26 @@ function sectionPageRoute(route, params) {
     exact: true,
     path: `/${route}`,
     params: params
-  }
+  };
 }
 
-exports.generateStoryPageRoutes = function generateStoryPageRoutes(config, {withoutParentSection} = {}) {
+exports.generateStoryPageRoutes = function generateStoryPageRoutes(
+  config,
+  { withoutParentSection } = {}
+) {
   return _(config.sections)
-    .filter((section) => withoutParentSection || !section["parent-id"])
-    .flatMap((section) => [storyPageRoute(`/${section.slug}/:storySlug`), storyPageRoute(`/${section.slug}/*/:storySlug`)])
+    .filter(section => withoutParentSection || !section["parent-id"])
+    .flatMap(section => [
+      storyPageRoute(`/${section.slug}/:storySlug`),
+      storyPageRoute(`/${section.slug}/*/:storySlug`)
+    ])
     .value();
-}
+};
 
 function storyPageRoute(path) {
   return {
-    pageType: 'story-page',
+    pageType: "story-page",
     exact: true,
     path: path
-  }
+  };
 }

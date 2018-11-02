@@ -1,4 +1,4 @@
-var assert = require('assert');
+var assert = require("assert");
 const express = require("express");
 
 const { isomorphicRoutes } = require("../../server/routes");
@@ -7,33 +7,47 @@ const supertest = require("supertest");
 function getClientStub(hostname) {
   return {
     getHostname: () => "demo.quintype.io",
-    getConfig: () => Promise.resolve({foo: "bar"})
-  }
+    getConfig: () => Promise.resolve({ foo: "bar" })
+  };
 }
 
-function createApp(loadData, route = {path: "/", pageType: "home-page"}, opts = {}) {
+function createApp(
+  loadData,
+  route = { path: "/", pageType: "home-page" },
+  opts = {}
+) {
   const app = express();
-  isomorphicRoutes(app, Object.assign({
-    assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null},
-    getClient: getClientStub,
-    generateRoutes: () => [route],
-    loadData: loadData,
-    appVersion: 42
-  }, opts));
+  isomorphicRoutes(
+    app,
+    Object.assign(
+      {
+        assetHelper: {
+          assetHash: file => (file == "app.js" ? "abcdef" : null)
+        },
+        getClient: getClientStub,
+        generateRoutes: () => [route],
+        loadData: loadData,
+        appVersion: 42
+      },
+      opts
+    )
+  );
 
   return app;
 }
 
-describe('Isomorphic Data Load', function() {
+describe("Isomorphic Data Load", function() {
   it("returns data given by the load data function", function(done) {
-    const app = createApp((pageType, params, config, client, {host}) => Promise.resolve({
-      data: {
-        pageType: pageType,
-        config: config,
-        clientHost: client.getHostname(),
-        host: host
-      }
-    }));
+    const app = createApp((pageType, params, config, client, { host }) =>
+      Promise.resolve({
+        data: {
+          pageType: pageType,
+          config: config,
+          clientHost: client.getHostname(),
+          host: host
+        }
+      })
+    );
 
     supertest(app)
       .get("/route-data.json?path=%2F")
@@ -45,11 +59,14 @@ describe('Isomorphic Data Load', function() {
         assert.equal("bar", response.data.config.foo);
         assert.equal("demo.quintype.io", response.data.clientHost);
         assert.equal("127.0.0.1", response.data.host);
-      }).then(done);
+      })
+      .then(done);
   });
 
   it("passes url parameters to the load data function", function(done) {
-    const app = createApp((pageType, params, config, client) => Promise.resolve({ data: { text: params.text } }));
+    const app = createApp((pageType, params, config, client) =>
+      Promise.resolve({ data: { text: params.text } })
+    );
 
     supertest(app)
       .get("/route-data.json?path=%2F&text=foobar")
@@ -58,11 +75,14 @@ describe('Isomorphic Data Load', function() {
       .then(res => {
         const response = JSON.parse(res.text);
         assert.equal("foobar", response.data.text);
-      }).then(done);
+      })
+      .then(done);
   });
 
   it("loads data for the homepage if no path is passed in", function(done) {
-    const app = createApp((pageType, params, config, client) => Promise.resolve({ data: {pageType} }));
+    const app = createApp((pageType, params, config, client) =>
+      Promise.resolve({ data: { pageType } })
+    );
 
     supertest(app)
       .get("/route-data.json")
@@ -71,11 +91,14 @@ describe('Isomorphic Data Load', function() {
       .then(res => {
         const response = JSON.parse(res.text);
         assert.equal("home-page", response.data.pageType);
-      }).then(done);
+      })
+      .then(done);
   });
 
   it("returns an appVersion on every response", function(done) {
-    const app = createApp((pageType, params, config, client) => Promise.resolve({}));
+    const app = createApp((pageType, params, config, client) =>
+      Promise.resolve({})
+    );
 
     supertest(app)
       .get("/route-data.json?path=%2F")
@@ -84,11 +107,14 @@ describe('Isomorphic Data Load', function() {
       .then(res => {
         const response = JSON.parse(res.text);
         assert.equal(42, response.appVersion);
-      }).then(done);
+      })
+      .then(done);
   });
 
   it("return the title of the page", function(done) {
-    const app = createApp((pageType, params, config, client) => Promise.resolve({data: {}, title: "foobar"}));
+    const app = createApp((pageType, params, config, client) =>
+      Promise.resolve({ data: {}, title: "foobar" })
+    );
     supertest(app)
       .get("/route-data.json?path=%2F")
       .expect("Content-Type", /json/)
@@ -96,11 +122,16 @@ describe('Isomorphic Data Load', function() {
       .then(res => {
         const response = JSON.parse(res.text);
         assert.equal("foobar", response.title);
-      }).then(done);
+      })
+      .then(done);
   });
 
   it("passes any params to the loadData function", function(done) {
-    const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {pageType: "home-page", path: "/", params: {amazing: "stuff"}});
+    const app = createApp(
+      (pageType, params, config, client) =>
+        Promise.resolve({ data: { amazing: params.amazing } }),
+      { pageType: "home-page", path: "/", params: { amazing: "stuff" } }
+    );
     supertest(app)
       .get("/route-data.json?path=%2F")
       .expect("Content-Type", /json/)
@@ -108,26 +139,36 @@ describe('Isomorphic Data Load', function() {
       .then(res => {
         const response = JSON.parse(res.text);
         assert.equal("stuff", response.data.amazing);
-      }).then(done);
+      })
+      .then(done);
   });
 
   it("passes back caching headers", function(done) {
-    const app = createApp((pageType, params, config, client) => Promise.resolve({data: {cacheKeys: ["foo", "bar"]}}));
+    const app = createApp((pageType, params, config, client) =>
+      Promise.resolve({ data: { cacheKeys: ["foo", "bar"] } })
+    );
     supertest(app)
       .get("/route-data.json?path=%2F")
       .expect("Content-Type", /json/)
-      .expect("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
+      .expect(
+        "Cache-Control",
+        "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400"
+      )
       .expect("Vary", "Accept-Encoding")
       .expect("Surrogate-Control", /public/)
       .expect("Cache-Tag", "foo,bar")
-      .expect(200, done)
+      .expect(200, done);
   });
 
   describe("aborting the data loader", () => {
     it("returns a 200 with a not-found if the load data decides to abort", function(done) {
-      const app = createApp((pageType, params, config, client, {next}) => next(), {}, {
-        loadErrorData: (e) => ({foo: "bar"})
-      });
+      const app = createApp(
+        (pageType, params, config, client, { next }) => next(),
+        {},
+        {
+          loadErrorData: e => ({ foo: "bar" })
+        }
+      );
 
       supertest(app)
         .get("/route-data.json?path=%2F")
@@ -136,13 +177,19 @@ describe('Isomorphic Data Load', function() {
         .then(res => {
           const response = JSON.parse(res.text);
           assert.equal("bar", response.foo);
-        }).then(done);
+        })
+        .then(done);
     });
 
     it("returns a 200 with a not-found if the load data decides to abort", function(done) {
-      const app = createApp((pageType, params, config, client, {next}) => next().then(n => ({data: n})), {}, {
-        loadErrorData: (e) => ({foo: "bar"})
-      });
+      const app = createApp(
+        (pageType, params, config, client, { next }) =>
+          next().then(n => ({ data: n })),
+        {},
+        {
+          loadErrorData: e => ({ foo: "bar" })
+        }
+      );
 
       supertest(app)
         .get("/route-data.json?path=%2F")
@@ -151,13 +198,16 @@ describe('Isomorphic Data Load', function() {
         .then(res => {
           const response = JSON.parse(res.text);
           assert.equal("bar", response.foo);
-        }).then(done);
+        })
+        .then(done);
     });
-  })
+  });
 
   describe("status codes", function() {
     it("any status code more than 500 becomes an http 500", function(done) {
-      const app = createApp((pageType, params, config, client) => Promise.resolve({data: {}, httpStatusCode: 503}));
+      const app = createApp((pageType, params, config, client) =>
+        Promise.resolve({ data: {}, httpStatusCode: 503 })
+      );
       supertest(app)
         .get("/route-data.json?path=%2F")
         .expect("Content-Type", /json/)
@@ -165,7 +215,9 @@ describe('Isomorphic Data Load', function() {
     });
 
     it("any status code less than 500 becomes an http 200", function(done) {
-      const app = createApp((pageType, params, config, client) => Promise.resolve({data: {}, httpStatusCode: 301}));
+      const app = createApp((pageType, params, config, client) =>
+        Promise.resolve({ data: {}, httpStatusCode: 301 })
+      );
       supertest(app)
         .get("/route-data.json?path=%2F")
         .expect("Content-Type", /json/)
@@ -173,15 +225,21 @@ describe('Isomorphic Data Load', function() {
         .then(res => {
           const response = JSON.parse(res.text);
           assert.equal(301, response.httpStatusCode);
-        }).then(done);
+        })
+        .then(done);
     });
   });
 
   describe("failure scenarios", function(done) {
     it("returns 404 if the path is not matched", function(done) {
-      const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {pageType: "home-page", path: "/foobar"}, {
-        loadErrorData: (e) => ({foo: "bar"})
-      });
+      const app = createApp(
+        (pageType, params, config, client) =>
+          Promise.resolve({ data: { amazing: params.amazing } }),
+        { pageType: "home-page", path: "/foobar" },
+        {
+          loadErrorData: e => ({ foo: "bar" })
+        }
+      );
       supertest(app)
         .get("/route-data.json?path=%2F")
         .expect("Content-Type", /json/)
@@ -189,14 +247,22 @@ describe('Isomorphic Data Load', function() {
         .then(res => {
           const response = JSON.parse(res.text);
           assert.equal("bar", response.foo);
-        }).then(done);
+        })
+        .then(done);
     });
 
     it("returns 404 if generate routes throws an exception", function(done) {
-      const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {pageType: "home-page", path: "/"}, {
-        generateRoutes: () => {throw "foobar"},
-        loadErrorData: (e) => ({foo: "bar"})
-      });
+      const app = createApp(
+        (pageType, params, config, client) =>
+          Promise.resolve({ data: { amazing: params.amazing } }),
+        { pageType: "home-page", path: "/" },
+        {
+          generateRoutes: () => {
+            throw "foobar";
+          },
+          loadErrorData: e => ({ foo: "bar" })
+        }
+      );
       supertest(app)
         .get("/route-data.json?path=%2F")
         .expect("Content-Type", /json/)
@@ -204,9 +270,17 @@ describe('Isomorphic Data Load', function() {
     });
 
     it("return 500 if loadData and loadErrorData both throw exceptions", function(done) {
-      const app = createApp((pageType, params, config, client) => {throw "foobar"}, {pageType: "home-page", path: "/"}, {
-        loadErrorData: () => {throw "exception2"; }
-      });
+      const app = createApp(
+        (pageType, params, config, client) => {
+          throw "foobar";
+        },
+        { pageType: "home-page", path: "/" },
+        {
+          loadErrorData: () => {
+            throw "exception2";
+          }
+        }
+      );
       supertest(app)
         .get("/route-data.json?path=%2F")
         .expect("Content-Type", /json/)
@@ -214,9 +288,15 @@ describe('Isomorphic Data Load', function() {
     });
 
     it("loads error data if loadData throws an exceptions", function(done) {
-      const app = createApp((pageType, params, config, client) => {throw "foobar"}, {pageType: "home-page", path: "/"}, {
-        loadErrorData: (error, config) => Promise.resolve({error})
-      });
+      const app = createApp(
+        (pageType, params, config, client) => {
+          throw "foobar";
+        },
+        { pageType: "home-page", path: "/" },
+        {
+          loadErrorData: (error, config) => Promise.resolve({ error })
+        }
+      );
       supertest(app)
         .get("/route-data.json?path=%2F")
         .expect("Content-Type", /json/)
@@ -229,7 +309,12 @@ describe('Isomorphic Data Load', function() {
     });
 
     it("has a default loadErrorData", function(done) {
-      const app = createApp((pageType, params, config, client) => {throw "foobar"}, {pageType: "home-page", path: "/"});
+      const app = createApp(
+        (pageType, params, config, client) => {
+          throw "foobar";
+        },
+        { pageType: "home-page", path: "/" }
+      );
       supertest(app)
         .get("/route-data.json?path=%2F")
         .expect("Content-Type", /json/)

@@ -1,8 +1,8 @@
-const {matchPath} = require("react-router");
+const { matchPath } = require("react-router");
 
 function matchAllRoutes(path, routes) {
   // Sure there is some construct to do these two lines
-  if (!path.startsWith('/')) {
+  if (!path.startsWith("/")) {
     path = "/" + path;
   }
 
@@ -10,14 +10,14 @@ function matchAllRoutes(path, routes) {
   const matchedRoutes = [];
   routes.forEach(route => {
     const match = matchPath(path, route);
-    if(match) {
+    if (match) {
       return matchedRoutes.push({
         pageType: route.pageType,
         params: Object.assign({}, route.params, match.params),
         match: match
       });
     }
-  })
+  });
   return matchedRoutes;
 }
 

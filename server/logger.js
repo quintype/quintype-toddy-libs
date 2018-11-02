@@ -2,13 +2,12 @@
 
 const process = require("process");
 const winston = require("winston");
-const {combine, timestamp } = winston.format;
+const { combine, timestamp } = winston.format;
 
 function trimNewline() {
   return {
-    transform: (msg) => {
-      if(msg.message)
-        msg.message = msg.message.trim();
+    transform: msg => {
+      if (msg.message) msg.message = msg.message.trim();
       return msg;
     }
   };
@@ -19,8 +18,9 @@ function createTestLogger() {
     format: combine(timestamp(), trimNewline(), winston.format.json()),
     transports: [
       new winston.transports.File({
-        filename: '/dev/null'
-      })]
+        filename: "/dev/null"
+      })
+    ]
   });
 }
 
@@ -29,14 +29,14 @@ function createDevLogger() {
     format: combine(timestamp(), trimNewline(), winston.format.json()),
     transports: [
       new winston.transports.Console({
-        colorize: true,
+        colorize: true
       })
     ]
   });
 }
 
 function createProdLogger() {
- return winston.createLogger({
+  return winston.createLogger({
     format: combine(timestamp(), trimNewline(), winston.format.json()),
     transports: [
       new winston.transports.Console({
@@ -44,27 +44,28 @@ function createProdLogger() {
         level: "error"
       }),
       new winston.transports.File({
-        filename: 'log/production.log'
+        filename: "log/production.log"
       })
     ],
-    exceptionHandlers: [
-      new winston.transports.Console()
-    ],  
+    exceptionHandlers: [new winston.transports.Console()],
     exitOnError: false
   });
 }
 
 function createLogger() {
-  switch(process.env.NODE_ENV) {
-    case 'production': return createProdLogger();
-    case 'test': return createTestLogger();
-    default: return createDevLogger();
+  switch (process.env.NODE_ENV) {
+    case "production":
+      return createProdLogger();
+    case "test":
+      return createTestLogger();
+    default:
+      return createDevLogger();
   }
 }
 
 function truncateStack(message) {
-  if(message.length > 1024) {
-    return `${message.substring(0, 1024)}... (truncated)`
+  if (message.length > 1024) {
+    return `${message.substring(0, 1024)}... (truncated)`;
   } else {
     return message;
   }
@@ -74,11 +75,11 @@ const logger = createLogger();
 const errorFn = logger.error.bind(logger);
 
 logger.error = function(e) {
-  if(e && e.stack) {
-    errorFn({message: e.message, stack: truncateStack(e.stack)})
+  if (e && e.stack) {
+    errorFn({ message: e.message, stack: truncateStack(e.stack) });
   } else {
-    errorFn(e)
+    errorFn(e);
   }
-}
+};
 
 module.exports = logger;
