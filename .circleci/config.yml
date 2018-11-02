@@ -1,0 +1,14 @@
+version: 2
+jobs:
+  lint_js:
+    docker:
+      - image: circleci/node:8.11
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run lint:js:ci
+workflows:
+  version: 2
+  lint:
+    jobs:
+      - lint_js

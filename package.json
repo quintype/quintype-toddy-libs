@@ -9,7 +9,9 @@
     "watch-test": "NODE_ENV=test npx mocha --recursive --watch --require ./test/babel",
     "coverage": "nyc --all npm test",
     "coverage-html": "nyc --all --reporter=html npm test",
-    "sync-files-to": "npx onchange --verbose --wait --await-write-finish 'client/**/*' 'server/**/*' 'isomorphic/**/*' -- ./bin-dev-scripts/sync-to.sh "
+    "sync-files-to": "npx onchange --verbose --wait --await-write-finish 'client/**/*' 'server/**/*' 'isomorphic/**/*' -- ./bin-dev-scripts/sync-to.sh ",
+    "lint:js:ci": "npx eslint $(git diff --pretty='' --name-only origin/master..HEAD -- '*.js' '*.jsx') ./assetify.js"
+
   },
   "repository": {
     "type": "git",
