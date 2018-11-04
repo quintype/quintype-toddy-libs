@@ -6,11 +6,6 @@
   ],
   "plugins": [
     "standard"
-  ],
-  "parserOptions": {
-    "ecmaFeatures": {
-      "jsx": true
-    }
-  }
+  ]
 }
-    
+   
