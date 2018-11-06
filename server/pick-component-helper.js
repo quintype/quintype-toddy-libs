@@ -1,4 +1,4 @@
-export function pickComponentHelper(components, loadChunk) {
+exports.pickComponentHelper = function pickComponentHelper(components, loadChunk) {
   return {
     pickComponent: pickComponent,
     getChunkName: getChunkName
