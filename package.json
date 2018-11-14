@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "2.80.0",
+  "version": "2.81.0",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,7 @@
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
     "@quintype/backend": "^1.14.0",
-    "@quintype/components": "^1.38.0",
+    "@quintype/components": "^1.41.0",
     "atob": "^2.1.2",
     "cluster": "^0.7.7",
     "compression": "^1.7.1",
@@ -36,7 +36,7 @@
     "http-proxy": "^1.16.2",
     "js-yaml": "^3.10.0",
     "lodash": "^4.17.11",
-    "morgan": "^1.9.0",
+    "morgan": "^1.9.1",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
     "react-redux": "^5.0.6",
