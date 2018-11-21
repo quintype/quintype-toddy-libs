@@ -7,7 +7,7 @@ class IsomorphicComponentBase extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if ((this.props.currentPath !== prevProps.currentPath) ||  (this.props.currentPath === '/')) {
+    if ((this.props.currentPath !== prevProps.currentPath) ||  (this.props.currentPath === prevProps.currentPath)) {
       window.scrollTo(0, 0);
      }
      
