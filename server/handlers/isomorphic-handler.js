@@ -94,7 +94,11 @@ function createStoreFromResult(url, result, opts = {}) {
       data: result.data,
       config: result.config,
       currentPath: `${url.pathname}${url.search || ""}`,
-    })
+    }),
+    header: {
+      isSidebarVisible: false,
+      isSearchFormVisible: false
+    }
   });
 }
 
