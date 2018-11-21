@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "prepublishOnly": "npm test && ./bin-dev-scripts/standard-version-release.sh",
-    "test": "NODE_ENV=test npx mocha --recursive --require ./test/babel",
-    "watch-test": "NODE_ENV=test npx mocha --recursive --watch --require ./test/babel",
+    "test": "NODE_ENV=test npx mocha --recursive --require @babel/register",
+    "watch-test": "NODE_ENV=test npx mocha --recursive --watch --require @babel/register",
     "coverage": "nyc --all npm test",
     "coverage-html": "nyc --all --reporter=html npm test",
     "sync-files-to": "npx onchange --verbose --wait --await-write-finish 'client/**/*' 'server/**/*' 'isomorphic/**/*' -- ./bin-dev-scripts/sync-to.sh "
