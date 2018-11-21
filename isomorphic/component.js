@@ -7,9 +7,10 @@ class IsomorphicComponentBase extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.props.currentPath != prevProps.currentPath) {
+    if ((this.props.currentPath !== prevProps.currentPath) ||  (this.props.currentPath === '/')) {
       window.scrollTo(0, 0);
-    }
+     }
+     
 
     if(this.props.title)
       global.document.title = this.props.title;
