@@ -1,12 +1,9 @@
-const ROOT_PATH = require("path").resolve(__dirname, '..');
-
-require("babel-register")({
-  presets: ["react"],
-  plugins: [
-    "transform-es2015-modules-commonjs",
-    "quintype-assets",
+require("@babel/register")({
+  presets: [
+    "@babel/preset-react",
+    ["@babel/preset-env", {"targets": {"node": true}}],
   ],
-  ignore(file) {
-    return file.startsWith(ROOT_PATH + '/node_modules');
-  }
+  plugins: [
+    "babel-plugin-quintype-assets",
+  ]
 });
