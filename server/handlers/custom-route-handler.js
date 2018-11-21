@@ -25,6 +25,10 @@ function writeStaticPageResponse(res, url, page, data, { config, renderLayout, s
       config: data.config,
       currentPath: `${url.pathname}${url.search || ""}`,
       disableIsomorphicComponent: true
+    },
+    header: {
+      isSidebarVisible: false,
+      isSearchFormVisible: false
     }
   });
 
@@ -56,7 +60,7 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
           logError('Defaulting the status-code to 302 with destination-path as home-page');
         }
         addCacheHeadersToResult(res, page.cacheKeys(config["publisher-id"]))
-       
+
         return res.redirect(page["status-code"] || 302, page["destination-path"] || "/");
       }
 
