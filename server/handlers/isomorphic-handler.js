@@ -59,6 +59,8 @@ function getSeoInstance(seo, config) {
 }
 
 exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs}) {
+  const url = urlLib.parse(req.url, true);
+
   if(req.query["_workbox-precaching"] && req.query["_workbox-precaching"] != assetHelper.assetHash("app.js"))
     return res.status(503)
               .send("Requested Shell Is Not Current");
@@ -78,9 +80,7 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {
       return renderLayout(res, {
         config: config,
         content: '<div class="app-loading"><script type="text/javascript">window.qtLoadedFromShell = true</script></div>',
-        store: createStore((state) => state, {
-          qt: {config: result.config}
-        }),
+        store: createStoreFromResult(url, result),
         shell: true,
       });
     })
