@@ -10,7 +10,7 @@ exports.getDefaultState = function(result) {
   };
 }
 
-exports.createStoreFromMe = function(result, customQt, opts = {}) {
+exports.createBasicStore = function(result, customQt, opts = {}) {
   const defaultState = getDefaultState(result);
   const qt =  Object.assign({}, defaultState.qt, opts, customQt);
   const finalState = Object.assign({}, defaultState, {qt});

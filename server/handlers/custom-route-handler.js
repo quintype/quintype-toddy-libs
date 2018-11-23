@@ -8,7 +8,7 @@ const staticPageTemplateStr = fs.readFileSync(path.join(__dirname, "../views/sta
 const staticPageTemplate = ejs.compile(staticPageTemplateStr);
 
 const { CustomPath } = require("../impl/api-client-impl");
-const { createStoreFromMe } = require("./create-store");
+const { createBasicStore } = require("./create-store");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 
 function renderStaticPageContent(store, content) {
@@ -23,7 +23,7 @@ function writeStaticPageResponse(res, url, page, result, { config, renderLayout,
     data: Object.assign({}, page, result.data),
     currentPath: `${url.pathname}${url.search || ""}`,
   }
-  const store = createStoreFromMe(result, qt, {
+  const store = createBasicStore(result, qt, {
     disableIsomorphicComponent: true
   })
 

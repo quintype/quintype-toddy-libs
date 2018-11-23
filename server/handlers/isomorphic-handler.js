@@ -8,7 +8,7 @@ const {ApplicationException, NotFoundException} = require("../exceptions");
 const {renderReduxComponent} = require("../render");
 const {createStore} = require("redux");
 const Promise = require("bluebird");
-const { getDefaultState, createStoreFromMe } = require("./create-store");
+const { getDefaultState, createBasicStore } = require("./create-store");
 const { customUrlToCacheKey } = require("../caching");
 
 const ABORT_HANDLER = "__ABORT__";
@@ -91,7 +91,7 @@ function createStoreFromResult(url, result, opts = {}) {
     data: result.data,
     currentPath: `${url.pathname}${url.search || ""}`,
   };
-  return createStoreFromMe(result, qt, opts);
+  return createBasicStore(result, qt, opts);
 }
 
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, next, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}) {
