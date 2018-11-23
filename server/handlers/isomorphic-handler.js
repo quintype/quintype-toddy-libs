@@ -8,6 +8,7 @@ const {ApplicationException, NotFoundException} = require("../exceptions");
 const {renderReduxComponent} = require("../render");
 const {createStore} = require("redux");
 const Promise = require("bluebird");
+const { getDefaultState, createBasicStore } = require("./create-store");
 const { customUrlToCacheKey } = require("../caching");
 
 const ABORT_HANDLER = "__ABORT__";
@@ -78,28 +79,19 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {
       return renderLayout(res, {
         config: config,
         content: '<div class="app-loading"><script type="text/javascript">window.qtLoadedFromShell = true</script></div>',
-        store: createStore((state) => state, {
-          qt: {config: result.config}
-        }),
+        store: createStore((state) => state, getDefaultState(result)),
         shell: true,
       });
     })
 }
 
-
 function createStoreFromResult(url, result, opts = {}) {
-  return createStore((state) => state, {
-    qt: Object.assign({}, opts, {
-      pageType: result.pageType || opts.defaultPageType,
-      data: result.data,
-      config: result.config,
-      currentPath: `${url.pathname}${url.search || ""}`,
-    }),
-    header: {
-      isSidebarVisible: false,
-      isSearchFormVisible: false
-    }
-  });
+  const qt = {
+    pageType: result.pageType || opts.defaultPageType,
+    data: result.data,
+    currentPath: `${url.pathname}${url.search || ""}`,
+  };
+  return createBasicStore(result, qt, opts);
 }
 
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, next, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}) {
