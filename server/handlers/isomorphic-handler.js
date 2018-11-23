@@ -8,6 +8,7 @@ const {ApplicationException, NotFoundException} = require("../exceptions");
 const {renderReduxComponent} = require("../render");
 const {createStore} = require("redux");
 const Promise = require("bluebird");
+const { getDefaultState, createStoreFromMe } = require("./create-store");
 const { customUrlToCacheKey } = require("../caching");
 
 const ABORT_HANDLER = "__ABORT__";
@@ -59,8 +60,6 @@ function getSeoInstance(seo, config) {
 }
 
 exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs}) {
-  const url = urlLib.parse(req.url, true);
-
   if(req.query["_workbox-precaching"] && req.query["_workbox-precaching"] != assetHelper.assetHash("app.js"))
     return res.status(503)
               .send("Requested Shell Is Not Current");
@@ -80,26 +79,19 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {
       return renderLayout(res, {
         config: config,
         content: '<div class="app-loading"><script type="text/javascript">window.qtLoadedFromShell = true</script></div>',
-        store: createStoreFromResult(url, result),
+        store: createStore((state) => state, getDefaultState(result)),
         shell: true,
       });
     })
 }
 
-
 function createStoreFromResult(url, result, opts = {}) {
-  return createStore((state) => state, {
-    qt: Object.assign({}, opts, {
-      pageType: result.pageType || opts.defaultPageType,
-      data: result.data,
-      config: result.config,
-      currentPath: `${url.pathname}${url.search || ""}`,
-    }),
-    header: {
-      isSidebarVisible: false,
-      isSearchFormVisible: false
-    }
-  });
+  const qt = {
+    pageType: result.pageType || opts.defaultPageType,
+    data: result.data,
+    currentPath: `${url.pathname}${url.search || ""}`,
+  };
+  return createStoreFromMe(result, qt, opts);
 }
 
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, next, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}) {

@@ -1,5 +1,4 @@
 const urlLib = require("url");
-const {createStore} = require("redux");
 const Promise = require("bluebird");
 const get = require("lodash/get");
 const ejs = require("ejs");
@@ -9,7 +8,8 @@ const staticPageTemplateStr = fs.readFileSync(path.join(__dirname, "../views/sta
 const staticPageTemplate = ejs.compile(staticPageTemplateStr);
 
 const { CustomPath } = require("../impl/api-client-impl");
-const {addCacheHeadersToResult} = require("./cdn-caching");
+const { createStoreFromMe } = require("./create-store");
+const { addCacheHeadersToResult } = require("./cdn-caching");
 
 function renderStaticPageContent(store, content) {
   const renderedContent = staticPageTemplate({store, content});
@@ -17,20 +17,15 @@ function renderStaticPageContent(store, content) {
   return renderedContent;
 }
 
-function writeStaticPageResponse(res, url, page, data, { config, renderLayout, seo }) {
-  const store = createStore((state) => state, {
-    qt: {
-      pageType: page.type,
-      data: Object.assign({}, page, data.data),
-      config: data.config,
-      currentPath: `${url.pathname}${url.search || ""}`,
-      disableIsomorphicComponent: true
-    },
-    header: {
-      isSidebarVisible: false,
-      isSearchFormVisible: false
-    }
-  });
+function writeStaticPageResponse(res, url, page, result, { config, renderLayout, seo }) {
+  const qt = {
+    pageType: page.type,
+    data: Object.assign({}, page, result.data),
+    currentPath: `${url.pathname}${url.search || ""}`,
+  }
+  const store = createStoreFromMe(result, qt, {
+    disableIsomorphicComponent: true
+  })
 
   const seoInstance = (typeof seo == 'function') ? seo(config) : seo;
   const seoTags = seoInstance && seoInstance.getMetaTags(config, page.type, {}, {url});
