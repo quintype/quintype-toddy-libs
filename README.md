@@ -241,6 +241,8 @@ Preloading app.js and /route-data.json can be triggered by passing preloadJS tru
 
 ### forwardFavicon
 
+### app.reloadConfig
+
 ## Optimising front-end javascript
 
 1. https://developers.google.com/web/fundamentals/performance/optimizing-javascript/tree-shaking/
