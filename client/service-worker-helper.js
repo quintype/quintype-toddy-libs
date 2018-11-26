@@ -11,6 +11,9 @@ function qDebug() {
 }
 
 export function initializeQServiceWorker(self, params) {
+  importScripts(`sw-offline-google-analytics/build/importScripts/sw-offline-google-analytics.${process.env.NODE_ENV == 'production' ? 'prod' : 'dev'}.v0.0.25.js`);
+  goog.offlineGoogleAnalytics.initialize();
+
   importScripts(`https://unpkg.com/workbox-sw@${workboxVersion}/build/importScripts/workbox-sw.${process.env.NODE_ENV == 'production' ? 'prod' : 'dev'}.v${workboxVersion}.js`);
 
   const routeMatcher = function({event, url}) {
