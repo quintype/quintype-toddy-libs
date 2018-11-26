@@ -41,6 +41,9 @@ function loadDataForIsomorphicRoute(loadData, loadErrorData, url, routes, {other
   }
 }
 
+
+
+
 function loadDataForPageType(loadData, loadErrorData = () => Promise.resolve({httpStatusCode: 500}), pageType, params, {config, client, logError, host}) {
   return new Promise((resolve) => resolve(loadData(pageType, params, config, client, {host, next: abortHandler})))
     .then(result => {
@@ -93,6 +96,10 @@ function createStoreFromResult(url, result, opts = {}) {
   };
   return createBasicStore(result, qt, opts);
 }
+
+exports.handleVisualStoryRoute = function handleVisualStoryRoute(req, res, next, {config, client, renderVisualStory, pickComponent, loadErrorData, seo, logError, assetHelper, preloadJs, preloadRouteData}) {
+  return renderVisualStory(res, {});
+};
 
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, next, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}) {
   const url = urlLib.parse(req.query.path || "/", true);
@@ -165,7 +172,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
         res.setHeader("Cache-Control", "public,max-age=15,s-maxage=120");
         res.setHeader("Vary", "Accept-Encoding");
         res.json(result)
-      }).catch(handleException).finally(() => res.end());;
+      }).catch(handleException).finally(() => res.end());
   }
 };
 

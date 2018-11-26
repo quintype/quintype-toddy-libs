@@ -1,5 +1,5 @@
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
-const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute, notFoundHandler} = require("./handlers/isomorphic-handler");
+const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute, notFoundHandler, handleVisualStoryRoute} = require("./handlers/isomorphic-handler");
 const {oneSignalImport} = require("./handlers/one-signal");
 const {customRouteHandler} = require("./handlers/custom-route-handler");
 const {handleManifest, handleAssetLink} = require("./handlers/json-manifest-handlers");
@@ -78,6 +78,7 @@ function toFunction(value, toRequire) {
 exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                      {generateRoutes,
                                                       renderLayout,
+                                                       renderVisualStory,
                                                       loadData,
                                                       pickComponent,
                                                       loadErrorData,
@@ -137,6 +138,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   staticRoutes.forEach(route => {
     app.get(route.path, withConfig(handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, seo}, route)))
   });
+
+  app.get("/visual-stories/*", withConfig(handleVisualStoryRoute, {generateRoutes, loadData, renderVisualStory, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
 
   app.get("/*", withConfig(handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
 
