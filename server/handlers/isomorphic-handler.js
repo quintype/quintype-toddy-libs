@@ -97,8 +97,11 @@ function createStoreFromResult(url, result, opts = {}) {
   return createBasicStore(result, qt, opts);
 }
 
-exports.handleVisualStoryRoute = function handleVisualStoryRoute(req, res, next, {config, client, renderVisualStory, pickComponent, loadErrorData, seo, logError, assetHelper, preloadJs, preloadRouteData}) {
-  return renderVisualStory(res, {});
+exports.handleVisualStoryRoute = function handleVisualStoryRoute(req, res, next, {config, client, renderVisualStory, loadData, pickComponent, loadErrorData, seo, logError, assetHelper}) {
+  const pageType = 'visual-story';
+  const slug = _.get(req, ['params', [0]], '');
+  return loadDataForPageType(loadData, loadErrorData, pageType, {slug}, {config, client, logError, host: req.hostname})
+    .then(result => renderVisualStory(res, Object.assign({pageType: pageType, disableIsomorphicComponent: true}, result)));
 };
 
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, next, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}) {
