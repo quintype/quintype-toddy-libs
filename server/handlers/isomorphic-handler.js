@@ -98,6 +98,9 @@ function createStoreFromResult(url, result, opts = {}) {
 }
 
 exports.handleVisualStoryRoute = function handleVisualStoryRoute(req, res, next, {config, client, renderVisualStory, loadData, pickComponent, loadErrorData, seo, logError, assetHelper}) {
+  if(!renderVisualStory) {
+    return res.send({error: "template unavailable"});
+  }
   const pageType = 'visual-story';
   const slug = _.get(req, ['params', [0]], '');
   return loadDataForPageType(loadData, loadErrorData, pageType, {slug}, {config, client, logError, host: req.hostname})
