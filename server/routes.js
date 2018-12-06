@@ -139,7 +139,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
     app.get(route.path, withConfig(handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, seo}, route)))
   });
 
-  app.get("/visual-stories/*", withConfig(handleVisualStoryRoute, {generateRoutes, loadData, renderVisualStory, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
+  app.get("/ampstories/*", withConfig(handleVisualStoryRoute, {generateRoutes, loadData, renderVisualStory, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
 
   app.get("/*", withConfig(handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
 
