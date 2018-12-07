@@ -4,13 +4,13 @@ npm install
 npm test
 git diff --quiet
 
-BRANCH=git branch | grep \* | cut -d ' ' -f2-
+BRANCH=$(git branch | grep \* | cut -d ' ' -f2-)
 
 if [ $BRANCH == 'master' ]
 then
   npx standard-version
 else
-  npx standard-version --prerelease $(git branch | grep \* | cut -d ' ' -f2-)
+  npx standard-version --prerelease $BRANCH
 fi
 
 unset BRANCH
