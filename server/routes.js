@@ -3,6 +3,7 @@ const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, h
 const {oneSignalImport} = require("./handlers/one-signal");
 const {customRouteHandler} = require("./handlers/custom-route-handler");
 const {handleManifest, handleAssetLink} = require("./handlers/json-manifest-handlers");
+const {handleBookend} = require("./handlers/bookend-handler");
 const {redirectStory} = require("./handlers/story-redirect");
 const {simpleJsonHandler} = require("./handlers/simple-json-handler");
 const {makePickComponentSync} = require("../isomorphic/make-pick-component-sync");
@@ -85,6 +86,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       seo,
                                                       manifestFn,
                                                       assetLinkFn,
+                                                       bookendFn,
 
                                                       logError = require("./logger").error,
                                                       oneSignalServiceWorkers = false,
@@ -140,6 +142,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   });
 
   app.get("/ampstories/*", withConfig(handleVisualStoryRoute, {generateRoutes, loadData, renderVisualStory, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
+
+  app.get("/bookend.json", withConfig(handleBookend, {bookendFn}));
 
   app.get("/*", withConfig(handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
 
