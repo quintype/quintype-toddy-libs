@@ -1,18 +1,19 @@
 import get from 'lodash/get'
+import { runWhenIdle } from "./run-when-idle";
 
 // istanbul ignore next
 export function startAnalytics() {
   global.qlitics=global.qlitics||function(){(qlitics.q=qlitics.q||[]).push(arguments);};
   global.qlitics('init');
 
-  (function () {
+  runWhenIdle(function () {
     var s = document.createElement('script');
     s.type = 'text/javascript';
     s.async = true;
     s.src = '/qlitics.js';
     var x = document.getElementsByTagName('script')[0];
     x.parentNode.insertBefore(s, x);
-  })();
+  });
 }
 
 function pageTypeToQliticsPageType(pageType) {
