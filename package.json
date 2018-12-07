@@ -1,10 +1,10 @@
 {
   "name": "@quintype/framework",
-  "version": "2.87.0-standard-version-script.0",
+  "version": "2.87.0-standard-version-script.1",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
-    "prepublishOnly": "npm install && npm test && git diff --quiet && npx standard-version --prerelease && git push --follow-tags origin",
+    "prepublishOnly": "./bin-dev-scripts/standard-version-release.sh",
     "test": "NODE_ENV=test npx mocha --recursive --require ./test/babel",
     "watch-test": "NODE_ENV=test npx mocha --recursive --watch --require ./test/babel",
     "coverage": "nyc --all npm test",
