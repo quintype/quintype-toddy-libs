@@ -86,7 +86,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       seo,
                                                       manifestFn,
                                                       assetLinkFn,
-                                                       bookendFn,
 
                                                       logError = require("./logger").error,
                                                       oneSignalServiceWorkers = false,
@@ -143,7 +142,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 
   app.get("/ampstories/*", withConfig(handleVisualStoryRoute, {generateRoutes, loadData, renderVisualStory, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
 
-  app.get("/bookend.json", withConfig(handleBookend, {bookendFn}));
+  app.get("/bookend.json", handleBookend);
 
   app.get("/*", withConfig(handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
 
