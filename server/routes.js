@@ -112,6 +112,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
     }
   }
 
+
   pickComponent = makePickComponentSync(pickComponent);
 
   app.get("/service-worker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, assetHelper, renderServiceWorker}));
@@ -142,7 +143,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 
   app.get("/ampstories/*", withConfig(handleVisualStoryRoute, {generateRoutes, loadData, renderVisualStory, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
 
-  app.get("/bookend.json", handleBookend);
+  app.get("/bookend.json", withConfig(handleBookend));
 
   app.get("/*", withConfig(handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
 
