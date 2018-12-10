@@ -1,17 +1,15 @@
-#!/usr/bin/env bash
+#!/bin/bash -e
 
 npm install
-npm test
 git diff --quiet
 
-BRANCH=$(git branch | grep \* | cut -d ' ' -f2-)
+BRANCH=$(git symbolic-ref --short HEAD)
 
-if [ $BRANCH == 'master' ]
+if [ "$BRANCH" == 'master' ]
 then
   npx standard-version
 else
-  npx standard-version --prerelease $BRANCH
+  npx standard-version --prerelease "$BRANCH" --skip.changelog=true
 fi
 
-unset BRANCH
-git push --follow-tags origin
+git push --follow-tags origin "$BRANCH"
