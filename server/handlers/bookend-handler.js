@@ -6,7 +6,9 @@ const jsonPayLoad = {
       "twitter",
       "email",
       "facebook",
-      "whatsapp"
+      "whatsapp",
+      "linkedin",
+      "gplus"
     ]
   };
 
