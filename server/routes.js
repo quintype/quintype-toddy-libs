@@ -1,5 +1,5 @@
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
-const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute, notFoundHandler, handleVisualStoryRoute} = require("./handlers/isomorphic-handler");
+const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute, notFoundHandler } = require("./handlers/isomorphic-handler");
 const {oneSignalImport} = require("./handlers/one-signal");
 const {customRouteHandler} = require("./handlers/custom-route-handler");
 const {handleManifest, handleAssetLink} = require("./handlers/json-manifest-handlers");
@@ -69,11 +69,11 @@ function toFunction(value, toRequire) {
     value = require(toRequire);
   }
 
-  if (typeof(value) == 'function') {
+  if (typeof(value) === 'function') {
     return value;
-  } 
+  }
     return () => value;
-  
+
 }
 
 function withConfigPartial(getClient, logError) {
@@ -90,7 +90,6 @@ function withConfigPartial(getClient, logError) {
 exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                      {generateRoutes,
                                                       renderLayout,
-                                                       renderVisualStory,
                                                       loadData,
                                                       pickComponent,
                                                       loadErrorData,
@@ -146,8 +145,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
     app.get(route.path, withConfig(handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, seo}, route)))
   });
 
-  app.get("/ampstories/*", withConfig(handleVisualStoryRoute, {generateRoutes, loadData, renderVisualStory, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
-
   app.get("/*", withConfig(handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
 
   if(redirectRootLevelStories) {
@@ -164,12 +161,12 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 }
 
 function getWithConfig(app, route, handler, opts = {}) {
-  const {    
+  const {
     getClient = require("./api-client").getClient,
     logError
   } = opts;
   const withConfig = withConfigPartial(getClient, logError);
-  app.get(route, withConfig(handler))
+  app.get(route, withConfig(handler, opts))
 }
 
 exports.getWithConfig = getWithConfig;
@@ -192,7 +189,7 @@ exports.proxyGetRequest = function(app, route, handler, opts = {}) {
     } catch(e) {
       logError(e);
       sendResult(null);
-    }    
+    }
 
     function sendResult(result) {
       if(result) {
