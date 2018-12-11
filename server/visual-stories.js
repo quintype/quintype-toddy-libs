@@ -64,7 +64,7 @@ async function handleBookend(req, res, next, {config, client}) {
 
 
 
-  exports.enableVisualStories = function enableVisualStories(app, renderVisualStory, {logError}){
-    getWithConfig(app, "/ampstories/:storyId/bookend.json", withError(handleBookend, logError), {logError});
-    getWithConfig(app, "/ampstories/*/:storySlug", withError(handleVisualStory, logError), {logError, renderVisualStory});
+  exports.enableVisualStories = function enableVisualStories(app, renderVisualStory, {logError, getClient}){
+    getWithConfig(app, "/ampstories/:storyId/bookend.json", withError(handleBookend, logError), {logError, getClient});
+    getWithConfig(app, "/ampstories/*/:storySlug", withError(handleVisualStory, logError), {logError, getClient, renderVisualStory});
   }
