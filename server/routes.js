@@ -7,6 +7,7 @@ const {handleBookend} = require("./handlers/bookend-handler");
 const {redirectStory} = require("./handlers/story-redirect");
 const {simpleJsonHandler} = require("./handlers/simple-json-handler");
 const {makePickComponentSync} = require("../isomorphic/make-pick-component-sync");
+const rp = require("request-promise");
 
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
                                                                  {forwardAmp = false,
@@ -76,6 +77,17 @@ function toFunction(value, toRequire) {
   }
 }
 
+function withConfigPartial(getClient, logError) {
+  return function withConfig(f, staticParams) {
+    return function (req, res, next) {
+      const client = getClient(req.hostname);
+      return client.getConfig()
+        .then(c => f(req, res, next, Object.assign({}, staticParams, { config: c, client: client })))
+        .catch(logError);
+    }
+  }
+}
+
 exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                      {generateRoutes,
                                                       renderLayout,
@@ -103,14 +115,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       renderServiceWorker = renderServiceWorkerFn,
                                                       templateOptions = false,
                                                     }) {
-  function withConfig(f, staticParams) {
-    return function(req, res, next) {
-      const client = getClient(req.hostname);
-      return client.getConfig()
-        .then(c => f(req, res, next, Object.assign({}, staticParams, {config: c, client: client})))
-        .catch(logError);
-    }
-  }
+
+  const withConfig = withConfigPartial(getClient, logError);
 
 
   pickComponent = makePickComponentSync(pickComponent);
@@ -157,5 +163,49 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 
   if(handleNotFound) {
     app.get("/*", withConfig(notFoundHandler, {renderLayout, pickComponent, loadErrorData, logError, assetHelper}));
+  }
+}
+
+function getWithConfig(app, route, handler, opts = {}) {
+  const {    
+    getClient = require("./api-client").getClient,
+    logError
+  } = opts;
+  const withConfig = withConfigPartial(getClient, logError);
+  app.get(route, withConfig(handler))
+}
+
+exports.getWithConfig = getWithConfig;
+
+exports.proxyGetRequest = function(app, route, handler, opts = {}) {
+  const {
+    cacheControl = "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600"
+  } = opts;
+
+  getWithConfig(app, route, proxyHandler, opts);
+
+  async function proxyHandler(req, res, next, {config, client}) {
+    try {
+      const result = await handler(req.params, {config, client});
+      if(typeof result == "string" && result.startsWith("http")) {
+        sendResult(await rp(result, {json: true}));
+      } else {
+        sendResult(result);
+      }
+    } catch(e) {
+      logError(e);
+      sendResult(null);
+    }    
+
+    function sendResult(result) {
+      if(result) {
+        res.setHeader("Cache-Control", cacheControl);
+        res.setHeader("Vary", "Accept-Encoding");
+        res.json(result)
+      } else {
+        res.status(503);
+        res.end();
+      }
+    }
   }
 }
