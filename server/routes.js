@@ -159,14 +159,25 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   }
 }
 
-exports.proxyGetRequest = function(app, route, handler, opts = {}) {
-  const {
-    cacheControl = "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600",
+function getWithConfig(app, route, handler, opts = {}) {
+  const {    
     getClient = require("./api-client").getClient,
     logError
   } = opts;
   const withConfig = withConfigPartial(getClient, logError);
-  app.get(route, withConfig(async function(req, res, next, {config, client}) {
+  app.get(route, withConfig(handler))
+}
+
+exports.getWithConfig = getWithConfig;
+
+exports.proxyGetRequest = function(app, route, handler, opts = {}) {
+  const {
+    cacheControl = "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600"
+  } = opts;
+
+  getWithConfig(app, route, proxyHandler, opts);
+
+  async function proxyHandler(req, res, next, {config, client}) {
     try {
       const result = await handler(req.params, {config, client});
       if(typeof result == "string" && result.startsWith("http")) {
@@ -177,7 +188,7 @@ exports.proxyGetRequest = function(app, route, handler, opts = {}) {
     } catch(e) {
       logError(e);
       sendResult(null);
-    }
+    }    
 
     function sendResult(result) {
       if(result) {
@@ -189,5 +200,5 @@ exports.proxyGetRequest = function(app, route, handler, opts = {}) {
         res.end();
       }
     }
-  }))
+  }
 }
