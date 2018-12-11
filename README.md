@@ -153,6 +153,21 @@ Any yaml file you add to config is available as follows:
 const {some_config} = require('@quintype/framework/server/static-configuration')
 ```
 
+## Proxying A Request to Another Host (for caching)
+
+It is possible to forward requests to another host, and cache the results on our CDN. This can be done as follows in `app/server/app.js`.
+
+```javascript
+const {proxyGetRequest} = require('@quintype/framework/server/routes');
+
+proxyGetRequest(app, "/path/to/:resource.json", (params, next) => `https://example.com/${params.resource}.json`, {logError})
+```
+
+The handler can return the following:
+* null / undefined - The result will be a 503
+* any truthy value - The result will be returned as a 200 with the result as content
+* A url starting with http(s) - The URL will be fetched and content will be returned according to the above two rules
+
 ## Debugging
 
 * In order to use `assetify` function, please annotate the application-js with id="app-js". The hostname specified here is assumed to be the cdn
