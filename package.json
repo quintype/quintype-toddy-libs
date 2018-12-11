@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "prepublishOnly": "npm test && ./bin-dev-scripts/standard-version-release.sh",
-    "test": "NODE_ENV=test npx mocha --recursive --require ./test/babel",
-    "watch-test": "NODE_ENV=test npx mocha --recursive --watch --require ./test/babel",
+    "test": "NODE_ENV=test npx mocha --recursive --require @babel/register",
+    "watch-test": "NODE_ENV=test npx mocha --recursive --watch --require @babel/register",
     "coverage": "nyc --all npm test",
     "coverage-html": "nyc --all --reporter=html npm test",
     "sync-files-to": "npx onchange --verbose --wait --await-write-finish 'client/**/*' 'server/**/*' 'isomorphic/**/*' -- ./bin-dev-scripts/sync-to.sh "
@@ -46,19 +46,16 @@
     "winston": "3.0.0-rc1"
   },
   "devDependencies": {
-    "@quintype/build": "^1.2.0",
+    "@babel/core": "^7.1.6",
+    "@babel/preset-env": "^7.1.6",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.0.0",
     "babel-plugin-quintype-assets": "^1.0.2",
-    "babel-plugin-react-css-modules": "^3.3.3",
-    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-es2015-tree-shaking": "^1.0.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-register": "^6.26.0",
     "history": "^4.7.2",
     "jsdom": "^12.2.0",
     "jsdom-global": "3.0.2",
     "mocha": "^4.0.1",
-    "nyc": "^11.4.1",
+    "nyc": "^13.1.0",
     "onchange": "^4.1.0",
     "standard-version": "^4.4.0",
     "supertest": "^3.0.0"
