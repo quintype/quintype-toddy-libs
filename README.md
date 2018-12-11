@@ -175,9 +175,11 @@ In order to use the visual-stories, do the following in `app/server/app.js`
 ```javascript
 import {enableVisualStories} from '@quintype/framework/server/visual-stories';
 
-function renderVisualStory({story, config, client}) {
-  // render ejs
-  // content = ReactDom.renderToStaticMarkup(<amp-story></amp-story>)
+function renderVisualStory(res, story, {config, client}) {
+  res.render("pages/visual-story", {
+    seo: "",
+    content: ReactDom.renderToStaticMarkup(<amp-story></amp-story>)
+  })
 }
 
 enableVisualStories(app, renderVisualStory, {logError})
