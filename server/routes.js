@@ -3,7 +3,6 @@ const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, h
 const {oneSignalImport} = require("./handlers/one-signal");
 const {customRouteHandler} = require("./handlers/custom-route-handler");
 const {handleManifest, handleAssetLink} = require("./handlers/json-manifest-handlers");
-const {handleBookend} = require("./handlers/bookend-handler");
 const {redirectStory} = require("./handlers/story-redirect");
 const {simpleJsonHandler} = require("./handlers/simple-json-handler");
 const {makePickComponentSync} = require("../isomorphic/make-pick-component-sync");
@@ -20,13 +19,13 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
     ssl: host.startsWith("https") ? {servername: host.replace(/^https:\/\//, "")} : undefined
   });
 
-  apiProxy.on('proxyReq', function(proxyReq, req, res, options) {
+  apiProxy.on('proxyReq', (proxyReq, req, res, options) => {
     proxyReq.setHeader('Host', getClient(req.hostname).getHostname());
   });
 
   const sketchesProxy = (req, res) => apiProxy.web(req, res);
 
-  app.get("/ping", function(req, res) {
+  app.get("/ping", (req, res) => {
     getClient(req.hostname)
     .getConfig()
     .then(() => res.send("pong"))
@@ -72,9 +71,9 @@ function toFunction(value, toRequire) {
 
   if (typeof(value) == 'function') {
     return value;
-  } else {
+  } 
     return () => value;
-  }
+  
 }
 
 function withConfigPartial(getClient, logError) {
@@ -82,7 +81,7 @@ function withConfigPartial(getClient, logError) {
     return function (req, res, next) {
       const client = getClient(req.hostname);
       return client.getConfig()
-        .then(c => f(req, res, next, Object.assign({}, staticParams, { config: c, client: client })))
+        .then(c => f(req, res, next, Object.assign({}, staticParams, { config: c, client })))
         .catch(logError);
     }
   }
@@ -149,8 +148,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 
   app.get("/ampstories/*", withConfig(handleVisualStoryRoute, {generateRoutes, loadData, renderVisualStory, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
 
-  app.get("/bookend.json", withConfig(handleBookend));
-
   app.get("/*", withConfig(handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
 
   if(redirectRootLevelStories) {
@@ -187,7 +184,7 @@ exports.proxyGetRequest = function(app, route, handler, opts = {}) {
   async function proxyHandler(req, res, next, {config, client}) {
     try {
       const result = await handler(req.params, {config, client});
-      if(typeof result == "string" && result.startsWith("http")) {
+      if(typeof result === "string" && result.startsWith("http")) {
         sendResult(await rp(result, {json: true}));
       } else {
         sendResult(result);
