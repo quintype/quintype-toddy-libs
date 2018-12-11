@@ -168,7 +168,7 @@ exports.proxyGetRequest = function(app, route, handler, opts = {}) {
   const withConfig = withConfigPartial(getClient, logError);
   app.get(route, withConfig(async function(req, res, next, {config, client}) {
     try {
-      const result = await handler(req.params, next, {config, client});
+      const result = await handler(req.params, {config, client});
       if(typeof result == "string" && result.startsWith("http")) {
         sendResult(await rp(result, {json: true}));
       } else {

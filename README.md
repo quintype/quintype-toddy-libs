@@ -160,7 +160,7 @@ It is possible to forward requests to another host, and cache the results on our
 ```javascript
 const {proxyGetRequest} = require('@quintype/framework/server/routes');
 
-proxyGetRequest(app, "/path/to/:resource.json", (params, next) => `https://example.com/${params.resource}.json`, {logError})
+proxyGetRequest(app, "/path/to/:resource.json", (params) => `https://example.com/${params.resource}.json`, {logError})
 ```
 
 The handler can return the following:
