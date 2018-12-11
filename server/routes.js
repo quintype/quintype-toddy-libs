@@ -75,6 +75,17 @@ function toFunction(value, toRequire) {
   }
 }
 
+function withConfigPartial(getClient, logError) {
+  return function withConfig(f, staticParams) {
+    return function (req, res, next) {
+      const client = getClient(req.hostname);
+      return client.getConfig()
+        .then(c => f(req, res, next, Object.assign({}, staticParams, { config: c, client: client })))
+        .catch(logError);
+    }
+  }
+}
+
 exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                      {generateRoutes,
                                                       renderLayout,
@@ -101,14 +112,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       renderServiceWorker = renderServiceWorkerFn,
                                                       templateOptions = false,
                                                     }) {
-  function withConfig(f, staticParams) {
-    return function(req, res, next) {
-      const client = getClient(req.hostname);
-      return client.getConfig()
-        .then(c => f(req, res, next, Object.assign({}, staticParams, {config: c, client: client})))
-        .catch(logError);
-    }
-  }
+
+  const withConfig = withConfigPartial(getClient, logError);
 
   pickComponent = makePickComponentSync(pickComponent);
 
