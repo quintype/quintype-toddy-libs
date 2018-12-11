@@ -1,4 +1,4 @@
-const { getWithConfig } = require("./routes");
+const { getWithConfig, withError} = require("./routes");
 const {Story} = require("./impl/api-client-impl");
 const {addCacheHeadersToResult} = require("./handlers/cdn-caching");
 const {storyToCacheKey} = require("./caching");
@@ -62,7 +62,9 @@ async function handleBookend(req, res, next, {config, client}) {
     }
   }
 
+
+
   exports.enableVisualStories = function enableVisualStories(app, renderVisualStory, {logError}){
-    getWithConfig(app, "/ampstories/:storyId/bookend.json", handleBookend, {logError});
-    getWithConfig(app, "/ampstories/*/:storySlug", handleVisualStory, {logError, renderVisualStory});
+    getWithConfig(app, "/ampstories/:storyId/bookend.json", withError(handleBookend, logError), {logError});
+    getWithConfig(app, "/ampstories/*/:storySlug", withError(handleVisualStory, logError), {logError, renderVisualStory});
   }

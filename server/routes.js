@@ -87,6 +87,18 @@ function withConfigPartial(getClient, logError) {
   }
 }
 
+exports.withError = function withError(handler, logError) {
+  return async (req, res, next, opts) => {
+    try {
+      await handler(req, res, next, opts);
+    } catch(e) {
+      logError(e);
+      res.status(500);
+      res.end()
+    }
+  }
+}
+
 exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                      {generateRoutes,
                                                       renderLayout,
