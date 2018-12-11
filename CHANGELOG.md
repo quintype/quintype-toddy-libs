@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.88.1"></a>
+## [2.88.1](https://github.com/quintype/quintype-node-framework/compare/v2.88.0...v2.88.1) (2018-12-11)
+
+
+### Bug Fixes
+
+* proxyGetRequest handler no longer accepts next ([719484c](https://github.com/quintype/quintype-node-framework/commit/719484c))
+
+
+
 <a name="2.88.0"></a>
 # [2.88.0](https://github.com/quintype/quintype-node-framework/compare/v2.86.0...v2.88.0) (2018-12-11)
 
