@@ -1,5 +1,5 @@
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
-const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute, notFoundHandler} = require("./handlers/isomorphic-handler");
+const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute, notFoundHandler } = require("./handlers/isomorphic-handler");
 const {oneSignalImport} = require("./handlers/one-signal");
 const {customRouteHandler} = require("./handlers/custom-route-handler");
 const {handleManifest, handleAssetLink} = require("./handlers/json-manifest-handlers");
@@ -19,13 +19,13 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
     ssl: host.startsWith("https") ? {servername: host.replace(/^https:\/\//, "")} : undefined
   });
 
-  apiProxy.on('proxyReq', function(proxyReq, req, res, options) {
+  apiProxy.on('proxyReq', (proxyReq, req, res, options) => {
     proxyReq.setHeader('Host', getClient(req.hostname).getHostname());
   });
 
   const sketchesProxy = (req, res) => apiProxy.web(req, res);
 
-  app.get("/ping", function(req, res) {
+  app.get("/ping", (req, res) => {
     getClient(req.hostname)
     .getConfig()
     .then(() => res.send("pong"))
@@ -69,11 +69,11 @@ function toFunction(value, toRequire) {
     value = require(toRequire);
   }
 
-  if (typeof(value) == 'function') {
+  if (typeof(value) === 'function') {
     return value;
-  } else {
-    return () => value;
   }
+    return () => value;
+
 }
 
 function withConfigPartial(getClient, logError) {
@@ -81,8 +81,20 @@ function withConfigPartial(getClient, logError) {
     return function (req, res, next) {
       const client = getClient(req.hostname);
       return client.getConfig()
-        .then(c => f(req, res, next, Object.assign({}, staticParams, { config: c, client: client })))
+        .then(c => f(req, res, next, Object.assign({}, staticParams, { config: c, client })))
         .catch(logError);
+    }
+  }
+}
+
+exports.withError = function withError(handler, logError) {
+  return async (req, res, next, opts) => {
+    try {
+      await handler(req, res, next, opts);
+    } catch(e) {
+      logError(e);
+      res.status(500);
+      res.end()
     }
   }
 }
@@ -115,6 +127,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                     }) {
 
   const withConfig = withConfigPartial(getClient, logError);
+
 
   pickComponent = makePickComponentSync(pickComponent);
 
@@ -160,12 +173,12 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 }
 
 function getWithConfig(app, route, handler, opts = {}) {
-  const {    
+  const {
     getClient = require("./api-client").getClient,
     logError
   } = opts;
   const withConfig = withConfigPartial(getClient, logError);
-  app.get(route, withConfig(handler))
+  app.get(route, withConfig(handler, opts))
 }
 
 exports.getWithConfig = getWithConfig;
@@ -180,7 +193,7 @@ exports.proxyGetRequest = function(app, route, handler, opts = {}) {
   async function proxyHandler(req, res, next, {config, client}) {
     try {
       const result = await handler(req.params, {config, client});
-      if(typeof result == "string" && result.startsWith("http")) {
+      if(typeof result === "string" && result.startsWith("http")) {
         sendResult(await rp(result, {json: true}));
       } else {
         sendResult(result);
@@ -188,7 +201,7 @@ exports.proxyGetRequest = function(app, route, handler, opts = {}) {
     } catch(e) {
       logError(e);
       sendResult(null);
-    }    
+    }
 
     function sendResult(result) {
       if(result) {

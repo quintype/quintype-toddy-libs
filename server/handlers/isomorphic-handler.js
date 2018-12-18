@@ -41,6 +41,9 @@ function loadDataForIsomorphicRoute(loadData, loadErrorData, url, routes, {other
   }
 }
 
+
+
+
 function loadDataForPageType(loadData, loadErrorData = () => Promise.resolve({httpStatusCode: 500}), pageType, params, {config, client, logError, host}) {
   return new Promise((resolve) => resolve(loadData(pageType, params, config, client, {host, next: abortHandler})))
     .then(result => {
@@ -56,7 +59,7 @@ function loadDataForPageType(loadData, loadErrorData = () => Promise.resolve({ht
 }
 
 function getSeoInstance(seo, config) {
-  return (typeof seo == 'function') ? seo(config) : seo;
+  return (typeof seo === 'function') ? seo(config) : seo;
 }
 
 exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs}) {
@@ -77,7 +80,7 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {
       }
 
       return renderLayout(res, {
-        config: config,
+        config,
         content: '<div class="app-loading"><script type="text/javascript">window.qtLoadedFromShell = true</script></div>',
         store: createStore((state) => state, getDefaultState(result)),
         shell: true,
@@ -114,7 +117,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
       const params = Object.assign({}, url.query, req.query, match.params)
       const pageType = match.pageType || "static-page";
       return loadDataForPageType(loadData, loadErrorData, pageType, params, {config, client, logError, host: req.hostname})
-        .then(result => Object.assign({pageType: pageType, disableIsomorphicComponent: true}, result))
+        .then(result => Object.assign({pageType, disableIsomorphicComponent: true}, result))
     }
   }
 
@@ -149,7 +152,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
       addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]));
       const seoInstance = getSeoInstance(seo, config);
       res.json(Object.assign({}, result, {
-        appVersion: appVersion,
+        appVersion,
         data: _.omit(result.data, ["cacheKeys"]),
         title: seoInstance ? seoInstance.getTitle(config, result.pageType, result) : result.title,
       }));
@@ -165,7 +168,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
         res.setHeader("Cache-Control", "public,max-age=15,s-maxage=120");
         res.setHeader("Vary", "Accept-Encoding");
         res.json(result)
-      }).catch(handleException).finally(() => res.end());;
+      }).catch(handleException).finally(() => res.end());
   }
 };
 
@@ -193,10 +196,10 @@ exports.notFoundHandler = function notFoundHandler(req, res, next, {config, clie
       return pickComponent.preloadComponent(store.getState().qt.pageType)
         .then(() =>
           renderLayout(res, {
-            config: config,
+            config,
             title: result.title,
-            content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
-            store: store,
+            content: renderReduxComponent(IsomorphicComponent, store, {pickComponent}),
+            store,
             pageType: store.getState().qt.pageType,
           })
         );
@@ -257,11 +260,11 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
     return pickComponent.preloadComponent(store.getState().qt.pageType)
       .then(() =>
         renderLayout(res, {
-          config: config,
+          config,
           title: result.title,
-          content: renderReduxComponent(IsomorphicComponent, store, {pickComponent: pickComponent}),
-          store: store,
-          seoTags: seoTags,
+          content: renderReduxComponent(IsomorphicComponent, store, {pickComponent}),
+          store,
+          seoTags,
           pageType: store.getState().qt.pageType,
         })
       );
@@ -293,11 +296,11 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, co
       addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"],['static']));
 
       return renderLayout(res, Object.assign({
-        config: config,
+        config,
         title: seoInstance ? seoInstance.getTitle(config, result.pageType || match.pageType, result, {url}) : result.title,
-        store: store,
+        store,
         disableAjaxNavigation: true,
-        seoTags: seoTags
+        seoTags
       }, renderParams));
     }).catch(e => {
       logError(e);

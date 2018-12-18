@@ -168,6 +168,23 @@ The handler can return the following:
 * any truthy value - The result will be returned as a 200 with the result as content
 * A url starting with http(s) - The URL will be fetched and content will be returned according to the above two rules
 
+## Visual Stories (amp stories)
+
+In order to use the visual-stories, do the following in `app/server/app.js`
+
+```javascript
+import {enableVisualStories} from '@quintype/framework/server/visual-stories';
+
+function renderVisualStory(res, story, {config, client}) {
+  res.render("pages/visual-story", {
+    seo: "",
+    content: ReactDom.renderToStaticMarkup(<amp-story></amp-story>)
+  })
+}
+
+enableVisualStories(app, renderVisualStory, {logError})
+```
+
 ## Debugging
 
 * In order to use `assetify` function, please annotate the application-js with id="app-js". The hostname specified here is assumed to be the cdn
