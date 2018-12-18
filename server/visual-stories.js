@@ -12,7 +12,10 @@ async function handleBookend(req, res, next, {config, client}) {
     "shareProviders": [
       "twitter",
       "email",
-      "facebook",
+      {
+      "provider": "facebook",
+      "app_id": config['public-integrations'].facebook['app-id'],
+      },
       "whatsapp",
       "linkedin",
       "gplus"
@@ -61,8 +64,6 @@ async function handleBookend(req, res, next, {config, client}) {
       await renderVisualStory(res, story, {config, client});
     }
   }
-
-
 
   exports.enableVisualStories = function enableVisualStories(app, renderVisualStory, {logError}){
     getWithConfig(app, "/ampstories/:storyId/bookend.json", withError(handleBookend, logError), {logError});
