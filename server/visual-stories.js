@@ -3,10 +3,12 @@ const {Story} = require("./impl/api-client-impl");
 const {addCacheHeadersToResult} = require("./handlers/cdn-caching");
 const {storyToCacheKey} = require("./caching");
 const urlLib = require("url");
+const get = require("lodash/get");
 
 async function handleBookend(req, res, next, {config, client}) {
   const relatedStoriesResponse = await client.getRelatedStories(req.params.storyId, req.query.section);
   const relatedStories = relatedStoriesResponse["related-stories"];
+  const fbAppId = get(config, ['public-integrations', 'facebook','app-id'], '');
 
   const jsonPayLoad = {
     "bookendVersion": "v1.0",
@@ -15,7 +17,7 @@ async function handleBookend(req, res, next, {config, client}) {
       "email",
       {
       "provider": "facebook",
-      "app_id": config['public-integrations'].facebook['app-id'],
+      "app_id": fbAppId,
       },
       "whatsapp",
       "linkedin",
