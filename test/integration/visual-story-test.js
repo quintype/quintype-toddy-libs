@@ -1,4 +1,4 @@
-var assert = require('assert');
+const assert = require('assert');
 const express = require("express");
 
 const { enableVisualStories } = require("../../server/visual-stories");
@@ -11,20 +11,16 @@ function getClientStub(hostname) {
   }
 }
 
-getClientStub.withRelatedStories = relatedStories => {
-  return hostname => Object.assign({}, getClientStub(hostname), {
+getClientStub.withRelatedStories = relatedStories => hostname => Object.assign({}, getClientStub(hostname), {
     getRelatedStories: async () => ({'related-stories': relatedStories})
   })
-}
 
-getClientStub.withStory = story => {
-  return hostname => Object.assign({}, getClientStub(hostname), {
-    getStoryBySlug: async () => ({story: story})
+getClientStub.withStory = story => hostname => Object.assign({}, getClientStub(hostname), {
+    getStoryBySlug: async () => ({story})
   })
-}
 
-describe('Visual Stories Bookend', function () {
-  it("returns the bookend if there are related stories", function(done) {
+describe('Visual Stories Bookend', () => {
+  it("returns the bookend if there are related stories", (done) => {
     const app = express();
     enableVisualStories(app, () => { }, { getClient: getClientStub.withRelatedStories([{headline: "foo"}]) })
     supertest(app)
@@ -41,7 +37,7 @@ describe('Visual Stories Bookend', function () {
       .then(() => done());
   });
 
-  it("returns a 404 if there are no related stories", function (done) {
+  it("returns a 404 if there are no related stories", (done) => {
     const app = express();
     enableVisualStories(app, () => {}, {getClient: getClientStub.withRelatedStories([])})
     supertest(app)
@@ -52,8 +48,8 @@ describe('Visual Stories Bookend', function () {
   });
 });
 
-describe("Visual Stories AmpPage", function() {
-  it("calls render if the story is present and adds caching headers", function(done) {
+describe("Visual Stories AmpPage", () => {
+  it("calls render if the story is present and adds caching headers", (done) => {
     const story = {headline: "foobar", id: "abcdefgh", "story-template": "visual-story"};
     const app = express();
     enableVisualStories(app, (res, story) => { res.json(story.asJson()) }, { getClient: getClientStub.withStory(story) })
@@ -69,7 +65,7 @@ describe("Visual Stories AmpPage", function() {
       .then(done);
   })
 
-  it("returns 404 if the story is not found", function(done) {
+  it("returns 404 if the story is not found", (done) => {
     const app = express();
     enableVisualStories(app, () => { }, { getClient: getClientStub.withStory(null) })
     supertest(app)
@@ -78,7 +74,7 @@ describe("Visual Stories AmpPage", function() {
       .then(() => done());
   })
 
-  it("returns 404 if the story is not a visual story", function(done) {
+  it("returns 404 if the story is not a visual story", (done) => {
     const app = express();
     enableVisualStories(app, () => { }, { getClient: getClientStub.withStory({'story-template': 'blank'}) })
     supertest(app)

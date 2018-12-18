@@ -64,7 +64,7 @@ async function handleBookend(req, res, next, {config, client}) {
     const seoInstance = (typeof seo === 'function') ? seo(config) : seo;
     const seoTags = seoInstance && seoInstance.getMetaTags(config, story['story-template'], story, {url});
 
-    if(story == null || story['story-template'] !== 'visual-story') {
+    if(story === null || story['story-template'] !== 'visual-story') {
       res.status(404);
       res.end();
     } else {
