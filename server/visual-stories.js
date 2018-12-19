@@ -67,6 +67,7 @@ async function handleBookend(req, res, next, {config, client}) {
     } else {
       const seoInstance = (typeof seo === 'function') ? seo(config) : seo;
       const seoTags = seoInstance && seoInstance.getMetaTags(config, story['story-template'], story, {url});
+
       addCacheHeadersToResult(res, [storyToCacheKey(config["publisher-id"], story)]);
       await renderVisualStory(res, story, {config, client, seoTags});
     }
