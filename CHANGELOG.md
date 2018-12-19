@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.89.1"></a>
+## [2.89.1](https://github.com/quintype/quintype-node-framework/compare/v2.89.0...v2.89.1) (2018-12-19)
+
+
+### Bug Fixes
+
+* **package-lock:** package lock updates ([fa2080d](https://github.com/quintype/quintype-node-framework/commit/fa2080d))
+* **seo-instance:** fixed seo instance creation on story check ([b9a80c4](https://github.com/quintype/quintype-node-framework/commit/b9a80c4))
+
+
+
 <a name="2.89.0"></a>
 # [2.89.0](https://github.com/quintype/quintype-node-framework/compare/v2.87.0...v2.89.0) (2018-12-18)
 
