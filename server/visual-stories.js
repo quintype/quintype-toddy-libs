@@ -69,13 +69,13 @@ async function handleBookend(req, res, next, {config, client}) {
     const url = urlLib.parse(req.url, true);
     const story = await Story.getStoryBySlug(client, req.params.storySlug);
 
-    const seoInstance = (typeof seo === 'function') ? seo(config) : seo;
-    const seoTags = seoInstance && seoInstance.getMetaTags(config, story['story-template'], story, {url});
-
     if(story === null || story['story-template'] !== 'visual-story') {
       res.status(404);
       res.end();
     } else {
+      const seoInstance = (typeof seo === 'function') ? seo(config) : seo;
+      const seoTags = seoInstance && seoInstance.getMetaTags(config, story['story-template'], story, {url});
+
       addCacheHeadersToResult(res, [storyToCacheKey(config["publisher-id"], story)]);
       await renderVisualStory(res, story, {config, client, seoTags});
     }
@@ -85,5 +85,4 @@ async function handleBookend(req, res, next, {config, client}) {
     getWithConfig(app, "/ampstories/:storyId/bookend.json", withError(handleBookend, logError), {logError, getClient});
     getWithConfig(app, "/ampstories/*/:storySlug", withError(handleVisualStory, logError), {logError, getClient, renderVisualStory, seo});
   };
-
 
