@@ -5,6 +5,14 @@ const {storyToCacheKey} = require("./caching");
 const urlLib = require("url");
 const get = require("lodash/get");
 
+
+function getImageUrl(story, config) {
+  if(get(story, ['story-template']) === 'news-elsewhere'){
+    return get(story, ['metadata', 'reference-url'], '');
+  }
+  return `${config['sketches-host']}/${story.slug}`;
+}
+
 async function handleBookend(req, res, next, {config, client}) {
   const relatedStoriesResponse = await client.getRelatedStories(req.params.storyId, req.query.section);
   const relatedStories = relatedStoriesResponse["related-stories"];
@@ -32,7 +40,7 @@ async function handleBookend(req, res, next, {config, client}) {
         "type": "small",
         "title": `${story.headline}`,
         "image": `${config['cdn-name']}${story['hero-image-s3-key']}?w=480&auto=format&compress`,
-        "url": `${config['sketches-host']}/${story.slug}`
+        "url": getImageUrl(story, config)
       })),
       [{
         "type": "cta-link",
@@ -47,8 +55,8 @@ async function handleBookend(req, res, next, {config, client}) {
     };
 
     if(relatedStories.length > 0) {
-      res.header("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
-      res.header("Vary", "Accept-Encoding")
+      res.header("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400");
+      res.header("Vary", "Accept-Encoding");
       res.json(jsonPayLoad);
     } else {
       res.status(404);
