@@ -6,7 +6,7 @@ const urlLib = require("url");
 const get = require("lodash/get");
 
 
-function getExternalStory(story, config) {
+function getImageUrl(story, config) {
   if(get(story, ['story-template']) === 'news-elsewhere'){
     return get(story, ['metadata', 'reference-url'], '');
   }
@@ -40,7 +40,7 @@ async function handleBookend(req, res, next, {config, client}) {
         "type": "small",
         "title": `${story.headline}`,
         "image": `${config['cdn-name']}${story['hero-image-s3-key']}?w=480&auto=format&compress`,
-        "url": getExternalStory(story, config)
+        "url": getImageUrl(story, config)
       })),
       [{
         "type": "cta-link",
@@ -55,14 +55,14 @@ async function handleBookend(req, res, next, {config, client}) {
     };
 
     if(relatedStories.length > 0) {
-      res.header("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
-      res.header("Vary", "Accept-Encoding")
+      res.header("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400");
+      res.header("Vary", "Accept-Encoding");
       res.json(jsonPayLoad);
     } else {
       res.status(404);
       res.json({error: {message: "Not Found"}});
     }
-  };
+  }
 
   async function handleVisualStory(req, res, next, {config, client, renderVisualStory, seo}) {
 
@@ -84,6 +84,6 @@ async function handleBookend(req, res, next, {config, client}) {
   exports.enableVisualStories = function enableVisualStories(app, renderVisualStory, {logError, getClient, seo}){
     getWithConfig(app, "/ampstories/:storyId/bookend.json", withError(handleBookend, logError), {logError, getClient});
     getWithConfig(app, "/ampstories/*/:storySlug", withError(handleVisualStory, logError), {logError, getClient, renderVisualStory, seo});
-  }
+  };
 
 
