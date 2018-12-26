@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.89.2"></a>
+## [2.89.2](https://github.com/quintype/quintype-node-framework/compare/v2.89.1...v2.89.2) (2018-12-26)
+
+
+### Bug Fixes
+
+* **bookend.json:** Handle external stories on bookend ([#63](https://github.com/quintype/quintype-node-framework/issues/63)) ([a305f5a](https://github.com/quintype/quintype-node-framework/commit/a305f5a))
+
+
+
 <a name="2.89.1"></a>
 ## [2.89.1](https://github.com/quintype/quintype-node-framework/compare/v2.89.0...v2.89.1) (2018-12-19)
 

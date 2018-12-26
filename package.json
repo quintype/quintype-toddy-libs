@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "2.89.1",
+  "version": "2.89.2",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
