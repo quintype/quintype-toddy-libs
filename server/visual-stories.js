@@ -5,6 +5,14 @@ const {storyToCacheKey} = require("./caching");
 const urlLib = require("url");
 const get = require("lodash/get");
 
+
+function getExternalStory(story, config) {
+  if(get(story, ['story-template']) === 'news-elsewhere'){
+    return get(story, ['metadata', 'reference-url'], '');
+  }
+  return `${config['sketches-host']}/${story.slug}`;
+}
+
 async function handleBookend(req, res, next, {config, client}) {
   const relatedStoriesResponse = await client.getRelatedStories(req.params.storyId, req.query.section);
   const relatedStories = relatedStoriesResponse["related-stories"];
@@ -32,7 +40,7 @@ async function handleBookend(req, res, next, {config, client}) {
         "type": "small",
         "title": `${story.headline}`,
         "image": `${config['cdn-name']}${story['hero-image-s3-key']}?w=480&auto=format&compress`,
-        "url": `${config['sketches-host']}/${story.slug}`
+        "url": getExternalStory(story, config)
       })),
       [{
         "type": "cta-link",
@@ -77,4 +85,5 @@ async function handleBookend(req, res, next, {config, client}) {
     getWithConfig(app, "/ampstories/:storyId/bookend.json", withError(handleBookend, logError), {logError, getClient});
     getWithConfig(app, "/ampstories/*/:storySlug", withError(handleVisualStory, logError), {logError, getClient, renderVisualStory, seo});
   }
+
 
