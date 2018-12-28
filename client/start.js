@@ -4,8 +4,6 @@ import {Provider} from 'react-redux';
 import get from 'lodash/get';
 import { createBrowserHistory } from 'history'
 
-require("../assetify/client")();
-
 import { createQtStore } from '../store/create-store';
 import { IsomorphicComponent } from '../isomorphic/component'
 import { BreakingNews } from '@quintype/components';
@@ -14,6 +12,8 @@ import { startAnalytics, registerPageView, registerStoryShare, setMemberId } fro
 import { registerServiceWorker, setupServiceWorkerUpdates, checkForServiceWorkerUpdates } from './impl/load-service-worker';
 import { makePickComponentSync } from '../isomorphic/make-pick-component-sync';
 
+require("../assetify/client")();
+
 export const history = createBrowserHistory();
 
 // App gets two more functions: updateServiceWorker and getAppVersion later
@@ -21,7 +21,7 @@ export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl, registerPageVi
 
 function getRouteData(path, {location = global.location, existingFetch}) {
   const url = new URL(path, location.origin);
-  return (existingFetch || fetch(`/route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? "&" + url.search.slice(1) : ""}`, {credentials: 'same-origin'}))
+  return (existingFetch || fetch(`/route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? `&${  url.search.slice(1)}` : ""}`, {credentials: 'same-origin'}))
     .then(response => {
       if(response.status == 404) {
         // There is a chance this might abort
@@ -69,7 +69,7 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
         .then(() => {
           dispatch({
             type: NAVIGATE_TO_PAGE,
-            page: page,
+            page,
             currentPath: path
           });
 
@@ -95,14 +95,14 @@ export function maybeSetUrl(path, title) {
 }
 
 export function renderComponent(clazz, container, store, props = {}, callback) {
-  const component = React.createElement(Provider, {store: store},
+  const component = React.createElement(Provider, {store},
                       React.createElement(clazz, props || {}));
 
   if(props.hydrate) {
     return ReactDOM.hydrate(component, document.getElementById(container), callback);
-  } else {
-    return ReactDOM.render(component, document.getElementById(container), callback);
   }
+    return ReactDOM.render(component, document.getElementById(container), callback);
+
 }
 
 export function renderIsomorphicComponent(container, store, pickComponent, props) {
@@ -110,9 +110,9 @@ export function renderIsomorphicComponent(container, store, pickComponent, props
     pickComponentWrapper = makePickComponentSync(pickComponent);
     return pickComponentWrapper.preloadComponent(store.getState().qt.pageType)
       .then(() => renderComponent(IsomorphicComponent, container, store, Object.assign({pickComponent: pickComponentWrapper}, props), () => store.dispatch({type: CLIENT_SIDE_RENDERED})))
-  } else {
-    console && console.log("IsomorphicComponent is disabled");
   }
+    console && console.log("IsomorphicComponent is disabled");
+
 }
 
 export function renderBreakingNews(container, store, view, props) {
@@ -125,6 +125,14 @@ function getJsonContent(id) {
     return JSON.parse(element.textContent);
 }
 
+const performance = window.performance || {mark: () => {}, measure: () => {}}
+function runWithTiming(name, f) {
+  performance.mark(`${name}Start`)
+  f();
+  performance.mark(`${name}Finish`)
+  performance.measure(`${name}Time`, `${name}Start`, `${name}Finish`);
+}
+
 export function startApp(renderApplication, reducers, opts) {
   app.getAppVersion = () => opts.appVersion || 1;
   global.app = app;
@@ -133,7 +141,7 @@ export function startApp(renderApplication, reducers, opts) {
   const path = `${location.pathname}${location.search || ""}`;
   const staticData = global.staticPageStoreContent || getJsonContent('static-page');
   const dataPromise = staticData
-    ? Promise.resolve(staticData["qt"])
+    ? Promise.resolve(staticData.qt)
     : getRouteData(path, {existingFetch: global.initialFetch})
 
   const serviceWorkerPromise = registerServiceWorker(opts);
@@ -142,17 +150,19 @@ export function startApp(renderApplication, reducers, opts) {
 
   const store = createQtStore(reducers, global.initialPage || getJsonContent('initial-page') || {}, {});
 
-  opts.preRenderApplication && opts.preRenderApplication(store);
+  if(opts.preRenderApplication) {
+    runWithTiming("qt_preRender", () => opts.preRenderApplication(store))
+  }
 
   return dataPromise.then(page => doStartApp(page));
 
-
   function doStartApp(page){
-    store.dispatch({ type: NAVIGATE_TO_PAGE, page: page, currentPath: path });
+    store.dispatch({ type: NAVIGATE_TO_PAGE, page, currentPath: path });
 
     setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page)
 
-    renderApplication(store);
+    runWithTiming('qt_render', () => renderApplication(store))
+
     history.listen(change => app.maybeNavigateTo(`${change.pathname}${change.search || ""}`, store));
 
     registerPageView(store.getState().qt);
