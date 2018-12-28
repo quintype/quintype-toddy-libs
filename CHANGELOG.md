@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.89.3"></a>
+## [2.89.3](https://github.com/quintype/quintype-node-framework/compare/v2.89.2...v2.89.3) (2018-12-28)
+
+
+### Bug Fixes
+
+* **Development:** Ensure that we never create more workers than we need. ([2fcf806](https://github.com/quintype/quintype-node-framework/commit/2fcf806))
+
+
+
 <a name="2.89.2"></a>
 ## [2.89.2](https://github.com/quintype/quintype-node-framework/compare/v2.89.1...v2.89.2) (2018-12-26)
 
