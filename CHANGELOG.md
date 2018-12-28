@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.90.0"></a>
+# [2.90.0](https://github.com/quintype/quintype-node-framework/compare/v2.89.3...v2.90.0) (2018-12-28)
+
+
+### Features
+
+* **Performance:** Added User Timings ([285d4e6](https://github.com/quintype/quintype-node-framework/commit/285d4e6))
+
+
+
 <a name="2.89.3"></a>
 ## [2.89.3](https://github.com/quintype/quintype-node-framework/compare/v2.89.2...v2.89.3) (2018-12-28)
 
