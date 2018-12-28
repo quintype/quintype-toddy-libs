@@ -1,19 +1,19 @@
 // istanbul ignore file
 // This is the start file, to be called from your start.js
 
-var cluster = require('cluster');
-var process = require("process");
+const cluster = require('cluster');
+const process = require("process");
 const {initializeAllClients} = require("./api-client");
 const logger = require("./logger");
 
 function startMaster({workers = 4}) {
   let terminating = false;
 
-  for (var i = 0; i < workers; i++) {
+  for (let i = 0; i < workers; i++) {
     cluster.fork();
   }
 
-  process.on("SIGTERM", function() {
+  process.on("SIGTERM", () => {
     logger.info("Caught a SIGTERM. Terminating All Workers");
     terminating = true;
     for (const worker of Object.values(cluster.workers)) {
@@ -21,19 +21,22 @@ function startMaster({workers = 4}) {
     }
   });
 
-  process.on("SIGHUP", function() {
+  process.on("SIGHUP", () => {
     logger.info("Respawning All Workers.");
-    for(const worker of Object.values(cluster.workers)) {
-      // Create a new worker, then kill the old one when it starts listening
-      const newWorker = cluster.fork();
-      newWorker.on('listening', function() {
+    Object.values(cluster.workers).forEach((worker, index) => {
+      if(index < workers) {
+        const newWorker = cluster.fork();
+        newWorker.on('listening', () => {
+          worker.process.kill("SIGTERM");
+        })
+      } else {
         worker.process.kill("SIGTERM");
-      })
-    }
+      }
+    })
   })
 
-  cluster.on('exit', function (worker, code, signal) {
-    logger.error('worker ' + worker.process.pid + ' died');
+  cluster.on('exit', (worker, code, signal) => {
+    logger.error(`worker ${  worker.process.pid  } died`);
     const aliveWorkers = Object.values(cluster.workers).filter(worker => worker.state !== 'dead')
 
     if(terminating) {
@@ -41,11 +44,9 @@ function startMaster({workers = 4}) {
         logger.info("All Workers Terminated. Gracefully Exiting");
         process.exit()
       }
-    } else {
-      if(aliveWorkers.length < workers) {
+    } else if(aliveWorkers.length < workers) {
         cluster.fork();
       }
-    }
   });
 }
 
@@ -61,13 +62,13 @@ async function startWorker(appThunk, opts) {
     await initializeAllClients();
     const server = app.listen(opts.port || 3000, () => console.log('Example app listening on port 3000!'))
 
-    process.on("SIGTERM", function() {
-      server.close(function() {
+    process.on("SIGTERM", () => {
+      server.close(() => {
         cluster.worker.disconnect();
         process.exit();
       })
     });
-    process.on("SIGHUP", function() {})
+    process.on("SIGHUP", () => {})
 
   } catch (e) {
     if (process.env.NODE_ENV != "production") {
