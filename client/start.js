@@ -148,7 +148,7 @@ export function startApp(renderApplication, reducers, opts) {
 
   startAnalytics();
 
-  const store = createQtStore(reducers, global.initialPage || getJsonContent('initial-page') || {}, {});
+  const store = createQtStore(reducers, (staticData && staticData.qt) || global.initialPage || getJsonContent('initial-page') || {}, {});
 
   if(opts.preRenderApplication) {
     runWithTiming("qt_preRender", () => opts.preRenderApplication(store))
