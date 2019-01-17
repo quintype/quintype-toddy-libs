@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.91.0"></a>
+# [2.91.0](https://github.com/quintype/quintype-node-framework/compare/v2.90.0...v2.91.0) (2019-01-17)
+
+
+### Features
+
+* **Multiple Publishers:** Support skipping config warmup ([61f432c](https://github.com/quintype/quintype-node-framework/commit/61f432c))
+* **Performance:** Setting static-data works for preload ([6bb9f96](https://github.com/quintype/quintype-node-framework/commit/6bb9f96))
+
+
+
 <a name="2.90.0"></a>
 # [2.90.0](https://github.com/quintype/quintype-node-framework/compare/v2.89.3...v2.90.0) (2018-12-28)
 
