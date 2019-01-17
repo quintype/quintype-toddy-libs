@@ -12,11 +12,13 @@ function getClient(hostname) {
 
 function initializeAllClients() {
   const promises = [defaultClient.getConfig()];
-  Object.entries(config.host_to_api_host || []).forEach(([host, apiHost]) => {
-    const client = new Client(apiHost);
-    cachedSecondaryClients[host] = client;
-    promises.push(client.getConfig());
-  });
+  if(!config.skip_warm_config)  {
+    Object.entries(config.host_to_api_host || []).forEach(([host, apiHost]) => {
+      const client = new Client(apiHost);
+      cachedSecondaryClients[host] = client;
+      promises.push(client.getConfig());
+    });
+  }
   return Promise.all(promises);
 }
 

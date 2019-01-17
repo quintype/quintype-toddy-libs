@@ -7,6 +7,11 @@ function getClientImpl(config, cachedSecondaryClients, hostname) {
 }
 
 function createTemporaryClient(config, hostname) {
+  const configuredHosts = config.host_to_api_host || {};
+  if(configuredHosts[hostname]) {
+    return new Client(configuredHosts[hostname], true);
+  }
+
   const matchedString = (config.host_to_automatic_api_host || []).find(str => hostname.includes(str));
   if(matchedString)
     return new Client(`https://${hostname.replace(matchedString, "")}`, true);

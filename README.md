@@ -271,6 +271,10 @@ Preloading app.js and /route-data.json can be triggered by passing preloadJS tru
 
 ### forwardAmp
 
+### multiple publishers
+
+FIXME: Write notes on `host_to_api_host`, `host_to_automatic_api_host` and `skip_warm_config`
+
 ### forwardFavicon
 
 ## Optimising front-end javascript

@@ -20,6 +20,11 @@ describe('ApiClient', function() {
       assert.equal("https://foo.quintype.io", client.baseUrl);
     });
 
+    it("creates a temporary client if host_to_api_host_is set", function() {
+      const client = getClientImpl({host_to_api_host: {"foo.madrid.quintype.io": "https://foo.quintype.io"}}, {}, "foo.madrid.quintype.io");
+      assert.equal("https://foo.quintype.io", client.baseUrl);
+    })
+
     it("returns null if no client is found", function() {
       const client = getClientImpl({}, {}, "www.unknown.com");
       assert.equal(null, client);
