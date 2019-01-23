@@ -58,8 +58,8 @@ function loadDataForPageType(loadData, loadErrorData = () => Promise.resolve({ht
     });
 }
 
-function getSeoInstance(seo, config) {
-  return (typeof seo === 'function') ? seo(config) : seo;
+function getSeoInstance(seo, config, pageType="") {
+  return (typeof seo === 'function') ? seo(config, pageType) : seo;
 }
 
 exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs}) {
@@ -150,7 +150,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
       res.status(statusCode < 500 ? 200 : 500);
       res.setHeader("Content-Type", "application/json");
       addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]));
-      const seoInstance = getSeoInstance(seo, config);
+      const seoInstance = getSeoInstance(seo, config, result.pageType);
       res.json(Object.assign({}, result, {
         appVersion,
         data: _.omit(result.data, ["cacheKeys"]),
@@ -239,8 +239,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
       addCacheHeadersToResult(res, [customUrlToCacheKey(config["publisher-id"], "redirect")]);
       return res.redirect(301, result.data.location);
     }
-
-    const seoInstance = getSeoInstance(seo, config);
+    const seoInstance = getSeoInstance(seo, config, result.pageType);
     const seoTags = seoInstance && seoInstance.getMetaTags(config, result.pageType || match.pageType, result, {url});
     const store = createStoreFromResult(url, result, {
       disableIsomorphicComponent: statusCode != 200,
@@ -256,6 +255,8 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
     if(preloadRouteData) {
       res.append("Link", `</route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? `&${url.search.substr(1)}` : ""}>; rel=preload; as=fetch;`);
     }
+
+
 
     return pickComponent.preloadComponent(store.getState().qt.pageType)
       .then(() =>
@@ -286,7 +287,7 @@ exports.handleStaticRoute = function handleStaticRoute(req, res, next, {path, co
         return res.redirect(301, result.data.location);
       }
 
-      const seoInstance = getSeoInstance(seo, config);
+      const seoInstance = getSeoInstance(seo, config, result.pageType);
       const seoTags = seoInstance && seoInstance.getMetaTags(config, result.pageType || pageType, result, {url});
       const store = createStoreFromResult(url, result, {
         disableIsomorphicComponent: disableIsomorphicComponent === undefined ? true : disableIsomorphicComponent,
