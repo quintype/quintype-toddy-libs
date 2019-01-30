@@ -1,4 +1,4 @@
-import get from 'lodash/get'
+import { get } from "@quintype/lodash";
 import { runWhenIdle } from "./run-when-idle";
 
 // istanbul ignore next
