@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
-import get from 'lodash/get';
+import { get } from "@quintype/lodash";
 import { createBrowserHistory } from 'history'
 
 import { createQtStore } from '../store/create-store';
