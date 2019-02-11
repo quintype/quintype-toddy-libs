@@ -149,7 +149,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
       const statusCode = result.httpStatusCode || 200;
       res.status(statusCode < 500 ? 200 : 500);
       res.setHeader("Content-Type", "application/json");
-      addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]));
+      addCacheHeadersToResult(res, 'DO_NOT_CACHE');
       const seoInstance = getSeoInstance(seo, config, result.pageType);
       res.json(Object.assign({}, result, {
         appVersion,
