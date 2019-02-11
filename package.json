@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "2.92.4",
+  "version": "2.93.0-route-cache.0",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
