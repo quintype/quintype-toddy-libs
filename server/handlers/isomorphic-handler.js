@@ -200,8 +200,7 @@ exports.notFoundHandler = function notFoundHandler(req, res, next, {config, clie
             title: result.title,
             content: renderReduxComponent(IsomorphicComponent, store, {pickComponent}),
             store,
-            pageType: store.getState().qt.pageType,
-            disableAjaxNavigation: true
+            pageType: store.getState().qt.pageType
           })
         );
     }).catch(e => {
