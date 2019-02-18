@@ -184,7 +184,7 @@ exports.notFoundHandler = function notFoundHandler(req, res, next, {config, clie
       const statusCode = result.httpStatusCode || 404;
 
       const store = createStoreFromResult(url, result, {
-        disableIsomorphicComponent: true,
+        disableIsomorphicComponent: false,
         defaultPageType: 'not-found',
       });
 
