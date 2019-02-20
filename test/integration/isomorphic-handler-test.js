@@ -114,7 +114,7 @@ describe('Isomorphic Handler', function() {
       .then(res => {
         const response = JSON.parse(res.text);
         assert.equal('<div data-page-type="not-found" data-reactroot="">foobar</div>', response.content);
-        assert.equal(true, response.store.qt.disableIsomorphicComponent);
+        assert.equal(false, response.store.qt.disableIsomorphicComponent);
         assert.equal("127.0.0.1", response.store.qt.data.host);
       }).then(done);
   });
@@ -191,7 +191,7 @@ describe('Isomorphic Handler', function() {
         .then(res => {
           const response = JSON.parse(res.text);
           assert.equal('<div data-page-type="not-found" data-reactroot="">foobar</div>', response.content);
-          assert.equal(true, response.store.qt.disableIsomorphicComponent);
+          assert.equal(false, response.store.qt.disableIsomorphicComponent);
           assert.equal("127.0.0.1", response.store.qt.data.host);
         }).then(done);
     });
@@ -208,7 +208,7 @@ describe('Isomorphic Handler', function() {
         .then(res => {
           const response = JSON.parse(res.text);
           assert.equal('<div data-page-type="not-found" data-reactroot="">foobar</div>', response.content);
-          assert.equal(true, response.store.qt.disableIsomorphicComponent);
+          assert.equal(false, response.store.qt.disableIsomorphicComponent);
           assert.equal("127.0.0.1", response.store.qt.data.host);
         }).then(done);
     });
