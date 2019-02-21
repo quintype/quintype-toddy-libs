@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.93.0"></a>
+# [2.93.0](https://github.com/quintype/quintype-node-framework/compare/v2.89.0...v2.93.0) (2019-02-21)
+
+
+### Bug Fixes
+
+* **404 navigation:** Set disableIsomorphicComponent to false in notFoundHandler ([#67](https://github.com/quintype/quintype-node-framework/issues/67)) ([2c40592](https://github.com/quintype/quintype-node-framework/commit/2c40592))
+* **bookend.json:** Handle external stories on bookend ([#63](https://github.com/quintype/quintype-node-framework/issues/63)) ([a305f5a](https://github.com/quintype/quintype-node-framework/commit/a305f5a))
+* **Development:** Ensure that we never create more workers than we need. ([2fcf806](https://github.com/quintype/quintype-node-framework/commit/2fcf806))
+* **package-lock:** package lock updates ([fa2080d](https://github.com/quintype/quintype-node-framework/commit/fa2080d))
+* **pagetype:** Pass pagetype to the app ([#64](https://github.com/quintype/quintype-node-framework/issues/64)) ([d28439b](https://github.com/quintype/quintype-node-framework/commit/d28439b))
+* **seo-instance:** fixed seo instance creation on story check ([b9a80c4](https://github.com/quintype/quintype-node-framework/commit/b9a80c4))
+
+
+### Features
+
+* **Multiple Publishers:** Support skipping config warmup ([61f432c](https://github.com/quintype/quintype-node-framework/commit/61f432c))
+* **Performance:** Added User Timings ([285d4e6](https://github.com/quintype/quintype-node-framework/commit/285d4e6))
+* **Performance:** Setting static-data works for preload ([6bb9f96](https://github.com/quintype/quintype-node-framework/commit/6bb9f96))
+* **version:** Bump up the version to 2.91.1 ([6258ec5](https://github.com/quintype/quintype-node-framework/commit/6258ec5))
+* **version:** Bump up the version to 2.91.1-package-lock ([b4b49b3](https://github.com/quintype/quintype-node-framework/commit/b4b49b3))
+
+
+
 <a name="2.92.6"></a>
 ## [2.92.6](https://github.com/quintype/quintype-node-framework/compare/v2.92.4...v2.92.6) (2019-02-19)
 
