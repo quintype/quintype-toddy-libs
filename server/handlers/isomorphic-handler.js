@@ -160,7 +160,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
   }
 
   function returnNotFound() {
-    return new Promise(resolve => resolve(loadErrorData(new NotFoundException(), config)))
+    return new Promise(resolve => resolve(loadErrorData(new NotFoundException(), config, client, {host: req.hostname})))
       .catch(e => console.log("Exception", e))
       .then(result => {
         res.status(result.httpStatusCode || 404);
