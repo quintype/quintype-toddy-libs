@@ -25,5 +25,7 @@ export function createQtStore(customReducers, initialValue, {location = global.l
     serviceWorkerStatus: serviceWorkerStatusReducer,
   }, ComponentReducers, customReducers));
   const initialState = Object.assign({currentPath: location.pathname}, initialValue);
-  return createStore(reducers, {qt: initialState});
+  const store = createStore(reducers, {qt: initialState});
+  store.initialReducer = reducers;
+  return store;
 }
