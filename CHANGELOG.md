@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.93.3"></a>
+## [2.93.3](https://github.com/quintype/quintype-node-framework/compare/v2.93.0...v2.93.3) (2019-03-19)
+
+
+### Bug Fixes
+
+* **Attach reducers to store:** Attach reducers to redux store ([#70](https://github.com/quintype/quintype-node-framework/issues/70)) ([350ce37](https://github.com/quintype/quintype-node-framework/commit/350ce37))
+* **consitency in calling errorData:** Pass client and host whenever calling errorData ([#69](https://github.com/quintype/quintype-node-framework/issues/69)) ([8d99b08](https://github.com/quintype/quintype-node-framework/commit/8d99b08))
+
+
+
 <a name="2.93.2"></a>
 ## [2.93.2](https://github.com/quintype/quintype-node-framework/compare/v2.93.1...v2.93.2) (2019-03-12)
 
