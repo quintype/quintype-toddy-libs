@@ -5,7 +5,7 @@ const {setAssetifyFn} = require("../assetify");
 function getPublicPath() {
   const script = global.document.getElementById("app-js");
   if(script && script.src)
-    return script.src.split("app")[0];
+    return script.src.split(/app(?!.*\/)/)[0];
 }
 
 __webpack_public_path__ = getPublicPath() || __webpack_public_path__;
