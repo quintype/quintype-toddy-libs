@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.93.4"></a>
+## [2.93.4](https://github.com/quintype/quintype-node-framework/compare/v2.93.3...v2.93.4) (2019-03-30)
+
+
+### Bug Fixes
+
+* **identify public path:** use regex to identify public path ([#71](https://github.com/quintype/quintype-node-framework/issues/71)) ([8f5a74f](https://github.com/quintype/quintype-node-framework/commit/8f5a74f))
+
+
+
 <a name="2.93.3"></a>
 ## [2.93.3](https://github.com/quintype/quintype-node-framework/compare/v2.93.0...v2.93.3) (2019-03-19)
 
