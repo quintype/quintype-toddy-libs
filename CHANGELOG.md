@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.94.0"></a>
+# [2.94.0](https://github.com/quintype/quintype-node-framework/compare/v2.93.4...v2.94.0) (2019-04-04)
+
+
+### Features
+
+* **bump up @quintype/backend:** add support for advanced search api ([#72](https://github.com/quintype/quintype-node-framework/issues/72)) ([a8cfe43](https://github.com/quintype/quintype-node-framework/commit/a8cfe43))
+
+
+
 <a name="2.93.4"></a>
 ## [2.93.4](https://github.com/quintype/quintype-node-framework/compare/v2.93.3...v2.93.4) (2019-03-30)
 
