@@ -136,7 +136,7 @@ describe('Isomorphic Data Load', function() {
         .then(res => {
           const response = JSON.parse(res.text);
           assert.equal("bar", response.foo);
-        }).then(done);
+        }).then(done, done);
     });
 
     it("returns a 200 with a not-found if the load data decides to abort", function(done) {
@@ -151,9 +151,9 @@ describe('Isomorphic Data Load', function() {
         .then(res => {
           const response = JSON.parse(res.text);
           assert.equal("bar", response.foo);
-        }).then(done);
+        }).then(done, done);
     });
-  })
+  });
 
   describe("status codes", function() {
     it("any status code more than 500 becomes an http 500", function(done) {
@@ -179,6 +179,7 @@ describe('Isomorphic Data Load', function() {
 
   describe("failure scenarios", function(done) {
     it("returns 404 if the path is not matched", function(done) {
+      this.timeout(10000);
       const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {pageType: "home-page", path: "/foobar"}, {
         loadErrorData: (e) => ({foo: "bar"})
       });
