@@ -132,7 +132,7 @@ describe('Isomorphic Handler', function() {
         const response = JSON.parse(res.text);
         assert.equal('<div data-page-type="not-found">foobar</div>', response.content);
         assert.equal(true, response.store.qt.disableIsomorphicComponent);
-      }).then(done);
+      }).then(done, done);
   });
 
   it("Throws a 500 if loadData and loadErrorData both crash", function(done) {
