@@ -1,3 +1,5 @@
+// FIMXE: Convert this entire thing to async await / or even Typescript
+
 const _ = require("lodash");
 
 const urlLib = require("url");
