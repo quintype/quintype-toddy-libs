@@ -1,4 +1,4 @@
-var assert = require('assert');
+const assert = require('assert');
 const express = require("express");
 
 const { isomorphicRoutes } = require("../../server/routes");
@@ -16,9 +16,9 @@ function createApp(loadData, staticRoutes, opts = {}) {
   isomorphicRoutes(app, Object.assign({
     assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null},
     getClient: getClientStub,
-    staticRoutes: staticRoutes,
+    staticRoutes,
     generateRoutes: () => [],
-    loadData: loadData,
+    loadData,
     renderLayout: (res, {store, disableAjaxNavigation, contentTemplate}) => res.send(JSON.stringify({store: store.getState(), contentTemplate, disableAjaxNavigation})),
     appVersion: 42
   }, opts));

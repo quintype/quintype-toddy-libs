@@ -1,4 +1,4 @@
-var assert = require('assert');
+const assert = require('assert');
 const express = require("express");
 
 const { isomorphicRoutes } = require("../../server/routes");
@@ -17,7 +17,7 @@ function createApp(loadData, route = {path: "/", pageType: "home-page"}, opts = 
     assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null},
     getClient: getClientStub,
     generateRoutes: () => [route],
-    loadData: loadData,
+    loadData,
     appVersion: 42
   }, opts));
 
@@ -28,10 +28,10 @@ describe('Isomorphic Data Load', function() {
   it("returns data given by the load data function", function(done) {
     const app = createApp((pageType, params, config, client, {host}) => Promise.resolve({
       data: {
-        pageType: pageType,
-        config: config,
+        pageType,
+        config,
         clientHost: client.getHostname(),
-        host: host
+        host
       }
     }));
 

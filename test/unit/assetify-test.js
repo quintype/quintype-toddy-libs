@@ -1,4 +1,4 @@
-var assert = require('assert');
+const assert = require('assert');
 
 const assetify = require("../../assetify")
 const { AssetHelperImpl } = require("../../server/impl/asset-helper-impl");

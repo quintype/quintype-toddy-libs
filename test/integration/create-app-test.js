@@ -1,7 +1,7 @@
-var assert = require('assert');
-const createApp = require("../../server/create-app");
+const assert = require('assert');
 const supertest = require("supertest");
 const fs = require("fs");
+const createApp = require("../../server/create-app");
 
 describe('createApp', function() {
   const app = createApp({publicFolder: "test", assetHelper: {assetFiles: () => new Set(["/babel.js"])}});

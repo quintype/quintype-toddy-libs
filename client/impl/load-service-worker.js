@@ -3,9 +3,9 @@ import { SERVICE_WORKER_UPDATED } from '@quintype/components';
 export function registerServiceWorker({enableServiceWorker = false, serviceWorkerLocation = "/service-worker.js", navigator = global.navigator}) {
   if(enableServiceWorker && navigator.serviceWorker) {
     return navigator.serviceWorker.register(serviceWorkerLocation)
-  } else {
+  } 
     return Promise.resolve(null)
-  }
+  
 }
 
 export function setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page) {

@@ -1,4 +1,4 @@
-var assert = require('assert');
+const assert = require('assert');
 const express = require("express");
 
 const { isomorphicRoutes } = require("../../server/routes");
@@ -26,7 +26,7 @@ describe('ShellHandler', function() {
     assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null, assetPath: (file) => `/assets/${file}`},
     getClient: getClientStub,
     renderLayout: renderLayoutStub,
-    loadData: (pageType, _, config, client) => ({config: Object.assign({pageType: pageType}, config)}),
+    loadData: (pageType, _, config, client) => ({config: Object.assign({pageType}, config)}),
     preloadJs: true,
   })
 

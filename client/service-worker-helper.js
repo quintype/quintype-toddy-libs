@@ -1,8 +1,8 @@
 // istanbul ignore file: Needs to be run as a service worker
 
-const workboxVersion = '2.1.1';
-
 import {matchBestRoute} from '../isomorphic/match-best-route';
+
+const workboxVersion = '2.1.1';
 
 function qDebug() {
   if(process.env.NODE_ENV !== 'production') {
@@ -28,10 +28,10 @@ export function initializeQServiceWorker(self, params) {
     if(matchBestRoute(url.pathname, params.routes)) {
       qDebug(`Rendering the shell for navigation to ${url.pathname}`);
       return true;
-    } else {
+    } 
       qDebug(`Not rendering the shell for navigation to ${url.pathname}`);
       return false;
-    }
+    
   };
   const shellHandler = ({event}) => caches.match('/shell.html').then((r) => r || fetch(event.request));
 

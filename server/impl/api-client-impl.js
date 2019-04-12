@@ -38,12 +38,12 @@ Story.prototype.cacheKeys = function(publisherId) {
 Story.sorterToCacheKey = sorterToCacheKey;
 
 Author.prototype.cacheKeys = function(publisherId) {
-  const author = this.author;
+  const {author} = this;
   return author && author.id ? [authorToCacheKey(publisherId, author)] : null;
 }
 
 CustomPath.prototype.cacheKeys = function(publisherId) {
-  const page = this.page;
+  const {page} = this;
   return page && page.id ? [customUrlToCacheKey(publisherId, page)] : null;
 }
 

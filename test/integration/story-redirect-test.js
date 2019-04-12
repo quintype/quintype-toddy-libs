@@ -1,4 +1,4 @@
-var assert = require('assert');
+const assert = require('assert');
 const express = require("express");
 const React = require("react");
 
@@ -14,7 +14,7 @@ function createApp(opts = {}) {
   isomorphicRoutes(app, Object.assign({
     assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null, assetPath: (file) => `/assets/${file}`},
     generateRoutes: () => [],
-    pickComponent: pickComponent,
+    pickComponent,
     loadErrorData: (err, config) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar"}}),
     renderLayout: (res, {store, title, content}) => res.send(JSON.stringify({store: store.getState(), title, content})),
     redirectRootLevelStories: true,

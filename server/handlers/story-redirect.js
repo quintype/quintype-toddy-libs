@@ -8,9 +8,9 @@ exports.redirectStory = function redirectStory(req, res, next, {logError, config
       if(story) {
         addCacheHeadersToResult(res, [storyToCacheKey(config["publisher-id"], story)]);
         return res.redirect(301, `/${story.slug}`)
-      } else {
+      } 
         return next();
-      }
+      
     })
     .catch(e => next());
 }

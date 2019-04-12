@@ -2,6 +2,7 @@
 
 const process = require("process");
 const winston = require("winston");
+
 const {combine, timestamp } = winston.format;
 
 function trimNewline() {
@@ -65,9 +66,9 @@ function createLogger() {
 function truncateStack(message) {
   if(message.length > 1024) {
     return `${message.substring(0, 1024)}... (truncated)`
-  } else {
+  } 
     return message;
-  }
+  
 }
 
 const logger = createLogger();

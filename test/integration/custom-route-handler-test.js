@@ -1,4 +1,4 @@
-var assert = require('assert');
+const assert = require('assert');
 const express = require("express");
 const React = require("react");
 
@@ -32,7 +32,7 @@ function createApp(loadData, routes, opts = {}) {
     assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null, assetPath: (file) => `/assets/${file}`},
     getClient: getClientStub,
     generateRoutes: () => routes,
-    loadData: loadData,
+    loadData,
     renderLayout: (res, {contentTemplate, store}) => res.send(JSON.stringify({contentTemplate, store: store.getState()})),
     handleNotFound: false
   }, opts));

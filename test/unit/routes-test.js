@@ -1,4 +1,4 @@
-var assert = require('assert');
+const assert = require('assert');
 
 const {matchBestRoute, matchAllRoutes} = require("../../isomorphic/match-best-route");
 const {generateSectionPageRoutes, generateStoryPageRoutes} = require("../../server/generate-routes");

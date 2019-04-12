@@ -1,4 +1,4 @@
-var assert = require('assert');
+const assert = require('assert');
 
 const {getClientImpl, Client, Story, Author, Member, Collection, CustomPath} = require("../../server/impl/api-client-impl");
 

@@ -4,10 +4,10 @@ import {Provider} from 'react-redux';
 import get from 'lodash/get';
 import { createBrowserHistory } from 'history'
 
-import { createQtStore } from '../store/create-store';
-import { IsomorphicComponent } from '../isomorphic/component'
 import { BreakingNews } from '@quintype/components';
 import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components';
+import { createQtStore } from '../store/create-store';
+import { IsomorphicComponent } from '../isomorphic/component'
 import { startAnalytics, registerPageView, registerStoryShare, setMemberId } from './analytics';
 import { registerServiceWorker, setupServiceWorkerUpdates, checkForServiceWorkerUpdates } from './impl/load-service-worker';
 import { makePickComponentSync } from '../isomorphic/make-pick-component-sync';
@@ -137,7 +137,7 @@ export function startApp(renderApplication, reducers, opts) {
   app.getAppVersion = () => opts.appVersion || 1;
   global.app = app;
 
-  const location = global.location;
+  const {location} = global;
   const path = `${location.pathname}${location.search || ""}`;
   const staticData = global.staticPageStoreContent || getJsonContent('static-page');
   const dataPromise = staticData

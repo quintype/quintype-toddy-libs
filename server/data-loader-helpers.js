@@ -19,8 +19,7 @@ exports.homeCollectionOrStories = function homeCollectionOrStories(client) {
     .then(collection => {
       if(collection)
         return collection;
-      else
-        return Story.getStories(client).then(stories => Collection.build({
+      return Story.getStories(client).then(stories => Collection.build({
           slug: 'home',
           name: "Home",
           template: "default",

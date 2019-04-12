@@ -1,4 +1,4 @@
-var assert = require("assert");
+const assert = require("assert");
 const {NotFoundException} = require('../../server/exceptions');
 
 describe('NotFoundException', function() {

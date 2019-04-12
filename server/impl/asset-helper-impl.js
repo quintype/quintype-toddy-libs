@@ -27,7 +27,7 @@ class AssetHelperImpl {
   readAsset(asset) {
     const path = this.assets[asset];
     if (path) {
-      return this.readFileSync("public" + path);
+      return this.readFileSync(`public${  path}`);
     }
   }
 

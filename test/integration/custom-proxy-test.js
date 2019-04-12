@@ -1,4 +1,4 @@
-var assert = require('assert');
+const assert = require('assert');
 const express = require("express");
 
 const { proxyGetRequest } = require("../../server/routes");
@@ -43,7 +43,7 @@ describe('proxyGetHandler', function () {
   })
 
   describe("proxying to another host", function() {
-    var upstreamServer;
+    let upstreamServer;
 
     before(function (next) {
       const upstreamApp = express();

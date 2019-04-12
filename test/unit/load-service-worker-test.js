@@ -1,4 +1,4 @@
-var assert = require('assert');
+const assert = require('assert');
 
 const { registerServiceWorker, setupServiceWorkerUpdates, checkForServiceWorkerUpdates } = require("../../client/impl/load-service-worker")
 const { createQtStore } = require("../../store/create-store")
@@ -12,11 +12,11 @@ function syncPromise(value) {
 const NAVIGATOR_STUB = {
   serviceWorker: {
     register(location) {
-      var updateCount = 0;
+      let updateCount = 0;
 
       return Promise.resolve({
-        location: location,
-        update: () => {updateCount = updateCount + 1; return syncPromise(null)},
+        location,
+        update: () => {updateCount += 1; return syncPromise(null)},
         getUpdateCount: () => updateCount,
       })
     }

@@ -1,6 +1,7 @@
-var assert = require('assert');
-
 import { NAVIGATE_TO_PAGE, SERVICE_WORKER_UPDATED } from '@quintype/components';
+
+const assert = require('assert');
+
 const { createQtStore } = require("../../store/create-store")
 
 describe('AssetHelperImpl', function() {

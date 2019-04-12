@@ -13,7 +13,7 @@ function createApp({assetHelper = require("./asset-helper"), publicFolder = "pub
   const assetFiles = assetHelper.assetFiles();
 
   app.use(express.static(publicFolder, {
-    setHeaders: function (res, path, stat) {
+    setHeaders (res, path, stat) {
       if(assetFiles.has(res.req.url)) {
         res.set('Cache-Control', 'public,max-age=31104000,s-maxage=31104000');
       }

@@ -1,11 +1,11 @@
-var assert = require('assert');
+const assert = require('assert');
 const express = require("express");
 
 const { upstreamQuintypeRoutes } = require("../../server/routes");
 const supertest = require("supertest");
 
 describe('Sketches Proxy', function() {
-  var upstreamServer;
+  let upstreamServer;
 
   before(function(next) {
     const upstreamApp = express();
@@ -84,7 +84,7 @@ describe('Sketches Proxy', function() {
       const app = express();
       upstreamQuintypeRoutes(app, {
         config: {sketches_host: `http://127.0.0.1:${upstreamServer.address().port}`},
-        getClient: host => ({getConfig: getConfig}),
+        getClient: host => ({getConfig}),
       })
       return app;
     }

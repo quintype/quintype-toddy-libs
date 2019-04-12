@@ -19,11 +19,11 @@ function generateSectionPageRoute(section, sectionsById, opts) {
   if(section.collection)
     params.collectionSlug = section.collection.slug
 
-  var slug = section.slug;
+  let {slug} = section;
 
   if(section["parent-id"]) {
-    var currentSection = section;
-    var depth = 0;
+    let currentSection = section;
+    let depth = 0;
     while (currentSection["parent-id"] && depth++ < 5) {
       currentSection = sectionsById[currentSection["parent-id"]] || {slug: 'invalid'};
       slug = `${currentSection.slug}/${slug}`;
@@ -53,7 +53,7 @@ function sectionPageRoute(route, params) {
     pageType: "section-page",
     exact: true,
     path: `/${route}`,
-    params: params
+    params
   }
 }
 
@@ -68,6 +68,6 @@ function storyPageRoute(path) {
   return {
     pageType: 'story-page',
     exact: true,
-    path: path
+    path
   }
 }

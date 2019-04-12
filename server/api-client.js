@@ -23,15 +23,15 @@ function initializeAllClients() {
 }
 
 module.exports = {
-  Story: Story,
-  Author: Author,
-  CustomPath: CustomPath,
-  Collection: Collection,
-  Member: Member,
-  Entity: Entity,
-  MenuGroups: MenuGroups,
+  Story,
+  Author,
+  CustomPath,
+  Collection,
+  Member,
+  Entity,
+  MenuGroups,
 
   client: defaultClient,
-  getClient: getClient,
-  initializeAllClients: initializeAllClients
+  getClient,
+  initializeAllClients
 };

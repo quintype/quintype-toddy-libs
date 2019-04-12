@@ -1,4 +1,4 @@
-var assert = require('assert');
+const assert = require('assert');
 const express = require("express");
 
 const { isomorphicRoutes } = require("../../server/routes");
@@ -18,7 +18,7 @@ function renderLayoutStub(res, layout, params, callback) {
     hostname: params.hostname,
     assetHash: params.assetHash("app.js"),
     routes: params.routes,
-    layout: layout,
+    layout,
   });
   return callback(null, content);
 }

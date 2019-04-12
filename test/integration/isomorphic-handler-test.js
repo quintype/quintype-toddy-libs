@@ -1,4 +1,4 @@
-var assert = require('assert');
+const assert = require('assert');
 const express = require("express");
 const React = require("react");
 
@@ -22,7 +22,7 @@ function createApp(loadData, routes, opts = {}) {
     assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null, assetPath: (file) => `/assets/${file}`},
     getClient: getClientStub,
     generateRoutes: () => routes,
-    loadData: loadData,
+    loadData,
     pickComponent: opts.pickComponent || pickComponent,
     renderLayout: (res, {store, title, content}) => res.send(JSON.stringify({store: store.getState(), title, content})),
     handleCustomRoute: false
@@ -33,7 +33,7 @@ function createApp(loadData, routes, opts = {}) {
 
 describe('Isomorphic Handler', function() {
   it("Renders the page if the route matches", function(done) {
-    const app = createApp((pageType, params, config, client, {host}) => Promise.resolve({pageType, data: {text: "foobar", host: host}}), [{pageType: 'home-page', path: '/'}]);
+    const app = createApp((pageType, params, config, client, {host}) => Promise.resolve({pageType, data: {text: "foobar", host}}), [{pageType: 'home-page', path: '/'}]);
 
     supertest(app)
       .get("/")
@@ -104,7 +104,7 @@ describe('Isomorphic Handler', function() {
 
   it("Throws a 404 if the route is not matched", function(done) {
     const app = createApp((pageType, params, config, client) => Promise.resolve(), [{pageType: 'home-page', path: '/', exact: true}], {
-      loadErrorData: (err, config, client, {host}) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar", host: host}})
+      loadErrorData: (err, config, client, {host}) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar", host}})
     });
 
     supertest(app)
@@ -181,7 +181,7 @@ describe('Isomorphic Handler', function() {
   describe("aborting the data loader", () => {
     it("Throws a 404 if load data decides not to handle the request", function(done) {
       const app = createApp((pageType, params, config, client, {next}) => next(), [{pageType: 'home-page', path: '/skip', exact: true}], {
-        loadErrorData: (err, config, client, {host}) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar", host: host}})
+        loadErrorData: (err, config, client, {host}) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar", host}})
       });
 
       supertest(app)
@@ -198,7 +198,7 @@ describe('Isomorphic Handler', function() {
 
     it("Allows bypassing even data.abort is set", function(done) {
       const app = createApp((pageType, params, config, client, {next}) => next().then(n => ({data: n})), [{pageType: 'home-page', path: '/skip', exact: true}], {
-        loadErrorData: (err, config, client, {host}) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar", host: host}})
+        loadErrorData: (err, config, client, {host}) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar", host}})
       });
 
       supertest(app)
@@ -215,7 +215,7 @@ describe('Isomorphic Handler', function() {
 
     it("Allows you to chain one loader to the next if two routes overlap", function(done) {
       const overlappingRoutes = [{pageType: "skip", path: "/"}, {pageType: 'home-page', path: '/'}];
-      const dataLoader = (pageType, _1, _2, _3, {host, next}) => pageType == 'skip' ? next() : Promise.resolve({pageType, data: {text: "foobar", host: host}})
+      const dataLoader = (pageType, _1, _2, _3, {host, next}) => pageType == 'skip' ? next() : Promise.resolve({pageType, data: {text: "foobar", host}})
 
       const app = createApp(dataLoader,  overlappingRoutes);
 

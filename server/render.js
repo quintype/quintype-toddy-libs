@@ -5,6 +5,6 @@ const {Provider} = require("react-redux");
 
 exports.renderReduxComponent = function renderReduxComponent(Component, store, props) {
   return ReactDOMServer.renderToString(
-          React.createElement(Provider, {store: store},
+          React.createElement(Provider, {store},
             React.createElement(Component, props)));
 }

@@ -4,6 +4,7 @@ const get = require("lodash/get");
 const ejs = require("ejs");
 const fs = require("fs");
 const path = require("path");
+
 const staticPageTemplateStr = fs.readFileSync(path.join(__dirname, "../views/static-page.ejs"), {encoding: "utf-8"});
 const staticPageTemplate = ejs.compile(staticPageTemplateStr);
 
@@ -27,7 +28,7 @@ function writeStaticPageResponse(res, url, page, result, { config, renderLayout,
     disableIsomorphicComponent: true
   })
 
-  const seoInstance = (typeof seo == 'function') ? seo(config) : seo;
+  const seoInstance = (typeof seo === 'function') ? seo(config) : seo;
   const seoTags = seoInstance && seoInstance.getMetaTags(config, page.type, {}, {url});
 
   res.status(page["status-code"] || 200);
@@ -35,8 +36,8 @@ function writeStaticPageResponse(res, url, page, result, { config, renderLayout,
   return renderLayout(res, {
     title: page.title,
     content: renderStaticPageContent(store, page.content),
-    store: store,
-    seoTags: seoTags,
+    store,
+    seoTags,
     disableAjaxNavigation: true,
   });
 }
