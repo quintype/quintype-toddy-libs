@@ -1,6 +1,7 @@
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
 const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute, notFoundHandler } = require("./handlers/isomorphic-handler");
 const {oneSignalImport} = require("./handlers/one-signal");
+const {handleFcm} = require("./handlers/fcm");
 const {customRouteHandler} = require("./handlers/custom-route-handler");
 const {handleManifest, handleAssetLink} = require("./handlers/json-manifest-handlers");
 const {redirectStory} = require("./handlers/story-redirect");
@@ -111,6 +112,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 
                                                       logError = require("./logger").error,
                                                       oneSignalServiceWorkers = false,
+                                                      fcmServiceWorkers = false,
                                                       staticRoutes = [],
                                                       appVersion = 1,
                                                       preloadJs = false,
@@ -136,6 +138,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   if(oneSignalServiceWorkers) {
     app.get("/OneSignalSDKWorker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
     app.get("/OneSignalSDKUpdaterWorker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
+  }
+
+  if(fcmServiceWorkers) {
+    app.get("/firebase-messaging-sw.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: handleFcm}));
   }
 
   app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper, loadData, loadErrorData, logError, preloadJs}));
