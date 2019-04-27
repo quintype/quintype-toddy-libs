@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
-    "@quintype/backend": "^1.15.1",
+    "@quintype/backend": "^1.15.2-inherit-build.2",
     "@quintype/components": "^1.42.0",
     "atob": "^2.1.2",
     "cluster": "^0.7.7",
