@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.95.0"></a>
+# [2.95.0](https://github.com/quintype/quintype-node-framework/compare/v2.94.0...v2.95.0) (2019-04-29)
+
+
+### Features
+
+* **bump @quintype/backend version:** bump [@quintype](https://github.com/quintype)/backend version to 1.16.0 ([#74](https://github.com/quintype/quintype-node-framework/issues/74)) ([2502ca6](https://github.com/quintype/quintype-node-framework/commit/2502ca6))
+
+
+
 <a name="2.94.0"></a>
 # [2.94.0](https://github.com/quintype/quintype-node-framework/compare/v2.93.4...v2.94.0) (2019-04-04)
 
