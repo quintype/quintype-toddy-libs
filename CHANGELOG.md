@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.2](https://github.com/quintype/quintype-node-framework/compare/v3.0.1...v3.0.2) (2019-05-02)
+
+
+### Bug Fixes
+
+* **backend:** Bump node backend ([38168d0](https://github.com/quintype/quintype-node-framework/commit/38168d0))
+
+
+
 ## [3.0.1](https://github.com/quintype/quintype-node-framework/compare/v3.0.0...v3.0.1) (2019-05-02)
 
 
