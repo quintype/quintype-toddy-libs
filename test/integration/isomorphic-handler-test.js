@@ -41,7 +41,7 @@ describe('Isomorphic Handler', function() {
       .expect(200)
       .then(res => {
         const response = JSON.parse(res.text);
-        assert.equal("<div data-page-type=\"home-page\" data-reactroot=\"\">foobar</div>", response.content);
+        assert.equal("<div data-page-type=\"home-page\">foobar</div>", response.content);
         assert.equal("foobar", response.store.qt.data.text);
         assert.equal("127.0.0.1", response.store.qt.data.host);
         assert.equal("home-page", response.store.qt.pageType);
@@ -59,7 +59,7 @@ describe('Isomorphic Handler', function() {
       .expect(200)
       .then(res => {
         const response = JSON.parse(res.text);
-        assert.equal("<div data-page-type=\"home-page\" data-reactroot=\"\">foobar</div>", response.content);
+        assert.equal("<div data-page-type=\"home-page\">foobar</div>", response.content);
       }).then(done);
   });
 
@@ -113,7 +113,7 @@ describe('Isomorphic Handler', function() {
       .expect(404)
       .then(res => {
         const response = JSON.parse(res.text);
-        assert.equal('<div data-page-type="not-found" data-reactroot="">foobar</div>', response.content);
+        assert.equal('<div data-page-type="not-found">foobar</div>', response.content);
         assert.equal(false, response.store.qt.disableIsomorphicComponent);
         assert.equal("127.0.0.1", response.store.qt.data.host);
       }).then(done);
@@ -130,9 +130,9 @@ describe('Isomorphic Handler', function() {
       .expect(500)
       .then(res => {
         const response = JSON.parse(res.text);
-        assert.equal('<div data-page-type="not-found" data-reactroot="">foobar</div>', response.content);
+        assert.equal('<div data-page-type="not-found">foobar</div>', response.content);
         assert.equal(true, response.store.qt.disableIsomorphicComponent);
-      }).then(done);
+      }).then(done, done);
   });
 
   it("Throws a 500 if loadData and loadErrorData both crash", function(done) {
@@ -190,10 +190,10 @@ describe('Isomorphic Handler', function() {
         .expect(404)
         .then(res => {
           const response = JSON.parse(res.text);
-          assert.equal('<div data-page-type="not-found" data-reactroot="">foobar</div>', response.content);
+          assert.equal('<div data-page-type="not-found">foobar</div>', response.content);
           assert.equal(false, response.store.qt.disableIsomorphicComponent);
           assert.equal("127.0.0.1", response.store.qt.data.host);
-        }).then(done);
+        }).then(done, done);
     });
 
     it("Allows bypassing even data.abort is set", function(done) {
@@ -207,7 +207,7 @@ describe('Isomorphic Handler', function() {
         .expect(404)
         .then(res => {
           const response = JSON.parse(res.text);
-          assert.equal('<div data-page-type="not-found" data-reactroot="">foobar</div>', response.content);
+          assert.equal('<div data-page-type="not-found">foobar</div>', response.content);
           assert.equal(false, response.store.qt.disableIsomorphicComponent);
           assert.equal("127.0.0.1", response.store.qt.data.host);
         }).then(done);
@@ -225,7 +225,7 @@ describe('Isomorphic Handler', function() {
         .expect(200)
         .then(res => {
           const response = JSON.parse(res.text);
-          assert.equal("<div data-page-type=\"home-page\" data-reactroot=\"\">foobar</div>", response.content);
+          assert.equal("<div data-page-type=\"home-page\">foobar</div>", response.content);
           assert.equal("foobar", response.store.qt.data.text);
           assert.equal("127.0.0.1", response.store.qt.data.host);
           assert.equal("home-page", response.store.qt.pageType);
