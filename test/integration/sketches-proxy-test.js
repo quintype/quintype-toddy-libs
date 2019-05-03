@@ -20,7 +20,8 @@ describe('Sketches Proxy', function() {
         config: {sketches_host: `http://127.0.0.1:${upstreamServer.address().port}`},
         getClient: host => ({getHostname: () => host.toUpperCase()}),
         forwardAmp: true,
-        forwardFavicon: true
+        forwardFavicon: true,
+        publisherConfig: {},
       })
       return app;
     }

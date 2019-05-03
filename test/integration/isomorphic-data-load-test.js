@@ -18,7 +18,8 @@ function createApp(loadData, route = {path: "/", pageType: "home-page"}, opts = 
     getClient: getClientStub,
     generateRoutes: () => [route],
     loadData,
-    appVersion: 42
+    appVersion: 42,
+    publisherConfig: {},
   }, opts));
 
   return app;

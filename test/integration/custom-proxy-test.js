@@ -16,6 +16,7 @@ describe('proxyGetHandler', function () {
     const app = express();
     proxyGetRequest(app, "/some/:api.json", (params) => ({ foo: params.api }), {
       getClient: getClientStub,
+      publisherConfig: {},
     });
 
     supertest(app)
@@ -34,6 +35,7 @@ describe('proxyGetHandler', function () {
     const app = express();
     proxyGetRequest(app, "/some/:api.json", (params) => null, {
       getClient: getClientStub,
+      publisherConfig: {},
     });
 
     supertest(app)
@@ -56,6 +58,7 @@ describe('proxyGetHandler', function () {
 
       proxyGetRequest(app, "/some/:api.json", (params) => `http://127.0.0.1:${upstreamServer.address().port}/${params.api}`, {
         getClient: getClientStub,
+        publisherConfig: {},
       });
 
       supertest(app)

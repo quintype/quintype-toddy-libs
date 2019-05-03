@@ -28,6 +28,7 @@ describe('ShellHandler', function() {
     renderLayout: renderLayoutStub,
     loadData: (pageType, _, config, client) => ({config: Object.assign({pageType: pageType}, config)}),
     preloadJs: true,
+    publisherConfig: {},
   })
 
   it("returns the shell if the workbox prechaching matches", function(done) {

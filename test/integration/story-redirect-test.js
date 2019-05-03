@@ -18,7 +18,8 @@ function createApp(opts = {}) {
     loadErrorData: (err, config) => ({httpStatusCode: err.httpStatusCode, pageType: "not-found", data: {text: "foobar"}}),
     renderLayout: (res, {store, title, content}) => res.send(JSON.stringify({store: store.getState(), title, content})),
     redirectRootLevelStories: true,
-    handleCustomRoute: false
+    handleCustomRoute: false,
+    publisherConfig: {},
   }, opts));
 
   return app;

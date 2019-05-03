@@ -25,7 +25,8 @@ function createApp(loadData, routes, opts = {}) {
     loadData: loadData,
     pickComponent: opts.pickComponent || pickComponent,
     renderLayout: (res, {store, title, content}) => res.send(JSON.stringify({store: store.getState(), title, content})),
-    handleCustomRoute: false
+    handleCustomRoute: false,
+    publisherConfig: {},
   }, opts));
 
   return app;

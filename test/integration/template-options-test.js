@@ -17,7 +17,8 @@ describe('TemplateOptionsHandler', function() {
     isomorphicRoutes(app, {
       assetHelper: {},
       getClient: getClientStub,
-      templateOptions: {name: "Madrid", foo: "bar"}
+      templateOptions: {name: "Madrid", foo: "bar"},
+      publisherConfig: {},
     });
 
     supertest(app)
@@ -38,7 +39,8 @@ describe('TemplateOptionsHandler', function() {
     isomorphicRoutes(app, {
       assetHelper: {},
       getClient: getClientStub,
-      templateOptions: config => ({name: config["publisher-settings"].title})
+      templateOptions: config => ({name: config["publisher-settings"].title}),
+      publisherConfig: {},
     });
 
     supertest(app)
