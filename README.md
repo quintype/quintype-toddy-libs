@@ -283,7 +283,7 @@ FIXME: Write notes on `host_to_api_host`, `host_to_automatic_api_host` and `skip
 
 
 
-### Migration to framework@3
+## Migration to framework@3
 
 - Run the following to execute the script: 
 ```sh 
