@@ -35,6 +35,7 @@ describe('ServiceWorker Generator', function() {
     renderServiceWorker: renderLayoutStub,
     generateRoutes: (config) => config.sections.map(section => ({path: `/${section.slug}`})).concat([{skipPWA: true, path: "/skip"}]),
     oneSignalServiceWorkers: true,
+    publisherConfig: {},
   })
 
   it("generates the service worker correctly", function(done) {

@@ -20,7 +20,8 @@ function createApp(loadData, staticRoutes, opts = {}) {
     generateRoutes: () => [],
     loadData: loadData,
     renderLayout: (res, {store, disableAjaxNavigation, contentTemplate}) => res.send(JSON.stringify({store: store.getState(), contentTemplate, disableAjaxNavigation})),
-    appVersion: 42
+    appVersion: 42,
+    publisherConfig: {},
   }, opts));
 
   return app;

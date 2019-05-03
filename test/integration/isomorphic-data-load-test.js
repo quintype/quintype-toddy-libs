@@ -11,14 +11,15 @@ function getClientStub(hostname) {
   }
 }
 
-function createApp(loadData, route = {path: "/", pageType: "home-page"}, opts = {}) {
+function createApp(loadData, opts = {}) {
   const app = express();
   isomorphicRoutes(app, Object.assign({
     assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null},
     getClient: getClientStub,
-    generateRoutes: () => [route],
+    generateRoutes: () => opts.routes || [{path: "/", pageType: "home-page"}],
     loadData,
-    appVersion: 42
+    appVersion: 42,
+    publisherConfig: opts.publisherConfig || {},
   }, opts));
 
   return app;
@@ -100,7 +101,9 @@ describe('Isomorphic Data Load', function() {
   });
 
   it("passes any params to the loadData function", function(done) {
-    const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {pageType: "home-page", path: "/", params: {amazing: "stuff"}});
+    const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {
+      routes: [{pageType: "home-page", path: "/", params: {amazing: "stuff"}}]
+    });
     supertest(app)
       .get("/route-data.json?path=%2F")
       .expect("Content-Type", /json/)
@@ -125,7 +128,8 @@ describe('Isomorphic Data Load', function() {
 
   describe("aborting the data loader", () => {
     it("returns a 200 with a not-found if the load data decides to abort", function(done) {
-      const app = createApp((pageType, params, config, client, {next}) => next(), undefined, {
+      const app = createApp((pageType, params, config, client, {next}) => next(), {
+        routes: [],
         loadErrorData: (e) => ({foo: "bar"})
       });
 
@@ -140,7 +144,8 @@ describe('Isomorphic Data Load', function() {
     });
 
     it("returns a 200 with a not-found if the load data decides to abort", function(done) {
-      const app = createApp((pageType, params, config, client, {next}) => next().then(n => ({data: n})), undefined, {
+      const app = createApp((pageType, params, config, client, {next}) => next().then(n => ({data: n})), {
+        routes: [],
         loadErrorData: (e) => ({foo: "bar"})
       });
 
@@ -177,10 +182,66 @@ describe('Isomorphic Data Load', function() {
     });
   });
 
+  describe("Multi Domain Support", function() {
+    it("passes the domain slug to the load data function", function(done) {
+      const app = createApp((pageType, params, config, client, {domainSlug}) => Promise.resolve({ data: {domainSlug}, p: console.log("Here in data load", domainSlug) }), {
+        publisherConfig: {
+          domain_mapping: {
+            "127.0.0.1": "my-domain"
+          }
+        }
+      });
+
+      supertest(app)
+        .get("/route-data.json")
+        .expect("Content-Type", /json/)
+        .expect(200)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.equal("my-domain", response.data.domainSlug);
+        }).then(done);
+    });
+
+    it("passes undefined if domain mapping is not present", function(done) {
+      const app = createApp((pageType, params, config, client, {domainSlug}) => Promise.resolve({ data: {domainSlug}, p: console.log("Here in data load", domainSlug) }), {
+        publisherConfig: {}
+      });
+
+      supertest(app)
+        .get("/route-data.json")
+        .expect("Content-Type", /json/)
+        .expect(200)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.strictEqual(undefined, response.data.domainSlug);
+        }).then(done);
+    })
+
+    it("passes null if the domain is the default domain (or not present in the map)", function(done) {
+      const app = createApp((pageType, params, config, client, {domainSlug}) => Promise.resolve({ data: {domainSlug}, p: console.log("Here in data load", domainSlug) }), {
+        publisherConfig: {
+          domain_mapping: {
+            "unrelated.domain.com": "unrelated"
+          },
+        }
+      });
+
+      supertest(app)
+        .get("/route-data.json")
+        .expect("Content-Type", /json/)
+        .expect(200)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.strictEqual(null, response.data.domainSlug);
+        }).then(done);
+    })
+  })
+
   describe("failure scenarios", function(done) {
     it("returns 404 if the path is not matched", function(done) {
       this.timeout(10000);
-      const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {pageType: "home-page", path: "/foobar"}, {
+      const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {
+        routes: [{pageType: "home-page", path: "/foobar"}],
         loadErrorData: (e) => ({foo: "bar"})
       });
       supertest(app)
@@ -194,7 +255,8 @@ describe('Isomorphic Data Load', function() {
     });
 
     it("returns 404 if generate routes throws an exception", function(done) {
-      const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {pageType: "home-page", path: "/"}, {
+      const app = createApp((pageType, params, config, client) => Promise.resolve({data: {amazing: params.amazing}}), {
+        routes: [ {pageType: "home-page", path: "/"}],
         generateRoutes: () => {throw "foobar"},
         loadErrorData: (e) => ({foo: "bar"})
       });
@@ -205,7 +267,8 @@ describe('Isomorphic Data Load', function() {
     });
 
     it("return 500 if loadData and loadErrorData both throw exceptions", function(done) {
-      const app = createApp((pageType, params, config, client) => {throw "foobar"}, {pageType: "home-page", path: "/"}, {
+      const app = createApp((pageType, params, config, client) => {throw "foobar"}, {
+        routes: [{pageType: "home-page", path: "/"}],
         loadErrorData: () => {throw "exception2"; }
       });
       supertest(app)
@@ -215,7 +278,8 @@ describe('Isomorphic Data Load', function() {
     });
 
     it("loads error data if loadData throws an exceptions", function(done) {
-      const app = createApp((pageType, params, config, client) => {throw "foobar"}, {pageType: "home-page", path: "/"}, {
+      const app = createApp((pageType, params, config, client) => {throw "foobar"}, {
+        routes: [{pageType: "home-page", path: "/"}],
         loadErrorData: (error, config) => Promise.resolve({error})
       });
       supertest(app)
@@ -230,7 +294,7 @@ describe('Isomorphic Data Load', function() {
     });
 
     it("has a default loadErrorData", function(done) {
-      const app = createApp((pageType, params, config, client) => {throw "foobar"}, {pageType: "home-page", path: "/"});
+      const app = createApp((pageType, params, config, client) => {throw "foobar"}, {routes: [{pageType: "home-page", path: "/"}]});
       supertest(app)
         .get("/route-data.json?path=%2F")
         .expect("Content-Type", /json/)

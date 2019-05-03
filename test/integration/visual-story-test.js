@@ -22,7 +22,7 @@ getClientStub.withStory = story => hostname => Object.assign({}, getClientStub(h
 describe('Visual Stories Bookend', () => {
   it("returns the bookend if there are related stories", (done) => {
     const app = express();
-    enableVisualStories(app, () => { }, { getClient: getClientStub.withRelatedStories([{headline: "foo"}]) })
+    enableVisualStories(app, () => { }, { getClient: getClientStub.withRelatedStories([{headline: "foo"}]), publisherConfig: {} })
     supertest(app)
       .get("/ampstories/unknown/bookend.json")
       .expect("Content-Type", /json/)
@@ -39,7 +39,7 @@ describe('Visual Stories Bookend', () => {
 
   it("returns a 404 if there are no related stories", (done) => {
     const app = express();
-    enableVisualStories(app, () => {}, {getClient: getClientStub.withRelatedStories([])})
+    enableVisualStories(app, () => {}, {getClient: getClientStub.withRelatedStories([]), publisherConfig: {}})
     supertest(app)
       .get("/ampstories/unknown/bookend.json")
       .expect("Content-Type", /json/)
@@ -52,7 +52,7 @@ describe("Visual Stories AmpPage", () => {
   it("calls render if the story is present and adds caching headers", (done) => {
     const story = {headline: "foobar", id: "abcdefgh", "story-template": "visual-story"};
     const app = express();
-    enableVisualStories(app, (res, story) => { res.json(story.asJson()) }, { getClient: getClientStub.withStory(story) })
+    enableVisualStories(app, (res, story) => { res.json(story.asJson()) }, { getClient: getClientStub.withStory(story), publisherConfig: {} })
     supertest(app)
       .get("/ampstories/section/slug")
       .expect("Cache-Control", /public/)
@@ -67,7 +67,7 @@ describe("Visual Stories AmpPage", () => {
 
   it("returns 404 if the story is not found", (done) => {
     const app = express();
-    enableVisualStories(app, () => { }, { getClient: getClientStub.withStory(null) })
+    enableVisualStories(app, () => { }, { getClient: getClientStub.withStory(null), publisherConfig: {} })
     supertest(app)
       .get("/ampstories/section/slug")
       .expect(404)
@@ -76,7 +76,7 @@ describe("Visual Stories AmpPage", () => {
 
   it("returns 404 if the story is not a visual story", (done) => {
     const app = express();
-    enableVisualStories(app, () => { }, { getClient: getClientStub.withStory({'story-template': 'blank'}) })
+    enableVisualStories(app, () => { }, { getClient: getClientStub.withStory({'story-template': 'blank'}), publisherConfig: {} })
     supertest(app)
       .get("/ampstories/section/slug")
       .expect(404)

@@ -18,7 +18,8 @@ describe('ManifestHandler', function() {
     getClient: getClientStub,
     manifestFn: (config) => Promise.resolve({
       foo: "bar"
-    })
+    }), 
+    publisherConfig: {},
   });
 
   it("returns a manifest", function(done) {

@@ -19,7 +19,8 @@ describe('AssetLink Handler', function() {
     assetLinkFn: (config) => Promise.resolve({
       packageName: `com.quintype.twa.${config["publisher-name"]}`,
       authorizedKeys: ["02:0F:1B:07:EE:20:66:36:74:76:1A:3E:BC:64:17:A7:7F:E3:EE:FE:E2:3A:6B:33:C1:4B:A8:24:69:D7:44:40"]
-    })
+    }),
+    publisherConfig: {},
   });
 
   it("returns a manifest", function(done) {

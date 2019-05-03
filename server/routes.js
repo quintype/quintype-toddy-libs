@@ -76,12 +76,19 @@ function toFunction(value, toRequire) {
 
 }
 
-function withConfigPartial(getClient, logError) {
+function getDomainSlug(publisherConfig, hostName) {
+  if(!publisherConfig.domain_mapping) {
+    return undefined;
+  }
+  return publisherConfig.domain_mapping[hostName] || null;  
+}
+
+function withConfigPartial(getClient, logError, publisherConfig = require("./publisher-config")) {
   return function withConfig(f, staticParams) {
     return function (req, res, next) {
       const client = getClient(req.hostname);
       return client.getConfig()
-        .then(c => f(req, res, next, Object.assign({}, staticParams, { config: c, client })))
+        .then(config => f(req, res, next, Object.assign({}, staticParams, { config, client, domainSlug: getDomainSlug(publisherConfig, req["hostname"])})))
         .catch(logError);
     }
   }
@@ -124,9 +131,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                       getClient = require("./api-client").getClient,
                                                       renderServiceWorker = renderServiceWorkerFn,
                                                       templateOptions = false,
+                                                      publisherConfig = require("./publisher-config"),
                                                     }) {
 
-  const withConfig = withConfigPartial(getClient, logError);
+  const withConfig = withConfigPartial(getClient, logError, publisherConfig);
 
 
   pickComponent = makePickComponentSync(pickComponent);
@@ -175,9 +183,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 function getWithConfig(app, route, handler, opts = {}) {
   const {
     getClient = require("./api-client").getClient,
+    publisherConfig = require("./publisher-config"),
     logError
   } = opts;
-  const withConfig = withConfigPartial(getClient, logError);
+  const withConfig = withConfigPartial(getClient, logError, publisherConfig);
   app.get(route, withConfig(handler, opts))
 }
 
