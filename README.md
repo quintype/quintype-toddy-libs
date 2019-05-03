@@ -281,6 +281,16 @@ FIXME: Write notes on `host_to_api_host`, `host_to_automatic_api_host` and `skip
 
 1. https://developers.google.com/web/fundamentals/performance/optimizing-javascript/tree-shaking/
 
+
+
+### Migration to framework@3
+
+- Run the following to execute the script: 
+```sh 
+sh <(curl https://raw.githubusercontent.com/quintype/quintype-node-framework/master/scripts/framework-2-to-3-migration)
+```
+- Verify Changes with `git diff --cached`
+
 ## References
 
 * This architecture is heavily influenced by the method described in this [video](https://www.youtube.com/watch?v=atUdVSuNRjA)
