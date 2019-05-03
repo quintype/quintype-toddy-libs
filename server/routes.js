@@ -76,10 +76,11 @@ function toFunction(value, toRequire) {
 
 }
 
-function getDomainSlug(config, hostUrl) {
-  return null;
-  // const domain = config["domains"].find( domain => domain["host-url"].replace('https://', '') === hostUrl.replace('https://', ''));
-  // return domain && domain["slug"] ? domain["slug"] : null;
+function getDomainSlug(publisherConfig, hostName) {
+  if(!publisherConfig.domain_mapping) {
+    return undefined;
+  }
+  return publisherConfig.domain_mapping[hostName] || null;  
 }
 
 function withConfigPartial(getClient, logError, publisherConfig = require("./publisher-config")) {
