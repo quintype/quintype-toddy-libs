@@ -124,7 +124,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
 
   function allRoutes() {
     try {
-      return generateRoutes(config)
+      return generateRoutes(config, domainSlug)
     } catch(e) {
       return [];
     }
@@ -214,7 +214,7 @@ exports.notFoundHandler = function notFoundHandler(req, res, next, {config, clie
 exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {config, client, generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, assetHelper, preloadJs, preloadRouteData, domainSlug}) {
   const url = urlLib.parse(req.url, true);
 
-  return loadDataForIsomorphicRoute(loadData, loadErrorData, url, generateRoutes(config), {config, client, logError, host: req.hostname, logError, domainSlug})
+  return loadDataForIsomorphicRoute(loadData, loadErrorData, url, generateRoutes(config, domainSlug), {config, client, logError, host: req.hostname, domainSlug})
     .catch(e => {
       logError(e);
       return {httpStatusCode: 500, pageType: "error"}
