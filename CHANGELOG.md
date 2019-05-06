@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.3.0](https://github.com/quintype/quintype-node-framework/compare/v3.2.0...v3.3.0) (2019-05-06)
+
+
+### Features
+
+* generateCommonRoutes also generates the home page route ([d553d0c](https://github.com/quintype/quintype-node-framework/commit/d553d0c))
+
+
+
 # [3.2.0](https://github.com/quintype/quintype-node-framework/compare/v3.1.1...v3.2.0) (2019-05-06)
 
 
