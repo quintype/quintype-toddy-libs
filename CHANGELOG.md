@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.2.0](https://github.com/quintype/quintype-node-framework/compare/v3.1.1...v3.2.0) (2019-05-06)
+
+
+### Features
+
+* @q/b allows you to memoize things like routes ([5e812a9](https://github.com/quintype/quintype-node-framework/commit/5e812a9))
+
+
+
 ## [3.1.1](https://github.com/quintype/quintype-node-framework/compare/v3.1.0...v3.1.1) (2019-05-06)
 
 
