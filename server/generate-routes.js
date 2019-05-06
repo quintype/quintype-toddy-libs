@@ -3,7 +3,18 @@
 // /sect, /sect/:storySlug, /sect/*/:storySlug
 const _ = require("lodash");
 
+let shownDeprecationWarning = false;
+function deprecationWarning() {
+  if(!shownDeprecationWarning) {
+    // eslint-disable-next-line no-console
+    console.warn("[WARNING] generateSectionPageRoutes and generateStoryPageRoutes are deprecated and will be removed in @quintype/framework v4. Please switch to generateCommonRoutes https://github.com/quintype/quintype-node-framework/blob/master/README.md#switching-to-generatecommonroutes");
+    shownDeprecationWarning = true;
+  }
+}
+
 exports.generateSectionPageRoutes = function generateSectionPageRoutes(config, opts = {}) {
+  deprecationWarning();
+
   const sections = config.getDomainSections(opts.domainSlug);
 
   const sectionsById = _(sections).reduce((acc, section) => {
@@ -60,6 +71,7 @@ function sectionPageRoute(route, params) {
 }
 
 exports.generateStoryPageRoutes = function generateStoryPageRoutes(config, {withoutParentSection, domainSlug} = {}) {
+  deprecationWarning();
   const sections = config.getDomainSections(domainSlug);
   return _(sections)
     .filter((section) => withoutParentSection || !section["parent-id"])
@@ -72,5 +84,28 @@ function storyPageRoute(path) {
     pageType: 'story-page',
     exact: true,
     path
+  }
+}
+
+exports.generateCommonRoutes = function generateSectionPageRoutes(config, domainSlug, {
+  allRoutes = true,
+  sectionPageRoutes = allRoutes,
+  storyPageRoutes = allRoutes,
+} = {}) {
+  const sections = config.getDomainSections(domainSlug);
+  const sectionRoutes = sections.map(sectionToSectionRoute)
+  const storyRoutes = sectionRoutes.map(({ path }) => ({ path: `${path}(/.*)?/:storySlug`, pageType: "story-page", exact: true }));
+  return [].concat(
+    sectionPageRoutes ? sectionRoutes : [],
+    storyPageRoutes ? storyRoutes : []
+  )
+}
+
+function sectionToSectionRoute(section) {
+  try {
+    const url = new URL(section['section-url']);
+    return { path: url.pathname, pageType: "section-page", exact: true, params: { sectionId: section.id } }
+  } catch (e) {
+    return { path: `/${section.slug}`, pageType: "section-page", exact: true, params: { sectionId: section.id } };
   }
 }

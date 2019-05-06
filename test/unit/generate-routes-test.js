@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { Config } = require('../../server/impl/api-client-impl');
-const { generateSectionPageRoutes, generateStoryPageRoutes } = require("../../server/generate-routes");
+const { generateSectionPageRoutes, generateStoryPageRoutes, generateCommonRoutes } = require("../../server/generate-routes");
 
 describe('generateRoutes', function () {
   it("generates section routes correctly", function () {
@@ -140,4 +140,61 @@ describe("MultiDomain Support", function () {
   });
 })
 
+describe("generateCommonRoutes", function() {
+  it("generates section and story page routes", function() {
+    const config = Config.build({ sections: [{ id: 42, "section-url": "https://quintype-demo.quintype.io/photos"}]})
 
+    assert.deepEqual(
+      [{ path: "/photos", pageType: "section-page", exact: true, params: { sectionId: 42 } }],
+      generateCommonRoutes(config, undefined, { allRoutes: false, sectionPageRoutes: true })
+    )
+
+    assert.deepEqual(
+      [{ path: "/photos(/.*)?/:storySlug", pageType: "story-page", exact: true }],
+      generateCommonRoutes(config, undefined, { allRoutes: false, storyPageRoutes: true })
+    )
+  })
+
+  it("only picks the sections from the correct domain", function() {
+    const config = Config.build({ sections: [{ id: 42, "section-url": "https://quintype-demo.quintype.io/photos", 'domain-slug': 'sub' }] })
+
+    assert.deepEqual(
+      [],
+      generateCommonRoutes(config, null, { allRoutes: false, sectionPageRoutes: true })
+    )
+
+    assert.deepEqual(
+      [{ path: "/photos", pageType: "section-page", exact: true, params: { sectionId: 42 } }],
+      generateCommonRoutes(config, 'sub', { allRoutes: false, sectionPageRoutes: true })
+    )
+  })
+
+  it("puts section urls before the story urls", function() {
+    const config = Config.build({ sections: [
+      { id: 42, "section-url": "https://quintype-demo.quintype.io/photos" },
+      { id: 43, "section-url": "https://quintype-demo.quintype.io/photos/gallery" },
+    ]});
+
+    assert.deepEqual([
+      { path: "/photos", pageType: "section-page", exact: true, params: { sectionId: 42 } },
+      { path: "/photos/gallery", pageType: "section-page", exact: true, params: { sectionId: 43 } },
+      { path: "/photos(/.*)?/:storySlug", pageType: "story-page", exact: true },
+      { path: "/photos/gallery(/.*)?/:storySlug", pageType: "story-page", exact: true },
+      ], generateCommonRoutes(config, undefined, { allRoutes: false, sectionPageRoutes: true, storyPageRoutes: true })
+    )
+  })
+
+  it("generates things correctly if the section-url is missing", function() {
+    const config = Config.build({ sections: [{ id: 42, slug: "photos" }] })
+
+    assert.deepEqual(
+      [{ path: "/photos(/.*)?/:storySlug", pageType: "story-page", exact: true }],
+      generateCommonRoutes(config, undefined, { allRoutes: false, storyPageRoutes: true })
+    )
+
+    assert.deepEqual(
+      [{ path: "/photos", pageType: "section-page", exact: true, params: { sectionId: 42 } }],
+      generateCommonRoutes(config, undefined, { allRoutes: false, sectionPageRoutes: true })
+    )
+  })
+})
