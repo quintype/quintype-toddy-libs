@@ -155,6 +155,15 @@ describe("generateCommonRoutes", function() {
     )
   })
 
+  it("picks up the collection slug if there is one present in the section", function() {
+    const config = Config.build({ sections: [{ id: 42, "section-url": "https://quintype-demo.quintype.io/photos", collection: {slug: "photos"} }] })
+
+    assert.deepEqual(
+      [{ path: "/photos", pageType: "section-page", exact: true, params: { sectionId: 42, collectionSlug: "photos" } }],
+      generateCommonRoutes(config, undefined, { allRoutes: false, sectionPageRoutes: true })
+    )
+  })
+
   it("only picks the sections from the correct domain", function() {
     const config = Config.build({ sections: [{ id: 42, "section-url": "https://quintype-demo.quintype.io/photos", 'domain-slug': 'sub' }] })
 

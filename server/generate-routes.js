@@ -104,10 +104,17 @@ exports.generateCommonRoutes = function generateSectionPageRoutes(config, domain
 }
 
 function sectionToSectionRoute(section) {
+  const params = {
+    sectionId: section.id,
+  }
+  if(section.collection && section.collection.slug) {
+    params.collectionSlug = section.collection.slug;
+  }
+
   try {
     const url = new URL(section['section-url']);
-    return { path: url.pathname, pageType: "section-page", exact: true, params: { sectionId: section.id } }
+    return { path: url.pathname, pageType: "section-page", exact: true, params }
   } catch (e) {
-    return { path: `/${section.slug}`, pageType: "section-page", exact: true, params: { sectionId: section.id } };
+    return { path: `/${section.slug}`, pageType: "section-page", exact: true, params };
   }
 }
