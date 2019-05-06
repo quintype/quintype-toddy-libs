@@ -94,7 +94,7 @@ exports.generateCommonRoutes = function generateSectionPageRoutes(config, domain
 } = {}) {
   const sections = config.getDomainSections(domainSlug);
   const sectionRoutes = sections.map(sectionToSectionRoute)
-  const storyRoutes = sectionRoutes.map(({ path }) => ({ path: `${path}(/.*)?/:storySlug`, pageType: "story-page", exact: true }));
+  const storyRoutes = sectionRoutes.map(({ path }) => ({ path: `${path.replace(/^\/section\//, '/')}(/.*)?/:storySlug`, pageType: "story-page", exact: true }));
   return [].concat(
     sectionPageRoutes ? sectionRoutes : [],
     storyPageRoutes ? storyRoutes : []

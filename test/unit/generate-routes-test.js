@@ -182,7 +182,21 @@ describe("generateCommonRoutes", function() {
       { path: "/photos/gallery(/.*)?/:storySlug", pageType: "story-page", exact: true },
       ], generateCommonRoutes(config, undefined, { allRoutes: false, sectionPageRoutes: true, storyPageRoutes: true })
     )
-  })
+  });
+
+  it("removes /section from the story route", function () {
+    const config = Config.build({ sections: [{ id: 42, "section-url": "https://quintype-demo.quintype.io/section/photos" }] })
+
+    assert.deepEqual(
+      [{ path: "/section/photos", pageType: "section-page", exact: true, params: { sectionId: 42 } }],
+      generateCommonRoutes(config, undefined, { allRoutes: false, sectionPageRoutes: true })
+    )
+
+    assert.deepEqual(
+      [{ path: "/photos(/.*)?/:storySlug", pageType: "story-page", exact: true }],
+      generateCommonRoutes(config, undefined, { allRoutes: false, storyPageRoutes: true })
+    )
+  });
 
   it("generates things correctly if the section-url is missing", function() {
     const config = Config.build({ sections: [{ id: 42, slug: "photos" }] })
