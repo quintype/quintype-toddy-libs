@@ -193,6 +193,21 @@ enableVisualStories(app, renderVisualStory, {logError})
 
 ## Miscellaneous
 
+### Switching to generateCommonRoutes
+
+Starting in `@quintype/framework` v3, we are introducing multi domain support. The configuration for section page locations is now controlled by the editor. Please switch to using `generateCommonRoutes` to generate story page, and section page routes.
+
+```javascript
+import {generateCommonRoutes} from "@quintype/framework/server/generate-routes";
+
+export function generateRoutes(config, domainSlug) {
+  return generateCommonRoutes(config, domainSlug, {
+    sectionPageRoutes: true,
+    storyPageRoutes: true
+  })
+}
+```
+
 ### OneSignal Integration
 
 OneSignal interferes with our service worker, so a few changes have to be made to enable PWA with OneSignal.
