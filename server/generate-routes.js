@@ -4,12 +4,14 @@
 const _ = require("lodash");
 
 exports.generateSectionPageRoutes = function generateSectionPageRoutes(config, opts = {}) {
-  const sectionsById = _(config.sections).reduce((acc, section) => {
+  const sections = config.getDomainSections(opts.domainSlug);
+
+  const sectionsById = _(sections).reduce((acc, section) => {
     acc[section.id] = section;
     return acc;
   }, {});
 
-  return _(config.sections)
+  return _(sections)
     .flatMap((section) => generateSectionPageRoute(section, sectionsById, opts))
     .value();
 }
@@ -19,11 +21,11 @@ function generateSectionPageRoute(section, sectionsById, opts) {
   if(section.collection)
     params.collectionSlug = section.collection.slug
 
-  var slug = section.slug;
+  let {slug} = section;
 
   if(section["parent-id"]) {
-    var currentSection = section;
-    var depth = 0;
+    let currentSection = section;
+    let depth = 0;
     while (currentSection["parent-id"] && depth++ < 5) {
       currentSection = sectionsById[currentSection["parent-id"]] || {slug: 'invalid'};
       slug = `${currentSection.slug}/${slug}`;
@@ -53,12 +55,13 @@ function sectionPageRoute(route, params) {
     pageType: "section-page",
     exact: true,
     path: `/${route}`,
-    params: params
+    params
   }
 }
 
-exports.generateStoryPageRoutes = function generateStoryPageRoutes(config, {withoutParentSection} = {}) {
-  return _(config.sections)
+exports.generateStoryPageRoutes = function generateStoryPageRoutes(config, {withoutParentSection, domainSlug} = {}) {
+  const sections = config.getDomainSections(domainSlug);
+  return _(sections)
     .filter((section) => withoutParentSection || !section["parent-id"])
     .flatMap((section) => [storyPageRoute(`/${section.slug}/:storySlug`), storyPageRoute(`/${section.slug}/*/:storySlug`)])
     .value();
@@ -68,6 +71,6 @@ function storyPageRoute(path) {
   return {
     pageType: 'story-page',
     exact: true,
-    path: path
+    path
   }
 }

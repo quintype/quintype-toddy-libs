@@ -218,7 +218,7 @@ describe('Isomorphic Data Load', function() {
     })
 
     it("passes null if the domain is the default domain (or not present in the map)", function(done) {
-      const app = createApp((pageType, params, config, client, {domainSlug}) => Promise.resolve({ data: {domainSlug}, p: console.log("Here in data load", domainSlug) }), {
+      const app = createApp((pageType, params, config, client, {domainSlug}) => Promise.resolve({ data: {domainSlug} }), {
         publisherConfig: {
           domain_mapping: {
             "unrelated.domain.com": "unrelated"
@@ -233,6 +233,25 @@ describe('Isomorphic Data Load', function() {
         .then(res => {
           const response = JSON.parse(res.text);
           assert.strictEqual(null, response.data.domainSlug);
+        }).then(done);
+    });
+
+    it("passes the domainSlug to generateSlug", function(done) {
+      const app = createApp(pageType => Promise.resolve({ data: {pageType} }), {
+        publisherConfig: {
+          domain_mapping: {
+            "127.0.0.1": "subdomain"
+          },
+        },
+        generateRoutes: (config, domain) => [{path: "/", pageType: `home-for-${domain}`}]
+      });
+      supertest(app)
+        .get("/route-data.json")
+        .expect("Content-Type", /json/)
+        .expect(200)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.strictEqual("home-for-subdomain", response.data.pageType);
         }).then(done);
     })
   })
