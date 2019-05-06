@@ -91,11 +91,13 @@ exports.generateCommonRoutes = function generateSectionPageRoutes(config, domain
   allRoutes = true,
   sectionPageRoutes = allRoutes,
   storyPageRoutes = allRoutes,
+  homePageRoute = allRoutes,
 } = {}) {
   const sections = config.getDomainSections(domainSlug);
   const sectionRoutes = sections.map(sectionToSectionRoute)
   const storyRoutes = sectionRoutes.map(({ path }) => ({ path: `${path.replace(/^\/section\//, '/')}(/.*)?/:storySlug`, pageType: "story-page", exact: true }));
   return [].concat(
+    homePageRoute ? [{ path: "/", pageType: "home-page", exact: true, params: { collectionSlug: config.getHomeCollectionSlug(domainSlug)} }] : [],
     sectionPageRoutes ? sectionRoutes : [],
     storyPageRoutes ? storyRoutes : []
   )

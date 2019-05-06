@@ -210,5 +210,24 @@ describe("generateCommonRoutes", function() {
       [{ path: "/photos", pageType: "section-page", exact: true, params: { sectionId: 42 } }],
       generateCommonRoutes(config, undefined, { allRoutes: false, sectionPageRoutes: true })
     )
+  });
+
+  it("generates the home page route", function() {
+    const config = Config.build({ domains: [{ "slug": "sub", "home-collection-id": 1234 }], sections: [] });
+
+    assert.deepEqual(
+      [{ path: "/", pageType: "home-page", exact: true, params: { collectionSlug: "home" } }],
+      generateCommonRoutes(config, undefined, { allRoutes: false, homePageRoute: true })
+    );
+
+    assert.deepEqual(
+      [{ path: "/", pageType: "home-page", exact: true, params: { collectionSlug: "home" } }],
+      generateCommonRoutes(config, null, { allRoutes: false, homePageRoute: true })
+    );
+
+    assert.deepEqual(
+      [{ path: "/", pageType: "home-page", exact: true, params: { collectionSlug: "1234" } }],
+      generateCommonRoutes(config, "sub", { allRoutes: false, homePageRoute: true })
+    );
   })
 })
