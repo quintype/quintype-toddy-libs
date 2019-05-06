@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.1.0](https://github.com/quintype/quintype-node-framework/compare/v3.0.2...v3.1.0) (2019-05-06)
+
+
+### Bug Fixes
+
+* **migration:** Implement migration shell script ([972b3e7](https://github.com/quintype/quintype-node-framework/commit/972b3e7))
+* **readme:** Add migration scripts documentation to framework@3 ([ce4d48f](https://github.com/quintype/quintype-node-framework/commit/ce4d48f))
+* **readme:** Add migration scripts documentation to framework@3 ([951c5ec](https://github.com/quintype/quintype-node-framework/commit/951c5ec))
+
+
+### Features
+
+* **Multi Domain:** generateRoutes will receive a domainSlug ([#77](https://github.com/quintype/quintype-node-framework/issues/77)) ([21da61a](https://github.com/quintype/quintype-node-framework/commit/21da61a))
+* **Multidomain support:** Pass a domainSlug to functions that load data ([#76](https://github.com/quintype/quintype-node-framework/issues/76)) ([539b338](https://github.com/quintype/quintype-node-framework/commit/539b338))
+
+
+
 ## [3.0.2](https://github.com/quintype/quintype-node-framework/compare/v3.0.1...v3.0.2) (2019-05-02)
 
 
