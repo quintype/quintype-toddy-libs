@@ -80,7 +80,7 @@ function getDomainSlug(publisherConfig, hostName) {
   if(!publisherConfig.domain_mapping) {
     return undefined;
   }
-  return publisherConfig.domain_mapping[hostName] || null;  
+  return publisherConfig.domain_mapping[hostName] || null;
 }
 
 function withConfigPartial(getClient, logError, publisherConfig = require("./publisher-config")) {
@@ -88,7 +88,7 @@ function withConfigPartial(getClient, logError, publisherConfig = require("./pub
     return function (req, res, next) {
       const client = getClient(req.hostname);
       return client.getConfig()
-        .then(config => f(req, res, next, Object.assign({}, staticParams, { config, client, domainSlug: getDomainSlug(publisherConfig, req["hostname"])})))
+        .then(config => f(req, res, next, Object.assign({}, staticParams, { config, client, domainSlug: getDomainSlug(publisherConfig, req.hostname)})))
         .catch(logError);
     }
   }
@@ -135,7 +135,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                     }) {
 
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
-
 
   pickComponent = makePickComponentSync(pickComponent);
 
