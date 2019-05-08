@@ -80,7 +80,7 @@ function getDomainSlug(publisherConfig, hostName) {
   if(!publisherConfig.domain_mapping) {
     return undefined;
   }
-  return publisherConfig.domain_mapping[hostName] || null;  
+  return publisherConfig.domain_mapping[hostName] || null;
 }
 
 function withConfigPartial(getClient, logError, publisherConfig = require("./publisher-config")) {
@@ -88,7 +88,7 @@ function withConfigPartial(getClient, logError, publisherConfig = require("./pub
     return function (req, res, next) {
       const client = getClient(req.hostname);
       return client.getConfig()
-        .then(config => f(req, res, next, Object.assign({}, staticParams, { config, client, domainSlug: getDomainSlug(publisherConfig, req["hostname"])})))
+        .then(config => f(req, res, next, Object.assign({}, staticParams, { config, client, domainSlug: getDomainSlug(publisherConfig, req.hostname)})))
         .catch(logError);
     }
   }
@@ -103,6 +103,16 @@ exports.withError = function withError(handler, logError) {
       res.status(500);
       res.end()
     }
+  }
+}
+
+function wrapLoadDataWithMultiDomain(publisherConfig, f, configPos) {
+  return async function loadDataWrapped() {
+    const { domainSlug } = arguments[arguments.length - 1];
+    const config = arguments[configPos];
+    const domain = (config.domains || []).find(d => d.slug === domainSlug) || { 'host-url': config['sketches-host']};
+    const result = await f.apply(this, arguments);
+    return Object.assign({ domainSlug, currentHostUrl: domain['host-url'] }, result);
   }
 }
 
@@ -136,8 +146,9 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
 
-
   pickComponent = makePickComponentSync(pickComponent);
+  loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
+  loadErrorData = wrapLoadDataWithMultiDomain(publisherConfig, loadErrorData, 1);
 
   app.get("/service-worker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, assetHelper, renderServiceWorker}));
 

@@ -183,8 +183,20 @@ describe('Isomorphic Data Load', function() {
   });
 
   describe("Multi Domain Support", function() {
-    it("passes the domain slug to the load data function", function(done) {
-      const app = createApp((pageType, params, config, client, {domainSlug}) => Promise.resolve({ data: {domainSlug}, p: console.log("Here in data load", domainSlug) }), {
+    function getClientStubMultiDomain() {
+      return {
+        getConfig() {
+          return Promise.resolve({
+            "sketches-host": "https://www.example.com",
+            domains: [{ slug: "my-domain", "host-url": "https://subdomain.example.com" }]
+          })
+        }
+      }
+    }
+
+    it("passes the domain slug to the load data function, and returns currentHostUrl in response", function(done) {
+      const app = createApp((pageType, params, config, client, { domainSlug }) => Promise.resolve({ data: { domainSlug }}), {
+        getClient: getClientStubMultiDomain,
         publisherConfig: {
           domain_mapping: {
             "127.0.0.1": "my-domain"
@@ -199,11 +211,13 @@ describe('Isomorphic Data Load', function() {
         .then(res => {
           const response = JSON.parse(res.text);
           assert.equal("my-domain", response.data.domainSlug);
+          assert.equal("https://subdomain.example.com", response.currentHostUrl);
         }).then(done);
     });
 
-    it("passes undefined if domain mapping is not present", function(done) {
-      const app = createApp((pageType, params, config, client, {domainSlug}) => Promise.resolve({ data: {domainSlug}, p: console.log("Here in data load", domainSlug) }), {
+    it("passes undefined if domain mapping is not present, and returns currentHostUrl in response", function(done) {
+      const app = createApp((pageType, params, config, client, {domainSlug}) => Promise.resolve({ data: { domainSlug }}), {
+        getClient: getClientStubMultiDomain,
         publisherConfig: {}
       });
 
@@ -214,11 +228,13 @@ describe('Isomorphic Data Load', function() {
         .then(res => {
           const response = JSON.parse(res.text);
           assert.strictEqual(undefined, response.data.domainSlug);
+          assert.strictEqual("https://www.example.com", response.currentHostUrl);
         }).then(done);
     })
 
-    it("passes null if the domain is the default domain (or not present in the map)", function(done) {
+    it("passes null if the domain is the default domain (or not present in the map), and returns currentHostUrl in response", function(done) {
       const app = createApp((pageType, params, config, client, {domainSlug}) => Promise.resolve({ data: {domainSlug} }), {
+        getClient: getClientStubMultiDomain,
         publisherConfig: {
           domain_mapping: {
             "unrelated.domain.com": "unrelated"
@@ -233,6 +249,7 @@ describe('Isomorphic Data Load', function() {
         .then(res => {
           const response = JSON.parse(res.text);
           assert.strictEqual(null, response.data.domainSlug);
+          assert.strictEqual("https://www.example.com", response.currentHostUrl);
         }).then(done);
     });
 

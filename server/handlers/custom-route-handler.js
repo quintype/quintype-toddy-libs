@@ -41,7 +41,7 @@ function writeStaticPageResponse(res, url, page, result, { config, renderLayout,
   });
 }
 
-exports.customRouteHandler = function customRouteHandler(req, res, next, { config, client, loadData, loadErrorData, renderLayout, logError, seo }) {
+exports.customRouteHandler = function customRouteHandler(req, res, next, { config, client, loadData, loadErrorData, renderLayout, logError, seo, domainSlug }) {
   const url = urlLib.parse(req.url, true);
   const path = req.params[0];
   return CustomPath.getCustomPathData(client, path)
@@ -63,7 +63,7 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
         addCacheHeadersToResult(res, page.cacheKeys(config["publisher-id"]))
 
         if(page.metadata.header || page.metadata.footer) {
-          return loadData('custom-static-page', {}, config, client, {host: req.hostname})
+          return loadData('custom-static-page', {}, config, client, { host: req.hostname, domainSlug })
             .then(response => {
               return writeStaticPageResponse(res, url, page.page, response, { config, renderLayout, seo });
             });
