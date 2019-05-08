@@ -129,6 +129,9 @@ The response of the /route-data.json will look like the following:
 {
   appVersion: 42,
   title: "This is the title of the page",
+  // When multi domain support is enabled, this will be the canonical url of the domainSlug.
+  // See multi domain support for more information
+  currentHostUrl: "https://canonical-root.your-host.com",
   // your loadData function is responsible for loading this entire data
   data: {
     pageType: "story-page",
@@ -167,6 +170,21 @@ The handler can return the following:
 * null / undefined - The result will be a 503
 * any truthy value - The result will be returned as a 200 with the result as content
 * A url starting with http(s) - The URL will be fetched and content will be returned according to the above two rules
+
+## Multi Domain Support
+
+Multi domain support is achieved by assigning a section to a domain via the domain manager in the editor. Once this is done, add the following entries into your `publisher/config.yml`.
+
+```yaml
+# publisher/config.yml
+domain_mapping:
+  subdomain.my-domain.com: sub
+  another.my-domain.com: another
+```
+
+Doing this will enable a field called `domainSlug` to be passed to various functions, such as `generateRoutes` and `loadData`. This can be used to load data specific to the domain.
+
+Further, `/route-data.json` will have two more fields at the root level. `domainSlug`, which is the slug of the loaded domain. `currentHostUrl` specifies which domain you are on. The `currentHostUrl` is used by the link field to decide if it should do an ajax navigation or not.
 
 ## Visual Stories (amp stories)
 
@@ -300,8 +318,8 @@ FIXME: Write notes on `host_to_api_host`, `host_to_automatic_api_host` and `skip
 
 ## Migration to framework@3
 
-- Run the following to execute the script: 
-```sh 
+- Run the following to execute the script:
+```sh
 sh <(curl https://raw.githubusercontent.com/quintype/quintype-node-framework/master/scripts/framework-2-to-3-migration)
 ```
 - Verify Changes with `git diff --cached`
