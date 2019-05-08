@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.4.0](https://github.com/quintype/quintype-node-framework/compare/v3.3.1...v3.4.0) (2019-05-08)
+
+
+### Features
+
+* **Multi Domain:** Ability to have AJAX navigation on multi domain ([#79](https://github.com/quintype/quintype-node-framework/issues/79)) ([66e4567](https://github.com/quintype/quintype-node-framework/commit/66e4567))
+
+
+
 ## [3.3.1](https://github.com/quintype/quintype-node-framework/compare/v3.3.0...v3.3.1) (2019-05-06)
 
 
