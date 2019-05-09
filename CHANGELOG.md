@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.4.1](https://github.com/quintype/quintype-node-framework/compare/v3.4.0...v3.4.1) (2019-05-09)
+
+
+### Bug Fixes
+
+* **Multi Domain:** Returning primaryHostUrl along with currentHostUrl ([90f955b](https://github.com/quintype/quintype-node-framework/commit/90f955b))
+
+
+
 # [3.4.0](https://github.com/quintype/quintype-node-framework/compare/v3.3.1...v3.4.0) (2019-05-08)
 
 
