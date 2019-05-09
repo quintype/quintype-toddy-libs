@@ -95,6 +95,8 @@ function createStoreFromResult(url, result, opts = {}) {
     pageType: result.pageType || opts.defaultPageType,
     data: result.data,
     currentPath: `${url.pathname}${url.search || ""}`,
+    currentHostUrl: result.currentHostUrl,
+    primaryHostUrl: result.primaryHostUrl,
   };
   return createBasicStore(result, qt, opts);
 }
