@@ -110,9 +110,10 @@ function wrapLoadDataWithMultiDomain(publisherConfig, f, configPos) {
   return async function loadDataWrapped() {
     const { domainSlug } = arguments[arguments.length - 1];
     const config = arguments[configPos];
-    const domain = (config.domains || []).find(d => d.slug === domainSlug) || { 'host-url': config['sketches-host']};
+    const primaryHostUrl = config['sketches-host'];
+    const domain = (config.domains || []).find(d => d.slug === domainSlug) || { 'host-url': primaryHostUrl };
     const result = await f.apply(this, arguments);
-    return Object.assign({ domainSlug, currentHostUrl: domain['host-url'] }, result);
+    return Object.assign({ domainSlug, currentHostUrl: domain['host-url'], primaryHostUrl }, result);
   }
 }
 

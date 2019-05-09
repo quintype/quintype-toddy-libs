@@ -132,6 +132,7 @@ The response of the /route-data.json will look like the following:
   // When multi domain support is enabled, this will be the canonical url of the domainSlug.
   // See multi domain support for more information
   currentHostUrl: "https://canonical-root.your-host.com",
+  primaryHostUrl: "https://www.your-host.com",
   // your loadData function is responsible for loading this entire data
   data: {
     pageType: "story-page",

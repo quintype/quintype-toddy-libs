@@ -212,6 +212,7 @@ describe('Isomorphic Data Load', function() {
           const response = JSON.parse(res.text);
           assert.equal("my-domain", response.data.domainSlug);
           assert.equal("https://subdomain.example.com", response.currentHostUrl);
+          assert.equal("https://www.example.com", response.primaryHostUrl);
         }).then(done);
     });
 
@@ -229,6 +230,7 @@ describe('Isomorphic Data Load', function() {
           const response = JSON.parse(res.text);
           assert.strictEqual(undefined, response.data.domainSlug);
           assert.strictEqual("https://www.example.com", response.currentHostUrl);
+          assert.equal("https://www.example.com", response.primaryHostUrl);
         }).then(done);
     })
 
@@ -250,6 +252,7 @@ describe('Isomorphic Data Load', function() {
           const response = JSON.parse(res.text);
           assert.strictEqual(null, response.data.domainSlug);
           assert.strictEqual("https://www.example.com", response.currentHostUrl);
+          assert.equal("https://www.example.com", response.primaryHostUrl);
         }).then(done);
     });
 
