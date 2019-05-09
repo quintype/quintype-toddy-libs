@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.4.2](https://github.com/quintype/quintype-node-framework/compare/v3.4.1...v3.4.2) (2019-05-09)
+
+
+### Bug Fixes
+
+* **Multi Domain:** current and primaryHostUrls were not passed to isomorphic hander ([97dc07c](https://github.com/quintype/quintype-node-framework/commit/97dc07c))
+
+
+
 ## [3.4.1](https://github.com/quintype/quintype-node-framework/compare/v3.4.0...v3.4.1) (2019-05-09)
 
 
