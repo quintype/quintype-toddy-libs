@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "3.4.3-fix-redirect-perf.0",
+  "version": "3.4.2",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
