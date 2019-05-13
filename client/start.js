@@ -5,9 +5,9 @@ import get from 'lodash/get';
 import { createBrowserHistory } from 'history'
 
 import { BreakingNews } from '@quintype/components';
+import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components';
 import { createQtStore } from '../store/create-store';
 import { IsomorphicComponent } from '../isomorphic/component'
-import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components';
 import { startAnalytics, registerPageView, registerStoryShare, setMemberId } from './analytics';
 import { registerServiceWorker, setupServiceWorkerUpdates, checkForServiceWorkerUpdates } from './impl/load-service-worker';
 import { makePickComponentSync } from '../isomorphic/make-pick-component-sync';
@@ -35,6 +35,7 @@ function getRouteData(path, {location = global.location, existingFetch}) {
     // This next line aborts the entire load
     if(page.httpStatusCode == 301 && page.data && page.data.location) {
       location.assign(page.data.location);
+      return null;
     }
 
     return page;
@@ -58,6 +59,11 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
   dispatch({type: PAGE_LOADING});
   getRouteData(path, {})
     .then(page => {
+      if (!page) {
+        console && console.log("Recieved a null page. Expecting the browser to redirect.")
+        return;
+      }
+
       checkForServiceWorkerUpdates(app, page);
 
       if(page.disableIsomorphicComponent) {
@@ -101,7 +107,7 @@ export function renderComponent(clazz, container, store, props = {}, callback) {
   if(props.hydrate) {
     return ReactDOM.hydrate(component, document.getElementById(container), callback);
   }
-    return ReactDOM.render(component, document.getElementById(container), callback);
+  return ReactDOM.render(component, document.getElementById(container), callback);
 
 }
 
@@ -111,7 +117,7 @@ export function renderIsomorphicComponent(container, store, pickComponent, props
     return pickComponentWrapper.preloadComponent(store.getState().qt.pageType)
       .then(() => renderComponent(IsomorphicComponent, container, store, Object.assign({pickComponent: pickComponentWrapper}, props), () => store.dispatch({type: CLIENT_SIDE_RENDERED})))
   }
-    console && console.log("IsomorphicComponent is disabled");
+  console && console.log("IsomorphicComponent is disabled");
 
 }
 
@@ -157,6 +163,11 @@ export function startApp(renderApplication, reducers, opts) {
   return dataPromise.then(page => doStartApp(page));
 
   function doStartApp(page){
+    if(!page) {
+      console && console.log("Recieved a null page. Expecting the browser to redirect.")
+      return;
+    }
+
     store.dispatch({ type: NAVIGATE_TO_PAGE, page, currentPath: path });
 
     setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page)
