@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.4.3](https://github.com/quintype/quintype-node-framework/compare/v3.4.2...v3.4.3) (2019-05-13)
+
+
+### Bug Fixes
+
+* Do not remove the loading indicator when about to redirect ([#80](https://github.com/quintype/quintype-node-framework/issues/80)) ([e98753f](https://github.com/quintype/quintype-node-framework/commit/e98753f))
+
+
+
 ## [3.4.2](https://github.com/quintype/quintype-node-framework/compare/v3.4.1...v3.4.2) (2019-05-09)
 
 
