@@ -1,4 +1,4 @@
-var assert = require('assert');
+const assert = require('assert');
 const express = require("express");
 const React = require("react");
 
@@ -15,12 +15,15 @@ function getClientStub(hostname) {
           return Promise.resolve({"page":{"id": 101, "type":"redirect","status-code":301,"destination-path":"/permanent-location"}});
         case '/moved-temporarily':
           return Promise.resolve({"page":{"id": 102, "type":"redirect","status-code":302,"destination-path":"/temporary-location"}});
+        case '/moved-absolute':
+          // FIXME: the /http on the next line is garbage from API.
+          return Promise.resolve({ "page": { "id": 105, "type": "redirect", "status-code": 301, "destination-path": "/https://www.google.com" } });
         case '/static-with-header-footer':
           return Promise.resolve({"page":{"id": 103, "title":"Testing","content":"<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>","metadata":{"header":true,"footer":false},"type":"static-page","status-code":200}});
         case '/static-without-header-footer':
           return Promise.resolve({"page":{"id": 104, "title":"Testing","content":"<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>","metadata":{"header":false,"footer":false},"type":"static-page","status-code":200}});
         default:
-          return Promise.resolve({"page":null,"status-code":404});               
+          return Promise.resolve({"page":null,"status-code":404});
       }
     }
   };
@@ -32,12 +35,12 @@ function createApp(loadData, routes, opts = {}) {
     assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null, assetPath: (file) => `/assets/${file}`},
     getClient: getClientStub,
     generateRoutes: () => routes,
-    loadData: loadData,
+    loadData,
     renderLayout: (res, {contentTemplate, store}) => res.send(JSON.stringify({contentTemplate, store: store.getState()})),
     handleNotFound: false,
     publisherConfig: {},
   }, opts));
-  
+
   return app;
 }
 
@@ -132,5 +135,18 @@ describe('Custom Route Handler', function() {
         assert.deepEqual({}, response.store.qt.config);
         assert.deepEqual([], response.store.qt.data.navigationMenu);
       }).then(done);
+  });
+
+  it("Redirects to an absolute route, even if sketches gives a junk response", function (done) {
+    const app = createApp((pageType, params, config, client, { host, next }) => next(), [{ pageType: 'story-page', path: '/*' }]);
+    supertest(app)
+      .get("/moved-absolute")
+      .expect("Location", "https://www.google.com")
+      .expect("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400")
+      .expect("Vary", /Accept\-Encoding/)
+      .expect("Surrogate-Control", /public/)
+      .expect("Surrogate-Key", "u/42/105")
+      .expect("Cache-Tag", "u/42/105")
+      .expect(301, done);
   });
 })

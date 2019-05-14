@@ -4,6 +4,7 @@ const get = require("lodash/get");
 const ejs = require("ejs");
 const fs = require("fs");
 const path = require("path");
+
 const staticPageTemplateStr = fs.readFileSync(path.join(__dirname, "../views/static-page.ejs"), {encoding: "utf-8"});
 const staticPageTemplate = ejs.compile(staticPageTemplateStr);
 
@@ -27,7 +28,7 @@ function writeStaticPageResponse(res, url, page, result, { config, renderLayout,
     disableIsomorphicComponent: true
   })
 
-  const seoInstance = (typeof seo == 'function') ? seo(config) : seo;
+  const seoInstance = (typeof seo === 'function') ? seo(config) : seo;
   const seoTags = seoInstance && seoInstance.getMetaTags(config, page.type, {}, {url});
 
   res.status(page["status-code"] || 200);
@@ -35,8 +36,8 @@ function writeStaticPageResponse(res, url, page, result, { config, renderLayout,
   return renderLayout(res, {
     title: page.title,
     content: renderStaticPageContent(store, page.content),
-    store: store,
-    seoTags: seoTags,
+    store,
+    seoTags,
     disableAjaxNavigation: true,
   });
 }
@@ -56,7 +57,14 @@ exports.customRouteHandler = function customRouteHandler(req, res, next, { confi
         }
         addCacheHeadersToResult(res, page.cacheKeys(config["publisher-id"]))
 
-        return res.redirect(page["status-code"] || 302, page["destination-path"] || "/");
+        let destination = page["destination-path"] || "/";
+
+        // FIXME: This ugly hack is because sketches returns absolute urls as /http
+        if(destination.startsWith("/http")) {
+          destination = destination.replace("/http", "http");
+        }
+
+        return res.redirect(page["status-code"] || 302, destination);
       }
 
       if(page.type === 'static-page') {
