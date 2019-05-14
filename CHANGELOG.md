@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.5.0](https://github.com/quintype/quintype-node-framework/compare/v3.4.4...v3.5.0) (2019-05-14)
+
+
+### Features
+
+* Adding support for absolute redirects ([#82](https://github.com/quintype/quintype-node-framework/issues/82)) ([3488c20](https://github.com/quintype/quintype-node-framework/commit/3488c20))
+
+
+
 ## [3.4.4](https://github.com/quintype/quintype-node-framework/compare/v3.4.3...v3.4.4) (2019-05-13)
 
 
