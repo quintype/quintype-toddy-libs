@@ -6,8 +6,9 @@ const {handleManifest, handleAssetLink} = require("./handlers/json-manifest-hand
 const {redirectStory} = require("./handlers/story-redirect");
 const {simpleJsonHandler} = require("./handlers/simple-json-handler");
 const {makePickComponentSync} = require("../isomorphic/make-pick-component-sync");
+const { registerFCMTopic } = require("./handlers/fcm-registration-handler");
 const rp = require("request-promise");
-
+const bodyParser = require("body-parser");
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
                                                                  {forwardAmp = false,
                                                                   forwardFavicon = false,
@@ -160,6 +161,9 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 
   app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper, loadData, loadErrorData, logError, preloadJs}));
   app.get("/route-data.json", withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}));
+
+  app.post("/register-fcm-topic", bodyParser.json(), withConfig(registerFCMTopic, {publisherConfig}));
+
 
   if(manifestFn) {
     app.get("/manifest.json", withConfig(handleManifest, {manifestFn, logError}))
