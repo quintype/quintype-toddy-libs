@@ -1,18 +1,17 @@
 import firebase from "firebase/app";
 import "firebase/messaging";
 
-firebase.initializeApp({
-  messagingSenderId: "568104192219"
-});
-const messaging = firebase.messaging();
-messaging.onTokenRefresh(updateToken);
-
-export async function initializeFCM() {
+export async function initializeFCM(messageSenderId) {
   try {
+    firebase.initializeApp({
+      messagingSenderId: messageSenderId.toString()
+    });
+    const messaging = firebase.messaging();
+    messaging.onTokenRefresh(updateToken);
     await messaging.requestPermission();
     await updateToken();
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }
 
@@ -21,7 +20,7 @@ export default async function updateToken(firebaseInstance = firebase) {
     .messaging()
     .getToken()
     .then(registerFCMTopic)
-    .catch(console.log);
+    .catch((error) => { throw new Error("Cannot Update the subscription")});
 }
 
 function registerFCMTopic(token) {

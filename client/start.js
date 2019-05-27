@@ -143,7 +143,6 @@ function runWithTiming(name, f) {
 export function startApp(renderApplication, reducers, opts) {
   app.getAppVersion = () => opts.appVersion || 1;
   global.app = app;
-  console.log("From Start App");
   const {location} = global;
   const path = `${location.pathname}${location.search || ""}`;
   const staticData = global.staticPageStoreContent || getJsonContent('static-page');
@@ -171,7 +170,10 @@ export function startApp(renderApplication, reducers, opts) {
 
     store.dispatch({ type: NAVIGATE_TO_PAGE, page, currentPath: path });
     if( opts.enableFCM ) {
-      initializeFCM();
+      const mssgSenderId = get(page, ["config", "fcmMessageSenderId"], null);
+      if (mssgSenderId){
+        initializeFCM(mssgSenderId);
+      }
     }
     setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page)
 
