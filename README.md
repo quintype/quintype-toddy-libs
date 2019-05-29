@@ -280,6 +280,21 @@ startApp(renderApplication, CUSTOM_REDUCERS, {
             messagingSenderId: <your message sender Id>
           });
           const messaging = firebase.messaging();
+          function messageHandler(payload) {
+            const data = payload["data"];
+
+            var notificationTitle = data.title;
+            var notificationOptions = {
+              body: data.body,
+              icon: data["hero_image_s3_url"],
+              image: data["hero_image_s3_url"],
+              data: data
+            };
+
+            return self.registration.showNotification(notificationTitle,
+              notificationOptions);
+          }
+          messaging.setBackgroundMessageHandler(messageHandler);
       ```
 
 4. Make sure that the page data should have config with key fcmMessageSenderId refer doStartApp function in app/client/start.js.
