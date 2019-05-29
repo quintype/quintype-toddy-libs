@@ -1,10 +1,10 @@
 const { get } = require("lodash");
 const request = require("request-promise");
 
-exports.registerFCMTopic = function registerFCM(req, res, next, { config, client, publisherConfig }) {
+exports.registerFCMTopic = async function registerFCM(req, res, next, { config, client, publisherConfig }) {
     const token = get(req, ["body", "token"], null);
     if (!token) {
-        res.status(404).send("No Token Found");
+        res.status(400).send("No Token Found");
         return;
     }
 
@@ -14,17 +14,21 @@ exports.registerFCMTopic = function registerFCM(req, res, next, { config, client
         return;
     }
     const url = `https://iid.googleapis.com/iid/v1/${token}/rel/topics/all`;
-    request({
-        uri: url,
-        method: "POST",
-        headers: {
-        Authorization: `key=${serverKey}`,
-        "content-type": "application/json"
-        }
-    })
-    .then(() => res.status(200).send("Registration Done Suceessfuly"))
-    .catch(error => {
+    try {
+        await request({
+            uri: url,
+            method: "POST",
+            headers: {
+            Authorization: `key=${serverKey}`,
+            "content-type": "application/json"
+            }
+        });
+        console.log("Response");
+        console.log(response);
+        res.status(200).send("Registration Done Suceessfuly");
+        return;
+    } catch(error) {
         res.status(500).send("FCM Subscription Failed");
         return;
-    });
+    };
 }

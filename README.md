@@ -248,7 +248,24 @@ startApp(renderApplication, CUSTOM_REDUCERS, {
   serviceWorkerLocation: "/OneSignalSDKWorker.js", // OneSignal will automatically register the service worker
 })
 ```
-
+### FCM Integration
+Steps to Integrate FCM in your project
+1> While calling startApp in your project set enableFCM to true.
+2> publisher_config.yml should have the fcm configuration as below:
+    fcm:
+      message_sender_id: <MessageSenderId>
+      serverKey: <ServerKey>
+3> If you need offline messages you may include a service worker script in /public
+   Example of the script:
+      ```
+          importScripts("https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js");
+          importScripts("https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js");
+          firebase.initializeApp({
+            messagingSenderId: <your message sender Id>
+          });
+          const messaging = firebase.messaging();
+      ```
+4> Make sure that the page data should have config with key fcmMessageSenderId refer doStartApp function in app/client/start.js.
 ### Skipping loading data from /route-data.json
 
 This can be used where `/route-data.json` is not accessible (example preview).
