@@ -12,6 +12,17 @@ function qDebug() {
 
 export function initializeQServiceWorker(self, params) {
   importScripts(`https://unpkg.com/workbox-sw@${workboxVersion}/build/importScripts/workbox-sw.${process.env.NODE_ENV == 'production' ? 'prod' : 'dev'}.v${workboxVersion}.js`);
+  importScripts("https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js");
+  importScripts("https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js");
+
+  if (params.fcmMessagingSenderId) {
+    firebase.initializeApp({
+      messagingSenderId: params.fcmMessagingSenderId
+    });
+  
+    const messaging = firebase.messaging();
+  }
+
 
   const routeMatcher = function({event, url}) {
     if(event.request.mode !== 'navigate') {

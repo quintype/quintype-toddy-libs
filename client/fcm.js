@@ -1,7 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/messaging";
 
-export async function initializeFCM(messageSenderId) {
+export async function initializeFCM(serviceWorkerPromise, messageSenderId) {
   if (!messageSenderId || isNaN(messageSenderId )){
       console.log("Cannot subscribe to notifications at this moment");
       return;
@@ -11,6 +11,9 @@ export async function initializeFCM(messageSenderId) {
       messagingSenderId: messageSenderId.toString()
     });
     const messaging = firebase.messaging();
+    serviceWorkerPromise.then((registration) => {
+      messaging.useServiceWorker(registration);
+    });
     await messaging.requestPermission();
     await updateToken();
     messaging.onTokenRefresh(updateToken);

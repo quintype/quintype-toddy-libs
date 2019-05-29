@@ -152,7 +152,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
   loadErrorData = wrapLoadDataWithMultiDomain(publisherConfig, loadErrorData, 1);
 
-  app.get("/service-worker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, assetHelper, renderServiceWorker}));
+  app.get("/service-worker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, assetHelper, renderServiceWorker, fcm: publisherConfig.fcm}));
 
   if(oneSignalServiceWorkers) {
     app.get("/OneSignalSDKWorker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));

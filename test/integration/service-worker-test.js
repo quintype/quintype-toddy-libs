@@ -19,6 +19,7 @@ function renderLayoutStub(res, layout, params, callback) {
     assetHash: params.assetHash("app.js"),
     routes: params.routes,
     layout: layout,
+    fcmMessagingSenderId: params.fcm.message_sender_id
   });
   return callback(null, content);
 }
@@ -35,7 +36,7 @@ describe('ServiceWorker Generator', function() {
     renderServiceWorker: renderLayoutStub,
     generateRoutes: (config) => config.sections.map(section => ({path: `/${section.slug}`})).concat([{skipPWA: true, path: "/skip"}]),
     oneSignalServiceWorkers: true,
-    publisherConfig: {},
+    publisherConfig: {fcm: {message_sender_id: 123}},
   })
 
   it("generates the service worker correctly", function(done) {
@@ -63,6 +64,18 @@ describe('ServiceWorker Generator', function() {
         const {routes} = JSON.parse(res.text);
         assert.equal(1, routes.length);
         assert.equal("/news", routes[0].path);
+      })
+      .then(done);
+  });
+
+  it("initializes fcm", function(done) {
+    supertest(app)
+      .get("/service-worker.js")
+      .expect("Content-Type", /javascript/)
+      .expect(200)
+      .then(res => {
+        const {fcmMessagingSenderId} = JSON.parse(res.text);
+        assert.equal(123, fcmMessagingSenderId);
       })
       .then(done);
   });
