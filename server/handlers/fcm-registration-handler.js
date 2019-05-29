@@ -23,8 +23,6 @@ exports.registerFCMTopic = async function registerFCM(req, res, next, { config, 
             "content-type": "application/json"
             }
         });
-        console.log("Response");
-        console.log(response);
         res.status(200).send("Registration Done Suceessfuly");
         return;
     } catch(error) {

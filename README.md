@@ -249,14 +249,30 @@ startApp(renderApplication, CUSTOM_REDUCERS, {
 })
 ```
 ### FCM Integration
+
 Steps to Integrate FCM in your project
-1> While calling startApp in your project set enableFCM to true.
-2> publisher_config.yml should have the fcm configuration as below:
+
+1. While executing startApp in your project set enableFCM to true.
+
+An Example
+
+startApp(renderApplication, CUSTOM_REDUCERS, {
+  enableServiceWorker: process.env.NODE_ENV === "production",
+  enableFCM: true,
+  ...
+})
+
+2. publisher_config.yml should have the fcm configuration as below:
+```
     fcm:
       message_sender_id: <MessageSenderId>
       serverKey: <ServerKey>
-3> If you need offline messages you may include a service worker script in /public
+```
+
+3. You should have service worker script named firebase-messaging-sw.js in /public
+
    Example of the script:
+
       ```
           importScripts("https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js");
           importScripts("https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js");
@@ -265,7 +281,9 @@ Steps to Integrate FCM in your project
           });
           const messaging = firebase.messaging();
       ```
-4> Make sure that the page data should have config with key fcmMessageSenderId refer doStartApp function in app/client/start.js.
+
+4. Make sure that the page data should have config with key fcmMessageSenderId refer doStartApp function in app/client/start.js.
+
 ### Skipping loading data from /route-data.json
 
 This can be used where `/route-data.json` is not accessible (example preview).
