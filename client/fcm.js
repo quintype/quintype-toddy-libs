@@ -1,7 +1,7 @@
 export async function initializeFCM(messageSenderId) {
   if ( !messageSenderId ){
-      console.log("Cannot subscribe to notifications at this moment");
-      return;
+      console.log("messageSenderId is required");
+      return false;
   }
   Promise.all([
     import (/* webpackChunkName: "firebase-app" */ "firebase/app"),
