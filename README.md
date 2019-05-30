@@ -255,13 +255,15 @@ Steps to Integrate FCM in your project
 1. While executing startApp in your project set enableFCM to true.
 
 An Example
-
-startApp(renderApplication, CUSTOM_REDUCERS, {
-  enableServiceWorker: process.env.NODE_ENV === "production",
+```
+startApp(renderApplication, 
+  CUSTOM_REDUCERS, 
+  {
+  enableServiceWorker: process.env.NODE_ENV === "production",  
   enableFCM: true,
   ...
 })
-
+```
 2. publisher_config.yml should have the fcm configuration as below:
 ```
     fcm:
