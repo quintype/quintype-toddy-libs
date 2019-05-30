@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.6.0](https://github.com/quintype/quintype-node-framework/compare/v3.0.2...v3.6.0) (2019-05-30)
+
+
+### Bug Fixes
+
+* **migration:** Implement migration shell script ([972b3e7](https://github.com/quintype/quintype-node-framework/commit/972b3e7))
+* **Multi Domain:** current and primaryHostUrls were not passed to isomorphic hander ([97dc07c](https://github.com/quintype/quintype-node-framework/commit/97dc07c))
+* **Multi Domain:** Returning primaryHostUrl along with currentHostUrl ([90f955b](https://github.com/quintype/quintype-node-framework/commit/90f955b))
+* Do not remove the loading indicator when about to redirect ([#80](https://github.com/quintype/quintype-node-framework/issues/80)) ([e98753f](https://github.com/quintype/quintype-node-framework/commit/e98753f))
+* Passing collectionSlug along with the section page ([83ab13c](https://github.com/quintype/quintype-node-framework/commit/83ab13c))
+* removing /section from story page urls ([bc1b58d](https://github.com/quintype/quintype-node-framework/commit/bc1b58d))
+* **npm i:** update the package-lock ([8783132](https://github.com/quintype/quintype-node-framework/commit/8783132))
+* **readme:** Add migration scripts documentation to framework@3 ([ce4d48f](https://github.com/quintype/quintype-node-framework/commit/ce4d48f))
+* **readme:** Add migration scripts documentation to framework@3 ([951c5ec](https://github.com/quintype/quintype-node-framework/commit/951c5ec))
+
+
+### Features
+
+* @q/b allows you to memoize things like routes ([5e812a9](https://github.com/quintype/quintype-node-framework/commit/5e812a9))
+* **Multi Domain:** Ability to have AJAX navigation on multi domain ([#79](https://github.com/quintype/quintype-node-framework/issues/79)) ([66e4567](https://github.com/quintype/quintype-node-framework/commit/66e4567))
+* **Multi Domain:** Adding a function called generateCommonRoutes, which will generate routes ([#78](https://github.com/quintype/quintype-node-framework/issues/78)) ([f23c1bb](https://github.com/quintype/quintype-node-framework/commit/f23c1bb))
+* **Multi Domain:** generateRoutes will receive a domainSlug ([#77](https://github.com/quintype/quintype-node-framework/issues/77)) ([21da61a](https://github.com/quintype/quintype-node-framework/commit/21da61a))
+* **Multidomain support:** Pass a domainSlug to functions that load data ([#76](https://github.com/quintype/quintype-node-framework/issues/76)) ([539b338](https://github.com/quintype/quintype-node-framework/commit/539b338))
+* Adding support for absolute redirects ([#82](https://github.com/quintype/quintype-node-framework/issues/82)) ([3488c20](https://github.com/quintype/quintype-node-framework/commit/3488c20))
+* Fcm integration ([#83](https://github.com/quintype/quintype-node-framework/issues/83)) ([99c83df](https://github.com/quintype/quintype-node-framework/commit/99c83df))
+* generateCommonRoutes also generates the home page route ([d553d0c](https://github.com/quintype/quintype-node-framework/commit/d553d0c))
+
+
+
 # [3.5.0](https://github.com/quintype/quintype-node-framework/compare/v3.4.4...v3.5.0) (2019-05-14)
 
 
