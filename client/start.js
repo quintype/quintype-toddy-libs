@@ -11,6 +11,7 @@ import { IsomorphicComponent } from '../isomorphic/component'
 import { startAnalytics, registerPageView, registerStoryShare, setMemberId } from './analytics';
 import { registerServiceWorker, setupServiceWorkerUpdates, checkForServiceWorkerUpdates } from './impl/load-service-worker';
 import { makePickComponentSync } from '../isomorphic/make-pick-component-sync';
+import { initializeFCM } from './fcm';
 
 require("../assetify/client")();
 
@@ -142,7 +143,6 @@ function runWithTiming(name, f) {
 export function startApp(renderApplication, reducers, opts) {
   app.getAppVersion = () => opts.appVersion || 1;
   global.app = app;
-
   const {location} = global;
   const path = `${location.pathname}${location.search || ""}`;
   const staticData = global.staticPageStoreContent || getJsonContent('static-page');
@@ -169,7 +169,10 @@ export function startApp(renderApplication, reducers, opts) {
     }
 
     store.dispatch({ type: NAVIGATE_TO_PAGE, page, currentPath: path });
-
+    if( opts.enableFCM ) {
+      const mssgSenderId = get(page, ["config", "fcmMessageSenderId"], null);
+      initializeFCM(mssgSenderId);
+    }
     setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page)
 
     runWithTiming('qt_render', () => renderApplication(store))
@@ -181,7 +184,6 @@ export function startApp(renderApplication, reducers, opts) {
     if(page.title) {
       global.document.title = get(page, ['data', 'story', 'seo', 'meta-title'], page.title);
     }
-
     return store;
   };
 }

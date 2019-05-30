@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "3.5.0",
+  "version": "3.6.0-fcm-integration.4",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -26,13 +26,14 @@
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
     "@quintype/backend": "^1.20.0",
-    "@quintype/components": "^2.2.0",
+    "@quintype/components": "^2.5.0",
     "atob": "^2.1.2",
     "cluster": "^0.7.7",
     "compression": "^1.7.4",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "get-youtube-id": "^1.0.1",
+    "grpc": "^1.21.1",
     "http-proxy": "^1.17.0",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.11",
@@ -61,11 +62,12 @@
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
+    "firebase": "^6.0.2",
     "history": "^4.9.0",
     "jsdom": "^14.0.0",
     "jsdom-global": "3.0.2",
     "mocha": "^6.1.4",
-    "nyc": "^13.3.0",
+    "nyc": "^14.1.1",
     "onchange": "^4.1.0",
     "standard-version": "^5.0.2",
     "supertest": "^4.0.2"
