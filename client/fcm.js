@@ -1,4 +1,4 @@
-export async function initializeFCM(messageSenderId) {
+export function initializeFCM(messageSenderId) {
   if ( !messageSenderId ){
       console.log("messageSenderId is required");
       return false;
@@ -6,21 +6,19 @@ export async function initializeFCM(messageSenderId) {
   Promise.all([
     import (/* webpackChunkName: "firebase-app" */ "firebase/app"),
     import(/* webpackChunkName: "firebase-messaging" */ "firebase/messaging")
-  ]).then(async ([ firebase, m ]) => {
+  ]).then( ([ firebase, m ]) => {
     try {
         firebase.initializeApp({
           messagingSenderId: messageSenderId.toString()
         });
         const messaging = firebase.messaging();
-        // await messaging.requestPermission();
-        // await updateToken(firebase);
-        // messaging.onTokenRefresh(() => updateToken(firebase));
         messaging.requestPermission()
         .then(() => {
             updateToken(firebase)
             .then(() => {
                 messaging.onTokenRefresh(() => updateToken(firebase));
             })
+            .catch(console.error);
         })
       } catch (error) {
         console.error(error);
@@ -28,22 +26,13 @@ export async function initializeFCM(messageSenderId) {
   })
 }
 
-export default async function updateToken(firebaseInstance) {
-    try {
-        // const token = await firebaseInstance.messaging().getToken();
-        // if ( token ) {
-        //     registerFCMTopic(token);
-        // } else {
-        //     throw new Error ("Could not retrieve token from firebase");
-        // }
-        return firebaseInstance.messaging().getToken()
-                .then((token) => {
-                    registerFCMTopic(token);
-                })
+function updateToken(firebaseInstance) {
+    return firebaseInstance
+            .messaging().getToken()
+            .then((token) => {
+                return registerFCMTopic(token);
+            })
             .catch(() => { throw new Error("Could not retrieve token from firebase") });
-    } catch (error) {
-        throw new Error("Error while updating the subscription token");
-    }
 }
 
 function registerFCMTopic(token) {
