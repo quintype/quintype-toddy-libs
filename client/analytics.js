@@ -38,7 +38,7 @@ export function registerPageView(page, newPath) {
     registerStoryView(get(page.data, ["story", "id"]));
   }
 
-  if(newPath && global.ga) {
+  if(newPath && global.ga && !global.noImplicitGATracking) {
     global.ga(function(tracker) {
       tracker = tracker || global.ga.getByName("gtm1");
       if(!tracker)
