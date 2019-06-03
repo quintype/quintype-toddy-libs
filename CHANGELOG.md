@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.6.2](https://github.com/quintype/quintype-node-framework/compare/v3.6.1...v3.6.2) (2019-06-03)
+
+
+### Bug Fixes
+
+* Promisify usage of async await ([#84](https://github.com/quintype/quintype-node-framework/issues/84)) ([46559a2](https://github.com/quintype/quintype-node-framework/commit/46559a2))
+
+
+
 ## [3.6.1](https://github.com/quintype/quintype-node-framework/compare/v3.6.0...v3.6.1) (2019-05-30)
 
 
