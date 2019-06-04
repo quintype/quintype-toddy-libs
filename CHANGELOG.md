@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.7.0](https://github.com/quintype/quintype-node-framework/compare/v3.6.2...v3.7.0) (2019-06-04)
+
+
+### Features
+
+* **remove automatic ga firing:** add a global variable check to stop firing the ga automatically on page changes ([#85](https://github.com/quintype/quintype-node-framework/issues/85)) ([7d62cd2](https://github.com/quintype/quintype-node-framework/commit/7d62cd2))
+
+
+
 ## [3.6.2](https://github.com/quintype/quintype-node-framework/compare/v3.6.1...v3.6.2) (2019-06-03)
 
 
