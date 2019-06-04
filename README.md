@@ -82,7 +82,8 @@ new SEO({
 ```
 ### Analytics
 
-Currently, we trigger both Quintype analytics and GA when the page changes. The GA tracker looks for the default tracker, then looks for the tracker called `gtm1`
+Currently, we trigger both Quintype analytics and GA when the page changes. The GA tracker looks for the default tracker, then looks for the tracker called `gtm1`.
+You can stop the GA tracking behaviour if you set a global variable `qtNoAutomaticGATracking` to true. Keep in mind you'll have to implement your own ga tracking code.
 
 ### Useful Components
 
