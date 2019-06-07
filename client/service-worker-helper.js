@@ -25,7 +25,6 @@ export function initializeQServiceWorker(self, params) {
       return false;
     }
 
-    // for excluding custom urls
     if(params.excludeNavigation && params.excludeNavigation(url)) {
       return false;
     }
