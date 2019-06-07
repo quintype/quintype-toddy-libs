@@ -25,6 +25,11 @@ export function initializeQServiceWorker(self, params) {
       return false;
     }
 
+    // for excluding custom urls
+    if(params.excludeNavigation && params.excludeNavigation(url)) {
+      return false;
+    }
+
     if(matchBestRoute(url.pathname, params.routes)) {
       qDebug(`Rendering the shell for navigation to ${url.pathname}`);
       return true;
