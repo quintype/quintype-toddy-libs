@@ -18,7 +18,8 @@ function createApp({assetHelper = require("./asset-helper"), publicFolder = "pub
         res.set('Cache-Control', 'public,max-age=31104000,s-maxage=31104000');
       }
       res.set('Vary', 'Accept-Encoding');
-    }
+    },
+    maxAge: '1h'
   }));
   app.use(compression());
 

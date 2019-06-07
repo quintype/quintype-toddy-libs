@@ -24,7 +24,7 @@ describe('createApp', function() {
     supertest(app)
       .get("/integration/create-app-test.js")
       .set("Accept-Encoding", "deflate, gzip")
-      .expect("Cache-Control", 'public, max-age=0')
+      .expect("Cache-Control", 'public, max-age=3600')
       .expect("Vary", 'Accept-Encoding')
       .expect(200, done)
   });
