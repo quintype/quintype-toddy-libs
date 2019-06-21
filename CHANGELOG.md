@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.10.0](https://github.com/quintype/quintype-node-framework/compare/v3.9.0...v3.10.0) (2019-06-21)
+
+
+### Features
+
+* Allow you to pass extraRoutes to sketches ([98f9c59](https://github.com/quintype/quintype-node-framework/commit/98f9c59))
+
+
+
 # [3.9.0](https://github.com/quintype/quintype-node-framework/compare/v3.8.2...v3.9.0) (2019-06-18)
 
 
