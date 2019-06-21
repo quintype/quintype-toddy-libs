@@ -1,11 +1,11 @@
-var assert = require('assert');
+const assert = require('assert');
 const express = require("express");
 
 const { upstreamQuintypeRoutes } = require("../../server/routes");
 const supertest = require("supertest");
 
 describe('Sketches Proxy', function() {
-  var upstreamServer;
+  let upstreamServer;
 
   before(function(next) {
     const upstreamApp = express();
@@ -19,6 +19,7 @@ describe('Sketches Proxy', function() {
       upstreamQuintypeRoutes(app, {
         config: {sketches_host: `http://127.0.0.1:${upstreamServer.address().port}`},
         getClient: host => ({getHostname: () => host.toUpperCase()}),
+        extraRoutes: ["/custom-route"],
         forwardAmp: true,
         forwardFavicon: true,
         publisherConfig: {},
@@ -37,7 +38,20 @@ describe('Sketches Proxy', function() {
           assert.equal("127.0.0.1", host);
         })
         .then(done);
-    })
+    });
+
+    it("forwards custom routes to sketches", function (done) {
+      supertest(buildApp())
+        .get("/custom-route")
+        .expect(200)
+        .then((res) => {
+          const { method, url, host } = JSON.parse(res.text);
+          assert.equal("GET", method);
+          assert.equal("/custom-route", url);
+          assert.equal("127.0.0.1", host);
+        })
+        .then(done);
+    });
 
     it("grabs the hostname from the client", function(done) {
       supertest(buildApp())
@@ -85,7 +99,7 @@ describe('Sketches Proxy', function() {
       const app = express();
       upstreamQuintypeRoutes(app, {
         config: {sketches_host: `http://127.0.0.1:${upstreamServer.address().port}`},
-        getClient: host => ({getConfig: getConfig}),
+        getClient: host => ({getConfig}),
       })
       return app;
     }

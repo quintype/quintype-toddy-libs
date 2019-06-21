@@ -9,10 +9,12 @@ const {makePickComponentSync} = require("../isomorphic/make-pick-component-sync"
 const { registerFCMTopic } = require("./handlers/fcm-registration-handler");
 const rp = require("request-promise");
 const bodyParser = require("body-parser");
+
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
                                                                  {forwardAmp = false,
                                                                   forwardFavicon = false,
                                                                   config = require("./publisher-config"),
+                                                                  extraRoutes = [],
                                                                   getClient = require("./api-client").getClient} = {}) {
   const host = config.sketches_host;
   const apiProxy = require("http-proxy").createProxyServer({
@@ -57,6 +59,8 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
   if(forwardFavicon) {
     app.get("/favicon.ico", sketchesProxy);
   }
+
+  extraRoutes.forEach(route => app.all(route, sketchesProxy));
 }
 
 // istanbul ignore next
