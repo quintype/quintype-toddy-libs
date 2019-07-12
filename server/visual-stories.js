@@ -55,7 +55,7 @@ async function handleBookend(req, res, next, {config, client}) {
     };
 
     if(relatedStories.length > 0) {
-      res.header("Cache-Control", "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=14400");
+      res.header("Cache-Control", "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400");
       res.header("Vary", "Accept-Encoding");
       res.json(jsonPayLoad);
     } else {
