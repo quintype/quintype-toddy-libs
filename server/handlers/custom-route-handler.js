@@ -44,7 +44,9 @@ function writeStaticPageResponse(res, url, page, result, { config, renderLayout,
 
 exports.customRouteHandler = function customRouteHandler(req, res, next, { config, client, loadData, loadErrorData, renderLayout, logError, seo, domainSlug }) {
   const url = urlLib.parse(req.url, true);
-  const path = req.params[0];
+  const path = req.params[0].endsWith('/') ?
+    req.params[0].slice(0, -1) :
+    req.params[0];
   return CustomPath.getCustomPathData(client, path)
     .then(page => {
       if(!page) {
