@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.10.2](https://github.com/quintype/quintype-node-framework/compare/v3.10.1...v3.10.2) (2019-07-17)
+
+
+### Bug Fixes
+
+* **customRouteHandler:** Remove trailing slash if any for static pages :bug: ([#89](https://github.com/quintype/quintype-node-framework/issues/89)) ([d7f2896](https://github.com/quintype/quintype-node-framework/commit/d7f2896))
+* **package-lock:** bump package lock ([82fc66f](https://github.com/quintype/quintype-node-framework/commit/82fc66f))
+
+
+
 ## [3.10.1](https://github.com/quintype/quintype-node-framework/compare/v3.10.0...v3.10.1) (2019-06-24)
 
 
