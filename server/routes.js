@@ -19,7 +19,6 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
   const host = config.sketches_host;
   const apiProxy = require("http-proxy").createProxyServer({
     target: host,
-    proxyTimeout: 10 * 1000,
     ssl: host.startsWith("https") ? {servername: host.replace(/^https:\/\//, "")} : undefined
   });
 
