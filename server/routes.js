@@ -185,7 +185,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 
   //if(mobileApiEnabled) {
   if(true) {
-    app.get("/mobile-data.json", withMobileResponse(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}, withConfig))
+    app.get("/mobile-data.json", withMobileResponse(withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion})))
   }
 
   if(assetLinkFn) {
