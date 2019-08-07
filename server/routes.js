@@ -99,13 +99,13 @@ function withConfigPartial(getClient, logError, publisherConfig = require("./pub
   }
 }
 
-async function withMobileResponse(f){
+function withMobileResponse(f){
   return function(req, res, next) {
     return f(req, res, next).then(data => {
       //TODO: Implement data pick/omit here
       console.log(`response data --> `, data);
       return data;
-    })
+    });
   }
 }
 
@@ -205,7 +205,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   if(redirectRootLevelStories) {
     app.get("/:storySlug", withConfig(redirectStory, {logError}));
   }
-q
+
   if(handleCustomRoute) {
     app.get("/*", withConfig(customRouteHandler, {loadData, renderLayout, logError, seo}));
   }
