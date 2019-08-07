@@ -99,12 +99,14 @@ function withConfigPartial(getClient, logError, publisherConfig = require("./pub
   }
 }
 
-function withMobileResponse(dataPromise){
-  return dataPromise.then(data => {
-    //TODO: Implement data pick/omit here
-    console.log(`response data --> `, data);
-    return data;
-  })
+async function withMobileResponse(f){
+  return function(req, res, next) {
+    return f(req, res, next).then(data => {
+      //TODO: Implement data pick/omit here
+      console.log(`response data --> `, data);
+      return data;
+    })
+  }
 }
 
 exports.withError = function withError(handler, logError) {
@@ -183,7 +185,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 
   //if(mobileApiEnabled) {
   if(true) {
-    app.get("/mobile-data.json", withMobileResponse(withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion})))
+    app.get("/mobile-data.json", withMobileResponse(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}, withConfig))
   }
 
   if(assetLinkFn) {
