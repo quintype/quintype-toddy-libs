@@ -6,6 +6,10 @@ function getClientImpl(config, cachedSecondaryClients, hostname) {
   return cachedSecondaryClients[hostname] || createTemporaryClient(config, hostname);
 }
 
+function getMobileClient(hostname) {
+  return new Client(hostname);
+}
+
 function createTemporaryClient(config, hostname) {
   const configuredHosts = config.host_to_api_host || {};
   if(configuredHosts[hostname]) {
@@ -47,4 +51,4 @@ CustomPath.prototype.cacheKeys = function(publisherId) {
   return page && page.id ? [customUrlToCacheKey(publisherId, page)] : null;
 }
 
-module.exports = {getClientImpl, Client, Story, Author, CustomPath, Member, Collection, Entity, MenuGroups, Config};
+module.exports = {getClientImpl, getMobileClient, Client, Story, Author, CustomPath, Member, Collection, Entity, MenuGroups, Config};
