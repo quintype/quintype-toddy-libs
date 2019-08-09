@@ -47,4 +47,4 @@ CustomPath.prototype.cacheKeys = function(publisherId) {
   return page && page.id ? [customUrlToCacheKey(publisherId, page)] : null;
 }
 
-module.exports = {getClientImpl, getMobileClient, Client, Story, Author, CustomPath, Member, Collection, Entity, MenuGroups, Config};
+module.exports = {getClientImpl, Client, Story, Author, CustomPath, Member, Collection, Entity, MenuGroups, Config};
