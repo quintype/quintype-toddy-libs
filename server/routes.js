@@ -132,33 +132,43 @@ function wrapLoadDataWithMultiDomain(publisherConfig, f, configPos) {
   }
 }
 
+function getWithConfig(app, route, handler, opts = {}) {
+  const {
+    getClient = require("./api-client").getClient,
+    publisherConfig = require("./publisher-config"),
+    logError
+  } = opts;
+  const withConfig = withConfigPartial(getClient, logError, publisherConfig);
+  app.get(route, withConfig(handler, opts))
+}
+
 exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                      {generateRoutes,
-                                                      renderLayout,
-                                                      loadData,
-                                                      pickComponent,
-                                                      loadErrorData,
-                                                      seo,
-                                                      manifestFn,
-                                                      assetLinkFn,
+                                                       renderLayout,
+                                                       loadData,
+                                                       pickComponent,
+                                                       loadErrorData,
+                                                       seo,
+                                                       manifestFn,
+                                                       assetLinkFn,
 
-                                                      logError = require("./logger").error,
-                                                      oneSignalServiceWorkers = false,
-                                                      staticRoutes = [],
-                                                      appVersion = 1,
-                                                      preloadJs = false,
-                                                      preloadRouteData = false,
-                                                      handleCustomRoute = true,
-                                                      handleNotFound = true,
-                                                      redirectRootLevelStories = false,
+                                                       logError = require("./logger").error,
+                                                       oneSignalServiceWorkers = false,
+                                                       staticRoutes = [],
+                                                       appVersion = 1,
+                                                       preloadJs = false,
+                                                       preloadRouteData = false,
+                                                       handleCustomRoute = true,
+                                                       handleNotFound = true,
+                                                       redirectRootLevelStories = false,
 
-                                                      // The below are primarily for testing
-                                                      assetHelper = require("./asset-helper"),
-                                                      getClient = require("./api-client").getClient,
-                                                      renderServiceWorker = renderServiceWorkerFn,
-                                                      templateOptions = false,
-                                                      publisherConfig = require("./publisher-config"),
-                                                    }) {
+                                                       // The below are primarily for testing
+                                                       assetHelper = require("./asset-helper"),
+                                                       getClient = require("./api-client").getClient,
+                                                       renderServiceWorker = renderServiceWorkerFn,
+                                                       templateOptions = false,
+                                                       publisherConfig = require("./publisher-config"),
+                                                     }) {
 
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
 
@@ -213,16 +223,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   if(handleNotFound) {
     app.get("/*", withConfig(notFoundHandler, {renderLayout, pickComponent, loadErrorData, logError, assetHelper}));
   }
-}
-
-function getWithConfig(app, route, handler, opts = {}) {
-  const {
-    getClient = require("./api-client").getClient,
-    publisherConfig = require("./publisher-config"),
-    logError
-  } = opts;
-  const withConfig = withConfigPartial(getClient, logError, publisherConfig);
-  app.get(route, withConfig(handler, opts))
 }
 
 exports.getWithConfig = getWithConfig;

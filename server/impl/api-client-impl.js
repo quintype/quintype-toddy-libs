@@ -6,10 +6,6 @@ function getClientImpl(config, cachedSecondaryClients, hostname) {
   return cachedSecondaryClients[hostname] || createTemporaryClient(config, hostname);
 }
 
-function getMobileClient(hostname) {
-  return new Client(hostname);
-}
-
 function createTemporaryClient(config, hostname) {
   const configuredHosts = config.host_to_api_host || {};
   if(configuredHosts[hostname]) {
