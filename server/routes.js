@@ -161,6 +161,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        handleCustomRoute = true,
                                                        handleNotFound = true,
                                                        redirectRootLevelStories = false,
+                                                       mobileApiEnabled = true,
 
                                                        // The below are primarily for testing
                                                        assetHelper = require("./asset-helper"),
@@ -193,8 +194,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
     app.get("/manifest.json", withConfig(handleManifest, {manifestFn, logError}))
   }
 
-  //if(mobileApiEnabled) {
-  if(true) {
+  if(mobileApiEnabled) {
     app.get("/mobile-data.json", withMobileResponse(withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion})))
   }
 
