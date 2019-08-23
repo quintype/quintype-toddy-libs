@@ -2,13 +2,16 @@ const flatMap = require('lodash/flatMap');
 const uniq = require('lodash/uniq');
 
 class AssetHelperImpl {
-  constructor(config, assets, {readFileSync} = {}) {
+  constructor(config, assets, {readFileSync, readFile} = {}) {
     this.config = config;
     this.assets = assets;
     this.readFileSync = readFileSync || require("fs").readFileSync;
+    this.readFile = readFile || require("fs").readFile;
+    this.assetsContent = {};
 
     this.assetPath = this.assetPath.bind(this);
     this.readAsset = this.readAsset.bind(this);
+    this.readAssetAsync = this.readAssetAsync.bind(this);
     this.assetHash = this.assetHash.bind(this);
     this.assetFiles = this.assetFiles.bind(this);
     this.getChunk = this.getChunk.bind(this);
@@ -31,6 +34,19 @@ class AssetHelperImpl {
     }
   }
 
+  async readAssetAsync(asset) {
+    const path = this.assets[asset];
+    if(path) {
+      if(!this.assetsContent[path]) {
+        await this.readFile("public" + path, (err, data) => {
+          if (err) throw err;
+          this.assetsContent[path] = data;
+        })
+      }
+      return this.assetsContent[path];
+    }
+  }
+
   getChunk(chunk) {
     const getDependentFiles = (ext) => {
       const regex = RegExp(`(${chunk}~|~${chunk}).*\.${ext}$`);
@@ -44,7 +60,7 @@ class AssetHelperImpl {
     return {
       cssFiles: getDependentFiles('css').map(file => ({
         path: this.assetPath(file),
-        content: this.readAsset(file)
+        content: this.readAssetAsync(file)
       })),
       jsPaths: getDependentFiles('js').map(file => this.assetPath(file))
     };
