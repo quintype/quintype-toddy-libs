@@ -6,6 +6,7 @@ class AssetHelperImpl {
     this.config = config;
     this.assets = assets;
     this.readFileSync = readFileSync || require("fs").readFileSync;
+    this.assetsContent = {};
 
     this.assetPath = this.assetPath.bind(this);
     this.readAsset = this.readAsset.bind(this);
@@ -15,6 +16,7 @@ class AssetHelperImpl {
     this.getAllChunks = this.getAllChunks.bind(this);
     this.getFilesForChunks = this.getFilesForChunks.bind(this);
     this.serviceWorkerContents = this.serviceWorkerContents.bind(this);
+    this.warmupAssetCache = this.warmupAssetCache.bind(this);
   }
 
   assetPath(asset, host = this.config.asset_host) {
@@ -26,9 +28,20 @@ class AssetHelperImpl {
 
   readAsset(asset) {
     const path = this.assets[asset];
-    if (path) {
-      return this.readFileSync("public" + path);
+    
+    if(!path) {
+      return undefined;
     }
+    
+    if(!this.assetsContent[path]) {
+      this.assetsContent[path] = this.readFileSync("public" + path);
+    }
+    
+    return this.assetsContent[path];
+  }
+
+  warmupAssetCache() {
+    this.getAllChunks.apply(this, arguments);
   }
 
   getChunk(chunk) {
@@ -37,10 +50,8 @@ class AssetHelperImpl {
       const assets = this.assets[`${chunk}.${ext}`]
         ? [`${chunk}.${ext}`]
         : []
-
       return assets.concat(Object.keys(this.assets).filter(asset => regex.test(asset)));
     }
-
     return {
       cssFiles: getDependentFiles('css').map(file => ({
         path: this.assetPath(file),
