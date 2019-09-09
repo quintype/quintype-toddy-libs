@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.12.0](https://github.com/quintype/quintype-node-framework/compare/v3.11.0...v3.12.0) (2019-09-09)
+
+
+### Features
+
+* **mobile-data:** Implement mobile data route ([#90](https://github.com/quintype/quintype-node-framework/issues/90)) ([44b2956](https://github.com/quintype/quintype-node-framework/commit/44b2956))
+
+
+
 # [3.11.0](https://github.com/quintype/quintype-node-framework/compare/v2.95.0...v3.11.0) (2019-08-26)
 
 
