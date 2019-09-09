@@ -99,6 +99,16 @@ function withConfigPartial(getClient, logError, publisherConfig = require("./pub
   }
 }
 
+function withMobileResponse(f){
+  return function(req, res, next) {
+    return f(req, res, next).then(data => {
+      //TODO: Implement data pick/omit here
+      console.log(`response data --> `, data);
+      return data;
+    });
+  }
+}
+
 exports.withError = function withError(handler, logError) {
   return async (req, res, next, opts) => {
     try {
@@ -122,33 +132,44 @@ function wrapLoadDataWithMultiDomain(publisherConfig, f, configPos) {
   }
 }
 
+function getWithConfig(app, route, handler, opts = {}) {
+  const {
+    getClient = require("./api-client").getClient,
+    publisherConfig = require("./publisher-config"),
+    logError
+  } = opts;
+  const withConfig = withConfigPartial(getClient, logError, publisherConfig);
+  app.get(route, withConfig(handler, opts))
+}
+
 exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                      {generateRoutes,
-                                                      renderLayout,
-                                                      loadData,
-                                                      pickComponent,
-                                                      loadErrorData,
-                                                      seo,
-                                                      manifestFn,
-                                                      assetLinkFn,
+                                                       renderLayout,
+                                                       loadData,
+                                                       pickComponent,
+                                                       loadErrorData,
+                                                       seo,
+                                                       manifestFn,
+                                                       assetLinkFn,
 
-                                                      logError = require("./logger").error,
-                                                      oneSignalServiceWorkers = false,
-                                                      staticRoutes = [],
-                                                      appVersion = 1,
-                                                      preloadJs = false,
-                                                      preloadRouteData = false,
-                                                      handleCustomRoute = true,
-                                                      handleNotFound = true,
-                                                      redirectRootLevelStories = false,
+                                                       logError = require("./logger").error,
+                                                       oneSignalServiceWorkers = false,
+                                                       staticRoutes = [],
+                                                       appVersion = 1,
+                                                       preloadJs = false,
+                                                       preloadRouteData = false,
+                                                       handleCustomRoute = true,
+                                                       handleNotFound = true,
+                                                       redirectRootLevelStories = false,
+                                                       mobileApiEnabled = true,
 
-                                                      // The below are primarily for testing
-                                                      assetHelper = require("./asset-helper"),
-                                                      getClient = require("./api-client").getClient,
-                                                      renderServiceWorker = renderServiceWorkerFn,
-                                                      templateOptions = false,
-                                                      publisherConfig = require("./publisher-config"),
-                                                    }) {
+                                                       // The below are primarily for testing
+                                                       assetHelper = require("./asset-helper"),
+                                                       getClient = require("./api-client").getClient,
+                                                       renderServiceWorker = renderServiceWorkerFn,
+                                                       templateOptions = false,
+                                                       publisherConfig = require("./publisher-config"),
+                                                     }) {
 
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
 
@@ -171,6 +192,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 
   if(manifestFn) {
     app.get("/manifest.json", withConfig(handleManifest, {manifestFn, logError}))
+  }
+
+  if(mobileApiEnabled) {
+    app.get("/mobile-data.json", withMobileResponse(withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion})))
   }
 
   if(assetLinkFn) {
@@ -198,16 +223,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   if(handleNotFound) {
     app.get("/*", withConfig(notFoundHandler, {renderLayout, pickComponent, loadErrorData, logError, assetHelper}));
   }
-}
-
-function getWithConfig(app, route, handler, opts = {}) {
-  const {
-    getClient = require("./api-client").getClient,
-    publisherConfig = require("./publisher-config"),
-    logError
-  } = opts;
-  const withConfig = withConfigPartial(getClient, logError, publisherConfig);
-  app.get(route, withConfig(handler, opts))
 }
 
 exports.getWithConfig = getWithConfig;
