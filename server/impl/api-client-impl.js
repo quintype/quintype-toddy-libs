@@ -17,6 +17,14 @@ function createTemporaryClient(config, hostname) {
     return new Client(`https://${hostname.replace(matchedString, "")}`, true);
 }
 
+function itemToCacheKey(publisherId, item) {
+  switch(item.type) {
+    case "story": return [storyToCacheKey(publisherId, item.story)];
+    case "collection": return Collection.build(item).cacheKeys(publisherId).slice(0, 5);
+    default: return [];
+  }
+}
+
 function getItemCacheKeys(publisherId, items, depth) {
   let storyCacheKeys = [];
   let collectionCacheKeys = [];
@@ -29,7 +37,7 @@ function getItemCacheKeys(publisherId, items, depth) {
       collectionCacheKeys.push(...collectionKeys.collectionCacheKeys);
       break;
     }
-  })
+  });
   return ({ storyCacheKeys, collectionCacheKeys });
 }
 
@@ -43,6 +51,10 @@ Collection.prototype.getCollectionCacheKeys = function(publisherId, depth) {
 }
 
 Collection.prototype.cacheKeys = function(publisherId, depth) {
+  if(!depth) {
+    return [collectionToCacheKey(publisherId, this)]
+           .concat(_.flatMap(this.items, item => itemToCacheKey(publisherId, item)));
+  }
   const { storyCacheKeys, collectionCacheKeys } = getItemCacheKeys(publisherId, this.items, depth + 1);
   return [collectionToCacheKey(publisherId, this)].concat([...collectionCacheKeys, ...storyCacheKeys.slice(0, 200 - collectionCacheKeys.length)]);
 };
