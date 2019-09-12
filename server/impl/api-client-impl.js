@@ -17,17 +17,34 @@ function createTemporaryClient(config, hostname) {
     return new Client(`https://${hostname.replace(matchedString, "")}`, true);
 }
 
-function itemToCacheKey(publisherId, item) {
-  switch(item.type) {
-    case "story": return [storyToCacheKey(publisherId, item.story)];
-    case "collection": return Collection.build(item).cacheKeys(publisherId).slice(0, 5);
-    default: return [];
-  }
+function getItemCacheKeys(publisherId, items, depth) {
+  let storyCacheKeys = [];
+  let collectionCacheKeys = [];
+  items.map(item => {
+    switch(item.type) {
+      case "story": storyCacheKeys.push(storyToCacheKey(publisherId, item.story));
+      break;
+      case "collection": let collectionKeys = Collection.build(item).getCollectionCacheKeys(publisherId, depth - 1);
+      storyCacheKeys.push(...collectionKeys.storyCacheKeys);
+      collectionCacheKeys.push(...collectionKeys.collectionCacheKeys);
+      break;
+    }
+  })
+  return ({ storyCacheKeys, collectionCacheKeys });
 }
 
-Collection.prototype.cacheKeys = function(publisherId) {
-  return [collectionToCacheKey(publisherId, this)]
-           .concat(_.flatMap(this.items, item => itemToCacheKey(publisherId, item)));
+Collection.prototype.getCollectionCacheKeys = function(publisherId, depth) {
+  if (!depth) {
+    return ({ storyCacheKeys: [] , collectionCacheKeys: collectionToCacheKey(publisherId, this) });
+  }
+  let { storyCacheKeys, collectionCacheKeys } = getItemCacheKeys(publisherId, this.items, depth);
+  collectionCacheKeys.unshift(collectionToCacheKey(publisherId, this));
+  return ({ storyCacheKeys, collectionCacheKeys });
+}
+
+Collection.prototype.cacheKeys = function(publisherId, depth) {
+  const { storyCacheKeys, collectionCacheKeys } = getItemCacheKeys(publisherId, this.items, depth);
+  return [collectionToCacheKey(publisherId, this)].concat([...collectionCacheKeys, ...storyCacheKeys.slice(0, 200 - collectionCacheKeys.length)]);
 };
 
 Story.prototype.cacheKeys = function(publisherId) {
