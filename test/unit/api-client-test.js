@@ -45,7 +45,15 @@ describe('ApiClient', function() {
       assert.deepEqual(["c/1/42", "s/1/264f46f9"], collection.cacheKeys(1));
     })
 
-    it("adds nested collections", function() {
+    it("adds nested collections when depth is passed", function() {
+      const collection = Collection.build({
+        id: "42",
+        items: [{type: "collection", id: "500", items: [{type: "collection", id: "600", items: [{type: "collection", id: "700", items: [{type: 'story', story: {id: "abcdef12"}}]}]}, {type: "collection", id: "800", items: [{type: "collection", id: "900", items: [{type: 'story', story: {id: "xyz12"}}]}]}]}]
+      });
+      assert.deepEqual(["c/1/42", "c/1/500", "c/1/600", "c/1/700", "c/1/800", "c/1/900", "s/1/abcdef12", "s/1/xyz12"], collection.cacheKeys(1, 3));
+    })
+
+    it("adds nested collections when depth is not passed", function() {
       const collection = Collection.build({
         id: "42",
         items: [{type: "collection", id: "500", items: [{type: 'story', story: {id: "abcdef12"}}]}]
