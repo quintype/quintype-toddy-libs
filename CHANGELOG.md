@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.13.0](https://github.com/quintype/quintype-node-framework/compare/v3.12.0...v3.13.0) (2019-09-19)
+
+
+### Features
+
+* Reimplement cache tags logic ([#93](https://github.com/quintype/quintype-node-framework/issues/93)) ([d08fd01](https://github.com/quintype/quintype-node-framework/commit/d08fd01))
+
+
+
 # [3.12.0](https://github.com/quintype/quintype-node-framework/compare/v3.11.0...v3.12.0) (2019-09-09)
 
 
