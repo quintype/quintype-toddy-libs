@@ -2,4 +2,11 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>https://developers.quintype.com/quintype-node-framework/</loc></url>
 <url><loc>https://developers.quintype.com/quintype-node-framework/global.html</loc></url>
+<url><loc>https://developers.quintype.com/quintype-node-framework/module-analytics.html</loc></url>
+<url><loc>https://developers.quintype.com/quintype-node-framework/module-fcm.html</loc></url>
+<url><loc>https://developers.quintype.com/quintype-node-framework/module-IsomorphicComponent.html</loc></url>
+<url><loc>https://developers.quintype.com/quintype-node-framework/module-match-best-route.html</loc></url>
+<url><loc>https://developers.quintype.com/quintype-node-framework/module-pick-component-helper.html</loc></url>
+<url><loc>https://developers.quintype.com/quintype-node-framework/module-service-worker-helper.html</loc></url>
+<url><loc>https://developers.quintype.com/quintype-node-framework/module-start.html</loc></url>
 </urlset>
