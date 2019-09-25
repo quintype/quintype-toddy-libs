@@ -1,3 +1,16 @@
+/**
+ * This namespace handles integration with Firebase Cloud Messaging
+ * ```javascript
+ * import { initializeFCM } from "@quintype/framework/client/fcm";
+ * ```
+ * @category Client
+ * @module fcm
+ */
+
+/**
+ * initializeFCM will initialize FCM for sending push notifications.
+ * @param {string} messageSenderId The Firebase message sender id
+ */
 export function initializeFCM(messageSenderId) {
   if ( !messageSenderId ){
       console.log("messageSenderId is required");

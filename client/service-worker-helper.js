@@ -1,8 +1,15 @@
+/**
+ * ```javascript
+ * import { initializeQServiceWorker } from "quintype/framework/client/service-worker-helper";
+ * ```
+ * @category Service Worker
+ * @module service-worker-helper
+ */
 // istanbul ignore file: Needs to be run as a service worker
 
-const workboxVersion = '2.1.1';
-
 import {matchBestRoute} from '../isomorphic/match-best-route';
+
+const workboxVersion = '2.1.1';
 
 function qDebug() {
   if(process.env.NODE_ENV !== 'production') {
@@ -10,6 +17,14 @@ function qDebug() {
   }
 }
 
+/**
+ * Start the Service Worker.
+ * @param {ServiceWorkerScope} self
+ * @param {Object} params
+ * @param {function} params.excludeNavigation A function to exclude the PWA from serving the shell on that route, even if the route matches as per *routes*.
+ * @param {Array<Route>} params.routes An array of routes for the PWA to match
+ * @param {Array<string>} params.assets A list of assets to be cached before the ServiceWorker is installed
+ */
 export function initializeQServiceWorker(self, params) {
   importScripts(`https://unpkg.com/workbox-sw@${workboxVersion}/build/importScripts/workbox-sw.${process.env.NODE_ENV == 'production' ? 'prod' : 'dev'}.v${workboxVersion}.js`);
 
@@ -32,10 +47,10 @@ export function initializeQServiceWorker(self, params) {
     if(matchBestRoute(url.pathname, params.routes)) {
       qDebug(`Rendering the shell for navigation to ${url.pathname}`);
       return true;
-    } else {
+    }
       qDebug(`Not rendering the shell for navigation to ${url.pathname}`);
       return false;
-    }
+
   };
   const shellHandler = ({event}) => caches.match('/shell.html').then((r) => r || fetch(event.request));
 

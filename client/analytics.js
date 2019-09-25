@@ -1,17 +1,30 @@
+/**
+ * This namespace handles a number of analytics related functions.
+ * The vast majority of these features are already wired by default, but and are only required to be called manually if you are doing something special.
+ * ```javascript
+ * import * from "@quintype/framework/client/analytics";
+ * ```
+ * @category Client
+ * @module analytics
+ */
+
 import get from 'lodash/get'
 import { runWhenIdle } from "./run-when-idle";
 
+/**
+ * Load qlitics.js. This should be done automatically for you
+ */
 // istanbul ignore next
 export function startAnalytics() {
   global.qlitics=global.qlitics||function(){(qlitics.q=qlitics.q||[]).push(arguments);};
   global.qlitics('init');
 
   runWhenIdle(function () {
-    var s = document.createElement('script');
+    const s = document.createElement('script');
     s.type = 'text/javascript';
     s.async = true;
     s.src = '/qlitics.js';
-    var x = document.getElementsByTagName('script')[0];
+    const x = document.getElementsByTagName('script')[0];
     x.parentNode.insertBefore(s, x);
   });
 }
@@ -26,12 +39,22 @@ function pageTypeToQliticsPageType(pageType) {
   }
 }
 
+/**
+ * Register a story view event. This should already be wired up for story pages, but this event can
+ * be fired on an infinite scroll event. Ideally, please use {@link registerPageView}
+ * @param {uuid} storyContentId
+ */
 export function registerStoryView(storyContentId) {
   global.qlitics('track', 'story-view', {
     'story-content-id': storyContentId,
   });
 }
 
+/**
+ * Register a page view in both qlitics and google analytics. This method takes the page object, which is usually returned from *"/route-data.json"*.
+ * @param {Object} page ex: *{"page-type": "story-page", "story": {...}}*
+ * @param {string} newPath ex: "/path/to/story"
+ */
 export function registerPageView(page, newPath) {
   global.qlitics('track', 'page-view', {"page-type": pageTypeToQliticsPageType(page.pageType)})
   if(page.pageType == 'story-page') {
@@ -49,10 +72,20 @@ export function registerPageView(page, newPath) {
   }
 }
 
+/**
+ * Set the current member id on qlitics
+ * @param {number} memberId The member id of the logged in member
+ */
 export function setMemberId(memberId) {
   global.qlitics('set', 'member-id', memberId);
 }
 
+/**
+ * This event will register a social share of a story in qlitics
+ * @param {uuid} storyContentId The id of the story being shared
+ * @param {string} socialMediaType The social network the item is being shared on
+ * @param {string} storyUrl The canonical URL of the story
+ */
 export function registerStoryShare(storyContentId, socialMediaType, storyUrl) {
   global.qlitics('track', 'story-share', {
     'story-content-id': storyContentId,

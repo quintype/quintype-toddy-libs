@@ -1,5 +1,26 @@
+/**
+ * @category Isomorphic
+ * @module match-best-route
+ */
+
 const {matchPath} = require("react-router");
 
+/**
+ * Route represents a url pattern which is matched by the quintype framework.
+ * See {@link https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture#routing Routing} for more information on how the route is used.
+ * ```javascript
+ * {
+ *  path: "/my-route/:routeParam",
+ *  pageType: "home-page",
+ *  exact: true,
+ *  params: { foo: "bar" }
+ * }
+ * ```
+ * @typedef Route
+ * @property {string} path The path that the route matches.
+ * @property {string} pageType The page type
+ * @property {boolean} exact Is this route an exact match or a prefix
+ */
 
 function matchAllRoutes(path, routes) {
   // Sure there is some construct to do these two lines
