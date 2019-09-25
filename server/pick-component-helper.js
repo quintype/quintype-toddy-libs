@@ -1,16 +1,3 @@
-exports.pickComponentHelper = function pickComponentHelper(components, loadChunk) {
-  return {
-    pickComponent: pickComponent,
-    getChunkName: getChunkName
-  }
+const { pickComponentHelper } = require("../isomorphic/pick-component-helper");
 
-  function pickComponent(pageType) {
-    const { chunk, component } = components[pageType] || components['default'];
-    return loadChunk[chunk]().then(chunk => chunk[component]);
-  }
-
-  function getChunkName(pageType) {
-    const { chunk } = components[pageType] || components['default'];
-    return chunk;
-  }
-}
+exports.pickComponentHelper = pickComponentHelper;

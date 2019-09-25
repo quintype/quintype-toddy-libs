@@ -35,4 +35,12 @@ function mapDispatchToProps() {
   return {};
 }
 
+/**
+ * IsomorphicComponent is used to render the main content of all isomorphic pages.
+ * IsomorphicComponent is used during the {@link https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture#render render} phase.
+ * This component is not meant to be used directly, instead see {@link module:start.renderIsomorphicComponent renderIsomorphicComponent}
+ *
+ * @category Isomorphic
+ * @module IsomorphicComponent
+ */
 exports.IsomorphicComponent = connect(mapStateToProps, mapDispatchToProps)(IsomorphicComponentBase);
