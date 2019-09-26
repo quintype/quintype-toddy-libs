@@ -293,6 +293,23 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
 
 exports.getWithConfig = getWithConfig;
 
+/**
+ * *proxyGetRequest* can be used to forward requests to another host, and cache the results on our CDN. This can be done as follows in `app/server/app.js`.
+ *
+ * ```javascript
+ * proxyGetRequest(app, "/path/to/:resource.json", (params) => `https://example.com/${params.resource}.json`, {logError})
+ * ```
+ *
+ * The handler can return the following:
+ * * null / undefined - The result will be a 503
+ * * any truthy value - The result will be returned as a 200 with the result as content
+ * * A url starting with http(s) - The URL will be fetched and content will be returned according to the above two rules
+ * @param {Express} app The app to add the route to
+ * @param {string} route The new route
+ * @param {function} handler A function which takes params and returns a URL to proxy
+ * @param opts
+ * @param opts.cacheControl The cache control header to set on proxied requests (default: *"public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600"*)
+ */
 exports.proxyGetRequest = function(app, route, handler, opts = {}) {
   const {
     cacheControl = "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600"
