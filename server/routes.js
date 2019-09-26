@@ -1,3 +1,12 @@
+/**
+ * This namespace exports multiple utility functions for setting up routes
+ * ```javascript
+ * import { upstreamQuintypeRoutes, isomorphicRoutes, getWithConfig, proxyGetRequest } from "@quintype/framework/server/routes";
+ * ```
+ * @category Server
+ * @module routes
+ */
+
 const {generateServiceWorker} = require("./handlers/generate-service-worker");
 const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute, notFoundHandler } = require("./handlers/isomorphic-handler");
 const {oneSignalImport} = require("./handlers/one-signal");
@@ -10,11 +19,22 @@ const { registerFCMTopic } = require("./handlers/fcm-registration-handler");
 const rp = require("request-promise");
 const bodyParser = require("body-parser");
 
+/**
+ * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
+ *
+ * Requests like *&#47;api&#47;&ast;* and *&#47;stories.rss* are directly forwarded, but also it is also possible to forward other routes.
+ * @param {Express} app The express app to add the routes to
+ * @param {Object} opts Options
+ * @param {Array<string>} opts.extraRoutes Additionally forward some routes upstream. This takes an array of express compatible routes, such as ["/foo/*"]
+ * @param {boolean} opts.forwardAmp Forward amp story routes upstream (default false)
+ * @param {boolean} opts.forwardFavicon Forward favicon requests to the CMS (default false)
+ */
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
                                                                  {forwardAmp = false,
                                                                   forwardFavicon = false,
-                                                                  config = require("./publisher-config"),
                                                                   extraRoutes = [],
+
+                                                                  config = require("./publisher-config"),
                                                                   getClient = require("./api-client").getClient} = {}) {
   const host = config.sketches_host;
   const apiProxy = require("http-proxy").createProxyServer({
@@ -132,18 +152,64 @@ function wrapLoadDataWithMultiDomain(publisherConfig, f, configPos) {
   }
 }
 
+/**
+ * A handler is an extension of an express handler. Handlers are declared with the following arguments
+ * ```javascript
+ * function handler(req, res, next, { config, client, ...opts }) {
+ *  // do something cool
+ * }
+ * ```
+ * @typedef Handler
+ */
+
+/**
+ * Use *getWithConfig* to handle GET requests. The handle that is accepted is of type {@link module:routes~Handler}, which is similar to an express
+ * handler, but already has a *client* initialized, and the *config* fetched from the server.
+ *
+ * @param {Express} app Express app to add the route to
+ * @param {string} route The route to implement
+ * @param {module:routes~Handler} handler The Handler to run
+ * @param {Object} opts Options that will be passed to the handler. These options will be merged with a *config* and *client*
+ */
 function getWithConfig(app, route, handler, opts = {}) {
   const {
     getClient = require("./api-client").getClient,
     publisherConfig = require("./publisher-config"),
-    logError
+    logError = require("./logger").error,
   } = opts;
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
   app.get(route, withConfig(handler, opts))
 }
 
+/**
+ * *isomorphicRoutes* brings all the moving parts of the [server side rendering](https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture) together.
+ * It accepts all the pieces needed, and implements all the plumbing to make these pieces work together.
+ *
+ * Note that *isomorphicRoutes* adds a route that matches *&#47;&ast;*, so it should be near the end of your *app/server/app.js*.
+ *
+ * @param {Express} app Express app to add the routes to
+ * @param {Object} opts Options
+ * @param {function} opts.generateRoutes A function that generates routes to be matched given a config. See [routing](https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture#routing) for more information. This call should be memoized, as it's called on every request
+ * @param {function} opts.renderLayout A function that renders the layout given the content injected by *isomorphicRoutes*. See [renderLayout](https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture#renderlayout)
+ * @param {function} opts.loadData An async function that loads data for the page, given the *pageType*. See [loadData](https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture#loaddata)
+ * @param {function} opts.pickComponent An async function that picks the correct component for rendering each *pageType*. See [pickComponent](https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture#pickcomponent)
+ * @param {function} opts.loadErrorData An async function that loads data if there is an error. If *handleNotFound* is set to true, this function is also called to load data for the 404 page
+ * @param {SEO} opts.seo An SEO object that will generate html tags for each page. See [@quintype/seo](https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture#quintypeseo)
+ * @param {function} opts.manifestFn An async function that accepts the *config*, and returns content for the *&#47;manifest.json*. Common fields like *name*, *start_url* will be populated by default, but can be owerwritten. If not set, then manifest will not be generated.
+ * @param {function} opts.assetLinkFn An async function that accepts *config* and returns *{ packageName, authorizedKeys }* for the Android *&#47;.well-known/assetlinks.json*. If not implemented, then AssetLinks will return a 404.
+ * @param {boolean} opts.oneSignalServiceWorkers If set to true, then generate *&#47;OneSignalSKDWorker.js* which combines the Quintype worker as well as OneSignal's worker. (default: false)
+ * @param {*} opts.staticRoutes WIP: List of static routes
+ * @param {number} opts.appVersion The version of this app. In case there is a version mismatch between server and client, then client will update ServiceWorker in the background. See *app/isomorphic/app-version.js*.
+ * @param {boolean} opts.preloadJs Return a *Link* header preloading JS files. In h/2 compatible browsers, this Js will be pushed. (default: false)
+ * @param {boolean} opts.preloadRouteData Return a *Link* header preloading *&#47;route-data.json*. In h/2 compatible browsers, this Js will be pushed. (default: false)
+ * @param {boolean} opts.handleCustomRoute If the page is not matched as an isomorphic route, then match against a static page or redirect in the CMS, and behave accordingly. Note, this runs after the isomorphic routes, so any live stories or sections will take precedence over a redirection set up in the editor. (default: true)
+ * @param {boolean} opts.handleNotFound If set to true, then handle 404 pages with *pageType* set to *"not-found"*. (default: true)
+ * @param {boolean} opts.redirectRootLevelStories If set to true, then stories URLs without a section (at *&#47;:storySlug*) will redirect to the canonical url (default: false)
+ * @param {boolean} opts.mobileApiEnabled If set to true, then *&#47;mobile-data.json* will respond to mobile API requests. This is primarily used by the React Native starter kit. (default: true)
+ * @param {boolean} opts.templateOptions If set to true, then *&#47;template-options.json* will return a list of available components so that components can be sorted in the CMS. This reads data from *config/template-options.yml*. See [Adding a homepage component](https://developers.quintype.com/malibu/tutorial/adding-a-homepage-component) for more details
+ */
 exports.isomorphicRoutes = function isomorphicRoutes(app,
-                                                     {generateRoutes,
+                                                     { generateRoutes,
                                                        renderLayout,
                                                        loadData,
                                                        pickComponent,
@@ -152,7 +218,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        manifestFn,
                                                        assetLinkFn,
 
-                                                       logError = require("./logger").error,
                                                        oneSignalServiceWorkers = false,
                                                        staticRoutes = [],
                                                        appVersion = 1,
@@ -162,12 +227,13 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        handleNotFound = true,
                                                        redirectRootLevelStories = false,
                                                        mobileApiEnabled = true,
+                                                       templateOptions = false,
 
                                                        // The below are primarily for testing
+                                                       logError = require("./logger").error,
                                                        assetHelper = require("./asset-helper"),
                                                        getClient = require("./api-client").getClient,
                                                        renderServiceWorker = renderServiceWorkerFn,
-                                                       templateOptions = false,
                                                        publisherConfig = require("./publisher-config"),
                                                      }) {
 

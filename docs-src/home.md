@@ -7,4 +7,4 @@ It handles a number of functionality, such as
 
 For an explanation of the architecture of this library, please see [Malibu Documentation](https://developers.quintype.com/malibu/isomorphic-rendering).
 
-This documentation is still WIP. However, many topics might be covered in the [Malibu Documentation](https://developers.quintype.com/malibu) and [tutorial](https://developers.quintype.com/malibu/tutorial)
+The most important module for configuring your server is {@link module:routes routes}.
