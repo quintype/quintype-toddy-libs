@@ -1,10 +1,11 @@
-var assert = require('assert');
+const assert = require('assert');
 
 import { NAVIGATE_TO_PAGE, SERVICE_WORKER_UPDATED } from '@quintype/components';
+
 const { createQtStore } = require("../../store/create-store")
 
-describe('AssetHelperImpl', function() {
-  describe('assetPath', function() {
+describe('createQtStore', function() {
+  describe('store', function() {
     it("it can create a store with initial values", function() {
       const store = createQtStore({}, {pageType: "home-page"}, {location: {pathname: "/foobar"}});
       assert.equal("/foobar", store.getState().qt.currentPath)

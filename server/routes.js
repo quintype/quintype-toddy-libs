@@ -5,7 +5,7 @@ const {customRouteHandler} = require("./handlers/custom-route-handler");
 const {handleManifest, handleAssetLink} = require("./handlers/json-manifest-handlers");
 const {redirectStory} = require("./handlers/story-redirect");
 const {simpleJsonHandler} = require("./handlers/simple-json-handler");
-const {makePickComponentSync} = require("../isomorphic/make-pick-component-sync");
+const {makePickComponentSync} = require("../isomorphic/impl/make-pick-component-sync");
 const { registerFCMTopic } = require("./handlers/fcm-registration-handler");
 const rp = require("request-promise");
 const bodyParser = require("body-parser");
@@ -102,7 +102,7 @@ function withConfigPartial(getClient, logError, publisherConfig = require("./pub
 function withMobileResponse(f){
   return function(req, res, next) {
     return f(req, res, next).then(data => {
-      //TODO: Implement data pick/omit here
+      // TODO: Implement data pick/omit here
       console.log(`response data --> `, data);
       return data;
     });

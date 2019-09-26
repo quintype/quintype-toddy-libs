@@ -1,10 +1,10 @@
-var assert = require('assert');
+const assert = require('assert');
 
-const { AssetHelperImpl } = require("../../server/impl/asset-helper-impl")
+const { AssetHelper } = require("../../server/impl/asset-helper-impl")
 
-describe('AssetHelperImpl', function() {
+describe('AssetHelper', function() {
   describe('assetPath', function() {
-    const {assetPath} = new AssetHelperImpl({asset_host: "//my-cdn"},
+    const {assetPath} = new AssetHelper({asset_host: "//my-cdn"},
                                             {"app.js": "/toddy/assets/app-03e7de595a129bb1ce20.js"})
 
     it("returns the asset path of known assets", function() {
@@ -21,7 +21,7 @@ describe('AssetHelperImpl', function() {
   });
 
   describe("readAsset", function() {
-    const {readAsset, serviceWorkerContents} = new AssetHelperImpl({asset_host: "//my-cdn"},
+    const {readAsset, serviceWorkerContents} = new AssetHelper({asset_host: "//my-cdn"},
                                             {"app.js": "/app.js",
                                              "serviceWorkerHelper.js": "/serviceWorkerHelper.js"},
                                             {readFileSync: path => `Contents of ${path}`})
@@ -41,7 +41,7 @@ describe('AssetHelperImpl', function() {
   });
 
   describe("get asset hash", function() {
-    const {assetHash} = new AssetHelperImpl({asset_host: "//my-cdn"},
+    const {assetHash} = new AssetHelper({asset_host: "//my-cdn"},
                                             {"app.js": "/toddy/assets/app-03e7de595a129bb1ce20.js",
                                              "dev.js": "/toddy/assets/dev.js"})
 
@@ -59,7 +59,7 @@ describe('AssetHelperImpl', function() {
   })
 
   describe("get all asset files", function() {
-    const {assetFiles} = new AssetHelperImpl({asset_host: "//my-cdn"},
+    const {assetFiles} = new AssetHelper({asset_host: "//my-cdn"},
                                              {"app.js": "/toddy/assets/app-03e7de595a129bb1ce20.js",
                                               "dev.js": "/toddy/assets/dev.js"});
 
@@ -71,7 +71,7 @@ describe('AssetHelperImpl', function() {
   })
 
   describe("get files for a chunk", function() {
-    const {getChunk, getAllChunks, getFilesForChunks} = new AssetHelperImpl(
+    const {getChunk, getAllChunks, getFilesForChunks} = new AssetHelper(
       {asset_host: "//my-cdn"},
       {
         "list.css": "/toddy/assets/list-abcd.css",
