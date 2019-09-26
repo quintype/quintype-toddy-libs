@@ -19,8 +19,8 @@ import { createQtStore } from '../store/create-store';
 import { IsomorphicComponent } from '../isomorphic/component'
 import { startAnalytics, registerPageView, registerStoryShare, setMemberId } from './analytics';
 import { registerServiceWorker, setupServiceWorkerUpdates, checkForServiceWorkerUpdates } from './impl/load-service-worker';
-import { makePickComponentSync } from '../isomorphic/make-pick-component-sync';
-import { initializeFCM } from './fcm';
+import { makePickComponentSync } from '../isomorphic/impl/make-pick-component-sync';
+import { initializeFCM } from './impl/fcm';
 
 require("../assetify/client")();
 

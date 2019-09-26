@@ -22,6 +22,11 @@ const {matchPath} = require("react-router");
  * @property {boolean} exact Is this route an exact match or a prefix
  */
 
+ /**
+  * Find all routes that match a given path
+  * @param {string} path The current path
+  * @param {Array<Route>} routes An array of routes to be matched
+  */
 function matchAllRoutes(path, routes) {
   // Sure there is some construct to do these two lines
   if (!path.startsWith('/')) {

@@ -9,7 +9,7 @@
  */
 
 import get from 'lodash/get'
-import { runWhenIdle } from "./run-when-idle";
+import { runWhenIdle } from "./impl/run-when-idle";
 
 /**
  * Load qlitics.js. This should be done automatically for you
