@@ -1,3 +1,21 @@
+/**
+ * This namespace exports a utility function rendering visual stories
+ * ```javascript
+ *import {enableVisualStories} from '@quintype/framework/server/visual-stories';
+ *
+ * function renderVisualStory(res, story, {config, client}) {
+ *   res.render("pages/visual-story", {
+ *     seo: "",
+ *     content: ReactDom.renderToStaticMarkup(<amp-story></amp-story>)
+ *   })
+ * }
+ *
+ * enableVisualStories(app, renderVisualStory, {logError})
+ * ```
+ * @category Server
+ * @module visual-stories
+ */
+
 const { getWithConfig, withError} = require("./routes");
 const {Story} = require("./impl/api-client-impl");
 const {addCacheHeadersToResult} = require("./handlers/cdn-caching");

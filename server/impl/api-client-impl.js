@@ -26,13 +26,13 @@ function itemToCacheKey(publisherId, item) {
 }
 
 function getItemCacheKeys(publisherId, items, depth) {
-  let storyCacheKeys = [];
-  let collectionCacheKeys = [];
+  const storyCacheKeys = [];
+  const collectionCacheKeys = [];
   items.map(item => {
     switch(item.type) {
       case "story": storyCacheKeys.push(storyToCacheKey(publisherId, item.story));
       break;
-      case "collection": let collectionKeys = Collection.build(item).getCollectionCacheKeys(publisherId, depth - 1);
+      case "collection": const collectionKeys = Collection.build(item).getCollectionCacheKeys(publisherId, depth - 1);
       storyCacheKeys.push(...collectionKeys.storyCacheKeys);
       collectionCacheKeys.push(...collectionKeys.collectionCacheKeys);
       break;
@@ -45,7 +45,7 @@ Collection.prototype.getCollectionCacheKeys = function(publisherId, depth) {
   if (!depth) {
     return ({ storyCacheKeys: [] , collectionCacheKeys: [collectionToCacheKey(publisherId, this)] });
   }
-  let { storyCacheKeys, collectionCacheKeys } = getItemCacheKeys(publisherId, this.items, depth);
+  const { storyCacheKeys, collectionCacheKeys } = getItemCacheKeys(publisherId, this.items, depth);
   collectionCacheKeys.unshift(collectionToCacheKey(publisherId, this));
   return ({ storyCacheKeys, collectionCacheKeys });
 }
@@ -67,12 +67,12 @@ Story.prototype.cacheKeys = function(publisherId) {
 Story.sorterToCacheKey = sorterToCacheKey;
 
 Author.prototype.cacheKeys = function(publisherId) {
-  const author = this.author;
+  const {author} = this;
   return author && author.id ? [authorToCacheKey(publisherId, author)] : null;
 }
 
 CustomPath.prototype.cacheKeys = function(publisherId) {
-  const page = this.page;
+  const {page} = this;
   return page && page.id ? [customUrlToCacheKey(publisherId, page)] : null;
 }
 

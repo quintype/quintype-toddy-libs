@@ -1,3 +1,12 @@
+/**
+ * This name contins helpers for generating routes.
+ * ```javascript
+ * import { generateCommonRoutes } from "@quintype/framework/server/generate-routes";
+ * ```
+ * @category Server
+ * @module generate-routes
+ */
+
 // The below code dynamically generates routes based on the config
 // A section sect will generate three urls:
 // /sect, /sect/:storySlug, /sect/*/:storySlug
@@ -87,6 +96,18 @@ function storyPageRoute(path) {
   }
 }
 
+/**
+ * This is sued to generate all routes
+ *
+ * @param {Config} config The config object
+ * @param {string} domainSlug The domainSlug (undefined if this is the main domain)
+ * @param {Object} opts
+ * @param {boolean} opts.allRoutes Generate all routes (default true)
+ * @param {boolean} opts.sectionPageRoutes Generate section page routes (default *allRoutes*)
+ * @param {boolean} opts.storyPageRoutes Generate story page routes (default *allRoutes*)
+ * @param {boolean} opts.homePageRoute Generate home page route (default *allRoutes*)
+ * @return {Array<module:match-best-route~Route>} Array of created routes
+ */
 exports.generateCommonRoutes = function generateSectionPageRoutes(config, domainSlug, {
   allRoutes = true,
   sectionPageRoutes = allRoutes,

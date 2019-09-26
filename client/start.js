@@ -1,22 +1,37 @@
+/**
+ * This module contains functions for starting JS on the browser side
+ * ```javascript
+ * import * from "@quintype/framework/client/start";
+ * ```
+ * @category Client
+ * @module start
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Provider} from 'react-redux';
 import get from 'lodash/get';
 import { createBrowserHistory } from 'history'
 
-import { BreakingNews } from '@quintype/components';
-import { NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components';
+import { BreakingNews , NAVIGATE_TO_PAGE, CLIENT_SIDE_RENDERED, PAGE_LOADING, PAGE_FINISHED_LOADING } from '@quintype/components';
+
 import { createQtStore } from '../store/create-store';
 import { IsomorphicComponent } from '../isomorphic/component'
 import { startAnalytics, registerPageView, registerStoryShare, setMemberId } from './analytics';
 import { registerServiceWorker, setupServiceWorkerUpdates, checkForServiceWorkerUpdates } from './impl/load-service-worker';
-import { makePickComponentSync } from '../isomorphic/make-pick-component-sync';
-import { initializeFCM } from './fcm';
+import { makePickComponentSync } from '../isomorphic/impl/make-pick-component-sync';
+import { initializeFCM } from './impl/fcm';
 
 require("../assetify/client")();
 
+/**
+ * The history object can be used to manipulate browser history.
+ */
 export const history = createBrowserHistory();
 
+/**
+ * app contains multiple useful functions for controlling the app. These are saved on global.app.
+ */
 // App gets two more functions: updateServiceWorker and getAppVersion later
 export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl, registerPageView, registerStoryShare, setMemberId};
 
@@ -52,6 +67,17 @@ function getRouteData(path, {location = global.location, existingFetch}) {
 
 let pickComponentWrapper = null;
 
+/**
+ * navigateToPage is called when hydrating the initial page, or moving between pages with AJAX.
+ * You may want to consider calling {@link maybeNavigateTo} instead.
+ *
+ * This function can also be called as `app.navigateToPage()`.
+ *
+ * @param {function} dispatch The dispatch of the story
+ * @param {string} path The new path you are jumping to
+ * @param {boolean} doNotPushPath If set to true, then the path is not appended to *pushState*
+ * @returns {void}
+ */
 export function navigateToPage(dispatch, path, doNotPushPath) {
   if(global.disableAjaxNavigation) {
     global.location = path;
@@ -89,11 +115,27 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
     });
 }
 
+/**
+ * Navigate to the page if it is not the current page as per redux. This internally calls {@link navigateToPage}
+ *
+ * This function can also be called as `app.maybeNavigateTo()`.
+ * @param {string} path The new path
+ * @param {Redux} store The redux store
+ * @returns {void}
+ */
 export function maybeNavigateTo(path, store) {
   if(store.getState().qt.currentPath != path)
     navigateToPage(store.dispatch, path, true);
 }
 
+/**
+ * Sets the url and title
+ *
+ * * This function can also be called as `app.maybeSetUrl()`.
+ * @param {string} path The new path
+ * @param {string} title The new title.
+ * @returns {void}
+ */
 export function maybeSetUrl(path, title) {
   if(global.location.pathname == path)
     return;
@@ -101,6 +143,15 @@ export function maybeSetUrl(path, title) {
   global.document.title = title;
 }
 
+/**
+ * renderComponent can be used to render a component given the component, container and a redux store.
+ * @param {Component} clazz The component to render
+ * @param {string} container The id of the container to render the given component
+ * @param {Redux} store The redux store
+ * @param {Object} props Properties to bootstrap the component with
+ * @param {boolean} props.hydrate Hydrate the component instead of rendering it
+ * @param {callback} callback Callback on completion
+ */
 export function renderComponent(clazz, container, store, props = {}, callback) {
   const component = React.createElement(Provider, {store},
                       React.createElement(clazz, props || {}));
@@ -112,6 +163,14 @@ export function renderComponent(clazz, container, store, props = {}, callback) {
 
 }
 
+/**
+ * renderIsomorphicComponent can be used to render a component given the container and a redux store. This uses {@link IsomorphicComponent} internally.
+ * @param {string} container The id of the container to render the given component
+ * @param {Redux} store The redux store
+ * @param {function} pickComponent The [pickComponent](https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture#pickcomponent) function
+ * @param {Object} props Properties to bootstrap the component with
+ * @param {boolean} props.hydrate Hydrate the component instead of rendering it
+ */
 export function renderIsomorphicComponent(container, store, pickComponent, props) {
   if(!store.getState().qt.disableIsomorphicComponent) {
     pickComponentWrapper = makePickComponentSync(pickComponent);
@@ -122,6 +181,13 @@ export function renderIsomorphicComponent(container, store, pickComponent, props
 
 }
 
+/**
+ *
+ * @param {string} container The id of the container to render the given component
+ * @param {Redux} store The redux store
+ * @param {*} view The view to be rendered
+ * @param {Object} props Properties to bootstrap the component with
+ */
 export function renderBreakingNews(container, store, view, props) {
   return renderComponent(BreakingNews, container, store, Object.assign({view}, props));
 }
@@ -140,6 +206,19 @@ function runWithTiming(name, f) {
   performance.measure(`${name}Time`, `${name}Start`, `${name}Finish`);
 }
 
+/**
+ * Start the Browser Application. This is the entry point for the Quintype framework
+ * @param {function} renderApplication Once the data is fetched, *renderApplication(store)* will be called to render all components on page. See [renderApplication](https://developers.quintype.com/malibu/isomorphic-rendering/client-side-architecture.html#renderapplication)
+ * @param {Object} reducers A list of custom reducers for your application. This will be merged with the built in reducers
+ * @param {Object} opts Options
+ * @param {function} opts.preRenderApplication Render a part of the application on boot. See [preRenderApplication](https://developers.quintype.com/malibu/isomorphic-rendering/client-side-architecture.html#prerenderapplication)
+ * @param {boolean} opts.enableFCM Enable Firebase Cloud Messaging for push notifications
+ * @param {boolean} opts.enableServiceWorker Should service worker be enabled
+ * @param {string} opts.serviceWorkerLocation Location of the service worker (default: /service-worker.js)
+ * @param {number} opts.appVersion App Version. See [Updating App Version](https://developers.quintype.com/malibu/tutorial/updating-app-version)
+ * @returns {Redux} The store that was created
+ *
+ */
 export function startApp(renderApplication, reducers, opts) {
   app.getAppVersion = () => opts.appVersion || 1;
   global.app = app;

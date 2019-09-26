@@ -1,5 +1,5 @@
-var assert = require("assert");
-const {NotFoundException} = require('../../server/exceptions');
+let assert = require("assert");
+const {NotFoundException} = require('../../server/impl/exceptions');
 
 describe('NotFoundException', function() {
   it("has a status of 404", function() {
