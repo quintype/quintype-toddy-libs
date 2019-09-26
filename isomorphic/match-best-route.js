@@ -1,4 +1,9 @@
 /**
+ * This namespace is used to match path to routes. This is done during the [server side render](https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture.html#routing),
+ * [client side hydration](developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture.html#routing), and in the [service worker](https://developers.quintype.com/malibu/isomorphic-rendering/client-side-architecture.html#progressive-web-app)
+ * ```javascript
+ * import { matchAllRoutes } from "@quintype/framework/isomorphic/match-best-route";
+ * ```
  * @category Isomorphic
  * @module match-best-route
  */

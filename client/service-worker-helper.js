@@ -1,6 +1,6 @@
 /**
  * ```javascript
- * import { initializeQServiceWorker } from "quintype/framework/client/service-worker-helper";
+ * import { initializeQServiceWorker } from "@quintype/framework/client/service-worker-helper";
  * ```
  * @category Service Worker
  * @module service-worker-helper
