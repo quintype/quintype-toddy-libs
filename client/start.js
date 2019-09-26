@@ -76,6 +76,7 @@ let pickComponentWrapper = null;
  * @param {function} dispatch The dispatch of the story
  * @param {string} path The new path you are jumping to
  * @param {boolean} doNotPushPath If set to true, then the path is not appended to *pushState*
+ * @returns {void}
  */
 export function navigateToPage(dispatch, path, doNotPushPath) {
   if(global.disableAjaxNavigation) {
@@ -120,6 +121,7 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
  * This function can also be called as `app.maybeNavigateTo()`.
  * @param {string} path The new path
  * @param {Redux} store The redux store
+ * @returns {void}
  */
 export function maybeNavigateTo(path, store) {
   if(store.getState().qt.currentPath != path)
@@ -132,6 +134,7 @@ export function maybeNavigateTo(path, store) {
  * * This function can also be called as `app.maybeSetUrl()`.
  * @param {string} path The new path
  * @param {string} title The new title.
+ * @returns {void}
  */
 export function maybeSetUrl(path, title) {
   if(global.location.pathname == path)
@@ -213,6 +216,7 @@ function runWithTiming(name, f) {
  * @param {boolean} opts.enableServiceWorker Should service worker be enabled
  * @param {string} opts.serviceWorkerLocation Location of the service worker (default: /service-worker.js)
  * @param {number} opts.appVersion App Version. See [Updating App Version](https://developers.quintype.com/malibu/tutorial/updating-app-version)
+ * @returns {Redux} The store that was created
  *
  */
 export function startApp(renderApplication, reducers, opts) {

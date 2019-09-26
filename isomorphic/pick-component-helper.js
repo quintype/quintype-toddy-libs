@@ -26,6 +26,9 @@
  *   }
  * );
  * ```
+ * @param {Object} components A map from *pageType* to *{chunk, component}*
+ * @param {Object} loadChunk A map from *chunkName* to function that returns a promise that resolves to the chunk
+ * @returns {Object} A pair of functions: *pickComponent(pageType)* and *getChunkName(pageType)*.
  */
 exports.pickComponentHelper = function pickComponentHelper(components, loadChunk) {
   return {

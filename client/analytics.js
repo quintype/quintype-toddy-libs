@@ -13,6 +13,7 @@ import { runWhenIdle } from "./impl/run-when-idle";
 
 /**
  * Load qlitics.js. This should be done automatically for you
+ * @returns {void}
  */
 // istanbul ignore next
 export function startAnalytics() {
@@ -43,6 +44,7 @@ function pageTypeToQliticsPageType(pageType) {
  * Register a story view event. This should already be wired up for story pages, but this event can
  * be fired on an infinite scroll event. Ideally, please use {@link registerPageView}
  * @param {uuid} storyContentId
+ * @returns {void}
  */
 export function registerStoryView(storyContentId) {
   global.qlitics('track', 'story-view', {
@@ -54,6 +56,7 @@ export function registerStoryView(storyContentId) {
  * Register a page view in both qlitics and google analytics. This method takes the page object, which is usually returned from *"/route-data.json"*.
  * @param {Object} page ex: *{"page-type": "story-page", "story": {...}}*
  * @param {string} newPath ex: "/path/to/story"
+ * @returns {void}
  */
 export function registerPageView(page, newPath) {
   global.qlitics('track', 'page-view', {"page-type": pageTypeToQliticsPageType(page.pageType)})
@@ -75,6 +78,7 @@ export function registerPageView(page, newPath) {
 /**
  * Set the current member id on qlitics
  * @param {number} memberId The member id of the logged in member
+ * @returns {void}
  */
 export function setMemberId(memberId) {
   global.qlitics('set', 'member-id', memberId);
@@ -85,6 +89,7 @@ export function setMemberId(memberId) {
  * @param {uuid} storyContentId The id of the story being shared
  * @param {string} socialMediaType The social network the item is being shared on
  * @param {string} storyUrl The canonical URL of the story
+ * @returns {void}
  */
 export function registerStoryShare(storyContentId, socialMediaType, storyUrl) {
   global.qlitics('track', 'story-share', {

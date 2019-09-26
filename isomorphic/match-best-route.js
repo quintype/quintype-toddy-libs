@@ -30,7 +30,8 @@ const {matchPath} = require("react-router");
  /**
   * Find all routes that match a given path
   * @param {string} path The current path
-  * @param {Array<Route>} routes An array of routes to be matched
+  * @param {Array<module:match-best-route~Route>} routes An array of routes to be matched
+  * @returns {Array<module:match-best-route~Route>} Matching Routes
   */
 function matchAllRoutes(path, routes) {
   // Sure there is some construct to do these two lines

@@ -4,6 +4,7 @@
  * ```
  * @category Service Worker
  * @module service-worker-helper
+ * @returns {void}
  */
 // istanbul ignore file: Needs to be run as a service worker
 
