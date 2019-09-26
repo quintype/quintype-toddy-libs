@@ -14,6 +14,6 @@ class NotFoundException extends ApplicationException {
 }
 
 module.exports = {
-  ApplicationException : ApplicationException,
-  NotFoundException : NotFoundException
+  ApplicationException,
+  NotFoundException
 };

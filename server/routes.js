@@ -203,7 +203,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   }
 
   if(templateOptions) {
-    app.get('/template-options.json', withConfig(simpleJsonHandler, {jsonData: toFunction(templateOptions, "./template-options")}))
+    app.get('/template-options.json', withConfig(simpleJsonHandler, {jsonData: toFunction(templateOptions, "./impl/template-options")}))
   }
 
   staticRoutes.forEach(route => {

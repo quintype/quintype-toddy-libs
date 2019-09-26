@@ -1,3 +1,13 @@
+/**
+ * This namespace exposes a the publisher config from publisher.yml
+ * ```javascript
+ * import config from "@quintype/framework/server/logger";
+ *
+ * config["sketches_host"]
+ * ```
+ * @category Server
+ * @module publisher-config
+ */
 // istanbul ignore file
 
 const fs = require("fs");

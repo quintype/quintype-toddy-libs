@@ -1,7 +1,19 @@
+/**
+ * This namespace exposes a logger. We use winston under the hood for logging.
+ * ```javascript
+ * import logger from "@quintype/framework/server/logger";
+ *
+ * logger.error("Some Error Message");
+ * logger.error(e);
+ * ```
+ * @category Server
+ * @module logger
+ */
 // istanbul ignore file
 
 const process = require("process");
 const winston = require("winston");
+
 const {combine, timestamp } = winston.format;
 
 function trimNewline() {
@@ -49,7 +61,7 @@ function createProdLogger() {
     ],
     exceptionHandlers: [
       new winston.transports.Console()
-    ],  
+    ],
     exitOnError: false
   });
 }
@@ -65,9 +77,9 @@ function createLogger() {
 function truncateStack(message) {
   if(message.length > 1024) {
     return `${message.substring(0, 1024)}... (truncated)`
-  } else {
-    return message;
   }
+    return message;
+
 }
 
 const logger = createLogger();

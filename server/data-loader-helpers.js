@@ -1,7 +1,8 @@
 // istanbul ignore file
+// This file is not documented
 
 const {Story, Collection} = require('./api-client');
-const templateOptions = require('./template-options');
+const templateOptions = require('./impl/template-options');
 
 exports.catalogDataLoader = function catalogDataLoader(client, config) {
   return Story.getStories(client)
@@ -19,8 +20,7 @@ exports.homeCollectionOrStories = function homeCollectionOrStories(client) {
     .then(collection => {
       if(collection)
         return collection;
-      else
-        return Story.getStories(client).then(stories => Collection.build({
+      return Story.getStories(client).then(stories => Collection.build({
           slug: 'home',
           name: "Home",
           template: "default",

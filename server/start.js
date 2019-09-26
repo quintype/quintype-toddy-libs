@@ -1,3 +1,12 @@
+/**
+ * This namespace exports a utility function for starting the server, and correctly handling signal like SIGHUP and SIGTERM.
+ * ```javascript
+ * import { startApp } from "@quintype/framework/server/start";
+ * ```
+ * @category Server
+ * @module server-start
+ */
+
 // istanbul ignore file
 // This is the start file, to be called from your start.js
 
@@ -84,6 +93,14 @@ async function startWorker(appThunk, opts) {
   }
 }
 
+/**
+ * This app starts a cluster with workers who listen for web requests
+ * @param {function} appThunk A function which returns an express app when evaluated
+ * @param {Object} opts Options that are passed to [@quintype/build](https://developers.quintype.com/quintype-node-build) (in dev mode)
+ * @param {number} opts.workers The number of workers to be spawned (default 4)
+ * @param {number} opts.port The port to start on (default 3000)
+ * @param {number} opts.sleep Number of milliseconds to wait to respawn a terminated worker (default 250)
+ */
 module.exports.startApp = function(appThunk, opts = {}) {
   if(cluster.isMaster) {
     startMaster(opts)

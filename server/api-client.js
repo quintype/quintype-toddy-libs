@@ -1,7 +1,7 @@
 /**
  * This module just re-exports all symbols from [@quintype/backend](https://developers.quintype.com/quintype-node-backend)
  *
- * However, each exported class has one extra member function added called *getCacheKeys(publisherId)*, which returns cache keys for that object (Story or Collection).
+ * However, each exported class has one extra member function added called *cacheKeys(publisherId)*, which returns cache keys for that object (Story or Collection).
  *
  * ```javascript
  * import { Story, Author, CustomPath, Collection, Member, Entity } from "@quintype/framework/server/api-client";
