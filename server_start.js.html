@@ -5,7 +5,7 @@
 <head>
     <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create', 'UA-66074042-1', 'auto');ga('send', 'pageview');</script>
     <meta charset="utf-8">
-    <title>JSDoc: client/analytics.js</title>
+    <title>JSDoc: server/start.js</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -66,7 +66,7 @@
                 <div class="content" id="main-content-wrapper">
                     <header class="page-title">
                         <p>Source</p>
-                        <h1>client/analytics.js</h1>
+                        <h1>server/start.js</h1>
                     </header>
                     
                     
@@ -77,104 +77,114 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * This namespace handles a number of analytics related functions.
- * The vast majority of these features are already wired by default, but and are only required to be called manually if you are doing something special.
+ * This namespace exports a utility function for starting the server, and correctly handling signal like SIGHUP and SIGTERM.
  * ```javascript
- * import * from "@quintype/framework/client/analytics";
+ * import { startApp } from "@quintype/framework/server/start";
  * ```
- * @category Client
- * @module analytics
+ * @category Server
+ * @module server-start
  */
 
-import get from 'lodash/get'
-import { runWhenIdle } from "./impl/run-when-idle";
+// istanbul ignore file
+// This is the start file, to be called from your start.js
 
-/**
- * Load qlitics.js. This should be done automatically for you
- * @returns {void}
- */
-// istanbul ignore next
-export function startAnalytics() {
-  global.qlitics=global.qlitics||function(){(qlitics.q=qlitics.q||[]).push(arguments);};
-  global.qlitics('init');
+const cluster = require('cluster');
+const process = require("process");
+const {initializeAllClients} = require("./api-client");
+const logger = require("./logger");
 
-  runWhenIdle(function () {
-    const s = document.createElement('script');
-    s.type = 'text/javascript';
-    s.async = true;
-    s.src = '/qlitics.js';
-    const x = document.getElementsByTagName('script')[0];
-    x.parentNode.insertBefore(s, x);
-  });
-}
+function startMaster({workers = 4}) {
+  let terminating = false;
 
-function pageTypeToQliticsPageType(pageType) {
-  switch(pageType) {
-    case 'story-page': return 'story';
-    case 'home-page': return 'home';
-    case 'section-page': return 'section';
-    case 'tag-page': return 'topic';
-    default: return pageType;
-  }
-}
-
-/**
- * Register a story view event. This should already be wired up for story pages, but this event can
- * be fired on an infinite scroll event. Ideally, please use {@link registerPageView}
- * @param {uuid} storyContentId
- * @returns {void}
- */
-export function registerStoryView(storyContentId) {
-  global.qlitics('track', 'story-view', {
-    'story-content-id': storyContentId,
-  });
-}
-
-/**
- * Register a page view in both qlitics and google analytics. This method takes the page object, which is usually returned from *"/route-data.json"*.
- * @param {Object} page ex: *{"page-type": "story-page", "story": {...}}*
- * @param {string} newPath ex: "/path/to/story"
- * @returns {void}
- */
-export function registerPageView(page, newPath) {
-  global.qlitics('track', 'page-view', {"page-type": pageTypeToQliticsPageType(page.pageType)})
-  if(page.pageType == 'story-page') {
-    registerStoryView(get(page.data, ["story", "id"]));
+  for (let i = 0; i &lt; workers; i++) {
+    cluster.fork();
   }
 
-  if(newPath &amp;&amp; global.ga &amp;&amp; !global.qtNoAutomaticGATracking) {
-    global.ga(function(tracker) {
-      tracker = tracker || global.ga.getByName("gtm1");
-      if(!tracker)
-        return;
-      tracker.set('page', newPath);
-      tracker.send('pageview');
+  process.on("SIGTERM", () => {
+    logger.info("Caught a SIGTERM. Terminating All Workers");
+    terminating = true;
+    for (const worker of Object.values(cluster.workers)) {
+      worker.process.kill("SIGTERM");
+    }
+  });
+
+  process.on("SIGHUP", () => {
+    logger.info("Respawning All Workers.");
+    Object.values(cluster.workers).forEach((worker, index) => {
+      if(index &lt; workers) {
+        const newWorker = cluster.fork();
+        newWorker.on('listening', () => {
+          worker.process.kill("SIGTERM");
+        })
+      } else {
+        worker.process.kill("SIGTERM");
+      }
     })
+  })
+
+  cluster.on('exit', (worker, code, signal) => {
+    logger.error(`worker ${  worker.process.pid  } died`);
+    const aliveWorkers = Object.values(cluster.workers).filter(worker => worker.state !== 'dead')
+
+    if(terminating) {
+      if(aliveWorkers.length == 0) {
+        logger.info("All Workers Terminated. Gracefully Exiting");
+        process.exit()
+      }
+    } else if(aliveWorkers.length &lt; workers) {
+        cluster.fork();
+      }
+  });
+}
+
+async function startWorker(appThunk, opts) {
+  if (process.env.NODE_ENV != "production") {
+    require("@quintype/build")(opts)
+  }
+  require("../assetify/server")();
+
+  try {
+    const app = appThunk();
+
+    await initializeAllClients();
+    const server = app.listen(opts.port || 3000, () => console.log('Example app listening on port 3000!'))
+
+    process.on("SIGTERM", () => {
+      server.close(() => {
+        cluster.worker.disconnect();
+        process.exit();
+      })
+    });
+    process.on("SIGHUP", () => {})
+
+  } catch (e) {
+    if (process.env.NODE_ENV != "production") {
+      console.log(e.stack)
+    }
+
+    e = e || "";
+    const sleep = require("sleep-promise");
+    logger.error(`Worker died - ${e.message || e}`);
+    cluster.worker.disconnect()
+    await sleep(opts.sleep || 250)
+    process.exit();
   }
 }
 
 /**
- * Set the current member id on qlitics
- * @param {number} memberId The member id of the logged in member
- * @returns {void}
+ * This app starts a cluster with workers who listen for web requests
+ * @param {function} appThunk A function which returns an express app when evaluated
+ * @param {Object} opts Options that are passed to [@quintype/build](https://developers.quintype.com/quintype-node-build) (in dev mode)
+ * @param {number} opts.workers The number of workers to be spawned (default 4)
+ * @param {number} opts.port The port to start on (default 3000)
+ * @param {number} opts.sleep Number of milliseconds to wait to respawn a terminated worker (default 250)
  */
-export function setMemberId(memberId) {
-  global.qlitics('set', 'member-id', memberId);
-}
-
-/**
- * This event will register a social share of a story in qlitics
- * @param {uuid} storyContentId The id of the story being shared
- * @param {string} socialMediaType The social network the item is being shared on
- * @param {string} storyUrl The canonical URL of the story
- * @returns {void}
- */
-export function registerStoryShare(storyContentId, socialMediaType, storyUrl) {
-  global.qlitics('track', 'story-share', {
-    'story-content-id': storyContentId,
-    'social-media-type': socialMediaType,
-    'url': storyUrl,
-  });
+module.exports.startApp = function(appThunk, opts = {}) {
+  if(cluster.isMaster) {
+    startMaster(opts)
+  } else {
+    startWorker(appThunk, opts)
+  }
 }
 </code></pre>
         </article>

@@ -5,7 +5,7 @@
 <head>
     <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create', 'UA-66074042-1', 'auto');ga('send', 'pageview');</script>
     <meta charset="utf-8">
-    <title>JSDoc: client/analytics.js</title>
+    <title>JSDoc: server/visual-stories.js</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -66,7 +66,7 @@
                 <div class="content" id="main-content-wrapper">
                     <header class="page-title">
                         <p>Source</p>
-                        <h1>client/analytics.js</h1>
+                        <h1>server/visual-stories.js</h1>
                     </header>
                     
                     
@@ -77,105 +77,111 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * This namespace handles a number of analytics related functions.
- * The vast majority of these features are already wired by default, but and are only required to be called manually if you are doing something special.
+ * This namespace exports a utility function rendering visual stories
  * ```javascript
- * import * from "@quintype/framework/client/analytics";
+ *import {enableVisualStories} from '@quintype/framework/server/visual-stories';
+ *
+ * function renderVisualStory(res, story, {config, client}) {
+ *   res.render("pages/visual-story", {
+ *     seo: "",
+ *     content: ReactDom.renderToStaticMarkup(&lt;amp-story>&lt;/amp-story>)
+ *   })
+ * }
+ *
+ * enableVisualStories(app, renderVisualStory, {logError})
  * ```
- * @category Client
- * @module analytics
+ * @category Server
+ * @module visual-stories
  */
 
-import get from 'lodash/get'
-import { runWhenIdle } from "./impl/run-when-idle";
+const { getWithConfig, withError} = require("./routes");
+const {Story} = require("./impl/api-client-impl");
+const {addCacheHeadersToResult} = require("./handlers/cdn-caching");
+const {storyToCacheKey} = require("./caching");
+const urlLib = require("url");
+const get = require("lodash/get");
 
-/**
- * Load qlitics.js. This should be done automatically for you
- * @returns {void}
- */
-// istanbul ignore next
-export function startAnalytics() {
-  global.qlitics=global.qlitics||function(){(qlitics.q=qlitics.q||[]).push(arguments);};
-  global.qlitics('init');
 
-  runWhenIdle(function () {
-    const s = document.createElement('script');
-    s.type = 'text/javascript';
-    s.async = true;
-    s.src = '/qlitics.js';
-    const x = document.getElementsByTagName('script')[0];
-    x.parentNode.insertBefore(s, x);
-  });
-}
-
-function pageTypeToQliticsPageType(pageType) {
-  switch(pageType) {
-    case 'story-page': return 'story';
-    case 'home-page': return 'home';
-    case 'section-page': return 'section';
-    case 'tag-page': return 'topic';
-    default: return pageType;
+function getImageUrl(story, config) {
+  if(get(story, ['story-template']) === 'news-elsewhere'){
+    return get(story, ['metadata', 'reference-url'], '');
   }
+  return `${config['sketches-host']}/${story.slug}`;
 }
 
-/**
- * Register a story view event. This should already be wired up for story pages, but this event can
- * be fired on an infinite scroll event. Ideally, please use {@link registerPageView}
- * @param {uuid} storyContentId
- * @returns {void}
- */
-export function registerStoryView(storyContentId) {
-  global.qlitics('track', 'story-view', {
-    'story-content-id': storyContentId,
-  });
-}
+async function handleBookend(req, res, next, {config, client}) {
+  const relatedStoriesResponse = await client.getRelatedStories(req.params.storyId, req.query.section);
+  const relatedStories = relatedStoriesResponse["related-stories"];
+  const fbAppId = get(config, ['public-integrations', 'facebook','app-id'], '');
 
-/**
- * Register a page view in both qlitics and google analytics. This method takes the page object, which is usually returned from *"/route-data.json"*.
- * @param {Object} page ex: *{"page-type": "story-page", "story": {...}}*
- * @param {string} newPath ex: "/path/to/story"
- * @returns {void}
- */
-export function registerPageView(page, newPath) {
-  global.qlitics('track', 'page-view', {"page-type": pageTypeToQliticsPageType(page.pageType)})
-  if(page.pageType == 'story-page') {
-    registerStoryView(get(page.data, ["story", "id"]));
+  const jsonPayLoad = {
+    "bookendVersion": "v1.0",
+    "shareProviders": [
+      "twitter",
+      "email",
+      {
+      "provider": "facebook",
+      "app_id": fbAppId,
+      },
+      "whatsapp",
+      "linkedin",
+      "gplus"
+    ],
+    components: [].concat(
+      [{
+        "type": "heading",
+        "text": "More to read"
+      }],
+      relatedStories.map(story => ({
+        "type": "small",
+        "title": `${story.headline}`,
+        "image": `${config['cdn-name']}${story['hero-image-s3-key']}?w=480&amp;auto=format&amp;compress`,
+        "url": getImageUrl(story, config)
+      })),
+      [{
+        "type": "cta-link",
+        "links": [
+          {
+            "text": "More stories",
+            "url": `${config['sketches-host']}`
+          }
+        ]
+      }]
+      )
+    };
+
+    if(relatedStories.length > 0) {
+      res.header("Cache-Control", "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400");
+      res.header("Vary", "Accept-Encoding");
+      res.json(jsonPayLoad);
+    } else {
+      res.status(404);
+      res.json({error: {message: "Not Found"}});
+    }
   }
 
-  if(newPath &amp;&amp; global.ga &amp;&amp; !global.qtNoAutomaticGATracking) {
-    global.ga(function(tracker) {
-      tracker = tracker || global.ga.getByName("gtm1");
-      if(!tracker)
-        return;
-      tracker.set('page', newPath);
-      tracker.send('pageview');
-    })
+  async function handleVisualStory(req, res, next, {config, client, renderVisualStory, seo}) {
+
+    const url = urlLib.parse(req.url, true);
+    const story = await Story.getStoryBySlug(client, req.params.storySlug);
+
+    if(story === null || story['story-template'] !== 'visual-story') {
+      res.status(404);
+      res.end();
+    } else {
+      const seoInstance = (typeof seo === 'function') ? seo(config) : seo;
+      const seoTags = seoInstance &amp;&amp; seoInstance.getMetaTags(config, story['story-template'], story, {url});
+
+      addCacheHeadersToResult(res, [storyToCacheKey(config["publisher-id"], story)]);
+      await renderVisualStory(res, story, {config, client, seoTags});
+    }
   }
-}
 
-/**
- * Set the current member id on qlitics
- * @param {number} memberId The member id of the logged in member
- * @returns {void}
- */
-export function setMemberId(memberId) {
-  global.qlitics('set', 'member-id', memberId);
-}
+  exports.enableVisualStories = function enableVisualStories(app, renderVisualStory, {logError, getClient, seo, publisherConfig = require("./publisher-config")}){
+    getWithConfig(app, "/ampstories/:storyId/bookend.json", withError(handleBookend, logError), {logError, getClient, publisherConfig});
+    getWithConfig(app, "/ampstories/*/:storySlug", withError(handleVisualStory, logError), {logError, getClient, renderVisualStory, seo, publisherConfig});
+  };
 
-/**
- * This event will register a social share of a story in qlitics
- * @param {uuid} storyContentId The id of the story being shared
- * @param {string} socialMediaType The social network the item is being shared on
- * @param {string} storyUrl The canonical URL of the story
- * @returns {void}
- */
-export function registerStoryShare(storyContentId, socialMediaType, storyUrl) {
-  global.qlitics('track', 'story-share', {
-    'story-content-id': storyContentId,
-    'social-media-type': socialMediaType,
-    'url': storyUrl,
-  });
-}
 </code></pre>
         </article>
     </section>

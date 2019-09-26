@@ -3,7 +3,7 @@
 <head>
     <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create', 'UA-66074042-1', 'auto');ga('send', 'pageview');</script>
     <meta charset="utf-8">
-    <title>JSDoc: start</title>
+    <title>JSDoc: AssetHelper</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -63,8 +63,8 @@
             <div class="column is-9-desktop">
                 <div class="content" id="main-content-wrapper">
                     <header class="page-title">
-                        <p>Module</p>
-                        <h1>start</h1>
+                        <p>Class</p>
+                        <h1>AssetHelper</h1>
                     </header>
                     
                     
@@ -76,8 +76,15 @@
 
 <header>
     
+        <h2><span class="attribs"><span class="type-signature"></span></span>
+            <span class="ancestors"><a href="module-asset-helper.html">asset-helper</a>~</span>AssetHelper</h2>
         
-            
+            <div class="class-description"><p>AssetHelper can be used to get paths and contents of various assets, including CSS and client JS.
+Do note that when reading files from disk, AssetHelper uses <code>readFileSync</code>, but then memoizes the result so that
+future requests are much faster.</p>
+<p>You cannot use this class directly, but can access it's member functions as if they were static</p>
+<pre class="prettyprint source lang-javascript"><code>import { assetPath } from &quot;@quintype/framework/server/asset-helper&quot;;
+</code></pre></div>
         
     
 </header>
@@ -85,12 +92,6 @@
 <article>
     <div class="container-overview">
     
-        
-            <div class="description"><p>This module contains functions for starting JS on the browser side</p>
-<pre class="prettyprint source lang-javascript"><code>import * from &quot;@quintype/framework/client/start&quot;;
-</code></pre></div>
-        
-
         
             
 
@@ -140,9 +141,9 @@
 
     
         <p class="tag-source">
-            <a href="client_start.js.html" class="button">View Source</a>
+            <a href="server_impl_asset-helper-impl.js.html" class="button">View Source</a>
             <span>
-                <a href="client_start.js.html">client/start.js</a>, <a href="client_start.js.html#line1">line 1</a>
+                <a href="server_impl_asset-helper-impl.js.html">server/impl/asset-helper-impl.js</a>, <a href="server_impl_asset-helper-impl.js.html#line36">line 36</a>
             </span>
         </p>
     
@@ -185,159 +186,6 @@
 
     
 
-    
-        <div class='vertical-section'>
-            <h3 class="title"><span>Members</span></h3>
-            <div class="members">
-            
-                <div class="member">
-
-<h4 class="name" id=".app">
-    
-        
-            <span class='tag'>static</span>
-        
-            <span class='tag'>constant</span>
-        
-    
-    <span class="code-name">
-        app
-    </span>
-</h4>
-
-
-
-
-<div class="description">
-    <p>app contains multiple useful functions for controlling the app. These are saved on global.app.</p>
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-        <p class="tag-source">
-            <a href="client_start.js.html" class="button">View Source</a>
-            <span>
-                <a href="client_start.js.html">client/start.js</a>, <a href="client_start.js.html#line36">line 36</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-</div>
-            
-                <div class="member">
-
-<h4 class="name" id=".history">
-    
-        
-            <span class='tag'>static</span>
-        
-            <span class='tag'>constant</span>
-        
-    
-    <span class="code-name">
-        history
-    </span>
-</h4>
-
-
-
-
-<div class="description">
-    <p>The history object can be used to manipulate browser history.</p>
-</div>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-        <p class="tag-source">
-            <a href="client_start.js.html" class="button">View Source</a>
-            <span>
-                <a href="client_start.js.html">client/start.js</a>, <a href="client_start.js.html#line30">line 30</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-</div>
-            
-            </div>
-        </div>
     
 
     
@@ -349,15 +197,11 @@
 
 
     
-    <h4 class="name" id=".maybeNavigateTo">
-        
-            
-                <span class='tag'>static</span>
-            
+    <h4 class="name" id="assetFiles">
         
         <span class="code-name">
             
-                maybeNavigateTo<span class="signature">(path, store)</span><span class="type-signature"> &rarr; {void}</span>
+                assetFiles<span class="signature">()</span><span class="type-signature"> &rarr; {Set.&lt;string>}</span>
             
         </span>
     </h4>
@@ -366,8 +210,128 @@
     
     
     <div class="description">
-        <p>Navigate to the page if it is not the current page as per redux. This internally calls navigateToPage</p>
-<p>This function can also be called as <code>app.maybeNavigateTo()</code>.</p>
+        <p>Return a set of all assets</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_impl_asset-helper-impl.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_impl_asset-helper-impl.js.html">server/impl/asset-helper-impl.js</a>, <a href="server_impl_asset-helper-impl.js.html#line167">line 167</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'><p>A list of all assets</p></div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<span class="param-type">Set.&lt;string></span>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="assetHash">
+        
+        <span class="code-name">
+            
+                assetHash<span class="signature">(asset)</span><span class="type-signature"> &rarr; {string}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>Get the fingerprint that the asset was assigned during compilation phase.</p>
     </div>
     
 
@@ -405,7 +369,7 @@
         
 <tr class="deep-level-0">
   
-      <td class="name"><code>path</code></td>
+      <td class="name"><code>asset</code></td>
   
 
   <td class="type">
@@ -421,32 +385,7 @@
 
   
 
-  <td class="description last"><p>The new path</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>store</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Redux</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The redux store</p></td>
+  <td class="description last"><p>The asset name</p></td>
 </tr>
 
 
@@ -491,9 +430,1216 @@
 
     
         <p class="tag-source">
-            <a href="client_start.js.html" class="button">View Source</a>
+            <a href="server_impl_asset-helper-impl.js.html" class="button">View Source</a>
             <span>
-                <a href="client_start.js.html">client/start.js</a>, <a href="client_start.js.html#line126">line 126</a>
+                <a href="server_impl_asset-helper-impl.js.html">server/impl/asset-helper-impl.js</a>, <a href="server_impl_asset-helper-impl.js.html#line155">line 155</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'><p>The asset fingerprint</p></div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<span class="param-type">string</span>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="assetPath">
+        
+        <span class="code-name">
+            
+                assetPath<span class="signature">(asset, host)</span><span class="type-signature"> &rarr; {string}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>Get tha path to an asset</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>asset</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">string</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>The asset name (ex: <em>&quot;app.js&quot;</em>)</p></td>
+</tr>
+
+
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>host</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">string</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>The asset host (optional, this defaults to values from <em>publisher.yml</em>)</p></td>
+</tr>
+
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_impl_asset-helper-impl.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_impl_asset-helper-impl.js.html">server/impl/asset-helper-impl.js</a>, <a href="server_impl_asset-helper-impl.js.html#line59">line 59</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'><p>Fully Qualified URL of the asset</p></div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<span class="param-type">string</span>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="getAllChunks">
+        
+        <span class="code-name">
+            
+                getAllChunks<span class="signature">(&hellip;chunks)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="module-asset-helper.html#~Chunk">module:asset-helper~Chunk</a>>}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>Read the given chunks into memory. This is a synonym for warmupAssetCache</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>chunks</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">string</span>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+
+      
+
+      
+          &lt;repeatable><br>
+      
+      </td>
+  
+
+  
+
+  <td class="description last"><p>The list of chunks</p></td>
+</tr>
+
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_impl_asset-helper-impl.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_impl_asset-helper-impl.js.html">server/impl/asset-helper-impl.js</a>, <a href="server_impl_asset-helper-impl.js.html#line124">line 124</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<span class="param-type">Array.&lt;<a href="module-asset-helper.html#~Chunk">module:asset-helper~Chunk</a>></span>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="getChunk">
+        
+        <span class="code-name">
+            
+                getChunk<span class="signature">(chunk)</span><span class="type-signature"> &rarr; {<a href="module-asset-helper.html#~Chunk">module:asset-helper~Chunk</a>}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>Loads a chunk into memory, usually so that it can be embedded onto the page</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>chunk</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">string</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>The name of the chunk to be fetched (ex: <em>&quot;list&quot;</em>)</p></td>
+</tr>
+
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_impl_asset-helper-impl.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_impl_asset-helper-impl.js.html">server/impl/asset-helper-impl.js</a>, <a href="server_impl_asset-helper-impl.js.html#line100">line 100</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'><p>The loaded chunk</p></div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<span class="param-type"><a href="module-asset-helper.html#~Chunk">module:asset-helper~Chunk</a></span>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="getFilesForChunks">
+        
+        <span class="code-name">
+            
+                getFilesForChunks<span class="signature">(&hellip;chunks)</span><span class="type-signature"> &rarr; {Array.&lt;string>}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>Get a list of all JS and CSS files needed for a set of chunks</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>chunks</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">string</span>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+
+      
+
+      
+          &lt;repeatable><br>
+      
+      </td>
+  
+
+  
+
+  <td class="description last"><p>The list of chunks</p></td>
+</tr>
+
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_impl_asset-helper-impl.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_impl_asset-helper-impl.js.html">server/impl/asset-helper-impl.js</a>, <a href="server_impl_asset-helper-impl.js.html#line136">line 136</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'><p>Unique list of JS and CSS files for a set of chunks</p></div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<span class="param-type">Array.&lt;string></span>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="readAsset">
+        
+        <span class="code-name">
+            
+                readAsset<span class="signature">(asset)</span><span class="type-signature"> &rarr; {string}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>Return the contents of an asset as a string. This function will memoize the disk read, so that this
+function is much faster the next time.</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>asset</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">string</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>The asset name (ex: <em>&quot;app.js&quot;</em>)</p></td>
+</tr>
+
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_impl_asset-helper-impl.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_impl_asset-helper-impl.js.html">server/impl/asset-helper-impl.js</a>, <a href="server_impl_asset-helper-impl.js.html#line72">line 72</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'><p>The content of the asset</p></div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<span class="param-type">string</span>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="serviceWorkerContents">
+        
+        <span class="code-name">
+            
+                serviceWorkerContents<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>Get the contents of the service worker.</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_impl_asset-helper-impl.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_impl_asset-helper-impl.js.html">server/impl/asset-helper-impl.js</a>, <a href="server_impl_asset-helper-impl.js.html#line145">line 145</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'><p>Service Worker Contents</p></div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<span class="param-type">string</span>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="warmupAssetCache">
+        
+        <span class="code-name">
+            
+                warmupAssetCache<span class="signature">(&hellip;chunks)</span><span class="type-signature"> &rarr; {void}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>Read the given chunks into memory. This is a synonym for getAllChunks</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>chunks</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">string</span>
+
+
+  
+  </td>
+
+  
+      <td class="attributes">
+      
+
+      
+
+      
+          &lt;repeatable><br>
+      
+      </td>
+  
+
+  
+
+  <td class="description last"><p>The list of chunks</p></td>
+</tr>
+
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_impl_asset-helper-impl.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_impl_asset-helper-impl.js.html">server/impl/asset-helper-impl.js</a>, <a href="server_impl_asset-helper-impl.js.html#line91">line 91</a>
             </span>
         </p>
     
@@ -529,1523 +1675,6 @@
         <label>Type: </label>
         
 <span class="param-type">void</span>
-
-
-    </div>
-    
-</div>
-
-                
-        </div>
-    </div>
-
-
-
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id=".maybeSetUrl">
-        
-            
-                <span class='tag'>static</span>
-            
-        
-        <span class="code-name">
-            
-                maybeSetUrl<span class="signature">(path, title)</span><span class="type-signature"> &rarr; {void}</span>
-            
-        </span>
-    </h4>
-    
-
-    
-    
-    <div class="description">
-        <p>Sets the url and title</p>
-<ul>
-<li>This function can also be called as <code>app.maybeSetUrl()</code>.</li>
-</ul>
-    </div>
-    
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>path</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">string</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The new path</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>title</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">string</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The new title.</p></td>
-</tr>
-
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-        <p class="tag-source">
-            <a href="client_start.js.html" class="button">View Source</a>
-            <span>
-                <a href="client_start.js.html">client/start.js</a>, <a href="client_start.js.html#line139">line 139</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
-            
-                    
-
-<div class="columns">
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
-        
-<span class="param-type">void</span>
-
-
-    </div>
-    
-</div>
-
-                
-        </div>
-    </div>
-
-
-
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id=".navigateToPage">
-        
-            
-                <span class='tag'>static</span>
-            
-        
-        <span class="code-name">
-            
-                navigateToPage<span class="signature">(dispatch, path, doNotPushPath)</span><span class="type-signature"> &rarr; {void}</span>
-            
-        </span>
-    </h4>
-    
-
-    
-    
-    <div class="description">
-        <p>navigateToPage is called when hydrating the initial page, or moving between pages with AJAX.
-You may want to consider calling maybeNavigateTo instead.</p>
-<p>This function can also be called as <code>app.navigateToPage()</code>.</p>
-    </div>
-    
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>dispatch</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">function</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The dispatch of the story</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>path</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">string</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The new path you are jumping to</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>doNotPushPath</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">boolean</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>If set to true, then the path is not appended to <em>pushState</em></p></td>
-</tr>
-
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-        <p class="tag-source">
-            <a href="client_start.js.html" class="button">View Source</a>
-            <span>
-                <a href="client_start.js.html">client/start.js</a>, <a href="client_start.js.html#line81">line 81</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
-            
-                    
-
-<div class="columns">
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
-        
-<span class="param-type">void</span>
-
-
-    </div>
-    
-</div>
-
-                
-        </div>
-    </div>
-
-
-
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id=".renderBreakingNews">
-        
-            
-                <span class='tag'>static</span>
-            
-        
-        <span class="code-name">
-            
-                renderBreakingNews<span class="signature">(container, store, view, props)</span><span class="type-signature"></span>
-            
-        </span>
-    </h4>
-    
-
-    
-    
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>container</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">string</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The id of the container to render the given component</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>store</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Redux</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The redux store</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>view</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">*</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The view to be rendered</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>props</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Object</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Properties to bootstrap the component with</p></td>
-</tr>
-
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-        <p class="tag-source">
-            <a href="client_start.js.html" class="button">View Source</a>
-            <span>
-                <a href="client_start.js.html">client/start.js</a>, <a href="client_start.js.html#line191">line 191</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id=".renderComponent">
-        
-            
-                <span class='tag'>static</span>
-            
-        
-        <span class="code-name">
-            
-                renderComponent<span class="signature">(clazz, container, store, props, callback)</span><span class="type-signature"></span>
-            
-        </span>
-    </h4>
-    
-
-    
-    
-    <div class="description">
-        <p>renderComponent can be used to render a component given the component, container and a redux store.</p>
-    </div>
-    
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>clazz</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Component</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The component to render</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>container</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">string</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The id of the container to render the given component</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>store</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Redux</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The redux store</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>props</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Object</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Properties to bootstrap the component with</p></td>
-</tr>
-
-  
-  
-    
-<tr class="deep-level-1">
-  
-      <td class="name"><code>hydrate</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">boolean</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Hydrate the component instead of rendering it</p></td>
-</tr>
-
-  
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>callback</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">callback</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Callback on completion</p></td>
-</tr>
-
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-        <p class="tag-source">
-            <a href="client_start.js.html" class="button">View Source</a>
-            <span>
-                <a href="client_start.js.html">client/start.js</a>, <a href="client_start.js.html#line155">line 155</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id=".renderIsomorphicComponent">
-        
-            
-                <span class='tag'>static</span>
-            
-        
-        <span class="code-name">
-            
-                renderIsomorphicComponent<span class="signature">(container, store, pickComponent, props)</span><span class="type-signature"></span>
-            
-        </span>
-    </h4>
-    
-
-    
-    
-    <div class="description">
-        <p>renderIsomorphicComponent can be used to render a component given the container and a redux store. This uses IsomorphicComponent internally.</p>
-    </div>
-    
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>container</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">string</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The id of the container to render the given component</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>store</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Redux</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The redux store</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>pickComponent</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">function</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The <a href="https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture#pickcomponent">pickComponent</a> function</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>props</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Object</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Properties to bootstrap the component with</p></td>
-</tr>
-
-  
-  
-    
-<tr class="deep-level-1">
-  
-      <td class="name"><code>hydrate</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">boolean</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Hydrate the component instead of rendering it</p></td>
-</tr>
-
-  
-
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-        <p class="tag-source">
-            <a href="client_start.js.html" class="button">View Source</a>
-            <span>
-                <a href="client_start.js.html">client/start.js</a>, <a href="client_start.js.html#line174">line 174</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id=".startApp">
-        
-            
-                <span class='tag'>static</span>
-            
-        
-        <span class="code-name">
-            
-                startApp<span class="signature">(renderApplication, reducers, opts)</span><span class="type-signature"> &rarr; {Redux}</span>
-            
-        </span>
-    </h4>
-    
-
-    
-    
-    <div class="description">
-        <p>Start the Browser Application. This is the entry point for the Quintype framework</p>
-    </div>
-    
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>renderApplication</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">function</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Once the data is fetched, <em>renderApplication(store)</em> will be called to render all components on page. See <a href="https://developers.quintype.com/malibu/isomorphic-rendering/client-side-architecture.html#renderapplication">renderApplication</a></p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>reducers</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Object</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>A list of custom reducers for your application. This will be merged with the built in reducers</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>opts</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Object</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Options</p></td>
-</tr>
-
-  
-  
-    
-<tr class="deep-level-1">
-  
-      <td class="name"><code>preRenderApplication</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">function</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Render a part of the application on boot. See <a href="https://developers.quintype.com/malibu/isomorphic-rendering/client-side-architecture.html#prerenderapplication">preRenderApplication</a></p></td>
-</tr>
-
-  
-    
-<tr class="deep-level-1">
-  
-      <td class="name"><code>enableFCM</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">boolean</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Enable Firebase Cloud Messaging for push notifications</p></td>
-</tr>
-
-  
-    
-<tr class="deep-level-1">
-  
-      <td class="name"><code>enableServiceWorker</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">boolean</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Should service worker be enabled</p></td>
-</tr>
-
-  
-    
-<tr class="deep-level-1">
-  
-      <td class="name"><code>serviceWorkerLocation</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">string</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>Location of the service worker (default: /service-worker.js)</p></td>
-</tr>
-
-  
-    
-<tr class="deep-level-1">
-  
-      <td class="name"><code>appVersion</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">number</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>App Version. See <a href="https://developers.quintype.com/malibu/tutorial/updating-app-version">Updating App Version</a></p></td>
-</tr>
-
-  
-
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-        <p class="tag-source">
-            <a href="client_start.js.html" class="button">View Source</a>
-            <span>
-                <a href="client_start.js.html">client/start.js</a>, <a href="client_start.js.html#line222">line 222</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <div class='columns method-parameter'>
-        <div class="column is-2"><label>Returns:</label></div>
-        <div class="column is-10">
-            
-                    
-
-<div class="columns">
-    
-    <div class='param-desc column is-7'><p>The store that was created</p></div>
-    
-    
-    <div class='column is-5 has-text-left'>
-        <label>Type: </label>
-        
-<span class="param-type">Redux</span>
 
 
     </div>

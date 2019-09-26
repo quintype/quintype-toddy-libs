@@ -1,11 +1,9 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create', 'UA-66074042-1', 'auto');ga('send', 'pageview');</script>
     <meta charset="utf-8">
-    <title>JSDoc: client/analytics.js</title>
+    <title>JSDoc: asset-helper</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -65,120 +63,430 @@
             <div class="column is-9-desktop">
                 <div class="content" id="main-content-wrapper">
                     <header class="page-title">
-                        <p>Source</p>
-                        <h1>client/analytics.js</h1>
+                        <p>Module</p>
+                        <h1>asset-helper</h1>
                     </header>
                     
                     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
- * This namespace handles a number of analytics related functions.
- * The vast majority of these features are already wired by default, but and are only required to be called manually if you are doing something special.
- * ```javascript
- * import * from "@quintype/framework/client/analytics";
- * ```
- * @category Client
- * @module analytics
- */
+        
+            
+        
+    
+</header>
 
-import get from 'lodash/get'
-import { runWhenIdle } from "./impl/run-when-idle";
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>This namespace exposes a single instance of <a href="module-asset-helper-AssetHelper.html">AssetHelper</a></p></div>
+        
 
-/**
- * Load qlitics.js. This should be done automatically for you
- * @returns {void}
- */
-// istanbul ignore next
-export function startAnalytics() {
-  global.qlitics=global.qlitics||function(){(qlitics.q=qlitics.q||[]).push(arguments);};
-  global.qlitics('init');
+        
+            
 
-  runWhenIdle(function () {
-    const s = document.createElement('script');
-    s.type = 'text/javascript';
-    s.async = true;
-    s.src = '/qlitics.js';
-    const x = document.getElementsByTagName('script')[0];
-    x.parentNode.insertBefore(s, x);
-  });
-}
 
-function pageTypeToQliticsPageType(pageType) {
-  switch(pageType) {
-    case 'story-page': return 'story';
-    case 'home-page': return 'home';
-    case 'section-page': return 'section';
-    case 'tag-page': return 'topic';
-    default: return pageType;
-  }
-}
 
-/**
- * Register a story view event. This should already be wired up for story pages, but this event can
- * be fired on an infinite scroll event. Ideally, please use {@link registerPageView}
- * @param {uuid} storyContentId
- * @returns {void}
- */
-export function registerStoryView(storyContentId) {
-  global.qlitics('track', 'story-view', {
-    'story-content-id': storyContentId,
-  });
-}
 
-/**
- * Register a page view in both qlitics and google analytics. This method takes the page object, which is usually returned from *"/route-data.json"*.
- * @param {Object} page ex: *{"page-type": "story-page", "story": {...}}*
- * @param {string} newPath ex: "/path/to/story"
- * @returns {void}
- */
-export function registerPageView(page, newPath) {
-  global.qlitics('track', 'page-view', {"page-type": pageTypeToQliticsPageType(page.pageType)})
-  if(page.pageType == 'story-page') {
-    registerStoryView(get(page.data, ["story", "id"]));
-  }
 
-  if(newPath &amp;&amp; global.ga &amp;&amp; !global.qtNoAutomaticGATracking) {
-    global.ga(function(tracker) {
-      tracker = tracker || global.ga.getByName("gtm1");
-      if(!tracker)
-        return;
-      tracker.set('page', newPath);
-      tracker.send('pageview');
-    })
-  }
-}
 
-/**
- * Set the current member id on qlitics
- * @param {number} memberId The member id of the logged in member
- * @returns {void}
- */
-export function setMemberId(memberId) {
-  global.qlitics('set', 'member-id', memberId);
-}
 
-/**
- * This event will register a social share of a story in qlitics
- * @param {uuid} storyContentId The id of the story being shared
- * @param {string} socialMediaType The social network the item is being shared on
- * @param {string} storyUrl The canonical URL of the story
- * @returns {void}
- */
-export function registerStoryShare(storyContentId, socialMediaType, storyUrl) {
-  global.qlitics('track', 'story-share', {
-    'story-content-id': storyContentId,
-    'social-media-type': socialMediaType,
-    'url': storyUrl,
-  });
-}
-</code></pre>
-        </article>
-    </section>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_impl_asset-helper-impl.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_impl_asset-helper-impl.js.html">server/impl/asset-helper-impl.js</a>, <a href="server_impl_asset-helper-impl.js.html#line1">line 1</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+    
+    
+
+    
+
+    
+        <h3 class="subsection-title">Classes</h3>
+
+        <dl>
+            <dt><a href="module-asset-helper-AssetHelper.html">AssetHelper</a></dt>
+            <dd></dd>
+        </dl>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <div class='vertical-section'>
+            <h3 class="title"><span>Type Definitions</span></h3>
+            <div class="members">
+            
+                <div class="member">
+
+<h4 class="name" id="~Chunk">
+    
+    <span class="code-name">
+        Chunk
+    </span>
+</h4>
+
+
+
+
+<div class="description">
+    <p>Chunk represents a set of CSS and JS files that have been created due to webpack code splitting.</p>
+</div>
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+        
+<tr class="deep-level-0">
+    
+        <td class="name"><code>jsPaths</code></td>
+    
+
+    <td class="type">
+    
+        
+<span class="param-type">Array.&lt;string></span>
+
+
+    
+    </td>
+
+    
+
+    
+
+    <td class="description last"><p>A list of JS files</p></td>
+</tr>
+
+    
+        
+<tr class="deep-level-0">
+    
+        <td class="name"><code>cssFiles</code></td>
+    
+
+    <td class="type">
+    
+        
+<span class="param-type">Array.&lt;<a href="module-asset-helper.html#~CssFile">module:asset-helper~CssFile</a>></span>
+
+
+    
+    </td>
+
+    
+
+    
+
+    <td class="description last"><p>The CSS files</p></td>
+</tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_impl_asset-helper-impl.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_impl_asset-helper-impl.js.html">server/impl/asset-helper-impl.js</a>, <a href="server_impl_asset-helper-impl.js.html#line10">line 10</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+</div>
+            
+                <div class="member">
+
+<h4 class="name" id="~CssFile">
+    
+    <span class="code-name">
+        CssFile
+    </span>
+</h4>
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+        
+<tr class="deep-level-0">
+    
+        <td class="name"><code>path</code></td>
+    
+
+    <td class="type">
+    
+        
+<span class="param-type">string</span>
+
+
+    
+    </td>
+
+    
+
+    
+
+    <td class="description last"><p>The path to the css file</p></td>
+</tr>
+
+    
+        
+<tr class="deep-level-0">
+    
+        <td class="name"><code>content</code></td>
+    
+
+    <td class="type">
+    
+        
+<span class="param-type">string</span>
+
+
+    
+    </td>
+
+    
+
+    
+
+    <td class="description last"><p>The contents of the file</p></td>
+</tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_impl_asset-helper-impl.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_impl_asset-helper-impl.js.html">server/impl/asset-helper-impl.js</a>, <a href="server_impl_asset-helper-impl.js.html#line17">line 17</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+</div>
+            
+            </div>
+        </div>
+    
+
+    
+</article>
+
+</section>
 
 
 

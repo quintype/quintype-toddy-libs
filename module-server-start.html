@@ -1,11 +1,9 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create', 'UA-66074042-1', 'auto');ga('send', 'pageview');</script>
     <meta charset="utf-8">
-    <title>JSDoc: client/analytics.js</title>
+    <title>JSDoc: server-start</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -65,120 +63,392 @@
             <div class="column is-9-desktop">
                 <div class="content" id="main-content-wrapper">
                     <header class="page-title">
-                        <p>Source</p>
-                        <h1>client/analytics.js</h1>
+                        <p>Module</p>
+                        <h1>server-start</h1>
                     </header>
                     
                     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
- * This namespace handles a number of analytics related functions.
- * The vast majority of these features are already wired by default, but and are only required to be called manually if you are doing something special.
- * ```javascript
- * import * from "@quintype/framework/client/analytics";
- * ```
- * @category Client
- * @module analytics
- */
+        
+            
+        
+    
+</header>
 
-import get from 'lodash/get'
-import { runWhenIdle } from "./impl/run-when-idle";
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>This namespace exports a utility function for starting the server, and correctly handling signal like SIGHUP and SIGTERM.</p>
+<pre class="prettyprint source lang-javascript"><code>import { startApp } from &quot;@quintype/framework/server/start&quot;;
+</code></pre></div>
+        
 
-/**
- * Load qlitics.js. This should be done automatically for you
- * @returns {void}
- */
-// istanbul ignore next
-export function startAnalytics() {
-  global.qlitics=global.qlitics||function(){(qlitics.q=qlitics.q||[]).push(arguments);};
-  global.qlitics('init');
+        
+            
 
-  runWhenIdle(function () {
-    const s = document.createElement('script');
-    s.type = 'text/javascript';
-    s.async = true;
-    s.src = '/qlitics.js';
-    const x = document.getElementsByTagName('script')[0];
-    x.parentNode.insertBefore(s, x);
-  });
-}
 
-function pageTypeToQliticsPageType(pageType) {
-  switch(pageType) {
-    case 'story-page': return 'story';
-    case 'home-page': return 'home';
-    case 'section-page': return 'section';
-    case 'tag-page': return 'topic';
-    default: return pageType;
-  }
-}
 
-/**
- * Register a story view event. This should already be wired up for story pages, but this event can
- * be fired on an infinite scroll event. Ideally, please use {@link registerPageView}
- * @param {uuid} storyContentId
- * @returns {void}
- */
-export function registerStoryView(storyContentId) {
-  global.qlitics('track', 'story-view', {
-    'story-content-id': storyContentId,
-  });
-}
 
-/**
- * Register a page view in both qlitics and google analytics. This method takes the page object, which is usually returned from *"/route-data.json"*.
- * @param {Object} page ex: *{"page-type": "story-page", "story": {...}}*
- * @param {string} newPath ex: "/path/to/story"
- * @returns {void}
- */
-export function registerPageView(page, newPath) {
-  global.qlitics('track', 'page-view', {"page-type": pageTypeToQliticsPageType(page.pageType)})
-  if(page.pageType == 'story-page') {
-    registerStoryView(get(page.data, ["story", "id"]));
-  }
 
-  if(newPath &amp;&amp; global.ga &amp;&amp; !global.qtNoAutomaticGATracking) {
-    global.ga(function(tracker) {
-      tracker = tracker || global.ga.getByName("gtm1");
-      if(!tracker)
-        return;
-      tracker.set('page', newPath);
-      tracker.send('pageview');
-    })
-  }
-}
 
-/**
- * Set the current member id on qlitics
- * @param {number} memberId The member id of the logged in member
- * @returns {void}
- */
-export function setMemberId(memberId) {
-  global.qlitics('set', 'member-id', memberId);
-}
 
-/**
- * This event will register a social share of a story in qlitics
- * @param {uuid} storyContentId The id of the story being shared
- * @param {string} socialMediaType The social network the item is being shared on
- * @param {string} storyUrl The canonical URL of the story
- * @returns {void}
- */
-export function registerStoryShare(storyContentId, socialMediaType, storyUrl) {
-  global.qlitics('track', 'story-share', {
-    'story-content-id': storyContentId,
-    'social-media-type': socialMediaType,
-    'url': storyUrl,
-  });
-}
-</code></pre>
-        </article>
-    </section>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_start.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_start.js.html">server/start.js</a>, <a href="server_start.js.html#line1">line 1</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <div class='vertical-section'>
+            <h3 class="title"><span>Methods</span></h3>
+            <div class="members">
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id=".startApp">
+        
+            
+                <span class='tag'>static</span>
+            
+        
+        <span class="code-name">
+            
+                startApp<span class="signature">(appThunk, opts)</span><span class="type-signature"></span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>This app starts a cluster with workers who listen for web requests</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>appThunk</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">function</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>A function which returns an express app when evaluated</p></td>
+</tr>
+
+
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>opts</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">Object</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>Options that are passed to <a href="https://developers.quintype.com/quintype-node-build">@quintype/build</a> (in dev mode)</p></td>
+</tr>
+
+  
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>workers</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">number</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>The number of workers to be spawned (default 4)</p></td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>port</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">number</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>The port to start on (default 3000)</p></td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>sleep</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">number</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>Number of milliseconds to wait to respawn a terminated worker (default 250)</p></td>
+</tr>
+
+  
+
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_start.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_start.js.html">server/start.js</a>, <a href="server_start.js.html#line104">line 104</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+            
+            </div>
+        </div>
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 

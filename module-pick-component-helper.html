@@ -56,7 +56,7 @@
             <div class="column is-3" id="sidebarNav">
                 <div class="sidebar">
                     <nav>
-                        <h2><a href="index.html">Home</a></h2><div class="category"></div><div class="category"><h2>Client</h2><h3>Modules</h3><ul><li><a href="module-analytics.html">analytics</a></li><li><a href="module-start.html">start</a></li></ul></div><div class="category"><h2>Isomorphic</h2><h3>Modules</h3><ul><li><a href="module-IsomorphicComponent.html">IsomorphicComponent</a></li><li><a href="module-match-best-route.html">match-best-route</a></li><li><a href="module-pick-component-helper.html">pick-component-helper</a></li></ul></div><div class="category"><h2>Service Worker</h2><h3>Modules</h3><ul><li><a href="module-service-worker-helper.html">service-worker-helper</a></li></ul></div>
+                        <h2><a href="index.html">Home</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="module-asset-helper-AssetHelper.html">AssetHelper</a></li></ul></div><div class="category"><h2>Client</h2><h3>Modules</h3><ul><li><a href="module-analytics.html">analytics</a></li><li><a href="module-start.html">start</a></li></ul></div><div class="category"><h2>Isomorphic</h2><h3>Modules</h3><ul><li><a href="module-IsomorphicComponent.html">IsomorphicComponent</a></li><li><a href="module-match-best-route.html">match-best-route</a></li><li><a href="module-pick-component-helper.html">pick-component-helper</a></li></ul></div><div class="category"><h2>Server</h2><h3>Modules</h3><ul><li><a href="module-api-client.html">api-client</a></li><li><a href="module-asset-helper.html">asset-helper</a></li><li><a href="module-caching.html">caching</a></li><li><a href="module-create-app.html">create-app</a></li><li><a href="module-generate-routes.html">generate-routes</a></li><li><a href="module-logger.html">logger</a></li><li><a href="module-publisher-config.html">publisher-config</a></li><li><a href="module-render.html">render</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-server-start.html">server-start</a></li><li><a href="module-static-configuration.html">static-configuration</a></li><li><a href="module-visual-stories.html">visual-stories</a></li></ul></div><div class="category"><h2>Service Worker</h2><h3>Modules</h3><ul><li><a href="module-service-worker-helper.html">service-worker-helper</a></li></ul></div>
                     </nav>
                 </div>
             </div>
@@ -203,7 +203,7 @@
         
         <span class="code-name">
             
-                pickComponentHelper<span class="signature">()</span><span class="type-signature"></span>
+                pickComponentHelper<span class="signature">(components, loadChunk)</span><span class="type-signature"> &rarr; {Object}</span>
             
         </span>
     </h4>
@@ -238,6 +238,81 @@ and a map of functions to load each chunk.</p>
 
 
 
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>components</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">Object</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>A map from <em>pageType</em> to <em>{chunk, component}</em></p></td>
+</tr>
+
+
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>loadChunk</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">Object</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>A map from <em>chunkName</em> to function that returns a promise that resolves to the chunk</p></td>
+</tr>
+
+
+    
+    </tbody>
+</table>
 
 
 
@@ -278,7 +353,7 @@ and a map of functions to load each chunk.</p>
         <p class="tag-source">
             <a href="isomorphic_pick-component-helper.js.html" class="button">View Source</a>
             <span>
-                <a href="isomorphic_pick-component-helper.js.html">isomorphic/pick-component-helper.js</a>, <a href="isomorphic_pick-component-helper.js.html#line30">line 30</a>
+                <a href="isomorphic_pick-component-helper.js.html">isomorphic/pick-component-helper.js</a>, <a href="isomorphic_pick-component-helper.js.html#line33">line 33</a>
             </span>
         </p>
     
@@ -300,6 +375,31 @@ and a map of functions to load each chunk.</p>
 
 
 
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'><p>A pair of functions: <em>pickComponent(pageType)</em> and <em>getChunkName(pageType)</em>.</p></div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<span class="param-type">Object</span>
+
+
+    </div>
+    
+</div>
+
+                
+        </div>
+    </div>
 
 
 
