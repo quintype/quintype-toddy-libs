@@ -87,7 +87,9 @@
     
         
             <div class="description"><p>This namespace handles a number of analytics related functions.
-The vast majority of these features are already wired by default, but and are only required to be called manually if you are doing something special.</p>
+The vast majority of these features are already wired by default, but and are only required to be called manually if you are doing something special.
+By default, both GA and qlitics are tracked (including when pages are loaded via AJAX).</p>
+<p>The GA tracker looks for the default tracker, then looks for the tracker called <code>gtm1</code>. If you would like to disable GA tracking, set <code>window.qtNoAutomaticGATracking</code> to true.</p>
 <pre class="prettyprint source lang-javascript"><code>import * from &quot;@quintype/framework/client/analytics&quot;;
 </code></pre></div>
         
@@ -340,7 +342,7 @@ The vast majority of these features are already wired by default, but and are on
         <p class="tag-source">
             <a href="client_analytics.js.html" class="button">View Source</a>
             <span>
-                <a href="client_analytics.js.html">client/analytics.js</a>, <a href="client_analytics.js.html#line61">line 61</a>
+                <a href="client_analytics.js.html">client/analytics.js</a>, <a href="client_analytics.js.html#line65">line 65</a>
             </span>
         </p>
     
@@ -563,7 +565,7 @@ The vast majority of these features are already wired by default, but and are on
         <p class="tag-source">
             <a href="client_analytics.js.html" class="button">View Source</a>
             <span>
-                <a href="client_analytics.js.html">client/analytics.js</a>, <a href="client_analytics.js.html#line94">line 94</a>
+                <a href="client_analytics.js.html">client/analytics.js</a>, <a href="client_analytics.js.html#line98">line 98</a>
             </span>
         </p>
     
@@ -737,7 +739,7 @@ be fired on an infinite scroll event. Ideally, please use registerPageView</p>
         <p class="tag-source">
             <a href="client_analytics.js.html" class="button">View Source</a>
             <span>
-                <a href="client_analytics.js.html">client/analytics.js</a>, <a href="client_analytics.js.html#line49">line 49</a>
+                <a href="client_analytics.js.html">client/analytics.js</a>, <a href="client_analytics.js.html#line53">line 53</a>
             </span>
         </p>
     
@@ -910,7 +912,7 @@ be fired on an infinite scroll event. Ideally, please use registerPageView</p>
         <p class="tag-source">
             <a href="client_analytics.js.html" class="button">View Source</a>
             <span>
-                <a href="client_analytics.js.html">client/analytics.js</a>, <a href="client_analytics.js.html#line83">line 83</a>
+                <a href="client_analytics.js.html">client/analytics.js</a>, <a href="client_analytics.js.html#line87">line 87</a>
             </span>
         </p>
     
@@ -1033,7 +1035,7 @@ be fired on an infinite scroll event. Ideally, please use registerPageView</p>
         <p class="tag-source">
             <a href="client_analytics.js.html" class="button">View Source</a>
             <span>
-                <a href="client_analytics.js.html">client/analytics.js</a>, <a href="client_analytics.js.html#line19">line 19</a>
+                <a href="client_analytics.js.html">client/analytics.js</a>, <a href="client_analytics.js.html#line23">line 23</a>
             </span>
         </p>
     

@@ -79,6 +79,10 @@
             <pre class="prettyprint source linenums"><code>/**
  * This namespace handles a number of analytics related functions.
  * The vast majority of these features are already wired by default, but and are only required to be called manually if you are doing something special.
+ * By default, both GA and qlitics are tracked (including when pages are loaded via AJAX).
+ *
+ * The GA tracker looks for the default tracker, then looks for the tracker called `gtm1`. If you would like to disable GA tracking, set `window.qtNoAutomaticGATracking` to true.
+ *
  * ```javascript
  * import * from "@quintype/framework/client/analytics";
  * ```
