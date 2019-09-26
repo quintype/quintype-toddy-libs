@@ -58,7 +58,7 @@
             <div class="column is-3" id="sidebarNav">
                 <div class="sidebar">
                     <nav>
-                        <h2><a href="index.html">Home</a></h2><div class="category"></div><div class="category"><h2>Client</h2><h3>Modules</h3><ul><li><a href="module-analytics.html">analytics</a></li><li><a href="module-fcm.html">fcm</a></li><li><a href="module-start.html">start</a></li></ul></div><div class="category"><h2>Isomorphic</h2><h3>Modules</h3><ul><li><a href="module-IsomorphicComponent.html">IsomorphicComponent</a></li><li><a href="module-match-best-route.html">match-best-route</a></li><li><a href="module-pick-component-helper.html">pick-component-helper</a></li></ul></div><div class="category"><h2>Service Worker</h2><h3>Modules</h3><ul><li><a href="module-service-worker-helper.html">service-worker-helper</a></li></ul></div>
+                        <h2><a href="index.html">Home</a></h2><div class="category"></div><div class="category"><h2>Client</h2><h3>Modules</h3><ul><li><a href="module-analytics.html">analytics</a></li><li><a href="module-start.html">start</a></li></ul></div><div class="category"><h2>Isomorphic</h2><h3>Modules</h3><ul><li><a href="module-IsomorphicComponent.html">IsomorphicComponent</a></li><li><a href="module-match-best-route.html">match-best-route</a></li><li><a href="module-pick-component-helper.html">pick-component-helper</a></li></ul></div><div class="category"><h2>Service Worker</h2><h3>Modules</h3><ul><li><a href="module-service-worker-helper.html">service-worker-helper</a></li></ul></div>
                     </nav>
                 </div>
             </div>
@@ -100,6 +100,11 @@ const {matchPath} = require("react-router");
  * @property {boolean} exact Is this route an exact match or a prefix
  */
 
+ /**
+  * Find all routes that match a given path
+  * @param {string} path The current path
+  * @param {Array&lt;Route>} routes An array of routes to be matched
+  */
 function matchAllRoutes(path, routes) {
   // Sure there is some construct to do these two lines
   if (!path.startsWith('/')) {
