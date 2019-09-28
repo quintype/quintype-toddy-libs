@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.14.0](https://github.com/quintype/quintype-node-framework/compare/v3.13.1...v3.14.0) (2019-09-28)
+
+
+### Features
+
+* generateServiceWorker now gets config ([f63d80d](https://github.com/quintype/quintype-node-framework/commit/f63d80d))
+
+
+
 ## [3.13.1](https://github.com/quintype/quintype-node-framework/compare/v3.13.0...v3.13.1) (2019-09-26)
 
 
