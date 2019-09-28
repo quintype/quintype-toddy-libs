@@ -2,6 +2,7 @@ function generateServiceWorker(req, res, next, {config, generateRoutes, appVersi
   const {'theme-attributes': {'cache-burst': cacheBurst = 0 } = {}} = config || {};
   return new Promise(resolve => {
     renderServiceWorker(res, "js/service-worker", {
+      config,
       serviceWorkerHelper: assetHelper.serviceWorkerContents(),
       assetPath: assetHelper.assetPath,
       hostname: req.hostname,

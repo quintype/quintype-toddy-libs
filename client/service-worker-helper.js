@@ -1,7 +1,12 @@
 /**
+ * This namespace contains helpers for building a service worker. This namespace only exports *initializeQServiceWorker*.
+ *
+ * See [Setting up Push Notifications](https://developers.quintype.com/malibu/tutorial/setting-up-push-notifications) for an example of setting up push notifications.
+ *
  * ```javascript
  * import { initializeQServiceWorker } from "@quintype/framework/client/service-worker-helper";
  * ```
+ *
  * @category Service Worker
  * @module service-worker-helper
  * @returns {void}
