@@ -277,6 +277,7 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {function} opts.assetLinkFn An async function that accepts *config* and returns *{ packageName, authorizedKeys }* for the Android *&amp;#47;.well-known/assetlinks.json*. If not implemented, then AssetLinks will return a 404.
  * @param {boolean} opts.oneSignalServiceWorkers If set to true, then generate *&amp;#47;OneSignalSKDWorker.js* which combines the Quintype worker as well as OneSignal's worker. (default: false)
  * @param {*} opts.staticRoutes WIP: List of static routes
+ * @param {Array&lt;string>} opts.serviceWorkerPaths List of paths to host the service worker on (default: ["/service-worker.js"])s
  * @param {number} opts.appVersion The version of this app. In case there is a version mismatch between server and client, then client will update ServiceWorker in the background. See *app/isomorphic/app-version.js*.
  * @param {boolean} opts.preloadJs Return a *Link* header preloading JS files. In h/2 compatible browsers, this Js will be pushed. (default: false)
  * @param {boolean} opts.preloadRouteData Return a *Link* header preloading *&amp;#47;route-data.json*. In h/2 compatible browsers, this Js will be pushed. (default: false)
@@ -306,6 +307,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        redirectRootLevelStories = false,
                                                        mobileApiEnabled = true,
                                                        templateOptions = false,
+                                                       serviceWorkerPaths = ["/service-worker.js"],
 
                                                        // The below are primarily for testing
                                                        logError = require("./logger").error,
@@ -321,7 +323,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
   loadErrorData = wrapLoadDataWithMultiDomain(publisherConfig, loadErrorData, 1);
 
-  app.get("/service-worker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, assetHelper, renderServiceWorker}));
+  app.get(serviceWorkerPaths, withConfig(generateServiceWorker, {generateRoutes, appVersion, assetHelper, renderServiceWorker}));
 
   if(oneSignalServiceWorkers) {
     app.get("/OneSignalSDKWorker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
