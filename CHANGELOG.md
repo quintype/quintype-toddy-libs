@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.15.0](https://github.com/quintype/quintype-node-framework/compare/v3.14.0...v3.15.0) (2019-10-09)
+
+
+### Features
+
+* **ServiceWorker:** Add configure service-worker paths ([#95](https://github.com/quintype/quintype-node-framework/issues/95)) ([679a24e](https://github.com/quintype/quintype-node-framework/commit/679a24e))
+
+
+
 # [3.14.0](https://github.com/quintype/quintype-node-framework/compare/v3.13.1...v3.14.0) (2019-09-28)
 
 
