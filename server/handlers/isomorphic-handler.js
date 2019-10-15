@@ -101,7 +101,11 @@ function createStoreFromResult(url, result, opts = {}) {
   return createBasicStore(result, qt, opts);
 }
 
-exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, next, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion, domainSlug}) {
+function selectFieldsForMobile(config, fields) {
+  return fields.length > 0 ? _.pick(config, fields) : config
+}
+
+exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, next, {config, client, generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion, domainSlug, mobileApiEnabled, mobileConfigFields}) {
   const url = urlLib.parse(req.query.path || "/", true);
   const dataLoader = staticDataLoader() || isomorphicDataLoader();
 
@@ -157,6 +161,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
       res.json(Object.assign({}, result, {
         appVersion,
         data: _.omit(result.data, ["cacheKeys"]),
+        config: mobileApiEnabled ? selectFieldsForMobile(result.config, mobileConfigFields) : result.config,
         title: seoInstance ? seoInstance.getTitle(config, result.pageType, result) : result.title,
       }));
     }).catch(handleException).finally(() => res.end());
