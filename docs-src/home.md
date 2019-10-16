@@ -1,3 +1,5 @@
+*This library is part of the [Malibu Framework](https://developers.quintype.com/malibu)*.
+
 The Quintype framework handles most of the heavy lifting in the application for you.
 
 It handles a number of functionality, such as
