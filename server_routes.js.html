@@ -275,7 +275,7 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {SEO} opts.seo An SEO object that will generate html tags for each page. See [@quintype/seo](https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture#quintypeseo)
  * @param {function} opts.manifestFn An async function that accepts the *config*, and returns content for the *&amp;#47;manifest.json*. Common fields like *name*, *start_url* will be populated by default, but can be owerwritten. If not set, then manifest will not be generated.
  * @param {function} opts.assetLinkFn An async function that accepts *config* and returns *{ packageName, authorizedKeys }* for the Android *&amp;#47;.well-known/assetlinks.json*. If not implemented, then AssetLinks will return a 404.
- * @param {boolean} opts.oneSignalServiceWorkers If set to true, then generate *&amp;#47;OneSignalSKDWorker.js* which combines the Quintype worker as well as OneSignal's worker. (default: false)
+ * @param {boolean} opts.oneSignalServiceWorkers Deprecated: If set to true, then generate *&amp;#47;OneSignalSKDWorker.js* which combines the Quintype worker as well as OneSignal's worker. (default: false). Please see [https://developers.quintype.com/malibu/tutorial/onesignal](https://developers.quintype.com/malibu/tutorial/onesignal)
  * @param {*} opts.staticRoutes WIP: List of static routes
  * @param {Array&lt;string>} opts.serviceWorkerPaths List of paths to host the service worker on (default: ["/service-worker.js"])s
  * @param {number} opts.appVersion The version of this app. In case there is a version mismatch between server and client, then client will update ServiceWorker in the background. See *app/isomorphic/app-version.js*.
