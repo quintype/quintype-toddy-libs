@@ -4,7 +4,7 @@ const express = require("express");
 const { isomorphicRoutes } = require("../../server/routes");
 const supertest = require("supertest");
 
-function getClientStub(hostname) {
+function getClientStub() {
   return {
     getHostname: () => "demo.quintype.io",
     getConfig: () => Promise.resolve({foo: "bar"})
@@ -340,4 +340,71 @@ describe('Isomorphic Data Load', function() {
         .expect(500, done);
     });
   });
+  describe("Mobile Data", () => {
+    it("loads only config needed for mobile when mobileApiEnabled flag and the mobileConfigFields is passed", (done) => {
+      const app = createApp((pageType, params, config, client, {host}) => Promise.resolve({
+        data: {
+          pageType,
+          clientHost: client.getHostname(),
+          host
+        },
+        config: {
+          foo: "bar",
+          "cdn-image": "https://image.foobar.com",
+          "polltype-host": "https://poll.foobar.com",
+          "social-links": {
+            "link1": "https://link1.com/facebook"
+          },
+          "publisher-name": "Awesome Publisher"
+        }
+      }), {mobileApiEnabled: true, mobileConfigFields: ["cdn-image"]});
+      supertest(app)
+        .get("/mobile-data.json?path=%2F")
+        .expect("Content-Type", /json/)
+        .expect(200)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.equal("home-page", response.data.pageType);
+          assert.equal(null, response.config.foo);
+          assert.equal("https://image.foobar.com", response.config["cdn-image"]);
+          assert.equal(null, response.config["polltype-host"]);
+          assert.equal(JSON.stringify(["cdn-image"]), JSON.stringify(Object.keys(response.config)))
+          assert.equal("demo.quintype.io", response.data.clientHost);
+          assert.equal("127.0.0.1", response.data.host);
+        }).then(done);
+    })
+
+    it("loads all the config fields if the list of mobile config fields is empty", (done) => {
+      const app = createApp((pageType, params, config, client, {host}) => Promise.resolve({
+        data: {
+          pageType,
+          clientHost: client.getHostname(),
+          host
+        },
+        config: {
+          foo: "bar",
+          "cdn-image": "https://image.foobar.com",
+          "polltype-host": "https://poll.foobar.com",
+          "social-links": {
+            "link1": "https://link1.com/facebook"
+          },
+          "publisher-name": "Awesome Publisher"
+        }
+      }), {mobileApiEnabled: true, mobileConfigFields: []});
+      supertest(app)
+        .get("/mobile-data.json?path=%2F")
+        .expect("Content-Type", /json/)
+        .expect(200)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.equal("home-page", response.data.pageType);
+          assert.equal("bar", response.config.foo);
+          assert.equal("https://image.foobar.com", response.config["cdn-image"]);
+          assert.equal("https://poll.foobar.com", response.config["polltype-host"]);
+          assert.equal(JSON.stringify(["foo","cdn-image","polltype-host","social-links","publisher-name"]), JSON.stringify(Object.keys(response.config)))
+          assert.equal("demo.quintype.io", response.data.clientHost);
+          assert.equal("127.0.0.1", response.data.host);
+        }).then(done);
+    })
+  })
 });

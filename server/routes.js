@@ -119,16 +119,6 @@ function withConfigPartial(getClient, logError, publisherConfig = require("./pub
   }
 }
 
-function withMobileResponse(f){
-  return function(req, res, next) {
-    return f(req, res, next).then(data => {
-      // TODO: Implement data pick/omit here
-      console.log(`response data --> `, data);
-      return data;
-    });
-  }
-}
-
 exports.withError = function withError(handler, logError) {
   return async (req, res, next, opts) => {
     try {
@@ -207,6 +197,7 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {boolean} opts.handleNotFound If set to true, then handle 404 pages with *pageType* set to *"not-found"*. (default: true)
  * @param {boolean} opts.redirectRootLevelStories If set to true, then stories URLs without a section (at *&#47;:storySlug*) will redirect to the canonical url (default: false)
  * @param {boolean} opts.mobileApiEnabled If set to true, then *&#47;mobile-data.json* will respond to mobile API requests. This is primarily used by the React Native starter kit. (default: true)
+ * @param {Array<string>} opts.mobileConfigFields List of fields that are needed in the config field of the *&#47;mobile-data.json* API. This is primarily used by the React Native starter kit. (default: [])
  * @param {boolean} opts.templateOptions If set to true, then *&#47;template-options.json* will return a list of available components so that components can be sorted in the CMS. This reads data from *config/template-options.yml*. See [Adding a homepage component](https://developers.quintype.com/malibu/tutorial/adding-a-homepage-component) for more details
  */
 exports.isomorphicRoutes = function isomorphicRoutes(app,
@@ -228,6 +219,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        handleNotFound = true,
                                                        redirectRootLevelStories = false,
                                                        mobileApiEnabled = true,
+                                                       mobileConfigFields = [],
                                                        templateOptions = false,
                                                        serviceWorkerPaths = ["/service-worker.js"],
 
@@ -263,7 +255,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   }
 
   if(mobileApiEnabled) {
-    app.get("/mobile-data.json", withMobileResponse(withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion})))
+    app.get("/mobile-data.json", withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion, mobileApiEnabled, mobileConfigFields}))
   }
 
   if(assetLinkFn) {
