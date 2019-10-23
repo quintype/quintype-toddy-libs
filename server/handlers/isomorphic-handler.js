@@ -261,7 +261,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
     }
 
     if(preloadRouteData) {
-      res.append("Link", `</route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? `&${url.search.substr(1)}` : ""}>; rel=preload; as=fetch;`);
+      res.append("Link", `</route-data.json?path=${url.pathname}${url.search ? `&${url.search.substr(1)}` : ""}>; rel=preload; as=fetch;`);
     }
 
     return pickComponent.preloadComponent(store.getState().qt.pageType)

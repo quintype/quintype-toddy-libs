@@ -37,7 +37,7 @@ export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl, registerPageVi
 
 function getRouteData(path, {location = global.location, existingFetch}) {
   const url = new URL(path, location.origin);
-  return (existingFetch || fetch(`/route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? `&${  url.search.slice(1)}` : ""}`, {credentials: 'same-origin'}))
+  return (existingFetch || fetch(`/route-data.json?path=${url.pathname}${url.search ? `&${  url.search.slice(1)}` : ""}`, {credentials: 'same-origin'}))
     .then(response => {
       if(response.status == 404) {
         // There is a chance this might abort
