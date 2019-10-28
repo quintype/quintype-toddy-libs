@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.16.0](https://github.com/quintype/quintype-node-framework/compare/v3.15.0...v3.16.0) (2019-10-28)
+
+
+### Bug Fixes
+
+* Fixing the logging message when malibu starts ([db094dd](https://github.com/quintype/quintype-node-framework/commit/db094dd))
+
+
+### Features
+
+* **mobileData:** Select config fields for mobile ([#96](https://github.com/quintype/quintype-node-framework/issues/96)) ([eac3bfa](https://github.com/quintype/quintype-node-framework/commit/eac3bfa))
+
+
+
 # [3.15.0](https://github.com/quintype/quintype-node-framework/compare/v3.14.0...v3.15.0) (2019-10-09)
 
 
