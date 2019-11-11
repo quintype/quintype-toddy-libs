@@ -1,8 +1,8 @@
-var assert = require('assert');
+const assert = require('assert');
 const express = require("express");
+const supertest = require("supertest");
 
 const { isomorphicRoutes } = require("../../server/routes");
-const supertest = require("supertest");
 
 function getClientStub(hostname) {
   return {
@@ -26,6 +26,7 @@ describe('TemplateOptionsHandler', function() {
       .expect("Content-Type", /json/)
       .expect("Cache-Control", /public/)
       .expect("Vary", "Accept-Encoding")
+      .expect("Access-Control-Allow-Origin", "*")
       .expect(200)
       .then(res => {
         const {name, foo} = JSON.parse(res.text);
