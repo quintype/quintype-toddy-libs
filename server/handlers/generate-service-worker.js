@@ -1,5 +1,6 @@
 function generateServiceWorker(req, res, next, {config, generateRoutes, appVersion, appendFn, assetHelper, renderServiceWorker, domainSlug}) {
-  const {'theme-attributes': {'cache-burst': cacheBurst = 0 } = {}} = config || {};
+  // const {'theme-attributes': {'cache-burst': cacheBurst = 0 } = {}} = config || {};
+  const cacheBurst = new Date().getTime();
   return new Promise(resolve => {
     renderServiceWorker(res, "js/service-worker", {
       config,
