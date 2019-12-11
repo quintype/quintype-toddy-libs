@@ -28,7 +28,7 @@ export function setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page
 }
 
 export function checkForServiceWorkerUpdates(app, page = {}) {
-
+  app.updateServiceWorker && app.updateServiceWorker();
   if((page.appVersion && app.getAppVersion && app.getAppVersion() < page.appVersion)) {
     console && console.log("Updating the Service Worker");
     app.updateServiceWorker && app.updateServiceWorker();
