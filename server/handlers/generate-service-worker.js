@@ -1,5 +1,21 @@
-function generateServiceWorker(req, res, next, {config, generateRoutes, appVersion, appendFn, assetHelper, renderServiceWorker, domainSlug}) {
+const rp = require("request-promise");
+
+async function getPbConfig() {
+  return await rp(`https://pagebuilder.staging.quintype.com/api/v1/accounts/97/config`, {json: true}, function(
+    error,
+    response,
+    body
+  ) {
+    return body;
+  });
+}
+
+async function generateServiceWorker(req, res, next, {config, generateRoutes, appVersion, appendFn, assetHelper, renderServiceWorker, domainSlug}) {
   const {'theme-attributes': {'cache-burst': cacheBurst = 0 } = {}} = config || {};
+  const {config: {configVersion:pbConfigVersion = 0}} = await getPbConfig();
+  const maxConfigVersion = Math.max(cacheBurst, pbConfigVersion);
+
+  console.log('maxConfigVersion -------->', maxConfigVersion);
   return new Promise(resolve => {
     renderServiceWorker(res, "js/service-worker", {
       config,
@@ -7,7 +23,7 @@ function generateServiceWorker(req, res, next, {config, generateRoutes, appVersi
       assetPath: assetHelper.assetPath,
       hostname: req.hostname,
       assetHash: assetHelper.assetHash,
-      configVersion: cacheBurst,
+      configVersion: maxConfigVersion,
       getFilesForChunks: assetHelper.getFilesForChunks,
       routes: generateRoutes(config, domainSlug).filter(route => !route.skipPWA)
     }, (err, content) => {
