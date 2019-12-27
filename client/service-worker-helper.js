@@ -58,7 +58,7 @@ export function initializeQServiceWorker(self, params) {
       return false;
 
   };
-  const shellHandler = ({event}) => caches.match('/shell.html').then((r) => r || fetch(event.request));
+  const shellHandler = ({event}) => caches.match(params.shell || '/shell.html').then((r) => r || fetch(event.request));
 
   const workbox = new WorkboxSW({clientsClaim: true, skipWaiting: true});
   workbox.precache(params.assets);

@@ -1,6 +1,7 @@
 // FIMXE: Convert this entire thing to async await / or even Typescript
 
 const _ = require("lodash");
+const rp = require("request-promise");
 
 const urlLib = require("url");
 const {matchBestRoute, matchAllRoutes} = require('../../isomorphic/match-best-route');
@@ -64,8 +65,26 @@ function getSeoInstance(seo, config, pageType="") {
   return (typeof seo === 'function') ? seo(config, pageType) : seo;
 }
 
-exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs, domainSlug}) {
-  if(req.query["_workbox-precaching"] && req.query["_workbox-precaching"] != assetHelper.assetHash("app.js"))
+async function getPbConfig() {
+  return await rp(`https://pagebuilder.staging.quintype.com/api/v1/accounts/97/config`, {json: true}, function(
+    error,
+    response,
+    body
+  ) {
+    return body;
+  });
+}
+
+async function freshVersion(revision, assetHash) {
+  const {config: {configVersion:pbConfigVersion = 0}} = await getPbConfig();
+  return revision !== `${assetHash}-${pbConfigVersion}`;
+}
+
+exports.handleIsomorphicShell = async function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs, domainSlug}) {
+
+  const freshRevision = await freshVersion(req.query["__revision__"], assetHelper.assetHash("app.js"));
+
+  if(req.query["__revision__"] && !freshRevision)
     return res.status(503)
               .send("Requested Shell Is Not Current");
 
