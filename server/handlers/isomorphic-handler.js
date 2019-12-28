@@ -84,7 +84,7 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(req, res, n
 
   const freshRevision = await freshVersion(req.query["__revision__"], assetHelper.assetHash("app.js"));
 
-  if(req.query["__revision__"] && !freshRevision)
+  if(req.query["__revision__"] && freshRevision)
     return res.status(503)
               .send("Requested Shell Is Not Current");
 
