@@ -87,14 +87,16 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(req, res, n
   if(req.query["__revision__"] && freshRevision)
     return res.status(503)
               .send("Requested Shell Is Not Current");
-
-
+              
   loadDataForPageType(loadData, loadErrorData, "shell", {}, {config, client, logError, host: req.hostname, domainSlug})
     .then(result => {
+      const cacheKeys = _.get(result, ["data", "cacheKeys"]);
+
       res.status(200);
       res.setHeader("Content-Type", "text/html");
       res.setHeader("Cache-Control", "public,max-age=900");
       res.setHeader("Vary", "Accept-Encoding");
+      res.setHeader('Cache-Tag', _(cacheKeys).uniq().join(","));
 
       if(preloadJs) {
         res.append("Link", `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`);
