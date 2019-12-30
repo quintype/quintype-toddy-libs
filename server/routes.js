@@ -108,12 +108,25 @@ function getDomainSlug(publisherConfig, hostName) {
   return publisherConfig.domain_mapping[hostName] || null;
 }
 
-function withConfigPartial(getClient, logError, publisherConfig = require("./publisher-config")) {
+async function getPBConfigVersion(config) {
+  await rp(`https://pagebuilder.staging.quintype.com/api/v1/accounts/${config['publisher-id']}/config`, {json: true}, function(
+    error,
+    response,
+    body
+  ) {
+    return body.configVersion;
+  });
+}
+
+function withConfigPartial(getClient, logError, publisherConfig = require("./publisher-config"), enablePb) {
   return function withConfig(f, staticParams) {
     return function (req, res, next) {
       const client = getClient(req.hostname);
       return client.getConfig()
-        .then(config => f(req, res, next, Object.assign({}, staticParams, { config, client, domainSlug: getDomainSlug(publisherConfig, req.hostname)})))
+        .then(async (config) => {
+          const pbConfigVersion = enablePb ? await getPBConfigVersion(config) : 0;
+          f(req, res, next, Object.assign({}, staticParams, { config, client, domainSlug: getDomainSlug(publisherConfig, req.hostname), pbConfigVersion}))
+        })
         .catch(logError);
     }
   }
@@ -222,7 +235,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        mobileConfigFields = [],
                                                        templateOptions = false,
                                                        serviceWorkerPaths = ["/service-worker.js"],
-                                                       pbConfigVersion = 0,
+                                                       enablePb: false,
 
                                                        // The below are primarily for testing
                                                        logError = require("./logger").error,
@@ -232,20 +245,20 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        publisherConfig = require("./publisher-config"),
                                                      }) {
 
-  const withConfig = withConfigPartial(getClient, logError, publisherConfig);
+  const withConfig = withConfigPartial(getClient, logError, publisherConfig, enablePb);
 
   pickComponent = makePickComponentSync(pickComponent);
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
   loadErrorData = wrapLoadDataWithMultiDomain(publisherConfig, loadErrorData, 1);
 
-  app.get(serviceWorkerPaths, withConfig(generateServiceWorker, {generateRoutes, assetHelper, renderServiceWorker, pbConfigVersion}));
+  app.get(serviceWorkerPaths, withConfig(generateServiceWorker, {generateRoutes, assetHelper, renderServiceWorker}));
 
   if(oneSignalServiceWorkers) {
     app.get("/OneSignalSDKWorker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
     app.get("/OneSignalSDKUpdaterWorker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
   }
 
-  app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper, loadData, loadErrorData, logError, preloadJs, pbConfigVersion}));
+  app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper, loadData, loadErrorData, logError, preloadJs}));
   app.get("/route-data.json", withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}));
 
   app.post("/register-fcm-topic", bodyParser.json(), withConfig(registerFCMTopic, {publisherConfig}));

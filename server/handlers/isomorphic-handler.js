@@ -69,9 +69,9 @@ function freshRevision(revision, assetHash, pbConfigVersion) {
   return revision !== `${assetHash}-${pbConfigVersion}`;
 }
 
-exports.handleIsomorphicShell = async function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs, domainSlug, pbConfigVersion}) {
+exports.handleIsomorphicShell = async function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs, domainSlug}) {
 
-  if(req.query.revision && freshRevision(req.query.revision, assetHelper.assetHash("app.js"), pbConfigVersion))
+  if(req.query.revision && freshRevision(req.query.revision, assetHelper.assetHash("app.js"), config.pbConfigVersion))
     return res.status(503)
               .send("Requested Shell Is Not Current");
               

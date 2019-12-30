@@ -1,6 +1,6 @@
-function generateServiceWorker(req, res, next, {config, generateRoutes, appendFn, assetHelper, renderServiceWorker, domainSlug, pbConfigVersion}) {
+function generateServiceWorker(req, res, next, {config, generateRoutes, appendFn, assetHelper, renderServiceWorker, domainSlug}) {
   const {'theme-attributes': {'cache-burst': cacheBurst = 0 } = {}} = config || {};
-  const maxConfigVersion = Math.max(cacheBurst, pbConfigVersion);
+  const maxConfigVersion = Math.max(cacheBurst, config.pbConfigVersion);
 
   return new Promise(resolve => {
     renderServiceWorker(res, "js/service-worker", {
