@@ -229,6 +229,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        getClient = require("./api-client").getClient,
                                                        renderServiceWorker = renderServiceWorkerFn,
                                                        publisherConfig = require("./publisher-config"),
+                                                       pbConfigVersion = 0,
                                                      }) {
 
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
@@ -237,14 +238,14 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
   loadErrorData = wrapLoadDataWithMultiDomain(publisherConfig, loadErrorData, 1);
 
-  app.get(serviceWorkerPaths, withConfig(generateServiceWorker, {generateRoutes, appVersion, assetHelper, renderServiceWorker}));
+  app.get(serviceWorkerPaths, withConfig(generateServiceWorker, {generateRoutes, assetHelper, renderServiceWorker, pbConfigVersion}));
 
   if(oneSignalServiceWorkers) {
     app.get("/OneSignalSDKWorker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
     app.get("/OneSignalSDKUpdaterWorker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
   }
 
-  app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper, loadData, loadErrorData, logError, preloadJs}));
+  app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper, loadData, loadErrorData, logError, preloadJs, pbConfigVersion}));
   app.get("/route-data.json", withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}));
 
   app.post("/register-fcm-topic", bodyParser.json(), withConfig(registerFCMTopic, {publisherConfig}));

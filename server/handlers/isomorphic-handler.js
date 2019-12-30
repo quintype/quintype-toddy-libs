@@ -65,32 +65,19 @@ function getSeoInstance(seo, config, pageType="") {
   return (typeof seo === 'function') ? seo(config, pageType) : seo;
 }
 
-async function getPbConfig() {
-  return await rp(`https://pagebuilder.staging.quintype.com/api/v1/accounts/97/config`, {json: true}, function(
-    error,
-    response,
-    body
-  ) {
-    return body;
-  });
-}
-
-async function freshVersion(revision, assetHash) {
-  const {config: {configVersion:pbConfigVersion = 0}} = await getPbConfig();
+function freshRevision(revision, assetHash, pbConfigVersion) {
   return revision !== `${assetHash}-${pbConfigVersion}`;
 }
 
-exports.handleIsomorphicShell = async function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs, domainSlug}) {
+exports.handleIsomorphicShell = async function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs, domainSlug, pbConfigVersion}) {
 
-  const freshRevision = await freshVersion(req.query["__revision__"], assetHelper.assetHash("app.js"));
-
-  if(req.query["__revision__"] && freshRevision)
+  if(req.query.revision && freshRevision(req.query.revision, assetHelper.assetHash("app.js"), pbConfigVersion))
     return res.status(503)
               .send("Requested Shell Is Not Current");
               
   loadDataForPageType(loadData, loadErrorData, "shell", {}, {config, client, logError, host: req.hostname, domainSlug})
     .then(result => {
-      const cacheKeys = _.get(result, ["data", "cacheKeys"]);
+      const cacheKeys = _.get(result, ["data", "cacheKeys"]); 
 
       res.status(200);
       res.setHeader("Content-Type", "text/html");
