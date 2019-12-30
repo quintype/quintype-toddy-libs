@@ -15,8 +15,8 @@ exports.catalogDataLoader = function catalogDataLoader(client, config) {
     });
 }
 
-exports.homeCollectionOrStories = function homeCollectionOrStories(client) {
-  return Collection.getCollectionBySlug(client, "home", { 'item-type': 'collection'}, {depth: 1})
+exports.homeCollectionOrStories = function homeCollectionOrStories(client, depth = 1) {
+  return Collection.getCollectionBySlug(client, "home", { 'item-type': 'collection'}, {depth})
     .then(collection => {
       if(collection)
         return collection;
