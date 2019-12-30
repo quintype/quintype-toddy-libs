@@ -222,6 +222,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        mobileConfigFields = [],
                                                        templateOptions = false,
                                                        serviceWorkerPaths = ["/service-worker.js"],
+                                                       pbConfigVersion = 0,
 
                                                        // The below are primarily for testing
                                                        logError = require("./logger").error,
@@ -229,7 +230,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        getClient = require("./api-client").getClient,
                                                        renderServiceWorker = renderServiceWorkerFn,
                                                        publisherConfig = require("./publisher-config"),
-                                                       pbConfigVersion = 0,
                                                      }) {
 
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
