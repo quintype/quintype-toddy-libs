@@ -14,7 +14,7 @@ async function generateServiceWorker(req, res, next, {config, generateRoutes, ap
   const {'theme-attributes': {'cache-burst': cacheBurst = 0 } = {}} = config || {};
   const {config: {configVersion:pbConfigVersion = 0}} = await getPbConfig();
   const maxConfigVersion = Math.max(cacheBurst, pbConfigVersion);
-
+  
   console.log('maxConfigVersion -------->', maxConfigVersion);
   return new Promise(resolve => {
     renderServiceWorker(res, "js/service-worker", {
@@ -36,6 +36,7 @@ async function generateServiceWorker(req, res, next, {config, generateRoutes, ap
           .header("Content-Type", "application/javascript")
           .header("Cache-Control", "public,max-age=300")
           .header("Vary", "Accept-Encoding")
+          .header('Cache-Tag', 'pb/97/shell')
           .write(content);
         if(appendFn) appendFn(res);
         res.end();
