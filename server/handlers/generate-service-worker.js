@@ -1,7 +1,7 @@
 function generateServiceWorker(req, res, next, {config, generateRoutes, appendFn, assetHelper, renderServiceWorker, domainSlug, pbConfigVersion}) {
   const {'theme-attributes': {'cache-burst': cacheBurst = 0 } = {}} = config || {};
   const maxConfigVersion = Math.max(cacheBurst, pbConfigVersion);
-  
+
   return new Promise(resolve => {
     renderServiceWorker(res, "js/service-worker", {
       config,
@@ -22,7 +22,7 @@ function generateServiceWorker(req, res, next, {config, generateRoutes, appendFn
           .header("Content-Type", "application/javascript")
           .header("Cache-Control", "public,max-age=300")
           .header("Vary", "Accept-Encoding")
-          .header('Cache-Tag', 'pb/97/shell')
+          .header('Cache-Tag', `pb/${config["publisher-id"]}/sw`)
           .write(content);
         if(appendFn) appendFn(res);
         res.end();
