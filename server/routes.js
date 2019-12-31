@@ -108,14 +108,8 @@ function getDomainSlug(publisherConfig, hostName) {
   return publisherConfig.domain_mapping[hostName] || null;
 }
 
-async function getPBConfigVersion(config) {
-  await rp(`https://pagebuilder.staging.quintype.com/api/v1/accounts/${config['publisher-id']}/config`, {json: true}, function(
-    error,
-    response,
-    body
-  ) {
-    return body.configVersion;
-  });
+function getPBConfigVersion(config) {
+  return rp(`https://pagebuilder.staging.quintype.com/api/v1/accounts/${config['publisher-id']}/config`, {json: true}, (err, res, body) => body.configVersion );
 }
 
 function withConfigPartial(getClient, logError, publisherConfig = require("./publisher-config"), enablePb) {
@@ -123,9 +117,10 @@ function withConfigPartial(getClient, logError, publisherConfig = require("./pub
     return function (req, res, next) {
       const client = getClient(req.hostname);
       return client.getConfig()
-        .then(async (config) => {
-          const pbConfigVersion = enablePb ? await getPBConfigVersion(config) : 0;
-          f(req, res, next, Object.assign({}, staticParams, { config, client, domainSlug: getDomainSlug(publisherConfig, req.hostname), pbConfigVersion}))
+        .then(config => f(req, res, next, Object.assign({}, staticParams, { config, client, domainSlug: getDomainSlug(publisherConfig, req.hostname), pbConfigVersion})))
+        .then(config => {
+          if(!enablePb) return config;
+          return getPBConfigVersion(config).then(pbConfigVersion => ({...config, pbConfigVersion}));
         })
         .catch(logError);
     }
