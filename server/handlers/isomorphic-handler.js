@@ -1,7 +1,6 @@
 // FIMXE: Convert this entire thing to async await / or even Typescript
 
 const _ = require("lodash");
-const rp = require("request-promise");
 
 const urlLib = require("url");
 const {matchBestRoute, matchAllRoutes} = require('../../isomorphic/match-best-route');
@@ -73,13 +72,10 @@ exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {
               
   loadDataForPageType(loadData, loadErrorData, "shell", {}, {config, client, logError, host: req.hostname, domainSlug})
     .then(result => {
-      const cacheKeys = _.get(result, ["data", "cacheKeys"]); 
-
       res.status(200);
       res.setHeader("Content-Type", "text/html");
       res.setHeader("Cache-Control", "public,max-age=900");
       res.setHeader("Vary", "Accept-Encoding");
-      res.setHeader('Cache-Tag', _(cacheKeys).uniq().join(","));
 
       if(preloadJs) {
         res.append("Link", `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`);
