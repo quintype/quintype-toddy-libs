@@ -108,9 +108,16 @@ function getDomainSlug(publisherConfig, hostName) {
   return publisherConfig.domain_mapping[hostName] || null;
 }
 
-function getPBConfigVersion(config) {
-  return rp(`https://pagebuilder.staging.quintype.com/api/v1/accounts/${config['publisher-id']}/config`, {json: true}, (err, res, body) => body.configVersion );
+const isFreshRevisionFn = (revision, assetHash, pbConfigVersion) => revision !== `${assetHash}-${pbConfigVersion}`;
+
+const maxConfigVersionFn = (config = {}, enablePb) => {
+  const cacheBurst = get(config, ['theme-attributes', 'cache-burst'], 0);
+  const pbConfigVersion = get(config, ['pbConfigVersion'], 0);
+  if(!enablePb) return cacheBurst;
+  return Math.max(cacheBurst, pbConfigVersion);
 }
+
+const getPBConfigVersion = config => rp(`https://pagebuilder.staging.quintype.com/api/v1/accounts/${config['publisher-id']}/config`, {json: true}, (err, res, body) => body.configVersion );
 
 function withConfigPartial(getClient, logError, publisherConfig = require("./publisher-config"), enablePb) {
   return function withConfig(f, staticParams) {
@@ -231,6 +238,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        templateOptions = false,
                                                        serviceWorkerPaths = ["/service-worker.js"],
                                                        enablePb: false,
+                                                       maxConfigVersion = maxConfigVersionFn,
+                                                       isFreshRevision = isFreshRevisionFn,
 
                                                        // The below are primarily for testing
                                                        logError = require("./logger").error,
@@ -246,14 +255,14 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
   loadErrorData = wrapLoadDataWithMultiDomain(publisherConfig, loadErrorData, 1);
 
-  app.get(serviceWorkerPaths, withConfig(generateServiceWorker, {generateRoutes, assetHelper, renderServiceWorker}));
+  app.get(serviceWorkerPaths, withConfig(generateServiceWorker, {generateRoutes, assetHelper, renderServiceWorker, enablePb, maxConfigVersion}));
 
   if(oneSignalServiceWorkers) {
-    app.get("/OneSignalSDKWorker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
-    app.get("/OneSignalSDKUpdaterWorker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
+    app.get("/OneSignalSDKWorker.js", withConfig(generateServiceWorker, {generateRoutes, renderServiceWorker, assetHelper, appendFn: oneSignalImport, enablePb, maxConfigVersion}));
+    app.get("/OneSignalSDKUpdaterWorker.js", withConfig(generateServiceWorker, {generateRoutes, renderServiceWorker, assetHelper, appendFn: oneSignalImport, enablePb, maxConfigVersion}));
   }
 
-  app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper, loadData, loadErrorData, logError, preloadJs}));
+  app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper, loadData, loadErrorData, logError, preloadJs, isFreshRevision}));
   app.get("/route-data.json", withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}));
 
   app.post("/register-fcm-topic", bodyParser.json(), withConfig(registerFCMTopic, {publisherConfig}));

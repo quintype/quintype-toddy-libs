@@ -1,6 +1,5 @@
-function generateServiceWorker(req, res, next, {config, generateRoutes, appendFn, assetHelper, renderServiceWorker, domainSlug}) {
-  const {'theme-attributes': {'cache-burst': cacheBurst = 0 } = {}} = config || {};
-  const maxConfigVersion = Math.max(cacheBurst, config.pbConfigVersion);
+function generateServiceWorker(req, res, next, {config, generateRoutes, appendFn, assetHelper, renderServiceWorker, domainSlug, enablePb, maxConfigVersion}) {
+  const configVersion = maxConfigVersion(config, enablePb);
 
   return new Promise(resolve => {
     renderServiceWorker(res, "js/service-worker", {
@@ -9,7 +8,7 @@ function generateServiceWorker(req, res, next, {config, generateRoutes, appendFn
       assetPath: assetHelper.assetPath,
       hostname: req.hostname,
       assetHash: assetHelper.assetHash,
-      configVersion: maxConfigVersion,
+      configVersion,
       getFilesForChunks: assetHelper.getFilesForChunks,
       routes: generateRoutes(config, domainSlug).filter(route => !route.skipPWA)
     }, (err, content) => {

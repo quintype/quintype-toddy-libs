@@ -65,9 +65,7 @@ function getSeoInstance(seo, config, pageType="") {
   return (typeof seo === 'function') ? seo(config, pageType) : seo;
 }
 
-const isFreshRevisionFn = (revision, assetHash, pbConfigVersion) => revision !== `${assetHash}-${pbConfigVersion}`;
-
-exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs, domainSlug, isFreshRevision = isFreshRevisionFn }) {
+exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs, domainSlug, isFreshRevision }) {
 
   if(req.query.revision && isFreshRevision(req.query.revision, assetHelper.assetHash("app.js"), config.pbConfigVersion))
     return res.status(503)
