@@ -7,7 +7,7 @@ const supertest = require("supertest");
 function getClientStub(hostname) {
   return {
     getHostname: () => hostname,
-    getConfig: () => Promise.resolve({foo: "bar"})
+    getConfig: () => Promise.resolve({foo: "bar", "theme-attributes": {"cache-burst": 1577955704455}})
   }
 }
 
@@ -31,9 +31,9 @@ describe('ShellHandler', function() {
     publisherConfig: {},
   })
 
-  it("returns the shell if the workbox prechaching matches", function(done) {
+  it("returns the shell if the prechaching matches", function(done) {
     supertest(app)
-      .get("/shell.html?_workbox-precaching=abcdef")
+      .get("/shell.html?revision=abcdef-1577955704455")
       .expect("Content-Type", /html/)
       .expect(200)
       .then(res => {
@@ -45,13 +45,13 @@ describe('ShellHandler', function() {
       }).then(done);
   });
 
-  it("returns a 503 if the workbox precache doesn't match", function(done) {
+  it("returns a 503 if the precache doesn't match", function(done) {
     supertest(app)
-      .get("/shell.html?_workbox-precaching=junk")
+      .get("/shell.html?revision=junk-1577955704456")
       .expect(503, done);
   });
 
-  it("returns the shell if there is no workbox precaching", function(done) {
+  it("returns the shell if there is no precaching", function(done) {
     supertest(app)
       .get("/shell.html")
       .expect("Content-Type", /html/)
@@ -60,7 +60,7 @@ describe('ShellHandler', function() {
 
   it("sets a header for preloading script", function(done) {
     supertest(app)
-      .get("/shell.html?_workbox-precaching=abcdef")
+      .get("/shell.html?revision=abcdef-1577955704455")
       .expect("Content-Type", /html/)
       .expect("Link", '</assets/app.js>; rel=preload; as=script;')
       .expect(200, done);

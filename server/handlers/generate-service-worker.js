@@ -1,5 +1,6 @@
-function generateServiceWorker(req, res, next, {config, generateRoutes, appVersion, appendFn, assetHelper, renderServiceWorker, domainSlug}) {
-  const {'theme-attributes': {'cache-burst': cacheBurst = 0 } = {}} = config || {};
+async function generateServiceWorker(req, res, next, {config, generateRoutes, appendFn, assetHelper, renderServiceWorker, domainSlug, maxConfigVersion}) {
+  const configVersion = await maxConfigVersion(config);
+
   return new Promise(resolve => {
     renderServiceWorker(res, "js/service-worker", {
       config,
@@ -7,7 +8,7 @@ function generateServiceWorker(req, res, next, {config, generateRoutes, appVersi
       assetPath: assetHelper.assetPath,
       hostname: req.hostname,
       assetHash: assetHelper.assetHash,
-      configVersion: cacheBurst,
+      configVersion,
       getFilesForChunks: assetHelper.getFilesForChunks,
       routes: generateRoutes(config, domainSlug).filter(route => !route.skipPWA)
     }, (err, content) => {
@@ -20,6 +21,7 @@ function generateServiceWorker(req, res, next, {config, generateRoutes, appVersi
           .header("Content-Type", "application/javascript")
           .header("Cache-Control", "public,max-age=300")
           .header("Vary", "Accept-Encoding")
+          .header('Cache-Tag', `s/${config["publisher-id"]}/service-worker s/${config["publisher-id"]}/config`)
           .write(content);
         if(appendFn) appendFn(res);
         res.end();
