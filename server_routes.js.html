@@ -96,6 +96,7 @@ const {makePickComponentSync} = require("../isomorphic/impl/make-pick-component-
 const { registerFCMTopic } = require("./handlers/fcm-registration-handler");
 const rp = require("request-promise");
 const bodyParser = require("body-parser");
+const get = require("lodash/get");
 
 /**
  * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
@@ -277,6 +278,7 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {boolean} opts.mobileApiEnabled If set to true, then *&amp;#47;mobile-data.json* will respond to mobile API requests. This is primarily used by the React Native starter kit. (default: true)
  * @param {Array&lt;string>} opts.mobileConfigFields List of fields that are needed in the config field of the *&amp;#47;mobile-data.json* API. This is primarily used by the React Native starter kit. (default: [])
  * @param {boolean} opts.templateOptions If set to true, then *&amp;#47;template-options.json* will return a list of available components so that components can be sorted in the CMS. This reads data from *config/template-options.yml*. See [Adding a homepage component](https://developers.quintype.com/malibu/tutorial/adding-a-homepage-component) for more details
+ * @param {function} opts.maxConfigVersion An async function which resolves to a integer version of the config. This defaults to config.theme-attributes.cache-burst
  */
 exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                      { generateRoutes,
@@ -300,6 +302,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        mobileConfigFields = [],
                                                        templateOptions = false,
                                                        serviceWorkerPaths = ["/service-worker.js"],
+                                                       maxConfigVersion = config => get(config, ['theme-attributes', 'cache-burst'], 0),                                                       
 
                                                        // The below are primarily for testing
                                                        logError = require("./logger").error,
@@ -315,14 +318,14 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
   loadErrorData = wrapLoadDataWithMultiDomain(publisherConfig, loadErrorData, 1);
 
-  app.get(serviceWorkerPaths, withConfig(generateServiceWorker, {generateRoutes, appVersion, assetHelper, renderServiceWorker}));
+  app.get(serviceWorkerPaths, withConfig(generateServiceWorker, {generateRoutes, assetHelper, renderServiceWorker, maxConfigVersion}));
 
   if(oneSignalServiceWorkers) {
-    app.get("/OneSignalSDKWorker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
-    app.get("/OneSignalSDKUpdaterWorker.js", withConfig(generateServiceWorker, {generateRoutes, appVersion, renderServiceWorker, assetHelper, appendFn: oneSignalImport}));
+    app.get("/OneSignalSDKWorker.js", withConfig(generateServiceWorker, {generateRoutes, renderServiceWorker, assetHelper, appendFn: oneSignalImport, maxConfigVersion}));
+    app.get("/OneSignalSDKUpdaterWorker.js", withConfig(generateServiceWorker, {generateRoutes, renderServiceWorker, assetHelper, appendFn: oneSignalImport, maxConfigVersion}));
   }
 
-  app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper, loadData, loadErrorData, logError, preloadJs}));
+  app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper, loadData, loadErrorData, logError, preloadJs, maxConfigVersion}));
   app.get("/route-data.json", withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}));
 
   app.post("/register-fcm-topic", bodyParser.json(), withConfig(registerFCMTopic, {publisherConfig}));
