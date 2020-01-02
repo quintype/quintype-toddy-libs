@@ -199,6 +199,7 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {boolean} opts.mobileApiEnabled If set to true, then *&#47;mobile-data.json* will respond to mobile API requests. This is primarily used by the React Native starter kit. (default: true)
  * @param {Array<string>} opts.mobileConfigFields List of fields that are needed in the config field of the *&#47;mobile-data.json* API. This is primarily used by the React Native starter kit. (default: [])
  * @param {boolean} opts.templateOptions If set to true, then *&#47;template-options.json* will return a list of available components so that components can be sorted in the CMS. This reads data from *config/template-options.yml*. See [Adding a homepage component](https://developers.quintype.com/malibu/tutorial/adding-a-homepage-component) for more details
+ * @param {function} opts.maxConfigVersion An async function which resolves to a integer version of the config. This defaults to config.theme-attributes.cache-burst
  */
 exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                      { generateRoutes,
