@@ -18,6 +18,7 @@ const {makePickComponentSync} = require("../isomorphic/impl/make-pick-component-
 const { registerFCMTopic } = require("./handlers/fcm-registration-handler");
 const rp = require("request-promise");
 const bodyParser = require("body-parser");
+const get = require("lodash/get");
 
 /**
  * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
@@ -113,7 +114,7 @@ function withConfigPartial(getClient, logError, publisherConfig = require("./pub
     return function (req, res, next) {
       const client = getClient(req.hostname);
       return client.getConfig()
-        .then(config => f(req, res, next, Object.assign({}, staticParams, { config, client, domainSlug: getDomainSlug(publisherConfig, req.hostname)})))        
+        .then(config => f(req, res, next, Object.assign({}, staticParams, { config, client, domainSlug: getDomainSlug(publisherConfig, req.hostname)})))
         .catch(logError);
     }
   }
@@ -223,7 +224,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        mobileConfigFields = [],
                                                        templateOptions = false,
                                                        serviceWorkerPaths = ["/service-worker.js"],
-                                                       maxConfigVersion = (config) => get(config, ['theme-attributes', 'cache-burst'], 0),                                                       
+                                                       maxConfigVersion = config => get(config, ['theme-attributes', 'cache-burst'], 0),                                                       
 
                                                        // The below are primarily for testing
                                                        logError = require("./logger").error,
