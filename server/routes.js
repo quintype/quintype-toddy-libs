@@ -108,27 +108,12 @@ function getDomainSlug(publisherConfig, hostName) {
   return publisherConfig.domain_mapping[hostName] || null;
 }
 
-const isFreshRevisionFn = (revision, assetHash, pbConfigVersion) => revision !== `${assetHash}-${pbConfigVersion}`;
-
-const maxConfigVersionFn = (config = {}, enablePb) => {
-  const cacheBurst = get(config, ['theme-attributes', 'cache-burst'], 0);
-  const pbConfigVersion = get(config, ['pbConfigVersion'], 0);
-  if(!enablePb) return cacheBurst;
-  return Math.max(cacheBurst, pbConfigVersion);
-}
-
-const getPBConfigVersion = config => rp(`https://pagebuilder.staging.quintype.com/api/v1/accounts/${config['publisher-id']}/config`, {json: true}, (err, res, body) => body.configVersion );
-
-function withConfigPartial(getClient, logError, publisherConfig = require("./publisher-config"), enablePb) {
+function withConfigPartial(getClient, logError, publisherConfig = require("./publisher-config")) {
   return function withConfig(f, staticParams) {
     return function (req, res, next) {
       const client = getClient(req.hostname);
       return client.getConfig()
-        .then(config => f(req, res, next, Object.assign({}, staticParams, { config, client, domainSlug: getDomainSlug(publisherConfig, req.hostname), pbConfigVersion})))
-        .then(config => {
-          if(!enablePb) return config;
-          return getPBConfigVersion(config).then(pbConfigVersion => ({...config, pbConfigVersion}));
-        })
+        .then(config => f(req, res, next, Object.assign({}, staticParams, { config, client, domainSlug: getDomainSlug(publisherConfig, req.hostname)})))        
         .catch(logError);
     }
   }
@@ -237,9 +222,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        mobileConfigFields = [],
                                                        templateOptions = false,
                                                        serviceWorkerPaths = ["/service-worker.js"],
-                                                       enablePb: false,
-                                                       maxConfigVersion = maxConfigVersionFn,
-                                                       isFreshRevision = isFreshRevisionFn,
+                                                       maxConfigVersion = (config) => get(config, ['theme-attributes', 'cache-burst'], 0),                                                       
 
                                                        // The below are primarily for testing
                                                        logError = require("./logger").error,
@@ -249,20 +232,20 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        publisherConfig = require("./publisher-config"),
                                                      }) {
 
-  const withConfig = withConfigPartial(getClient, logError, publisherConfig, enablePb);
+  const withConfig = withConfigPartial(getClient, logError, publisherConfig);
 
   pickComponent = makePickComponentSync(pickComponent);
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
   loadErrorData = wrapLoadDataWithMultiDomain(publisherConfig, loadErrorData, 1);
 
-  app.get(serviceWorkerPaths, withConfig(generateServiceWorker, {generateRoutes, assetHelper, renderServiceWorker, enablePb, maxConfigVersion}));
+  app.get(serviceWorkerPaths, withConfig(generateServiceWorker, {generateRoutes, assetHelper, renderServiceWorker, maxConfigVersion}));
 
   if(oneSignalServiceWorkers) {
-    app.get("/OneSignalSDKWorker.js", withConfig(generateServiceWorker, {generateRoutes, renderServiceWorker, assetHelper, appendFn: oneSignalImport, enablePb, maxConfigVersion}));
-    app.get("/OneSignalSDKUpdaterWorker.js", withConfig(generateServiceWorker, {generateRoutes, renderServiceWorker, assetHelper, appendFn: oneSignalImport, enablePb, maxConfigVersion}));
+    app.get("/OneSignalSDKWorker.js", withConfig(generateServiceWorker, {generateRoutes, renderServiceWorker, assetHelper, appendFn: oneSignalImport, maxConfigVersion}));
+    app.get("/OneSignalSDKUpdaterWorker.js", withConfig(generateServiceWorker, {generateRoutes, renderServiceWorker, assetHelper, appendFn: oneSignalImport, maxConfigVersion}));
   }
 
-  app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper, loadData, loadErrorData, logError, preloadJs, isFreshRevision}));
+  app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper, loadData, loadErrorData, logError, preloadJs, maxConfigVersion}));
   app.get("/route-data.json", withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}));
 
   app.post("/register-fcm-topic", bodyParser.json(), withConfig(registerFCMTopic, {publisherConfig}));

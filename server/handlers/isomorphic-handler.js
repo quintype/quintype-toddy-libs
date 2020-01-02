@@ -64,9 +64,9 @@ function getSeoInstance(seo, config, pageType="") {
   return (typeof seo === 'function') ? seo(config, pageType) : seo;
 }
 
-exports.handleIsomorphicShell = function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs, domainSlug, isFreshRevision }) {
+exports.handleIsomorphicShell = async function handleIsomorphicShell(req, res, next, {config, renderLayout, assetHelper, client, loadData, loadErrorData, logError, preloadJs, domainSlug, maxConfigVersion }) {
 
-  if(req.query.revision && isFreshRevision(req.query.revision, assetHelper.assetHash("app.js"), config.pbConfigVersion))
+  if(req.query.revision && req.query.revision === await maxConfigVersion(config))
     return res.status(503)
               .send("Requested Shell Is Not Current");
               

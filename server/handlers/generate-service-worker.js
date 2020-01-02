@@ -1,5 +1,5 @@
-function generateServiceWorker(req, res, next, {config, generateRoutes, appendFn, assetHelper, renderServiceWorker, domainSlug, enablePb, maxConfigVersion}) {
-  const configVersion = maxConfigVersion(config, enablePb);
+async function generateServiceWorker(req, res, next, {config, generateRoutes, appendFn, assetHelper, renderServiceWorker, domainSlug, maxConfigVersion}) {
+  const configVersion = await maxConfigVersion(config);
 
   return new Promise(resolve => {
     renderServiceWorker(res, "js/service-worker", {
@@ -21,7 +21,7 @@ function generateServiceWorker(req, res, next, {config, generateRoutes, appendFn
           .header("Content-Type", "application/javascript")
           .header("Cache-Control", "public,max-age=300")
           .header("Vary", "Accept-Encoding")
-          .header('Cache-Tag', `pb/${config["publisher-id"]}/sw`)
+          .header('Cache-Tag', `s/${config["publisher-id"]}/service-worker s/${config["publisher-id"]}/config`)
           .write(content);
         if(appendFn) appendFn(res);
         res.end();
