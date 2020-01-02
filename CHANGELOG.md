@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.16.5](https://github.com/quintype/quintype-node-framework/compare/v3.16.4...v3.16.5) (2020-01-02)
+
+
+### Bug Fixes
+
+* **service-worker:** Fix service-worker update and added cache-tag to service-worker response ([#99](https://github.com/quintype/quintype-node-framework/issues/99)) ([5c492d8](https://github.com/quintype/quintype-node-framework/commit/5c492d8))
+
+
+
 ## [3.16.4](https://github.com/quintype/quintype-node-framework/compare/v3.16.3...v3.16.4) (2019-12-30)
 
 
