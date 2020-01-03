@@ -18,6 +18,14 @@ function abortHandler() {
   return Promise.resolve({pageType: ABORT_HANDLER, [ABORT_HANDLER]: true});
 }
 
+function allRoutes(generateRoutes, config, domainSlug) {
+  try {
+    return generateRoutes(config, domainSlug)
+  } catch(e) {
+    return [];
+  }
+}
+
 function loadDataForIsomorphicRoute(loadData, loadErrorData, url, routes, {otherParams, config, client, host, logError, domainSlug}) {
   return loadDataForEachRoute()
     .catch(error => {
@@ -129,16 +137,8 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(req, res, n
     }
   }
 
-  function allRoutes() {
-    try {
-      return generateRoutes(config, domainSlug)
-    } catch(e) {
-      return [];
-    }
-  }
-
   function isomorphicDataLoader() {
-    return loadDataForIsomorphicRoute(loadData, loadErrorData, url, allRoutes(), {config, client, logError, host: req.hostname, logError, otherParams: req.query, domainSlug})
+    return loadDataForIsomorphicRoute(loadData, loadErrorData, url, allRoutes(generateRoutes, config, domainSlug), {config, client, logError, host: req.hostname, logError, otherParams: req.query, domainSlug})
       .catch(e => {
         logError(e);
         return {httpStatusCode: 500, pageType: "error"}
@@ -249,6 +249,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
       return res.redirect(301, result.data.location);
     }
     const seoInstance = getSeoInstance(seo, config, result.pageType);
+    const match = matchAllRoutes(url.pathname, allRoutes(generateRoutes, config, domainSlug))
     const seoTags = seoInstance && seoInstance.getMetaTags(config, result.pageType || match.pageType, result, {url});
     const store = createStoreFromResult(url, result, {
       disableIsomorphicComponent: statusCode != 200,
