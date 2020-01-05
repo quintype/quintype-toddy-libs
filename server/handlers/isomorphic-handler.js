@@ -249,8 +249,9 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(req, res, next, {
       return res.redirect(301, result.data.location);
     }
     const seoInstance = getSeoInstance(seo, config, result.pageType);
-    const match = matchAllRoutes(url.pathname, allRoutes(generateRoutes, config, domainSlug))
-    const seoTags = seoInstance && seoInstance.getMetaTags(config, result.pageType || match.pageType, result, {url});
+    const  match = matchAllRoutes(url.pathname, allRoutes(generateRoutes, config, domainSlug)) || []
+    const pageType = _.get(match,['0','pageType'], '')
+    const seoTags = seoInstance && seoInstance.getMetaTags(config, result.pageType || pageType, result, {url});
     const store = createStoreFromResult(url, result, {
       disableIsomorphicComponent: statusCode != 200,
     });
