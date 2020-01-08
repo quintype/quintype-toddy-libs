@@ -86,7 +86,7 @@ let pickComponentWrapper = null;
  * @param {boolean} doNotPushPath If set to true, then the path is not appended to *pushState*
  * @returns {void}
  */
-export function navigateToPage(dispatch, path, doNotPushPath) {
+export function navigateToPage(dispatch, path, doNotPushPath) {  
   if(global.disableAjaxNavigation) {
     global.location = path;
   }
@@ -145,7 +145,7 @@ export function maybeNavigateTo(path, store) {
  * @returns {void}
  */
 export function maybeSetUrl(path, title) {
-  if(global.location.pathname == path)
+  if(global.location.pathname === path)
     return;
   global.history.pushState && global.history.pushState(null, title, path);
   global.document.title = title;

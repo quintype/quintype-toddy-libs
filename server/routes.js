@@ -19,6 +19,7 @@ const { registerFCMTopic } = require("./handlers/fcm-registration-handler");
 const rp = require("request-promise");
 const bodyParser = require("body-parser");
 const get = require("lodash/get");
+const { URL } = require("url");
 
 /**
  * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
@@ -132,14 +133,21 @@ exports.withError = function withError(handler, logError) {
   }
 }
 
+function convertToDomain(path) {
+  if(!path) {
+    return path;
+  }
+  return new URL(path).origin;
+}
+
 function wrapLoadDataWithMultiDomain(publisherConfig, f, configPos) {
   return async function loadDataWrapped() {
     const { domainSlug } = arguments[arguments.length - 1];
     const config = arguments[configPos];
-    const primaryHostUrl = config['sketches-host'];
+    const primaryHostUrl = convertToDomain(config['sketches-host']);
     const domain = (config.domains || []).find(d => d.slug === domainSlug) || { 'host-url': primaryHostUrl };
     const result = await f.apply(this, arguments);
-    return Object.assign({ domainSlug, currentHostUrl: domain['host-url'], primaryHostUrl }, result);
+    return Object.assign({ domainSlug, currentHostUrl: convertToDomain(domain['host-url']), primaryHostUrl }, result);
   }
 }
 
