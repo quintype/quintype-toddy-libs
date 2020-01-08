@@ -12,13 +12,21 @@ const compression = require("compression");
 const morgan = require("morgan");
 
 const logger = require("./logger");
+const { mountQuintypeAt } = require("./routes");
 
 /**
  * Create an express app with various common configurations
+ * @param {object} opts
+ * @param {string} opts.mountAt Mount Quintype framework at a subdirectory
  * @returns {Express} an express app
  */
-function createApp({assetHelper = require("./asset-helper"), publicFolder = "public"} = {}) {
+function createApp({assetHelper = require("./asset-helper"), publicFolder = "public", mountAt} = {}) {
   const app = express.apply(this, arguments);
+
+  if(mountAt) {
+    mountQuintypeAt(app, mountAt);
+  }
+
   app.set("view engine", "ejs");
 
   app.use(morgan("short", {stream: {write: msg => logger.info(msg)}}))

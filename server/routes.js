@@ -339,3 +339,14 @@ exports.proxyGetRequest = function(app, route, handler, opts = {}) {
     }
   }
 }
+
+exports.mountQuintypeAt = function(app, mountAt) {
+  app.use(function(req, res, next) {
+    if (req.url.indexOf(mountAt) === 0) {
+      req.url = req.url.slice(mountAt.length) || "/";
+      next();
+    } else {
+      res.status(404).send(`Not Found: Quintype has been mounted at ${mountAt}`);
+    }
+  });
+}
