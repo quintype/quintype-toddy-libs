@@ -35,9 +35,17 @@ export const history = createBrowserHistory();
 // App gets two more functions: updateServiceWorker and getAppVersion later
 export const app = {navigateToPage, maybeNavigateTo, maybeSetUrl, registerPageView, registerStoryShare, setMemberId};
 
-function getRouteData(path, {location = global.location, existingFetch}) {
-  const url = new URL(path, location.origin);
-  return (existingFetch || fetch(`/route-data.json?path=${encodeURIComponent(url.pathname)}${url.search ? `&${  url.search.slice(1)}` : ""}`, {credentials: 'same-origin'}))
+function getRouteDataAndPath(path, mountAt) {
+  const relativePath = path.startsWith(mountAt) ? path.slice(mountAt.length) : path;
+  return [`${mountAt || ""}/route-data.json`, relativePath];
+}
+
+function getRouteData(path, {location = global.location, existingFetch, mountAt = global.qtMountAt}) {
+  // if mountAt is set, then hit /mountAt/route-data, remove mountAt from path
+
+  const [routeDataPath, relativePath] = getRouteDataAndPath(path, mountAt)
+  const url = new URL(relativePath, location.origin);  
+  return (existingFetch || fetch(`${routeDataPath}?path=${encodeURIComponent(url.pathname)}${url.search ? `&${  url.search.slice(1)}` : ""}`, {credentials: 'same-origin'}))
     .then(response => {
       if(response.status == 404) {
         // There is a chance this might abort
@@ -49,7 +57,7 @@ function getRouteData(path, {location = global.location, existingFetch}) {
 
   function maybeRedirect(page) {
     // This next line aborts the entire load
-    if(page.httpStatusCode == 301 && page.data && page.data.location) {
+    if(page.httpStatusCode === 301 && page.data && page.data.location) {
       location.assign(page.data.location);
       return null;
     }

@@ -342,7 +342,7 @@ exports.proxyGetRequest = function(app, route, handler, opts = {}) {
 
 exports.mountQuintypeAt = function(app, mountAt) {
   app.use(function(req, res, next) {
-    if (req.url.indexOf(mountAt) === 0) {
+    if (req.url.startsWith(mountAt)) {
       req.url = req.url.slice(mountAt.length) || "/";
       next();
     } else {
