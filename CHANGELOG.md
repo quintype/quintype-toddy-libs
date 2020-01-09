@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.17.0](https://github.com/quintype/quintype-node-framework/compare/v3.16.6...v3.17.0) (2020-01-09)
+
+
+### Features
+
+* Mount Quintype at a subdirectory ([#102](https://github.com/quintype/quintype-node-framework/issues/102)) ([68504f0](https://github.com/quintype/quintype-node-framework/commit/68504f0))
+
+
+
 ## [3.16.6](https://github.com/quintype/quintype-node-framework/compare/v3.16.5...v3.16.6) (2020-01-07)
 
 
