@@ -98,9 +98,7 @@ const { mountQuintypeAt } = require("./routes");
  * @param {string} opts.mountAt Mount Quintype framework at a subdirectory. See [tutorial](https://developers.quintype.com/malibu/mount-at-a-subdirectory).
  * @returns {Express} an express app
  */
-function createApp({assetHelper = require("./asset-helper"), publicFolder = "public", mountAt} = {}) {
-  const app = express.apply(this, arguments);
-
+function createApp({assetHelper = require("./asset-helper"), publicFolder = "public", mountAt, app = express()} = {}) {
   if(mountAt) {
     mountQuintypeAt(app, mountAt);
   }
