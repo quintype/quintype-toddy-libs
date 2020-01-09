@@ -238,5 +238,22 @@ describe("generateCommonRoutes", function() {
       [{ path: "/", pageType: "home-page", exact: true, params: { collectionSlug: "1234" } }],
       generateCommonRoutes(config, "sub", { allRoutes: false, homePageRoute: true })
     );
+  });
+
+  it("removes the mount point from the section path", function() {
+    const config = Config.build({
+      "sketches-host": "https://quintype-demo.quintype.io/foo",
+      sections: [{ id: 42, "section-url": "https://quintype-demo.quintype.io/foo/photos" }]
+    })
+
+    assert.deepEqual(
+      [{ path: "/photos", pageType: "section-page", exact: true, params: { sectionId: 42 } }],
+      generateCommonRoutes(config, undefined, { allRoutes: false, sectionPageRoutes: true })
+    )
+
+    assert.deepEqual(
+      [{ path: "/photos(/.*)?/:storySlug", pageType: "story-page", exact: true }],
+      generateCommonRoutes(config, undefined, { allRoutes: false, storyPageRoutes: true })
+    )
   })
 })
