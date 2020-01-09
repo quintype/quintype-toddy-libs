@@ -2,7 +2,7 @@ const assert = require('assert');
 const express = require("express");
 const React = require("react");
 
-const { isomorphicRoutes } = require("../../server/routes");
+const { isomorphicRoutes, mountQuintypeAt } = require("../../server/routes");
 const supertest = require("supertest");
 
 function getClientStub(hostname) {
@@ -16,8 +16,7 @@ function pickComponent(pageType) {
   return ({data}) => <div data-page-type={pageType}>{data.text}</div>;
 }
 
-function createApp(loadData, routes, opts = {}) {
-  const app = express();
+function createApp(loadData, routes, opts = {}, app = express()) {
   isomorphicRoutes(app, Object.assign({
     assetHelper: {assetHash: (file) => file == "app.js" ? "abcdef" : null, assetPath: (file) => `/assets/${file}`},
     getClient: getClientStub,
@@ -34,7 +33,7 @@ function createApp(loadData, routes, opts = {}) {
 
 describe('Isomorphic Handler', function() {
   it("Renders the page if the route matches", function(done) {
-    const app = createApp((pageType, params, config, client, {host}) => Promise.resolve({pageType, data: {text: "foobar", host}}), [{pageType: 'home-page', path: '/'}]);
+    const app = createApp((pageType, params, config, client, {host}) => Promise.resolve({pageType, data: {text: "foobar", host}}), [{pageType: 'home-page', path: '/', exact: true}]);
 
     supertest(app)
       .get("/")
@@ -247,4 +246,35 @@ describe('Isomorphic Handler', function() {
         assert.equal("https://www.foo.com", response.store.qt.primaryHostUrl);
       }).then(done);
   });
+
+  describe("mountAt", function() {
+    it("Gets Pages Mounted at Some Path", function(done) {
+      const app = express();
+      mountQuintypeAt(app, "/foo")
+      createApp((pageType, params, config, client, {host}) => Promise.resolve({pageType, data: {text: "foobar", host}}), [{pageType: 'home-page', path: '/', exact: true}], {}, app);
+
+      supertest(app)
+        .get("/foo")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.equal("<div data-page-type=\"home-page\">foobar</div>", response.content);
+          assert.equal("foobar", response.store.qt.data.text);
+          assert.equal("127.0.0.1", response.store.qt.data.host);
+          assert.equal("home-page", response.store.qt.pageType);
+        }).then(done);
+    });
+
+    it("returns 404 for pages outside the mount at", function(done) {
+      const app = express();
+      mountQuintypeAt(app, "/foo")
+      createApp((pageType, params, config, client, {host}) => Promise.resolve({pageType, data: {text: "foobar", host}}), [{pageType: 'home-page', path: '/', exact: true}], {}, app);
+
+      supertest(app)
+        .get("/")
+        .expect(404)
+        .then(() => done());
+    })
+  })
 });

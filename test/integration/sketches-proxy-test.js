@@ -1,7 +1,7 @@
 const assert = require('assert');
 const express = require("express");
 
-const { upstreamQuintypeRoutes } = require("../../server/routes");
+const { upstreamQuintypeRoutes, mountQuintypeAt } = require("../../server/routes");
 const supertest = require("supertest");
 
 describe('Sketches Proxy', function() {
@@ -14,8 +14,7 @@ describe('Sketches Proxy', function() {
   });
 
   describe("forwarding requests", function() {
-    function buildApp() {
-      const app = express();
+    function buildApp({app = express()} = {}) {
       upstreamQuintypeRoutes(app, {
         config: {sketches_host: `http://127.0.0.1:${upstreamServer.address().port}`},
         getClient: host => ({getHostname: () => host.toUpperCase()}),
@@ -91,7 +90,22 @@ describe('Sketches Proxy', function() {
           assert.equal("/favicon.ico", url);
         })
         .then(done);
-    })
+    });
+
+    it("allows mounting at a different path", function(done) {
+      const app = express();
+      mountQuintypeAt(app, "/foo")
+      supertest(buildApp({app}))
+        .get("/foo/api/v1/config")
+        .expect(200)
+        .then((res) => {
+          const {method, url, host} = JSON.parse(res.text);
+          assert.equal("GET", method);
+          assert.equal("/api/v1/config", url);
+          assert.equal("127.0.0.1", host);
+        })
+        .then(done);
+    });
   })
 
   describe("ping check", function() {

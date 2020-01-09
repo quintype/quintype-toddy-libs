@@ -273,7 +273,38 @@ describe('Isomorphic Data Load', function() {
           const response = JSON.parse(res.text);
           assert.strictEqual("home-for-subdomain", response.data.pageType);
         }).then(done);
-    })
+    });
+
+    it("strips the mount point", function(done) {
+      const app = createApp((pageType, params, config, client, { domainSlug }) => Promise.resolve({ data: { domainSlug }}), {
+        getClient: () => {
+          return {
+            getConfig() {
+              return Promise.resolve({
+                "sketches-host": "https://www.example.com/subdir",
+                domains: [{ slug: "my-domain", "host-url": "https://subdomain.example.com/subdir" }]
+              })
+            }
+          }
+        },
+        publisherConfig: {
+          domain_mapping: {
+            "127.0.0.1": "my-domain"
+          }
+        }
+      });
+
+      supertest(app)
+        .get("/route-data.json")
+        .expect("Content-Type", /json/)
+        .expect(200)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.equal("my-domain", response.data.domainSlug);
+          assert.equal("https://subdomain.example.com", response.currentHostUrl);
+          assert.equal("https://www.example.com", response.primaryHostUrl);
+        }).then(done);
+    });
   })
 
   describe("failure scenarios", function(done) {
