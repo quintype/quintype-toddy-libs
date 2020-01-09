@@ -118,16 +118,33 @@ describe('Sketches Proxy', function() {
       return app;
     }
 
-    it("returns a successful ping if the config is loaded", function(done) {
-      supertest(buildApp(() => Promise.resolve({})))
+    it("returns a successful ping if the config is loaded", async function() {
+      await supertest(buildApp(() => Promise.resolve({})))
         .get("/ping")
-        .expect(200, done);
+        .expect(200);
     });
 
-    it("fails with a 503 if the config fails", function(done) {
-      supertest(buildApp(() => Promise.reject({})))
+    it("fails with a 503 if the config fails", async function() {
+      await supertest(buildApp(() => Promise.reject({})))
         .get("/ping")
-        .expect(503, done);
+        .expect(503);
+    })
+
+    it("responds with a ping even if it's mounted somewhere", async function() {
+      const app = express();
+      mountQuintypeAt(app, "/foo")
+      upstreamQuintypeRoutes(app, {
+        config: { sketches_host: `http://127.0.0.1:${upstreamServer.address().port}` },
+        getClient: host => ({ getConfig: () => Promise.resolve({}) }),
+      })
+
+      await supertest(app)
+        .get("/ping")
+        .expect(200);
+
+      await supertest(app)
+        .get("/foo/ping")
+        .expect(200);
     })
   });
 

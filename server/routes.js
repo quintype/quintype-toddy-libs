@@ -348,10 +348,13 @@ exports.proxyGetRequest = function(app, route, handler, opts = {}) {
   }
 }
 
+// This could also be done using express's mount point, but /ping stops working
 exports.mountQuintypeAt = function(app, mountAt) {
   app.use(function(req, res, next) {
     if (req.url.startsWith(mountAt)) {
       req.url = req.url.slice(mountAt.length) || "/";
+      next();
+    } else if (req.url === '/ping') {
       next();
     } else {
       res.status(404).send(`Not Found: Quintype has been mounted at ${mountAt}`);
