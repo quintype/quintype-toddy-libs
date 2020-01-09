@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.17.2](https://github.com/quintype/quintype-node-framework/compare/v3.17.1...v3.17.2) (2020-01-09)
+
+
+### Bug Fixes
+
+* generateCommonRoutes now understands mount points ([69dd8c9](https://github.com/quintype/quintype-node-framework/commit/69dd8c9))
+
+
+
 ## [3.17.1](https://github.com/quintype/quintype-node-framework/compare/v3.17.0...v3.17.1) (2020-01-09)
 
 
