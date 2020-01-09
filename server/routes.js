@@ -232,7 +232,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(app,
                                                        mobileConfigFields = [],
                                                        templateOptions = false,
                                                        serviceWorkerPaths = ["/service-worker.js"],
-                                                       maxConfigVersion = config => get(config, ['theme-attributes', 'cache-burst'], 0),                                                       
+                                                       maxConfigVersion = config => get(config, ['theme-attributes', 'cache-burst'], 0),
 
                                                        // The below are primarily for testing
                                                        logError = require("./logger").error,

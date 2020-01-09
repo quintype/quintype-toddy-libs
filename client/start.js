@@ -44,7 +44,7 @@ function getRouteData(path, {location = global.location, existingFetch, mountAt 
   // if mountAt is set, then hit /mountAt/route-data, remove mountAt from path
 
   const [routeDataPath, relativePath] = getRouteDataAndPath(path, mountAt)
-  const url = new URL(relativePath, location.origin);  
+  const url = new URL(relativePath, location.origin);
   return (existingFetch || fetch(`${routeDataPath}?path=${encodeURIComponent(url.pathname)}${url.search ? `&${  url.search.slice(1)}` : ""}`, {credentials: 'same-origin'}))
     .then(response => {
       if(response.status == 404) {
@@ -86,7 +86,7 @@ let pickComponentWrapper = null;
  * @param {boolean} doNotPushPath If set to true, then the path is not appended to *pushState*
  * @returns {void}
  */
-export function navigateToPage(dispatch, path, doNotPushPath) {  
+export function navigateToPage(dispatch, path, doNotPushPath) {
   if(global.disableAjaxNavigation) {
     global.location = path;
   }

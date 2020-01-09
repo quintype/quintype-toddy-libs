@@ -14,7 +14,7 @@ describe('Sketches Proxy', function() {
   });
 
   describe("forwarding requests", function() {
-    function buildApp({app = express()} = {}) {      
+    function buildApp({app = express()} = {}) {
       upstreamQuintypeRoutes(app, {
         config: {sketches_host: `http://127.0.0.1:${upstreamServer.address().port}`},
         getClient: host => ({getHostname: () => host.toUpperCase()}),

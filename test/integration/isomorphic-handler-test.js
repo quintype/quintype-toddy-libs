@@ -252,7 +252,7 @@ describe('Isomorphic Handler', function() {
       const app = express();
       mountQuintypeAt(app, "/foo")
       createApp((pageType, params, config, client, {host}) => Promise.resolve({pageType, data: {text: "foobar", host}}), [{pageType: 'home-page', path: '/', exact: true}], {}, app);
-  
+
       supertest(app)
         .get("/foo")
         .expect("Content-Type", /html/)
@@ -270,7 +270,7 @@ describe('Isomorphic Handler', function() {
       const app = express();
       mountQuintypeAt(app, "/foo")
       createApp((pageType, params, config, client, {host}) => Promise.resolve({pageType, data: {text: "foobar", host}}), [{pageType: 'home-page', path: '/', exact: true}], {}, app);
-  
+
       supertest(app)
         .get("/")
         .expect(404)
