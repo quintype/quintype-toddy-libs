@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.17.1](https://github.com/quintype/quintype-node-framework/compare/v3.17.0...v3.17.1) (2020-01-09)
+
+
+### Bug Fixes
+
+* createApp accepts app, and /ping works outside the mount path ([dbe77e6](https://github.com/quintype/quintype-node-framework/commit/dbe77e6))
+
+
+
 # [3.17.0](https://github.com/quintype/quintype-node-framework/compare/v3.16.6...v3.17.0) (2020-01-09)
 
 
