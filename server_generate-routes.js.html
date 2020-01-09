@@ -193,7 +193,7 @@ exports.generateCommonRoutes = function generateSectionPageRoutes(config, domain
   homePageRoute = allRoutes,
 } = {}) {
   const sections = config.getDomainSections(domainSlug);
-  const sectionRoutes = sections.map(sectionToSectionRoute)
+  const sectionRoutes = sections.map(s => sectionToSectionRoute(config["sketches-host"], s))
   const storyRoutes = sectionRoutes.map(({ path }) => ({ path: `${path.replace(/^\/section\//, '/')}(/.*)?/:storySlug`, pageType: "story-page", exact: true }));
   return [].concat(
     homePageRoute ? [{ path: "/", pageType: "home-page", exact: true, params: { collectionSlug: config.getHomeCollectionSlug(domainSlug)} }] : [],
@@ -202,7 +202,7 @@ exports.generateCommonRoutes = function generateSectionPageRoutes(config, domain
   )
 }
 
-function sectionToSectionRoute(section) {
+function sectionToSectionRoute(baseUrl, section) {
   const params = {
     sectionId: section.id,
   }
@@ -211,8 +211,11 @@ function sectionToSectionRoute(section) {
   }
 
   try {
-    const url = new URL(section['section-url']);
-    return { path: url.pathname, pageType: "section-page", exact: true, params }
+    const sectionUrl = section['section-url'];
+    const relativeUrl = baseUrl &amp;&amp; sectionUrl.startsWith(baseUrl)
+      ? sectionUrl.slice(baseUrl.length)
+      : new URL(section['section-url']).pathname;
+    return { path: relativeUrl, pageType: "section-page", exact: true, params }
   } catch (e) {
     return { path: `/${section.slug}`, pageType: "section-page", exact: true, params };
   }
