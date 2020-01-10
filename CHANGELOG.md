@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.18.3](https://github.com/quintype/quintype-node-framework/compare/v3.18.2...v3.18.3) (2020-01-10)
+
+
+### Bug Fixes
+
+* **Subdirectory:** Service Worker is loaded relatively ([8543c81](https://github.com/quintype/quintype-node-framework/commit/8543c81))
+
+
+
 ## [3.18.2](https://github.com/quintype/quintype-node-framework/compare/v3.18.1...v3.18.2) (2020-01-10)
 
 
