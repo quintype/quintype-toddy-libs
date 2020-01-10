@@ -1,11 +1,11 @@
 import { SERVICE_WORKER_UPDATED } from '@quintype/components';
 
-export function registerServiceWorker({enableServiceWorker = false, serviceWorkerLocation = "/service-worker.js", navigator = global.navigator}) {
+export function registerServiceWorker({enableServiceWorker = false, serviceWorkerLocation = "/service-worker.js", navigator = global.navigator, mountAt = global.qtMountAt}) {
   if(enableServiceWorker && navigator.serviceWorker) {
-    return navigator.serviceWorker.register(serviceWorkerLocation)
-  } else {
-    return Promise.resolve(null)
+    const fullServiceWorkerLocation = mountAt ? `${mountAt}${serviceWorkerLocation}` : serviceWorkerLocation;
+    return navigator.serviceWorker.register(fullServiceWorkerLocation)
   }
+  return Promise.resolve(null)
 }
 
 export function setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page) {

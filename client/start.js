@@ -222,7 +222,7 @@ function runWithTiming(name, f) {
  * @param {function} opts.preRenderApplication Render a part of the application on boot. See [preRenderApplication](https://developers.quintype.com/malibu/isomorphic-rendering/client-side-architecture.html#prerenderapplication)
  * @param {boolean} opts.enableFCM Enable Firebase Cloud Messaging for push notifications
  * @param {boolean} opts.enableServiceWorker Should service worker be enabled
- * @param {string} opts.serviceWorkerLocation Location of the service worker (default: /service-worker.js)
+ * @param {string} opts.serviceWorkerLocation Location of the service worker (default: /service-worker.js). Note, if using mountAt, this is relative to the mount point.
  * @param {number} opts.appVersion App Version. See [Updating App Version](https://developers.quintype.com/malibu/tutorial/updating-app-version)
  * @returns {Redux} The store that was created
  *
