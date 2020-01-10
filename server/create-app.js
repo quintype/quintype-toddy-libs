@@ -17,7 +17,7 @@ const { mountQuintypeAt } = require("./routes");
 /**
  * Create an express app with various common configurations
  * @param {object} opts
- * @param {string} opts.mountAt Mount Quintype framework at a subdirectory. See [tutorial](https://developers.quintype.com/malibu/mount-at-a-subdirectory).
+ * @param {string | function} opts.mountAt Mount Quintype framework at a subdirectory. See [tutorial](https://developers.quintype.com/malibu/mount-at-a-subdirectory). If mountAt is a function, it must accept the current hostname and return the mount point.
  * @returns {Express} an express app
  */
 function createApp({assetHelper = require("./asset-helper"), publicFolder = "public", mountAt, app = express()} = {}) {

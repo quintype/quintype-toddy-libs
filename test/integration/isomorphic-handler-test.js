@@ -248,12 +248,12 @@ describe('Isomorphic Handler', function() {
   });
 
   describe("mountAt", function() {
-    it("Gets Pages Mounted at Some Path", function(done) {
+    it("Gets Pages Mounted at Some Path", async function() {
       const app = express();
       mountQuintypeAt(app, "/foo")
       createApp((pageType, params, config, client, {host}) => Promise.resolve({pageType, data: {text: "foobar", host}}), [{pageType: 'home-page', path: '/', exact: true}], {}, app);
 
-      supertest(app)
+      await supertest(app)
         .get("/foo")
         .expect("Content-Type", /html/)
         .expect(200)
@@ -263,18 +263,35 @@ describe('Isomorphic Handler', function() {
           assert.equal("foobar", response.store.qt.data.text);
           assert.equal("127.0.0.1", response.store.qt.data.host);
           assert.equal("home-page", response.store.qt.pageType);
-        }).then(done);
+        });
     });
 
-    it("returns 404 for pages outside the mount at", function(done) {
+    it("returns 404 for pages outside the mount at", async function() {
       const app = express();
       mountQuintypeAt(app, "/foo")
       createApp((pageType, params, config, client, {host}) => Promise.resolve({pageType, data: {text: "foobar", host}}), [{pageType: 'home-page', path: '/', exact: true}], {}, app);
 
-      supertest(app)
+      await supertest(app)
         .get("/")
-        .expect(404)
-        .then(() => done());
-    })
+        .expect(404);
+    });
+
+    it("Gets Pages Mounted at Some Path", async function () {
+      const app = express();
+      mountQuintypeAt(app, (hostname) => `/${hostname}`)
+      createApp((pageType, params, config, client, { host }) => Promise.resolve({ pageType, data: { text: "foobar", host } }), [{ pageType: 'home-page', path: '/', exact: true }], {}, app);
+
+      await supertest(app)
+        .get("/127.0.0.1")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.equal("<div data-page-type=\"home-page\">foobar</div>", response.content);
+          assert.equal("foobar", response.store.qt.data.text);
+          assert.equal("127.0.0.1", response.store.qt.data.host);
+          assert.equal("home-page", response.store.qt.pageType);
+        });
+    });
   })
 });
