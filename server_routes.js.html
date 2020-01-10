@@ -431,13 +431,13 @@ exports.mountQuintypeAt = function(app, mountAt) {
   app.use(function(req, res, next) {
     const mountPoint = typeof(mountAt) === 'function' ? mountAt(req.hostname) : mountAt;
 
-    if (req.url.startsWith(mountPoint)) {
+    if (mountPoint &amp;&amp; req.url.startsWith(mountPoint)) {
       req.url = req.url.slice(mountPoint.length) || "/";
       next();
-    } else if (req.url === '/ping') {
-      next();
-    } else {
+    } else if (mountPoint &amp;&amp; req.url !== '/ping') {
       res.status(404).send(`Not Found: Quintype has been mounted at ${mountPoint}`);
+    } else {
+      next();
     }
   });
 }
