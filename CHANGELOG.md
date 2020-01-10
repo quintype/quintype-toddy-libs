@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.18.2](https://github.com/quintype/quintype-node-framework/compare/v3.18.1...v3.18.2) (2020-01-10)
+
+
+### Bug Fixes
+
+* **Subdirectory:** things still work if mountpoint returns a null ([4f138d2](https://github.com/quintype/quintype-node-framework/commit/4f138d2))
+
+
+
 ## [3.18.1](https://github.com/quintype/quintype-node-framework/compare/v3.18.0...v3.18.1) (2020-01-10)
 
 
