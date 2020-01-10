@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.18.1](https://github.com/quintype/quintype-node-framework/compare/v3.18.0...v3.18.1) (2020-01-10)
+
+
+### Bug Fixes
+
+* **Subdirectory:** Fixing an error message ([38c1ad2](https://github.com/quintype/quintype-node-framework/commit/38c1ad2))
+
+
+
 # [3.18.0](https://github.com/quintype/quintype-node-framework/compare/v3.17.2...v3.18.0) (2020-01-10)
 
 
