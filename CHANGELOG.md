@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.18.0](https://github.com/quintype/quintype-node-framework/compare/v3.17.2...v3.18.0) (2020-01-10)
+
+
+### Features
+
+* Accept mountpoint as a function ([7ee2aa0](https://github.com/quintype/quintype-node-framework/commit/7ee2aa0))
+
+
+
 ## [3.17.2](https://github.com/quintype/quintype-node-framework/compare/v3.17.1...v3.17.2) (2020-01-09)
 
 
