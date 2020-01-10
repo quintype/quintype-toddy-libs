@@ -293,5 +293,23 @@ describe('Isomorphic Handler', function() {
           assert.equal("home-page", response.store.qt.pageType);
         });
     });
+
+    it("doesn't apply the mountpoint if the function returns undefined", async () => {
+      const app = express();
+      mountQuintypeAt(app, (hostname) => undefined)
+      createApp((pageType, params, config, client, { host }) => Promise.resolve({ pageType, data: { text: "foobar", host } }), [{ pageType: 'home-page', path: '/', exact: true }], {}, app);
+
+      await supertest(app)
+        .get("/")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then(res => {
+          const response = JSON.parse(res.text);
+          assert.equal("<div data-page-type=\"home-page\">foobar</div>", response.content);
+          assert.equal("foobar", response.store.qt.data.text);
+          assert.equal("127.0.0.1", response.store.qt.data.host);
+          assert.equal("home-page", response.store.qt.pageType);
+        });
+    })
   })
 });
