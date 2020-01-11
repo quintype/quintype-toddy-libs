@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.18.4](https://github.com/quintype/quintype-node-framework/compare/v3.18.3...v3.18.4) (2020-01-11)
+
+
+### Bug Fixes
+
+* **Subdirectory:** qlitics is also aware of subdirectory ([e204507](https://github.com/quintype/quintype-node-framework/commit/e204507))
+
+
+
 ## [3.18.3](https://github.com/quintype/quintype-node-framework/compare/v3.18.2...v3.18.3) (2020-01-10)
 
 
