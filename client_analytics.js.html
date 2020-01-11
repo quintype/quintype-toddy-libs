@@ -98,7 +98,7 @@ import { runWhenIdle } from "./impl/run-when-idle";
  * @returns {void}
  */
 // istanbul ignore next
-export function startAnalytics() {
+export function startAnalytics({mountAt = global.qtMountAt || ""}) {
   global.qlitics=global.qlitics||function(){(qlitics.q=qlitics.q||[]).push(arguments);};
   global.qlitics('init');
 
@@ -106,7 +106,7 @@ export function startAnalytics() {
     const s = document.createElement('script');
     s.type = 'text/javascript';
     s.async = true;
-    s.src = '/qlitics.js';
+    s.src = `${mountAt}/qlitics.js`;
     const x = document.getElementsByTagName('script')[0];
     x.parentNode.insertBefore(s, x);
   });
