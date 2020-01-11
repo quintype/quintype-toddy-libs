@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.18.6](https://github.com/quintype/quintype-node-framework/compare/v3.18.5...v3.18.6) (2020-01-11)
+
+
+### Bug Fixes
+
+* Fixing a crash due to a wrong default params ([6a58968](https://github.com/quintype/quintype-node-framework/commit/6a58968))
+
+
+
 ## [3.18.5](https://github.com/quintype/quintype-node-framework/compare/v3.18.4...v3.18.5) (2020-01-11)
 
 
