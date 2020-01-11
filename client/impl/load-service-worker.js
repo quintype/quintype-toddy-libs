@@ -1,9 +1,8 @@
 import { SERVICE_WORKER_UPDATED } from '@quintype/components';
 
-export function registerServiceWorker({enableServiceWorker = false, serviceWorkerLocation = "/service-worker.js", navigator = global.navigator, mountAt = global.qtMountAt}) {
+export function registerServiceWorker({enableServiceWorker = false, serviceWorkerLocation = "/service-worker.js", navigator = global.navigator, mountAt = global.qtMountAt || ""}) {
   if(enableServiceWorker && navigator.serviceWorker) {
-    const fullServiceWorkerLocation = mountAt ? `${mountAt}${serviceWorkerLocation}` : serviceWorkerLocation;
-    return navigator.serviceWorker.register(fullServiceWorkerLocation)
+    return navigator.serviceWorker.register(`${mountAt}${serviceWorkerLocation}`)
   }
   return Promise.resolve(null)
 }
