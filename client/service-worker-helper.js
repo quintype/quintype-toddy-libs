@@ -31,17 +31,17 @@ function qDebug() {
  * @param {Array<Route>} params.routes An array of routes for the PWA to match
  * @param {Array<string>} params.assets A list of assets to be cached before the ServiceWorker is installed
  */
-export function initializeQServiceWorker(self, params) {
+export function initializeQServiceWorker(self, params = {}) {
   importScripts(`https://unpkg.com/workbox-sw@${workboxVersion}/build/importScripts/workbox-sw.${process.env.NODE_ENV == 'production' ? 'prod' : 'dev'}.v${workboxVersion}.js`);
 
-  const routeMatcher = function({event, url}) {
+  const routeMatcher = function routeMatcher({event, url}) {
     if(event.request.mode !== 'navigate') {
       return false;
     }
 
     // Can this somehow be changed to using a combination of qtLoadedFromShell and some other stuff?
     // Other random libraries may change this fragment
-    if(url.searchParams.has("bypass-sw") || url.hash == '#bypass-sw') {
+    if(url.searchParams.has("bypass-sw") || url.hash === '#bypass-sw') {
       qDebug(`Bypassing the shell due to bypass-sw being present`);
       return false;
     }
@@ -50,11 +50,22 @@ export function initializeQServiceWorker(self, params) {
       return false;
     }
 
-    if(matchBestRoute(url.pathname, params.routes)) {
-      qDebug(`Rendering the shell for navigation to ${url.pathname}`);
+    let {pathname} = url;
+
+    if(params.mountAt && !pathname.startsWith(params.mountAt)) {
+      return false;
+    }
+
+    // Remove the mountAt before matching any routes
+    if(params.mountAt && pathname.startsWith(params.mountAt)) {
+      pathname = pathname.slice(params.mountAt.length);
+    }
+
+    if(matchBestRoute(pathname, params.routes)) {
+      qDebug(`Rendering the shell for navigation to ${pathname}`);
       return true;
     }
-      qDebug(`Not rendering the shell for navigation to ${url.pathname}`);
+      qDebug(`Not rendering the shell for navigation to ${pathname}`);
       return false;
 
   };
