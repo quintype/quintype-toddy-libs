@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.18.7](https://github.com/quintype/quintype-node-framework/compare/v3.18.6...v3.18.7) (2020-01-13)
+
+
+### Bug Fixes
+
+* initializeQServiceWorker honors the mountAt parameter ([217e721](https://github.com/quintype/quintype-node-framework/commit/217e721))
+
+
+
 ## [3.18.6](https://github.com/quintype/quintype-node-framework/compare/v3.18.5...v3.18.6) (2020-01-11)
 
 
