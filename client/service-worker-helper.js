@@ -30,6 +30,8 @@ function qDebug() {
  * @param {function} params.excludeNavigation A function to exclude the PWA from serving the shell on that route, even if the route matches as per *routes*.
  * @param {Array<Route>} params.routes An array of routes for the PWA to match
  * @param {Array<string>} params.assets A list of assets to be cached before the ServiceWorker is installed
+ * @param {string|undefined} params.mountAt Mount point for the routes to be mounted
+ * @param {string} params.shell Path for the shell. Default '/shell.html'
  */
 export function initializeQServiceWorker(self, params = {}) {
   importScripts(`https://unpkg.com/workbox-sw@${workboxVersion}/build/importScripts/workbox-sw.${process.env.NODE_ENV == 'production' ? 'prod' : 'dev'}.v${workboxVersion}.js`);
