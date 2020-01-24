@@ -426,7 +426,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       preloadJs,
       preloadRouteData,
       assetHelper,
-      ampMobileStoryPages
+      ampStoryPages
     })
   );
 
