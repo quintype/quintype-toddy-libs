@@ -365,7 +365,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     preloadJs,
     preloadRouteData,
     domainSlug,
-    ampMobileStoryPages
+    ampStoryPages
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -391,11 +391,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
         "story",
         "is-amp-supported"
       ]);
-      if (
-        result.pageType === "story-page" &&
-        ampMobileStoryPages &&
-        isAmpSupported
-      ) {
+      if (result.pageType === "story-page" && ampStoryPages && isAmpSupported) {
         return new Promise(resolve => resolve(writeAmpResponse(result))).catch(
           e => {
             logError(e);
