@@ -74,6 +74,8 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
   app.all("/rss-feed", sketchesProxy);
   app.all("/stories.rss", sketchesProxy);
   app.all("/news_sitemap.xml", sketchesProxy);
+  app.all("/sso-login", sketchesProxy);
+  app.all("/sso-signup", sketchesProxy);
 
   if(forwardAmp) {
     app.get("/amp/*", sketchesProxy);
