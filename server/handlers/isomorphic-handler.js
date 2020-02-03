@@ -391,7 +391,9 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
         "story",
         "is-amp-supported"
       ]);
-      const ampStoryPagesConfig = config.ampStoryPages || ampStoryPages;
+      const ampStoryPagesConfig =
+        _.get(config, ["theme-attributes", "amp-story-pages"], false) ||
+        ampStoryPages;
       if (
         result.pageType === "story-page" &&
         ampStoryPagesConfig &&
