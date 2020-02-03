@@ -418,6 +418,8 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     });
 
   function writeAmpResponse(result) {
+    res.status(statusCode);
+    addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]));
     request.get(
       `${result.currentHostUrl}/amp/story/${encodeURIComponent(req.path)}`,
       (error, response, body) => {
