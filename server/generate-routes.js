@@ -178,7 +178,13 @@ function sectionToSectionRoute(baseUrl, section, skipPWA = false) {
       baseUrl && sectionUrl.startsWith(baseUrl)
         ? sectionUrl.slice(baseUrl.length)
         : new URL(section["section-url"]).pathname;
-    return { path: relativeUrl, pageType: "section-page", exact: true, params };
+    return {
+      path: relativeUrl,
+      pageType: "section-page",
+      exact: true,
+      params,
+      skipPWA
+    };
   } catch (e) {
     return {
       path: `/${section.slug}`,
