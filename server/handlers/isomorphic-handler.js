@@ -391,7 +391,12 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
         "story",
         "is-amp-supported"
       ]);
-      if (result.pageType === "story-page" && ampStoryPages && isAmpSupported) {
+      const ampStoryPagesConfig = config.ampStoryPages || ampStoryPages;
+      if (
+        result.pageType === "story-page" &&
+        ampStoryPagesConfig &&
+        isAmpSupported
+      ) {
         return new Promise(resolve => resolve(writeAmpResponse(result))).catch(
           e => {
             logError(e);
