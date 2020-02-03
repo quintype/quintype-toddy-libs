@@ -418,6 +418,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     });
 
   function writeAmpResponse(result) {
+    const statusCode = result.httpStatusCode || 200;
     res.status(statusCode);
     addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]));
     request.get(
