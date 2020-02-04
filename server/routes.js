@@ -275,10 +275,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     mobileApiEnabled = true,
     mobileConfigFields = [],
     templateOptions = false,
-<<<<<<< HEAD
     ampStoryPages = false,
-=======
->>>>>>> master
     serviceWorkerPaths = ["/service-worker.js"],
     maxConfigVersion = config =>
       get(config, ["theme-attributes", "cache-burst"], 0),
@@ -430,12 +427,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       logError,
       preloadJs,
       preloadRouteData,
-<<<<<<< HEAD
       assetHelper,
       ampStoryPages
-=======
-      assetHelper
->>>>>>> master
     })
   );
 
