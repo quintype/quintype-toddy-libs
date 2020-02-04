@@ -1,4 +1,4 @@
-const {createStore} = require("redux");
+const { createStore } = require("redux");
 
 function getDefaultState(result) {
   return {
@@ -12,13 +12,13 @@ function getDefaultState(result) {
 
 function createBasicStore(result, customQt, opts = {}) {
   const defaultState = getDefaultState(result);
-  const qt =  Object.assign({}, defaultState.qt, opts, customQt);
-  const finalState = Object.assign({}, defaultState, {qt});
+  const qt = Object.assign({}, defaultState.qt, opts, customQt);
+  const finalState = Object.assign({}, defaultState, { qt });
 
-  return createStore((state) => state, finalState);
+  return createStore(state => state, finalState);
 }
 
 module.exports = {
   getDefaultState,
   createBasicStore
-}
+};

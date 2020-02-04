@@ -30,11 +30,14 @@
  * @param {Object} loadChunk A map from *chunkName* to function that returns a promise that resolves to the chunk
  * @returns {Object} A pair of functions: *pickComponent(pageType)* and *getChunkName(pageType)*.
  */
-exports.pickComponentHelper = function pickComponentHelper(components, loadChunk) {
+exports.pickComponentHelper = function pickComponentHelper(
+  components,
+  loadChunk
+) {
   return {
     pickComponent,
     getChunkName
-  }
+  };
 
   function pickComponent(pageType) {
     const { chunk, component } = components[pageType] || components.default;
@@ -45,4 +48,4 @@ exports.pickComponentHelper = function pickComponentHelper(components, loadChunk
     const { chunk } = components[pageType] || components.default;
     return chunk;
   }
-}
+};

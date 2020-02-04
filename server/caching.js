@@ -19,7 +19,7 @@
  */
 exports.authorToCacheKey = function authorToCacheKey(publisherId, author) {
   return `a/${publisherId}/${author.id}`;
-}
+};
 
 /**
  * Get the cache key for a story
@@ -28,8 +28,8 @@ exports.authorToCacheKey = function authorToCacheKey(publisherId, author) {
  * @returns {string} The cache key
  */
 exports.storyToCacheKey = function storyToCacheKey(publisherId, story) {
-  return `s/${publisherId}/${story.id.substr(0,8)}`;
-}
+  return `s/${publisherId}/${story.id.substr(0, 8)}`;
+};
 
 /**
  * Get the cache key for a collection
@@ -37,13 +37,22 @@ exports.storyToCacheKey = function storyToCacheKey(publisherId, story) {
  * @param {Object} collection The Collection. Note, this is not recursive
  * @returns {string} The cache key
  */
-exports.collectionToCacheKey = function collectionToCacheKey(publisherId, collection) {
+exports.collectionToCacheKey = function collectionToCacheKey(
+  publisherId,
+  collection
+) {
   return `c/${publisherId}/${collection.id}`;
-}
+};
 
-exports.sorterToCacheKey = function sorterToCacheKey(publisherId, storyGroup, sectionId) {
-  return `q/${publisherId}/${storyGroup}/${sectionId ? `section-${sectionId}` : "home"}`;
-}
+exports.sorterToCacheKey = function sorterToCacheKey(
+  publisherId,
+  storyGroup,
+  sectionId
+) {
+  return `q/${publisherId}/${storyGroup}/${
+    sectionId ? `section-${sectionId}` : "home"
+  }`;
+};
 
 /**
  * Get the cache key for a customUrl
@@ -53,4 +62,4 @@ exports.sorterToCacheKey = function sorterToCacheKey(publisherId, storyGroup, se
  */
 exports.customUrlToCacheKey = function customUrlToCacheKey(publisherId, page) {
   return `u/${publisherId}/${page.id}`;
-}
+};

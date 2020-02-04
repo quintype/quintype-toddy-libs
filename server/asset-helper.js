@@ -4,4 +4,7 @@
 const { AssetHelper } = require("./impl/asset-helper-impl");
 const fs = require("fs");
 
-module.exports = new AssetHelper(require("./publisher-config"), JSON.parse(fs.readFileSync("asset-manifest.json")))
+module.exports = new AssetHelper(
+  require("./publisher-config"),
+  JSON.parse(fs.readFileSync("asset-manifest.json"))
+);

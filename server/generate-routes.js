@@ -14,14 +14,19 @@ const _ = require("lodash");
 
 let shownDeprecationWarning = false;
 function deprecationWarning() {
-  if(!shownDeprecationWarning) {
+  if (!shownDeprecationWarning) {
     // eslint-disable-next-line no-console
-    console.warn("[WARNING] generateSectionPageRoutes and generateStoryPageRoutes are deprecated and will be removed in @quintype/framework v4. Please switch to generateCommonRoutes https://github.com/quintype/quintype-node-framework/blob/master/README.md#switching-to-generatecommonroutes");
+    console.warn(
+      "[WARNING] generateSectionPageRoutes and generateStoryPageRoutes are deprecated and will be removed in @quintype/framework v4. Please switch to generateCommonRoutes https://github.com/quintype/quintype-node-framework/blob/master/README.md#switching-to-generatecommonroutes"
+    );
     shownDeprecationWarning = true;
   }
 }
 
-exports.generateSectionPageRoutes = function generateSectionPageRoutes(config, opts = {}) {
+exports.generateSectionPageRoutes = function generateSectionPageRoutes(
+  config,
+  opts = {}
+) {
   deprecationWarning();
 
   const sections = config.getDomainSections(opts.domainSlug);
@@ -32,36 +37,38 @@ exports.generateSectionPageRoutes = function generateSectionPageRoutes(config, o
   }, {});
 
   return _(sections)
-    .flatMap((section) => generateSectionPageRoute(section, sectionsById, opts))
+    .flatMap(section => generateSectionPageRoute(section, sectionsById, opts))
     .value();
-}
+};
 
 function generateSectionPageRoute(section, sectionsById, opts) {
   const params = { sectionId: section.id };
-  if(section.collection)
-    params.collectionSlug = section.collection.slug
+  if (section.collection) params.collectionSlug = section.collection.slug;
 
-  let {slug} = section;
+  let { slug } = section;
 
-  if(section["parent-id"]) {
+  if (section["parent-id"]) {
     let currentSection = section;
     let depth = 0;
     while (currentSection["parent-id"] && depth++ < 5) {
-      currentSection = sectionsById[currentSection["parent-id"]] || {slug: 'invalid'};
+      currentSection = sectionsById[currentSection["parent-id"]] || {
+        slug: "invalid"
+      };
       slug = `${currentSection.slug}/${slug}`;
     }
   }
 
   let routes = [];
-  if(section["parent-id"] && opts.secWithoutParentPrefix)
+  if (section["parent-id"] && opts.secWithoutParentPrefix)
     routes = [section.slug, slug];
-  else
-    routes = [slug];
+  else routes = [slug];
 
-  if(opts.addSectionPrefix)
-    routes = _.flatMap(routes, route => [sectionPageRoute(route, params), addSectionPrefix(route, params)]);
-  else
-    routes = _.flatMap(routes, route => [sectionPageRoute(route, params)]);
+  if (opts.addSectionPrefix)
+    routes = _.flatMap(routes, route => [
+      sectionPageRoute(route, params),
+      addSectionPrefix(route, params)
+    ]);
+  else routes = _.flatMap(routes, route => [sectionPageRoute(route, params)]);
 
   return routes;
 }
@@ -76,24 +83,30 @@ function sectionPageRoute(route, params) {
     exact: true,
     path: `/${route}`,
     params
-  }
+  };
 }
 
-exports.generateStoryPageRoutes = function generateStoryPageRoutes(config, {withoutParentSection, domainSlug} = {}) {
+exports.generateStoryPageRoutes = function generateStoryPageRoutes(
+  config,
+  { withoutParentSection, domainSlug } = {}
+) {
   deprecationWarning();
   const sections = config.getDomainSections(domainSlug);
   return _(sections)
-    .filter((section) => withoutParentSection || !section["parent-id"])
-    .flatMap((section) => [storyPageRoute(`/${section.slug}/:storySlug`), storyPageRoute(`/${section.slug}/*/:storySlug`)])
+    .filter(section => withoutParentSection || !section["parent-id"])
+    .flatMap(section => [
+      storyPageRoute(`/${section.slug}/:storySlug`),
+      storyPageRoute(`/${section.slug}/*/:storySlug`)
+    ])
     .value();
-}
+};
 
 function storyPageRoute(path) {
   return {
-    pageType: 'story-page',
+    pageType: "story-page",
     exact: true,
     path
-  }
+  };
 }
 
 /**
@@ -108,37 +121,62 @@ function storyPageRoute(path) {
  * @param {boolean} opts.homePageRoute Generate home page route (default *allRoutes*)
  * @return {Array<module:match-best-route~Route>} Array of created routes
  */
-exports.generateCommonRoutes = function generateSectionPageRoutes(config, domainSlug, {
-  allRoutes = true,
-  sectionPageRoutes = allRoutes,
-  storyPageRoutes = allRoutes,
-  homePageRoute = allRoutes,
-} = {}) {
+exports.generateCommonRoutes = function generateSectionPageRoutes(
+  config,
+  domainSlug,
+  {
+    allRoutes = true,
+    sectionPageRoutes = allRoutes,
+    storyPageRoutes = allRoutes,
+    homePageRoute = allRoutes
+  } = {}
+) {
   const sections = config.getDomainSections(domainSlug);
-  const sectionRoutes = sections.map(s => sectionToSectionRoute(config["sketches-host"], s))
-  const storyRoutes = sectionRoutes.map(({ path }) => ({ path: `${path.replace(/^\/section\//, '/')}(/.*)?/:storySlug`, pageType: "story-page", exact: true }));
+  const sectionRoutes = sections.map(s =>
+    sectionToSectionRoute(config["sketches-host"], s)
+  );
+  const storyRoutes = sectionRoutes.map(({ path }) => ({
+    path: `${path.replace(/^\/section\//, "/")}(/.*)?/:storySlug`,
+    pageType: "story-page",
+    exact: true
+  }));
   return [].concat(
-    homePageRoute ? [{ path: "/", pageType: "home-page", exact: true, params: { collectionSlug: config.getHomeCollectionSlug(domainSlug)} }] : [],
+    homePageRoute
+      ? [
+          {
+            path: "/",
+            pageType: "home-page",
+            exact: true,
+            params: { collectionSlug: config.getHomeCollectionSlug(domainSlug) }
+          }
+        ]
+      : [],
     sectionPageRoutes ? sectionRoutes : [],
     storyPageRoutes ? storyRoutes : []
-  )
-}
+  );
+};
 
 function sectionToSectionRoute(baseUrl, section) {
   const params = {
-    sectionId: section.id,
-  }
-  if(section.collection && section.collection.slug) {
+    sectionId: section.id
+  };
+  if (section.collection && section.collection.slug) {
     params.collectionSlug = section.collection.slug;
   }
 
   try {
-    const sectionUrl = section['section-url'];
-    const relativeUrl = baseUrl && sectionUrl.startsWith(baseUrl)
-      ? sectionUrl.slice(baseUrl.length)
-      : new URL(section['section-url']).pathname;
-    return { path: relativeUrl, pageType: "section-page", exact: true, params }
+    const sectionUrl = section["section-url"];
+    const relativeUrl =
+      baseUrl && sectionUrl.startsWith(baseUrl)
+        ? sectionUrl.slice(baseUrl.length)
+        : new URL(section["section-url"]).pathname;
+    return { path: relativeUrl, pageType: "section-page", exact: true, params };
   } catch (e) {
-    return { path: `/${section.slug}`, pageType: "section-page", exact: true, params };
+    return {
+      path: `/${section.slug}`,
+      pageType: "section-page",
+      exact: true,
+      params
+    };
   }
 }
