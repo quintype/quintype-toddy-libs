@@ -7,14 +7,25 @@
  * @module routes
  */
 
-const {generateServiceWorker} = require("./handlers/generate-service-worker");
-const {handleIsomorphicShell, handleIsomorphicDataLoad, handleIsomorphicRoute, handleStaticRoute, notFoundHandler } = require("./handlers/isomorphic-handler");
-const {oneSignalImport} = require("./handlers/one-signal");
-const {customRouteHandler} = require("./handlers/custom-route-handler");
-const {handleManifest, handleAssetLink} = require("./handlers/json-manifest-handlers");
-const {redirectStory} = require("./handlers/story-redirect");
-const {simpleJsonHandler} = require("./handlers/simple-json-handler");
-const {makePickComponentSync} = require("../isomorphic/impl/make-pick-component-sync");
+const { generateServiceWorker } = require("./handlers/generate-service-worker");
+const {
+  handleIsomorphicShell,
+  handleIsomorphicDataLoad,
+  handleIsomorphicRoute,
+  handleStaticRoute,
+  notFoundHandler
+} = require("./handlers/isomorphic-handler");
+const { oneSignalImport } = require("./handlers/one-signal");
+const { customRouteHandler } = require("./handlers/custom-route-handler");
+const {
+  handleManifest,
+  handleAssetLink
+} = require("./handlers/json-manifest-handlers");
+const { redirectStory } = require("./handlers/story-redirect");
+const { simpleJsonHandler } = require("./handlers/simple-json-handler");
+const {
+  makePickComponentSync
+} = require("../isomorphic/impl/make-pick-component-sync");
 const { registerFCMTopic } = require("./handlers/fcm-registration-handler");
 const rp = require("request-promise");
 const bodyParser = require("body-parser");
@@ -31,34 +42,38 @@ const { URL } = require("url");
  * @param {boolean} opts.forwardAmp Forward amp story routes upstream (default false)
  * @param {boolean} opts.forwardFavicon Forward favicon requests to the CMS (default false)
  */
-exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
-                                                                 {forwardAmp = false,
-                                                                  forwardFavicon = false,
-                                                                  extraRoutes = [],
+exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
+  app,
+  {
+    forwardAmp = false,
+    forwardFavicon = false,
+    extraRoutes = [],
 
-                                                                  config = require("./publisher-config"),
-                                                                  getClient = require("./api-client").getClient} = {}) {
+    config = require("./publisher-config"),
+    getClient = require("./api-client").getClient
+  } = {}
+) {
   const host = config.sketches_host;
   const apiProxy = require("http-proxy").createProxyServer({
     target: host,
-    ssl: host.startsWith("https") ? {servername: host.replace(/^https:\/\//, "")} : undefined
+    ssl: host.startsWith("https")
+      ? { servername: host.replace(/^https:\/\//, "") }
+      : undefined
   });
 
-  apiProxy.on('proxyReq', (proxyReq, req, res, options) => {
-    proxyReq.setHeader('Host', getClient(req.hostname).getHostname());
+  apiProxy.on("proxyReq", (proxyReq, req, res, options) => {
+    proxyReq.setHeader("Host", getClient(req.hostname).getHostname());
   });
 
   const sketchesProxy = (req, res) => apiProxy.web(req, res);
 
   app.get("/ping", (req, res) => {
     getClient(req.hostname)
-    .getConfig()
-    .then(() => res.send("pong"))
-    .catch(() =>
-      res
-      .status(503)
-      .send({error: {message: "Config not loaded"}})
-    );
+      .getConfig()
+      .then(() => res.send("pong"))
+      .catch(() =>
+        res.status(503).send({ error: { message: "Config not loaded" } })
+      );
   });
 
   app.all("/api/*", sketchesProxy);
@@ -77,15 +92,15 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(app,
   app.all("/sso-login", sketchesProxy);
   app.all("/sso-signup", sketchesProxy);
 
-  if(forwardAmp) {
+  if (forwardAmp) {
     app.get("/amp/*", sketchesProxy);
   }
-  if(forwardFavicon) {
+  if (forwardFavicon) {
     app.get("/favicon.ico", sketchesProxy);
   }
 
   extraRoutes.forEach(route => app.all(route, sketchesProxy));
-}
+};
 
 // istanbul ignore next
 function renderServiceWorkerFn(res, layout, params, callback) {
@@ -94,49 +109,64 @@ function renderServiceWorkerFn(res, layout, params, callback) {
 
 // istanbul ignore next
 function toFunction(value, toRequire) {
-  if(value === true) {
+  if (value === true) {
     value = require(toRequire);
   }
 
-  if (typeof(value) === 'function') {
+  if (typeof value === "function") {
     return value;
   }
-    return () => value;
-
+  return () => value;
 }
 
 function getDomainSlug(publisherConfig, hostName) {
-  if(!publisherConfig.domain_mapping) {
+  if (!publisherConfig.domain_mapping) {
     return undefined;
   }
   return publisherConfig.domain_mapping[hostName] || null;
 }
 
-function withConfigPartial(getClient, logError, publisherConfig = require("./publisher-config")) {
+function withConfigPartial(
+  getClient,
+  logError,
+  publisherConfig = require("./publisher-config")
+) {
   return function withConfig(f, staticParams) {
-    return function (req, res, next) {
+    return function(req, res, next) {
       const client = getClient(req.hostname);
-      return client.getConfig()
-        .then(config => f(req, res, next, Object.assign({}, staticParams, { config, client, domainSlug: getDomainSlug(publisherConfig, req.hostname)})))
+      return client
+        .getConfig()
+        .then(config =>
+          f(
+            req,
+            res,
+            next,
+            Object.assign({}, staticParams, {
+              config,
+              client,
+              domainSlug: getDomainSlug(publisherConfig, req.hostname)
+            })
+          )
+        )
         .catch(logError);
-    }
-  }
+    };
+  };
 }
 
 exports.withError = function withError(handler, logError) {
   return async (req, res, next, opts) => {
     try {
       await handler(req, res, next, opts);
-    } catch(e) {
+    } catch (e) {
       logError(e);
       res.status(500);
-      res.end()
+      res.end();
     }
-  }
-}
+  };
+};
 
 function convertToDomain(path) {
-  if(!path) {
+  if (!path) {
     return path;
   }
   return new URL(path).origin;
@@ -146,11 +176,20 @@ function wrapLoadDataWithMultiDomain(publisherConfig, f, configPos) {
   return async function loadDataWrapped() {
     const { domainSlug } = arguments[arguments.length - 1];
     const config = arguments[configPos];
-    const primaryHostUrl = convertToDomain(config['sketches-host']);
-    const domain = (config.domains || []).find(d => d.slug === domainSlug) || { 'host-url': primaryHostUrl };
+    const primaryHostUrl = convertToDomain(config["sketches-host"]);
+    const domain = (config.domains || []).find(d => d.slug === domainSlug) || {
+      "host-url": primaryHostUrl
+    };
     const result = await f.apply(this, arguments);
-    return Object.assign({ domainSlug, currentHostUrl: convertToDomain(domain['host-url']), primaryHostUrl }, result);
-  }
+    return Object.assign(
+      {
+        domainSlug,
+        currentHostUrl: convertToDomain(domain["host-url"]),
+        primaryHostUrl
+      },
+      result
+    );
+  };
 }
 
 /**
@@ -176,10 +215,10 @@ function getWithConfig(app, route, handler, opts = {}) {
   const {
     getClient = require("./api-client").getClient,
     publisherConfig = require("./publisher-config"),
-    logError = require("./logger").error,
+    logError = require("./logger").error
   } = opts;
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
-  app.get(route, withConfig(handler, opts))
+  app.get(route, withConfig(handler, opts));
 }
 
 /**
@@ -212,91 +251,208 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {boolean} opts.templateOptions If set to true, then *&#47;template-options.json* will return a list of available components so that components can be sorted in the CMS. This reads data from *config/template-options.yml*. See [Adding a homepage component](https://developers.quintype.com/malibu/tutorial/adding-a-homepage-component) for more details
  * @param {function} opts.maxConfigVersion An async function which resolves to a integer version of the config. This defaults to config.theme-attributes.cache-burst
  */
-exports.isomorphicRoutes = function isomorphicRoutes(app,
-                                                     { generateRoutes,
-                                                       renderLayout,
-                                                       loadData,
-                                                       pickComponent,
-                                                       loadErrorData,
-                                                       seo,
-                                                       manifestFn,
-                                                       assetLinkFn,
+exports.isomorphicRoutes = function isomorphicRoutes(
+  app,
+  {
+    generateRoutes,
+    renderLayout,
+    loadData,
+    pickComponent,
+    loadErrorData,
+    seo,
+    manifestFn,
+    assetLinkFn,
 
-                                                       oneSignalServiceWorkers = false,
-                                                       staticRoutes = [],
-                                                       appVersion = 1,
-                                                       preloadJs = false,
-                                                       preloadRouteData = false,
-                                                       handleCustomRoute = true,
-                                                       handleNotFound = true,
-                                                       redirectRootLevelStories = false,
-                                                       mobileApiEnabled = true,
-                                                       mobileConfigFields = [],
-                                                       templateOptions = false,
-                                                       serviceWorkerPaths = ["/service-worker.js"],
-                                                       maxConfigVersion = config => get(config, ['theme-attributes', 'cache-burst'], 0),
+    oneSignalServiceWorkers = false,
+    staticRoutes = [],
+    appVersion = 1,
+    preloadJs = false,
+    preloadRouteData = false,
+    handleCustomRoute = true,
+    handleNotFound = true,
+    redirectRootLevelStories = false,
+    mobileApiEnabled = true,
+    mobileConfigFields = [],
+    templateOptions = false,
+    serviceWorkerPaths = ["/service-worker.js"],
+    maxConfigVersion = config =>
+      get(config, ["theme-attributes", "cache-burst"], 0),
 
-                                                       // The below are primarily for testing
-                                                       logError = require("./logger").error,
-                                                       assetHelper = require("./asset-helper"),
-                                                       getClient = require("./api-client").getClient,
-                                                       renderServiceWorker = renderServiceWorkerFn,
-                                                       publisherConfig = require("./publisher-config"),
-                                                     }) {
-
+    // The below are primarily for testing
+    logError = require("./logger").error,
+    assetHelper = require("./asset-helper"),
+    getClient = require("./api-client").getClient,
+    renderServiceWorker = renderServiceWorkerFn,
+    publisherConfig = require("./publisher-config")
+  }
+) {
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
 
   pickComponent = makePickComponentSync(pickComponent);
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
-  loadErrorData = wrapLoadDataWithMultiDomain(publisherConfig, loadErrorData, 1);
+  loadErrorData = wrapLoadDataWithMultiDomain(
+    publisherConfig,
+    loadErrorData,
+    1
+  );
 
-  app.get(serviceWorkerPaths, withConfig(generateServiceWorker, {generateRoutes, assetHelper, renderServiceWorker, maxConfigVersion}));
+  app.get(
+    serviceWorkerPaths,
+    withConfig(generateServiceWorker, {
+      generateRoutes,
+      assetHelper,
+      renderServiceWorker,
+      maxConfigVersion
+    })
+  );
 
-  if(oneSignalServiceWorkers) {
-    app.get("/OneSignalSDKWorker.js", withConfig(generateServiceWorker, {generateRoutes, renderServiceWorker, assetHelper, appendFn: oneSignalImport, maxConfigVersion}));
-    app.get("/OneSignalSDKUpdaterWorker.js", withConfig(generateServiceWorker, {generateRoutes, renderServiceWorker, assetHelper, appendFn: oneSignalImport, maxConfigVersion}));
+  if (oneSignalServiceWorkers) {
+    app.get(
+      "/OneSignalSDKWorker.js",
+      withConfig(generateServiceWorker, {
+        generateRoutes,
+        renderServiceWorker,
+        assetHelper,
+        appendFn: oneSignalImport,
+        maxConfigVersion
+      })
+    );
+    app.get(
+      "/OneSignalSDKUpdaterWorker.js",
+      withConfig(generateServiceWorker, {
+        generateRoutes,
+        renderServiceWorker,
+        assetHelper,
+        appendFn: oneSignalImport,
+        maxConfigVersion
+      })
+    );
   }
 
-  app.get("/shell.html", withConfig(handleIsomorphicShell, {renderLayout, assetHelper, loadData, loadErrorData, logError, preloadJs, maxConfigVersion}));
-  app.get("/route-data.json", withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion}));
+  app.get(
+    "/shell.html",
+    withConfig(handleIsomorphicShell, {
+      renderLayout,
+      assetHelper,
+      loadData,
+      loadErrorData,
+      logError,
+      preloadJs,
+      maxConfigVersion
+    })
+  );
+  app.get(
+    "/route-data.json",
+    withConfig(handleIsomorphicDataLoad, {
+      generateRoutes,
+      loadData,
+      loadErrorData,
+      logError,
+      staticRoutes,
+      seo,
+      appVersion
+    })
+  );
 
-  app.post("/register-fcm-topic", bodyParser.json(), withConfig(registerFCMTopic, {publisherConfig}));
+  app.post(
+    "/register-fcm-topic",
+    bodyParser.json(),
+    withConfig(registerFCMTopic, { publisherConfig })
+  );
 
-
-  if(manifestFn) {
-    app.get("/manifest.json", withConfig(handleManifest, {manifestFn, logError}))
+  if (manifestFn) {
+    app.get(
+      "/manifest.json",
+      withConfig(handleManifest, { manifestFn, logError })
+    );
   }
 
-  if(mobileApiEnabled) {
-    app.get("/mobile-data.json", withConfig(handleIsomorphicDataLoad, {generateRoutes, loadData, loadErrorData, logError, staticRoutes, seo, appVersion, mobileApiEnabled, mobileConfigFields}))
+  if (mobileApiEnabled) {
+    app.get(
+      "/mobile-data.json",
+      withConfig(handleIsomorphicDataLoad, {
+        generateRoutes,
+        loadData,
+        loadErrorData,
+        logError,
+        staticRoutes,
+        seo,
+        appVersion,
+        mobileApiEnabled,
+        mobileConfigFields
+      })
+    );
   }
 
-  if(assetLinkFn) {
-    app.get("/.well-known/assetlinks.json", withConfig(handleAssetLink, {assetLinkFn, logError}))
+  if (assetLinkFn) {
+    app.get(
+      "/.well-known/assetlinks.json",
+      withConfig(handleAssetLink, { assetLinkFn, logError })
+    );
   }
 
-  if(templateOptions) {
-    app.get('/template-options.json', withConfig(simpleJsonHandler, {jsonData: toFunction(templateOptions, "./impl/template-options")}))
+  if (templateOptions) {
+    app.get(
+      "/template-options.json",
+      withConfig(simpleJsonHandler, {
+        jsonData: toFunction(templateOptions, "./impl/template-options")
+      })
+    );
   }
 
   staticRoutes.forEach(route => {
-    app.get(route.path, withConfig(handleStaticRoute, Object.assign({logError, loadData, loadErrorData, renderLayout, seo}, route)))
+    app.get(
+      route.path,
+      withConfig(
+        handleStaticRoute,
+        Object.assign(
+          { logError, loadData, loadErrorData, renderLayout, seo },
+          route
+        )
+      )
+    );
   });
 
-  app.get("/*", withConfig(handleIsomorphicRoute, {generateRoutes, loadData, renderLayout, pickComponent, loadErrorData, seo, logError, preloadJs, preloadRouteData, assetHelper}));
+  app.get(
+    "/*",
+    withConfig(handleIsomorphicRoute, {
+      generateRoutes,
+      loadData,
+      renderLayout,
+      pickComponent,
+      loadErrorData,
+      seo,
+      logError,
+      preloadJs,
+      preloadRouteData,
+      assetHelper
+    })
+  );
 
-  if(redirectRootLevelStories) {
-    app.get("/:storySlug", withConfig(redirectStory, {logError}));
+  if (redirectRootLevelStories) {
+    app.get("/:storySlug", withConfig(redirectStory, { logError }));
   }
 
-  if(handleCustomRoute) {
-    app.get("/*", withConfig(customRouteHandler, {loadData, renderLayout, logError, seo}));
+  if (handleCustomRoute) {
+    app.get(
+      "/*",
+      withConfig(customRouteHandler, { loadData, renderLayout, logError, seo })
+    );
   }
 
-  if(handleNotFound) {
-    app.get("/*", withConfig(notFoundHandler, {renderLayout, pickComponent, loadErrorData, logError, assetHelper}));
+  if (handleNotFound) {
+    app.get(
+      "/*",
+      withConfig(notFoundHandler, {
+        renderLayout,
+        pickComponent,
+        loadErrorData,
+        logError,
+        assetHelper
+      })
+    );
   }
-}
+};
 
 exports.getWithConfig = getWithConfig;
 
@@ -324,44 +480,47 @@ exports.proxyGetRequest = function(app, route, handler, opts = {}) {
 
   getWithConfig(app, route, proxyHandler, opts);
 
-  async function proxyHandler(req, res, next, {config, client}) {
+  async function proxyHandler(req, res, next, { config, client }) {
     try {
-      const result = await handler(req.params, {config, client});
-      if(typeof result === "string" && result.startsWith("http")) {
-        sendResult(await rp(result, {json: true}));
+      const result = await handler(req.params, { config, client });
+      if (typeof result === "string" && result.startsWith("http")) {
+        sendResult(await rp(result, { json: true }));
       } else {
         sendResult(result);
       }
-    } catch(e) {
+    } catch (e) {
       logError(e);
       sendResult(null);
     }
 
     function sendResult(result) {
-      if(result) {
+      if (result) {
         res.setHeader("Cache-Control", cacheControl);
         res.setHeader("Vary", "Accept-Encoding");
-        res.json(result)
+        res.json(result);
       } else {
         res.status(503);
         res.end();
       }
     }
   }
-}
+};
 
 // This could also be done using express's mount point, but /ping stops working
 exports.mountQuintypeAt = function(app, mountAt) {
   app.use(function(req, res, next) {
-    const mountPoint = typeof(mountAt) === 'function' ? mountAt(req.hostname) : mountAt;
+    const mountPoint =
+      typeof mountAt === "function" ? mountAt(req.hostname) : mountAt;
 
     if (mountPoint && req.url.startsWith(mountPoint)) {
       req.url = req.url.slice(mountPoint.length) || "/";
       next();
-    } else if (mountPoint && req.url !== '/ping') {
-      res.status(404).send(`Not Found: Quintype has been mounted at ${mountPoint}`);
+    } else if (mountPoint && req.url !== "/ping") {
+      res
+        .status(404)
+        .send(`Not Found: Quintype has been mounted at ${mountPoint}`);
     } else {
       next();
     }
   });
-}
+};
