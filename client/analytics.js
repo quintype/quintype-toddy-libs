@@ -12,7 +12,7 @@
  * @module analytics
  */
 
-import get from 'lodash/get'
+import get from "lodash/get";
 import { runWhenIdle } from "./impl/run-when-idle";
 
 /**
@@ -20,27 +20,36 @@ import { runWhenIdle } from "./impl/run-when-idle";
  * @returns {void}
  */
 // istanbul ignore next
-export function startAnalytics({mountAt = global.qtMountAt || ""} = {}) {
-  global.qlitics=global.qlitics||function(){(qlitics.q=qlitics.q||[]).push(arguments);};
-  global.qlitics('init');
+export function startAnalytics({ mountAt = global.qtMountAt || "" } = {}) {
+  global.qlitics =
+    global.qlitics ||
+    function() {
+      (qlitics.q = qlitics.q || []).push(arguments);
+    };
+  global.qlitics("init");
 
-  runWhenIdle(function () {
-    const s = document.createElement('script');
-    s.type = 'text/javascript';
+  runWhenIdle(function() {
+    const s = document.createElement("script");
+    s.type = "text/javascript";
     s.async = true;
     s.src = `${mountAt}/qlitics.js`;
-    const x = document.getElementsByTagName('script')[0];
+    const x = document.getElementsByTagName("script")[0];
     x.parentNode.insertBefore(s, x);
   });
 }
 
 function pageTypeToQliticsPageType(pageType) {
-  switch(pageType) {
-    case 'story-page': return 'story';
-    case 'home-page': return 'home';
-    case 'section-page': return 'section';
-    case 'tag-page': return 'topic';
-    default: return pageType;
+  switch (pageType) {
+    case "story-page":
+      return "story";
+    case "home-page":
+      return "home";
+    case "section-page":
+      return "section";
+    case "tag-page":
+      return "topic";
+    default:
+      return pageType;
   }
 }
 
@@ -51,8 +60,8 @@ function pageTypeToQliticsPageType(pageType) {
  * @returns {void}
  */
 export function registerStoryView(storyContentId) {
-  global.qlitics('track', 'story-view', {
-    'story-content-id': storyContentId,
+  global.qlitics("track", "story-view", {
+    "story-content-id": storyContentId
   });
 }
 
@@ -63,19 +72,20 @@ export function registerStoryView(storyContentId) {
  * @returns {void}
  */
 export function registerPageView(page, newPath) {
-  global.qlitics('track', 'page-view', {"page-type": pageTypeToQliticsPageType(page.pageType)})
-  if(page.pageType == 'story-page') {
+  global.qlitics("track", "page-view", {
+    "page-type": pageTypeToQliticsPageType(page.pageType)
+  });
+  if (page.pageType == "story-page") {
     registerStoryView(get(page.data, ["story", "id"]));
   }
 
-  if(newPath && global.ga && !global.qtNoAutomaticGATracking) {
+  if (newPath && global.ga && !global.qtNoAutomaticGATracking) {
     global.ga(function(tracker) {
       tracker = tracker || global.ga.getByName("gtm1");
-      if(!tracker)
-        return;
-      tracker.set('page', newPath);
-      tracker.send('pageview');
-    })
+      if (!tracker) return;
+      tracker.set("page", newPath);
+      tracker.send("pageview");
+    });
   }
 }
 
@@ -85,7 +95,7 @@ export function registerPageView(page, newPath) {
  * @returns {void}
  */
 export function setMemberId(memberId) {
-  global.qlitics('set', 'member-id', memberId);
+  global.qlitics("set", "member-id", memberId);
 }
 
 /**
@@ -96,9 +106,9 @@ export function setMemberId(memberId) {
  * @returns {void}
  */
 export function registerStoryShare(storyContentId, socialMediaType, storyUrl) {
-  global.qlitics('track', 'story-share', {
-    'story-content-id': storyContentId,
-    'social-media-type': socialMediaType,
-    'url': storyUrl,
+  global.qlitics("track", "story-share", {
+    "story-content-id": storyContentId,
+    "social-media-type": socialMediaType,
+    url: storyUrl
   });
 }

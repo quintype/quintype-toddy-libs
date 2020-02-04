@@ -89,6 +89,8 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
   app.all("/rss-feed", sketchesProxy);
   app.all("/stories.rss", sketchesProxy);
   app.all("/news_sitemap.xml", sketchesProxy);
+  app.all("/sso-login", sketchesProxy);
+  app.all("/sso-signup", sketchesProxy);
 
   if (forwardAmp) {
     app.get("/amp/*", sketchesProxy);
@@ -273,7 +275,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     mobileApiEnabled = true,
     mobileConfigFields = [],
     templateOptions = false,
+<<<<<<< HEAD
     ampStoryPages = false,
+=======
+>>>>>>> master
     serviceWorkerPaths = ["/service-worker.js"],
     maxConfigVersion = config =>
       get(config, ["theme-attributes", "cache-burst"], 0),
@@ -425,8 +430,12 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       logError,
       preloadJs,
       preloadRouteData,
+<<<<<<< HEAD
       assetHelper,
       ampStoryPages
+=======
+      assetHelper
+>>>>>>> master
     })
   );
 

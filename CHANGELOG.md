@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.19.0](https://github.com/quintype/quintype-node-framework/compare/v3.18.7...v3.19.0) (2020-01-29)
+
+
+### Features
+
+* Adding SSO Proxy urls ([78e2cf0](https://github.com/quintype/quintype-node-framework/commit/78e2cf0))
+
+
+
 ## [3.18.7](https://github.com/quintype/quintype-node-framework/compare/v3.18.6...v3.18.7) (2020-01-13)
 
 

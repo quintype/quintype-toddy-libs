@@ -4,8 +4,8 @@
  * @module asset-helper
  */
 
-const flatMap = require('lodash/flatMap');
-const uniq = require('lodash/uniq');
+const flatMap = require("lodash/flatMap");
+const uniq = require("lodash/uniq");
 
 /**
  * Chunk represents a set of CSS and JS files that have been created due to webpack code splitting.
@@ -15,10 +15,10 @@ const uniq = require('lodash/uniq');
  */
 
 /**
-* @typedef CssFile
-* @property {string} path The path to the css file
-* @property {string} content The contents of the file
-*/
+ * @typedef CssFile
+ * @property {string} path The path to the css file
+ * @property {string} content The contents of the file
+ */
 
 /**
  * AssetHelper can be used to get paths and contents of various assets, including CSS and client JS.
@@ -33,7 +33,7 @@ const uniq = require('lodash/uniq');
  * @hideconstructor
  */
 class AssetHelper {
-  constructor(config, assets, {readFileSync} = {}) {
+  constructor(config, assets, { readFileSync } = {}) {
     this.config = config;
     this.assets = assets;
     this.readFileSync = readFileSync || require("fs").readFileSync;
@@ -72,12 +72,12 @@ class AssetHelper {
   readAsset(asset) {
     const path = this.assets[asset];
 
-    if(!path) {
+    if (!path) {
       return undefined;
     }
 
-    if(!this.assetsContent[path]) {
-      this.assetsContent[path] = this.readFileSync(`public${  path}`);
+    if (!this.assetsContent[path]) {
+      this.assetsContent[path] = this.readFileSync(`public${path}`);
     }
 
     return this.assetsContent[path];
@@ -98,22 +98,20 @@ class AssetHelper {
    * @return {module:asset-helper~Chunk} The loaded chunk
    */
   getChunk(chunk) {
-    const getDependentFiles = (ext) => {
+    const getDependentFiles = ext => {
       const regex = RegExp(`(${chunk}~|~${chunk}).*\.${ext}$`);
-      const assets = this.assets[`${chunk}.${ext}`]
-        ? [`${chunk}.${ext}`]
-        : []
-      return assets.concat(Object.keys(this.assets).filter(asset => regex.test(asset)));
-    }
+      const assets = this.assets[`${chunk}.${ext}`] ? [`${chunk}.${ext}`] : [];
+      return assets.concat(
+        Object.keys(this.assets).filter(asset => regex.test(asset))
+      );
+    };
     return {
-      cssFiles: getDependentFiles('css').map(file => ({
+      cssFiles: getDependentFiles("css").map(file => ({
         path: this.assetPath(file),
         content: this.readAsset(file)
       })),
-      jsPaths: getDependentFiles('js').map(file => this.assetPath(file))
+      jsPaths: getDependentFiles("js").map(file => this.assetPath(file))
     };
-
-
   }
 
   /**
@@ -135,7 +133,11 @@ class AssetHelper {
    */
   getFilesForChunks() {
     const chunks = this.getAllChunks.apply(this, arguments);
-    return uniq(flatMap(Object.values(chunks), ({ cssFiles, jsPaths }) => jsPaths.concat(cssFiles.map(x => x.path))));
+    return uniq(
+      flatMap(Object.values(chunks), ({ cssFiles, jsPaths }) =>
+        jsPaths.concat(cssFiles.map(x => x.path))
+      )
+    );
   }
 
   /**
@@ -143,7 +145,8 @@ class AssetHelper {
    * @returns {string} Service Worker Contents
    */
   serviceWorkerContents() {
-    this._serviceWorkerContents = this._serviceWorkerContents || this.readAsset("serviceWorkerHelper.js");
+    this._serviceWorkerContents =
+      this._serviceWorkerContents || this.readAsset("serviceWorkerHelper.js");
     return this._serviceWorkerContents;
   }
 
@@ -154,9 +157,9 @@ class AssetHelper {
    */
   assetHash(asset) {
     const path = this.assets[asset];
-    if(path) {
+    if (path) {
       const match = /\-([0-9a-fA-F]+)\./.exec(path);
-      return match ? match[1] : '1';
+      return match ? match[1] : "1";
     }
   }
 
