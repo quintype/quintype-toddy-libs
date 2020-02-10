@@ -385,51 +385,14 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
       if (!result) {
         return next();
       }
-
-      const isAmpSupported = _.get(result, [
-        "data",
-        "story",
-        "is-amp-supported"
-      ]);
-      const ampStoryPagesConfig =
-        _.get(config, ["theme-attributes", "amp-story-pages"], false) ||
-        ampStoryPages;
-      if (
-        result.pageType === "story-page" &&
-        ampStoryPagesConfig &&
-        isAmpSupported
-      ) {
-        return new Promise(resolve => resolve(writeAmpResponse(result))).catch(
-          e => {
-            logError(e);
-            res.status(500);
-            res.send(e.message);
-          }
-        );
-      } else {
-        return new Promise(resolve => resolve(writeResponse(result)))
-          .catch(e => {
-            logError(e);
-            res.status(500);
-            res.send(e.message);
-          })
-          .finally(() => res.end());
-      }
+      return new Promise(resolve => resolve(writeResponse(result)))
+        .catch(e => {
+          logError(e);
+          res.status(500);
+          res.send(e.message);
+        })
+        .finally(() => res.end());
     });
-
-  function writeAmpResponse(result) {
-    const statusCode = result.httpStatusCode || 200;
-    res.status(statusCode);
-    addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]));
-    request.get(
-      `${result.currentHostUrl}/amp/story/${encodeURIComponent(req.path)}`,
-      (error, response, body) => {
-        if (!error) {
-          res.send(body);
-        }
-      }
-    );
-  }
 
   function writeResponse(result) {
     const statusCode = result.httpStatusCode || 200;
@@ -486,6 +449,71 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
           pageType: store.getState().qt.pageType
         })
       );
+  }
+};
+
+exports.handleLightPagesRoute = (
+  req,
+  res,
+  next,
+  {
+    config,
+    client,
+    generateRoutes,
+    loadData,
+    loadErrorData,
+    logError,
+    domainSlug,
+    renderLightPage,
+    lightPages
+  }
+) => {
+  const url = urlLib.parse(req.url, true);
+
+  if (typeof lightPages === "function" && !lightPages(config)) {
+    return next();
+  }
+
+  return loadDataForIsomorphicRoute(
+    loadData,
+    loadErrorData,
+    url,
+    generateRoutes(config, domainSlug),
+    { config, client, logError, host: req.hostname, domainSlug }
+  )
+    .catch(e => {
+      logError(e);
+      return { httpStatusCode: 500, pageType: "error" };
+    })
+    .then(result => {
+      if (!result) {
+        return next();
+      }
+
+      const isAmpSupported = _.get(
+        result,
+        ["data", "story", "is-amp-supported"],
+        false
+      );
+
+      if (isAmpSupported) {
+        return new Promise(resolve => resolve(writeAmpResponse(result))).catch(
+          e => {
+            logError(e);
+            res.status(500);
+            res.send(e.message);
+          }
+        );
+      } else {
+        return next();
+      }
+    });
+
+  function writeAmpResponse(result) {
+    const statusCode = result.httpStatusCode || 200;
+    res.status(statusCode);
+    addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]));
+    renderLightPage(req, res, result);
   }
 };
 
