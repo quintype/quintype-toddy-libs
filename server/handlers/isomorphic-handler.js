@@ -452,7 +452,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
   }
 };
 
-exports.handleLightPagesRoute = (
+exports.handleLightPagesRoute = async (
   req,
   res,
   next,
@@ -474,46 +474,47 @@ exports.handleLightPagesRoute = (
     return next();
   }
 
-  return loadDataForIsomorphicRoute(
-    loadData,
-    loadErrorData,
-    url,
-    generateRoutes(config, domainSlug),
-    { config, client, logError, host: req.hostname, domainSlug }
-  )
-    .catch(e => {
-      logError(e);
-      return { httpStatusCode: 500, pageType: "error" };
-    })
-    .then(result => {
-      if (!result) {
-        return next();
-      }
+  try {
+    const result = await loadDataForIsomorphicRoute(
+      loadData,
+      loadErrorData,
+      url,
+      generateRoutes(config, domainSlug),
+      { config, client, logError, host: req.hostname, domainSlug }
+    );
+    if (!result) {
+      return next();
+    }
 
-      const isAmpSupported = _.get(
-        result,
-        ["data", "story", "is-amp-supported"],
-        false
-      );
+    const isAmpSupported = _.get(
+      result,
+      ["data", "story", "is-amp-supported"],
+      false
+    );
 
-      if (isAmpSupported) {
-        return new Promise(resolve => resolve(writeAmpResponse(result))).catch(
-          e => {
-            logError(e);
-            res.status(500);
-            res.send(e.message);
-          }
-        );
-      } else {
-        return next();
-      }
-    });
+    if (isAmpSupported) {
+      return new Promise(async resolve => {
+        try {
+          await resolve(writeAmpResponse(result));
+        } catch (e) {
+          logError(e);
+          res.status(500);
+          res.send(e.message);
+        }
+      });
+    } else {
+      return next();
+    }
 
-  function writeAmpResponse(result) {
-    const statusCode = result.httpStatusCode || 200;
-    res.status(statusCode);
-    addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]));
-    renderLightPage(req, res, result);
+    function writeAmpResponse(result) {
+      const statusCode = result.httpStatusCode || 200;
+      res.status(statusCode);
+      addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]));
+      renderLightPage(req, res, result);
+    }
+  } catch (e) {
+    logError(e);
+    return { httpStatusCode: 500, pageType: "error" };
   }
 };
 

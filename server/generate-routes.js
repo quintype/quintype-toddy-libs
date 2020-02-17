@@ -120,10 +120,10 @@ function storyPageRoute(path, skipPWA = false) {
  * @param {boolean} opts.sectionPageRoutes Generate section page routes (default *allRoutes*)
  * @param {boolean} opts.storyPageRoutes Generate story page routes (default *allRoutes*)
  * @param {boolean} opts.homePageRoute Generate home page route (default *allRoutes*)
- * @param {Object} skipPWA
- * @param {boolean} skipPWA.story Skips PWA for story pages
- * @param {boolean} skipPWA.home Skips PWA for home pages
- * @param {boolean} skipPWA.section Skips PWA for section pages
+ * @param {Object}  opts.skipPWA
+ * @param {boolean} opts.skipPWA.story Skips PWA for story pages
+ * @param {boolean} opts.skipPWA.home Skips PWA for home pages
+ * @param {boolean} opts.skipPWA.section Skips PWA for section pages
  * @return {Array<module:match-best-route~Route>} Array of created routes
  */
 exports.generateCommonRoutes = function generateSectionPageRoutes(
