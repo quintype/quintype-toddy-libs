@@ -3,7 +3,6 @@
 const _ = require("lodash");
 
 const urlLib = require("url");
-const request = require("request");
 const {
   matchBestRoute,
   matchAllRoutes
@@ -364,8 +363,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     assetHelper,
     preloadJs,
     preloadRouteData,
-    domainSlug,
-    ampStoryPages
+    domainSlug
   }
 ) {
   const url = urlLib.parse(req.url, true);
