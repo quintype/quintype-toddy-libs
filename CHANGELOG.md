@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.20.0](https://github.com/quintype/quintype-node-framework/compare/v3.19.0...v3.20.0) (2020-02-20)
+
+
+### Features
+
+* **defaultAmpStoryPages:** Render Amp Story pages by default ([#103](https://github.com/quintype/quintype-node-framework/issues/103)) ([af25079](https://github.com/quintype/quintype-node-framework/commit/af25079))
+
+
+
 # [3.19.0](https://github.com/quintype/quintype-node-framework/compare/v3.18.7...v3.19.0) (2020-01-29)
 
 
