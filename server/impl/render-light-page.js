@@ -15,4 +15,4 @@ const renderLightPage = (req, res, client) => {
   });
 };
 
-export default renderLightPage;
+module.exports = renderLightPage;
