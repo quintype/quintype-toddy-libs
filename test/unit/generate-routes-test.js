@@ -186,16 +186,26 @@ describe("generateRoutes", function() {
 
   it("generates story routes correctly", function() {
     const expectedRoutes = [
-      { path: "/sect/:storySlug", pageType: "story-page", exact: true },
-      { path: "/sect/*/:storySlug", pageType: "story-page", exact: true }
+      {
+        path: "/sect/:storySlug",
+        pageType: "story-page",
+        exact: true,
+        skipPWA: false
+      },
+      {
+        path: "/sect/*/:storySlug",
+        pageType: "story-page",
+        exact: true,
+        skipPWA: false
+      }
     ];
     assert.deepEqual(
       expectedRoutes,
       generateStoryPageRoutes(
         Config.build({
           sections: [
-            { id: 42, slug: "sect" },
-            { id: 43, slug: "sub-sect", "parent-id": 42 }
+            { id: 42, slug: "sect", skipPWA: false },
+            { id: 43, slug: "sub-sect", "parent-id": 42, skipPWA: false }
           ]
         })
       )
@@ -204,18 +214,38 @@ describe("generateRoutes", function() {
 
   it("adds routes for subsections when withoutParentSection is set", function() {
     const expectedRoutes = [
-      { path: "/sect/:storySlug", pageType: "story-page", exact: true },
-      { path: "/sect/*/:storySlug", pageType: "story-page", exact: true },
-      { path: "/sub-sect/:storySlug", pageType: "story-page", exact: true },
-      { path: "/sub-sect/*/:storySlug", pageType: "story-page", exact: true }
+      {
+        path: "/sect/:storySlug",
+        pageType: "story-page",
+        exact: true,
+        skipPWA: false
+      },
+      {
+        path: "/sect/*/:storySlug",
+        pageType: "story-page",
+        exact: true,
+        skipPWA: false
+      },
+      {
+        path: "/sub-sect/:storySlug",
+        pageType: "story-page",
+        exact: true,
+        skipPWA: false
+      },
+      {
+        path: "/sub-sect/*/:storySlug",
+        pageType: "story-page",
+        exact: true,
+        skipPWA: false
+      }
     ];
     assert.deepEqual(
       expectedRoutes,
       generateStoryPageRoutes(
         Config.build({
           sections: [
-            { id: 42, slug: "sect" },
-            { id: 43, slug: "sub-sect", "parent-id": 42 }
+            { id: 42, slug: "sect", skipPWA: false },
+            { id: 43, slug: "sub-sect", "parent-id": 42, skipPWA: false }
           ]
         }),
         { withoutParentSection: true }
@@ -316,8 +346,18 @@ describe("MultiDomain Support", function() {
 
   it("generates story page routes given a domain Slug", function() {
     const expectedRoutes = [
-      { path: "/sect/:storySlug", pageType: "story-page", exact: true },
-      { path: "/sect/*/:storySlug", pageType: "story-page", exact: true }
+      {
+        path: "/sect/:storySlug",
+        pageType: "story-page",
+        exact: true,
+        skipPWA: false
+      },
+      {
+        path: "/sect/*/:storySlug",
+        pageType: "story-page",
+        exact: true,
+        skipPWA: false
+      }
     ];
     const allRoutes = generateStoryPageRoutes(Config.build(config), {
       domainSlug: "subdomain"
@@ -340,7 +380,8 @@ describe("generateCommonRoutes", function() {
           path: "/photos",
           pageType: "section-page",
           exact: true,
-          params: { sectionId: 42 }
+          params: { sectionId: 42 },
+          skipPWA: false
         }
       ],
       generateCommonRoutes(config, undefined, {
@@ -354,12 +395,71 @@ describe("generateCommonRoutes", function() {
         {
           path: "/photos(/.*)?/:storySlug",
           pageType: "story-page",
-          exact: true
+          exact: true,
+          skipPWA: false
         }
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
         storyPageRoutes: true
+      })
+    );
+  });
+
+  it("respects the skipPWA parameter for home, story and section pages", function() {
+    const config = Config.build({
+      sections: [
+        { id: 42, "section-url": "https://quintype-demo.quintype.io/photos" }
+      ]
+    });
+
+    assert.deepEqual(
+      [
+        {
+          path: "/photos",
+          pageType: "section-page",
+          exact: true,
+          params: { sectionId: 42 },
+          skipPWA: true
+        }
+      ],
+      generateCommonRoutes(config, undefined, {
+        allRoutes: false,
+        sectionPageRoutes: true,
+        skipPWA: { section: true }
+      })
+    );
+
+    assert.deepEqual(
+      [
+        {
+          path: "/",
+          pageType: "home-page",
+          params: { collectionSlug: "home" },
+          exact: true,
+          skipPWA: true
+        }
+      ],
+      generateCommonRoutes(config, undefined, {
+        allRoutes: false,
+        homePageRoute: true,
+        skipPWA: { home: true }
+      })
+    );
+
+    assert.deepEqual(
+      [
+        {
+          path: "/photos(/.*)?/:storySlug",
+          pageType: "story-page",
+          exact: true,
+          skipPWA: true
+        }
+      ],
+      generateCommonRoutes(config, undefined, {
+        allRoutes: false,
+        storyPageRoutes: true,
+        skipPWA: { story: true }
       })
     );
   });
@@ -381,7 +481,8 @@ describe("generateCommonRoutes", function() {
           path: "/photos",
           pageType: "section-page",
           exact: true,
-          params: { sectionId: 42, collectionSlug: "photos" }
+          params: { sectionId: 42, collectionSlug: "photos" },
+          skipPWA: false
         }
       ],
       generateCommonRoutes(config, undefined, {
@@ -416,7 +517,8 @@ describe("generateCommonRoutes", function() {
           path: "/photos",
           pageType: "section-page",
           exact: true,
-          params: { sectionId: 42 }
+          params: { sectionId: 42 },
+          skipPWA: false
         }
       ],
       generateCommonRoutes(config, "sub", {
@@ -443,23 +545,27 @@ describe("generateCommonRoutes", function() {
           path: "/photos",
           pageType: "section-page",
           exact: true,
-          params: { sectionId: 42 }
+          params: { sectionId: 42 },
+          skipPWA: false
         },
         {
           path: "/photos/gallery",
           pageType: "section-page",
           exact: true,
-          params: { sectionId: 43 }
+          params: { sectionId: 43 },
+          skipPWA: false
         },
         {
           path: "/photos(/.*)?/:storySlug",
           pageType: "story-page",
-          exact: true
+          exact: true,
+          skipPWA: false
         },
         {
           path: "/photos/gallery(/.*)?/:storySlug",
           pageType: "story-page",
-          exact: true
+          exact: true,
+          skipPWA: false
         }
       ],
       generateCommonRoutes(config, undefined, {
@@ -486,7 +592,8 @@ describe("generateCommonRoutes", function() {
           path: "/section/photos",
           pageType: "section-page",
           exact: true,
-          params: { sectionId: 42 }
+          params: { sectionId: 42 },
+          skipPWA: false
         }
       ],
       generateCommonRoutes(config, undefined, {
@@ -500,7 +607,8 @@ describe("generateCommonRoutes", function() {
         {
           path: "/photos(/.*)?/:storySlug",
           pageType: "story-page",
-          exact: true
+          exact: true,
+          skipPWA: false
         }
       ],
       generateCommonRoutes(config, undefined, {
@@ -518,7 +626,8 @@ describe("generateCommonRoutes", function() {
         {
           path: "/photos(/.*)?/:storySlug",
           pageType: "story-page",
-          exact: true
+          exact: true,
+          skipPWA: false
         }
       ],
       generateCommonRoutes(config, undefined, {
@@ -533,7 +642,8 @@ describe("generateCommonRoutes", function() {
           path: "/photos",
           pageType: "section-page",
           exact: true,
-          params: { sectionId: 42 }
+          params: { sectionId: 42 },
+          skipPWA: false
         }
       ],
       generateCommonRoutes(config, undefined, {
@@ -555,7 +665,8 @@ describe("generateCommonRoutes", function() {
           path: "/",
           pageType: "home-page",
           exact: true,
-          params: { collectionSlug: "home" }
+          params: { collectionSlug: "home" },
+          skipPWA: false
         }
       ],
       generateCommonRoutes(config, undefined, {
@@ -570,7 +681,8 @@ describe("generateCommonRoutes", function() {
           path: "/",
           pageType: "home-page",
           exact: true,
-          params: { collectionSlug: "home" }
+          params: { collectionSlug: "home" },
+          skipPWA: false
         }
       ],
       generateCommonRoutes(config, null, {
@@ -585,7 +697,8 @@ describe("generateCommonRoutes", function() {
           path: "/",
           pageType: "home-page",
           exact: true,
-          params: { collectionSlug: "1234" }
+          params: { collectionSlug: "1234" },
+          skipPWA: false
         }
       ],
       generateCommonRoutes(config, "sub", {
@@ -612,7 +725,8 @@ describe("generateCommonRoutes", function() {
           path: "/photos",
           pageType: "section-page",
           exact: true,
-          params: { sectionId: 42 }
+          params: { sectionId: 42 },
+          skipPWA: false
         }
       ],
       generateCommonRoutes(config, undefined, {
@@ -626,7 +740,8 @@ describe("generateCommonRoutes", function() {
         {
           path: "/photos(/.*)?/:storySlug",
           pageType: "story-page",
-          exact: true
+          exact: true,
+          skipPWA: false
         }
       ],
       generateCommonRoutes(config, undefined, {

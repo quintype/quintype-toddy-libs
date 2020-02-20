@@ -88,29 +88,30 @@ function sectionPageRoute(route, params) {
 
 exports.generateStoryPageRoutes = function generateStoryPageRoutes(
   config,
-  { withoutParentSection, domainSlug } = {}
+  { withoutParentSection, domainSlug, skipPWA } = {}
 ) {
   deprecationWarning();
   const sections = config.getDomainSections(domainSlug);
   return _(sections)
     .filter(section => withoutParentSection || !section["parent-id"])
     .flatMap(section => [
-      storyPageRoute(`/${section.slug}/:storySlug`),
-      storyPageRoute(`/${section.slug}/*/:storySlug`)
+      storyPageRoute(`/${section.slug}/:storySlug`, skipPWA || false),
+      storyPageRoute(`/${section.slug}/*/:storySlug`, skipPWA || false)
     ])
     .value();
 };
 
-function storyPageRoute(path) {
+function storyPageRoute(path, skipPWA = false) {
   return {
     pageType: "story-page",
     exact: true,
-    path
+    path,
+    skipPWA
   };
 }
 
 /**
- * This is sued to generate all routes
+ * This is used to generate all routes
  *
  * @param {Config} config The config object
  * @param {string} domainSlug The domainSlug (undefined if this is the main domain)
@@ -119,6 +120,10 @@ function storyPageRoute(path) {
  * @param {boolean} opts.sectionPageRoutes Generate section page routes (default *allRoutes*)
  * @param {boolean} opts.storyPageRoutes Generate story page routes (default *allRoutes*)
  * @param {boolean} opts.homePageRoute Generate home page route (default *allRoutes*)
+ * @param {Object}  opts.skipPWA
+ * @param {boolean} opts.skipPWA.story Skips PWA for story pages
+ * @param {boolean} opts.skipPWA.home Skips PWA for home pages
+ * @param {boolean} opts.skipPWA.section Skips PWA for section pages
  * @return {Array<module:match-best-route~Route>} Array of created routes
  */
 exports.generateCommonRoutes = function generateSectionPageRoutes(
@@ -128,17 +133,19 @@ exports.generateCommonRoutes = function generateSectionPageRoutes(
     allRoutes = true,
     sectionPageRoutes = allRoutes,
     storyPageRoutes = allRoutes,
-    homePageRoute = allRoutes
+    homePageRoute = allRoutes,
+    skipPWA = {}
   } = {}
 ) {
   const sections = config.getDomainSections(domainSlug);
   const sectionRoutes = sections.map(s =>
-    sectionToSectionRoute(config["sketches-host"], s)
+    sectionToSectionRoute(config["sketches-host"], s, skipPWA.section || false)
   );
   const storyRoutes = sectionRoutes.map(({ path }) => ({
     path: `${path.replace(/^\/section\//, "/")}(/.*)?/:storySlug`,
     pageType: "story-page",
-    exact: true
+    exact: true,
+    skipPWA: skipPWA.story || false
   }));
   return [].concat(
     homePageRoute
@@ -147,6 +154,7 @@ exports.generateCommonRoutes = function generateSectionPageRoutes(
             path: "/",
             pageType: "home-page",
             exact: true,
+            skipPWA: skipPWA.home || false,
             params: { collectionSlug: config.getHomeCollectionSlug(domainSlug) }
           }
         ]
@@ -156,7 +164,7 @@ exports.generateCommonRoutes = function generateSectionPageRoutes(
   );
 };
 
-function sectionToSectionRoute(baseUrl, section) {
+function sectionToSectionRoute(baseUrl, section, skipPWA = false) {
   const params = {
     sectionId: section.id
   };
@@ -170,13 +178,20 @@ function sectionToSectionRoute(baseUrl, section) {
       baseUrl && sectionUrl.startsWith(baseUrl)
         ? sectionUrl.slice(baseUrl.length)
         : new URL(section["section-url"]).pathname;
-    return { path: relativeUrl, pageType: "section-page", exact: true, params };
+    return {
+      path: relativeUrl,
+      pageType: "section-page",
+      exact: true,
+      params,
+      skipPWA
+    };
   } catch (e) {
     return {
       path: `/${section.slug}`,
       pageType: "section-page",
       exact: true,
-      params
+      params,
+      skipPWA
     };
   }
 }

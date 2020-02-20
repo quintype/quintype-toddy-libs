@@ -383,7 +383,6 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
       if (!result) {
         return next();
       }
-
       return new Promise(resolve => resolve(writeResponse(result)))
         .catch(e => {
           logError(e);
@@ -448,6 +447,57 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
           pageType: store.getState().qt.pageType
         })
       );
+  }
+};
+
+exports.handleLightPagesRoute = async (
+  req,
+  res,
+  next,
+  {
+    config,
+    client,
+    generateRoutes,
+    loadData,
+    loadErrorData,
+    logError,
+    domainSlug,
+    renderLightPage,
+    lightPages
+  }
+) => {
+  const url = urlLib.parse(req.url, true);
+
+  if (typeof lightPages === "function" && !lightPages(config)) {
+    return next();
+  }
+
+  try {
+    const result = await loadDataForIsomorphicRoute(
+      loadData,
+      loadErrorData,
+      url,
+      generateRoutes(config, domainSlug),
+      { config, client, logError, host: req.hostname, domainSlug }
+    );
+    if (!result) {
+      return next();
+    }
+
+    const isAmpSupported = _.get(
+      result,
+      ["data", "story", "is-amp-supported"],
+      false
+    );
+
+    if (isAmpSupported) {
+      renderLightPage(req, res, client);
+    } else {
+      return next();
+    }
+  } catch (e) {
+    logError(e);
+    return { httpStatusCode: 500, pageType: "error" };
   }
 };
 
