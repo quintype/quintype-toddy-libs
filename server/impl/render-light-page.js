@@ -1,18 +1,17 @@
-const renderLightPage = (req, res, result) => {
-  const host = result.sketches_host;
-  const apiProxy = require("http-proxy").createProxyServer({
-    target: host,
-    ssl: host.startsWith("https")
-      ? { servername: host.replace(/^https:\/\//, "") }
-      : undefined
-  });
+const httpProxy = require("http-proxy");
 
-  apiProxy.on("proxyReq", (proxyReq, req, res, options) => {
-    proxyReq.setHeader("Host", `${getClient(req.hostname).getHostname()}`);
+const renderLightPage = (req, res, client) => {
+  const proxy = httpProxy.createProxyServer();
+  proxy.on("proxyReq", proxyReq => {
+    proxyReq.setHeader("Host", client.getHostname());
   });
-
-  const sketchesProxy = (req, res) => apiProxy.web(req, res);
-  sketchesProxy(req, res);
+  proxy.web(req, res, {
+    target: `${client.baseUrl}/amp/story/${encodeURIComponent(req.path)}`,
+    ssl: client.baseUrl.startsWith("https")
+      ? { servername: client.getHostname() }
+      : undefined,
+    ignorePath: true
+  });
 };
 
 export default renderLightPage;

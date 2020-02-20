@@ -493,24 +493,9 @@ exports.handleLightPagesRoute = async (
     );
 
     if (isAmpSupported) {
-      return new Promise(async resolve => {
-        try {
-          await resolve(writeAmpResponse(result));
-        } catch (e) {
-          logError(e);
-          res.status(500);
-          res.send(e.message);
-        }
-      });
+      renderLightPage(req, res, client);
     } else {
       return next();
-    }
-
-    function writeAmpResponse(result) {
-      const statusCode = result.httpStatusCode || 200;
-      res.status(statusCode);
-      addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]));
-      renderLightPage(req, res, result);
     }
   } catch (e) {
     logError(e);
