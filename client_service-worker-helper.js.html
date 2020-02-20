@@ -91,12 +91,12 @@
  */
 // istanbul ignore file: Needs to be run as a service worker
 
-import {matchBestRoute} from '../isomorphic/match-best-route';
+import { matchBestRoute } from "../isomorphic/match-best-route";
 
-const workboxVersion = '2.1.1';
+const workboxVersion = "2.1.1";
 
 function qDebug() {
-  if(process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== "production") {
     console.debug.apply(console, arguments);
   }
 }
@@ -112,51 +112,55 @@ function qDebug() {
  * @param {string} params.shell Path for the shell. Default '/shell.html'
  */
 export function initializeQServiceWorker(self, params = {}) {
-  importScripts(`https://unpkg.com/workbox-sw@${workboxVersion}/build/importScripts/workbox-sw.${process.env.NODE_ENV == 'production' ? 'prod' : 'dev'}.v${workboxVersion}.js`);
+  importScripts(
+    `https://unpkg.com/workbox-sw@${workboxVersion}/build/importScripts/workbox-sw.${
+      process.env.NODE_ENV == "production" ? "prod" : "dev"
+    }.v${workboxVersion}.js`
+  );
 
-  const routeMatcher = function routeMatcher({event, url}) {
-    if(event.request.mode !== 'navigate') {
+  const routeMatcher = function routeMatcher({ event, url }) {
+    if (event.request.mode !== "navigate") {
       return false;
     }
 
     // Can this somehow be changed to using a combination of qtLoadedFromShell and some other stuff?
     // Other random libraries may change this fragment
-    if(url.searchParams.has("bypass-sw") || url.hash === '#bypass-sw') {
+    if (url.searchParams.has("bypass-sw") || url.hash === "#bypass-sw") {
       qDebug(`Bypassing the shell due to bypass-sw being present`);
       return false;
     }
 
-    if(params.excludeNavigation &amp;&amp; params.excludeNavigation(url)) {
+    if (params.excludeNavigation &amp;&amp; params.excludeNavigation(url)) {
       return false;
     }
 
-    let {pathname} = url;
+    let { pathname } = url;
 
-    if(params.mountAt &amp;&amp; !pathname.startsWith(params.mountAt)) {
+    if (params.mountAt &amp;&amp; !pathname.startsWith(params.mountAt)) {
       return false;
     }
 
     // Remove the mountAt before matching any routes
-    if(params.mountAt &amp;&amp; pathname.startsWith(params.mountAt)) {
+    if (params.mountAt &amp;&amp; pathname.startsWith(params.mountAt)) {
       pathname = pathname.slice(params.mountAt.length);
     }
 
-    if(matchBestRoute(pathname, params.routes)) {
+    if (matchBestRoute(pathname, params.routes)) {
       qDebug(`Rendering the shell for navigation to ${pathname}`);
       return true;
     }
-      qDebug(`Not rendering the shell for navigation to ${pathname}`);
-      return false;
-
+    qDebug(`Not rendering the shell for navigation to ${pathname}`);
+    return false;
   };
-  const shell = params.shell || '/shell.html';
-  const shellHandler = ({event}) => caches.match(shell).then((r) => r || fetch(event.request));
+  const shell = params.shell || "/shell.html";
+  const shellHandler = ({ event }) =>
+    caches.match(shell).then(r => r || fetch(event.request));
 
-  const workbox = new WorkboxSW({clientsClaim: true, skipWaiting: true});
+  const workbox = new WorkboxSW({ clientsClaim: true, skipWaiting: true });
   workbox.precache(params.assets);
   workbox.router.registerRoute(routeMatcher, shellHandler);
   return workbox;
-};
+}
 </code></pre>
         </article>
     </section>
