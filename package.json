@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "3.20.1",
+  "version": "3.20.2-cacheTag.0",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
