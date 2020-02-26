@@ -1,11 +1,10 @@
-var assert = require("assert");
+const assert = require("assert");
 
 const {
   getClientImpl,
   Client,
   Story,
   Author,
-  Member,
   Collection,
   CustomPath
 } = require("../../server/impl/api-client-impl");
@@ -71,7 +70,7 @@ describe("ApiClient", function() {
     it("returns cache keys for a collection", function() {
       const collection = Collection.build({
         id: "42",
-        "collection-cache-keys": ["sc/97/38586"],
+        "collection-cache-keys": ["sc/1/38586"],
         items: [
           {
             type: "story",
@@ -80,7 +79,7 @@ describe("ApiClient", function() {
         ]
       });
       assert.deepEqual(
-        ["c/1/42", "s/1/264f46f9", "sc/97/38586"],
+        ["c/1/42", "s/1/264f46f9", "sc/1/38586"],
         collection.cacheKeys(1)
       );
     });
@@ -88,7 +87,7 @@ describe("ApiClient", function() {
     it("adds nested collections when depth is passed", function() {
       const collection = Collection.build({
         id: "42",
-        "collection-cache-keys": ["sc/97/38586"],
+        "collection-cache-keys": ["sc/1/38586"],
         items: [
           {
             type: "collection",
@@ -130,7 +129,7 @@ describe("ApiClient", function() {
           "c/1/900",
           "s/1/abcdef12",
           "s/1/xyz12",
-          "sc/97/38586"
+          "sc/1/38586"
         ],
         collection.cacheKeys(1, 3)
       );
@@ -139,7 +138,7 @@ describe("ApiClient", function() {
     it("adds nested collections when depth is not passed", function() {
       const collection = Collection.build({
         id: "42",
-        "collection-cache-keys": ["sc/97/38586"],
+        "collection-cache-keys": ["sc/1/38586"],
         items: [
           {
             type: "collection",
@@ -149,7 +148,7 @@ describe("ApiClient", function() {
         ]
       });
       assert.deepEqual(
-        ["c/1/42", "c/1/500", "s/1/abcdef12", "sc/97/38586"],
+        ["c/1/42", "c/1/500", "s/1/abcdef12", "sc/1/38586"],
         collection.cacheKeys(1)
       );
     });
