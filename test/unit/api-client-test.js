@@ -129,8 +129,8 @@ describe("ApiClient", function() {
           "c/1/800",
           "c/1/900",
           "s/1/abcdef12",
-          "sc/97/38586",
-          "s/1/xyz12"
+          "s/1/xyz12",
+          "sc/97/38586"
         ],
         collection.cacheKeys(1, 3)
       );
@@ -149,7 +149,7 @@ describe("ApiClient", function() {
         ]
       });
       assert.deepEqual(
-        ["c/1/42", "c/1/500", "sc/97/38586", "s/1/abcdef12"],
+        ["c/1/42", "c/1/500", "s/1/abcdef12", "sc/97/38586"],
         collection.cacheKeys(1)
       );
     });
