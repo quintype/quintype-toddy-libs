@@ -88,10 +88,17 @@ Collection.prototype.getCollectionCacheKeys = function(publisherId, depth) {
 };
 
 Collection.prototype.cacheKeys = function(publisherId, depth) {
+  console.log("### depth: ", depth);
+  console.log(
+    "keys",
+    [collectionToCacheKey(publisherId, this)]
+      .concat(_.flatMap(this.items, item => itemToCacheKey(publisherId, item)))
+      .concat(this["collection-cache-keys"])
+  );
   if (!depth) {
-    return [collectionToCacheKey(publisherId, this)].concat(
-      _.flatMap(this.items, item => itemToCacheKey(publisherId, item))
-    );
+    return [collectionToCacheKey(publisherId, this)]
+      .concat(_.flatMap(this.items, item => itemToCacheKey(publisherId, item)))
+      .concat(this["collection-cache-keys"]);
   }
   const { storyCacheKeys, collectionCacheKeys } = getItemCacheKeys(
     publisherId,
@@ -100,7 +107,8 @@ Collection.prototype.cacheKeys = function(publisherId, depth) {
   );
   return [collectionToCacheKey(publisherId, this)].concat([
     ...collectionCacheKeys,
-    ...storyCacheKeys.slice(0, 200 - collectionCacheKeys.length)
+    ...storyCacheKeys.slice(0, 200 - collectionCacheKeys.length),
+    ...this["collection-cache-keys"]
   ]);
 };
 
