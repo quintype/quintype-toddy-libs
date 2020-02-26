@@ -32,6 +32,29 @@ exports.storyToCacheKey = function storyToCacheKey(publisherId, story) {
 };
 
 /**
+ * Get the cache key for a story
+ * @param {number} publisherId Publisher Id
+ * @param {Object} storyTemplate The storyTemplate
+ * @returns {string} The cache key
+ */
+exports.storyTemplateToCacheKey = function storyTemplateToCacheKey(
+  publisherId,
+  storyTemplate
+) {
+  return `st/${publisherId}/${storyTemplate.id.substr(0, 8)}`;
+};
+
+/**
+ * Get the cache key for a tag
+ * @param {number} publisherId Publisher Id
+ * @param {Object} tag The tag
+ * @returns {string} The cache key
+ */
+exports.tagToCacheKey = function tagToCacheKey(publisherId, tag) {
+  return `t/${publisherId}/${tag.id.substr(0, 8)}`;
+};
+
+/**
  * Get the cache key for a collection
  * @param {number} publisherId Publisher Id
  * @param {Object} collection The Collection. Note, this is not recursive
@@ -42,6 +65,16 @@ exports.collectionToCacheKey = function collectionToCacheKey(
   collection
 ) {
   return `c/${publisherId}/${collection.id}`;
+};
+
+/**
+ * Get the cache key for a section
+ * @param {number} publisherId Publisher Id
+ * @param {Object} section The section. Note, this is not recursive
+ * @returns {string} The cache key
+ */
+exports.sectionToCacheKey = function sectionToCacheKey(publisherId, section) {
+  return `sc/${publisherId}/${section.id}`;
 };
 
 exports.sorterToCacheKey = function sorterToCacheKey(
