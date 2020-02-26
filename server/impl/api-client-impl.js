@@ -88,13 +88,6 @@ Collection.prototype.getCollectionCacheKeys = function(publisherId, depth) {
 };
 
 Collection.prototype.cacheKeys = function(publisherId, depth) {
-  console.log("### depth: ", depth);
-  console.log(
-    "keys",
-    [collectionToCacheKey(publisherId, this)]
-      .concat(_.flatMap(this.items, item => itemToCacheKey(publisherId, item)))
-      .concat(this["collection-cache-keys"])
-  );
   if (!depth) {
     return [collectionToCacheKey(publisherId, this)]
       .concat(_.flatMap(this.items, item => itemToCacheKey(publisherId, item)))
