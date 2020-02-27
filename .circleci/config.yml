@@ -1,12 +1,14 @@
 version: 2
 jobs:
-  dummy:
+  test:
     docker:
-      - image: quay.io/quintype/docker-base:circleci-node8-npm6
+      - image: circleci/node:12.0.0
     steps:
-      - run: echo "PLEASE IMPLEMENT THIS"
+      - checkout
+      - run: npm install
+      - run: npm test
 workflows:
   version: 2
   default:
     jobs:
-      - dummy
+      - test
