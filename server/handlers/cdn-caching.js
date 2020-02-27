@@ -2,7 +2,8 @@ const _ = require("lodash");
 
 exports.addCacheHeadersToResult = function addCacheHeadersToResult(
   res,
-  cacheKeys
+  cacheKeys,
+  cdnName="cloudflare"
 ) {
   if (cacheKeys) {
     if (cacheKeys === "DO_NOT_CACHE") {
@@ -15,9 +16,16 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult(
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       );
       res.setHeader("Vary", "Accept-Encoding");
-
+      
+       // Akamai Headers
+      cdnName === "akamai" && res.setHeader(
+        "Edge-Cache-Tag",
+        _(cacheKeys)
+          .uniq()
+          .join(",")
+      );
       // Cloudflare Headers
-      res.setHeader(
+      cdnName === "cloudflare" && res.setHeader(
         "Cache-Tag",
         _(cacheKeys)
           .uniq()
