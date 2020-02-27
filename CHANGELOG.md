@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.21.0](https://github.com/quintype/quintype-node-framework/compare/v3.20.1...v3.21.0) (2020-02-27)
+
+
+### Features
+
+* Add cacheTag for story template, tag and section. ([#105](https://github.com/quintype/quintype-node-framework/issues/105)) ([af66b13](https://github.com/quintype/quintype-node-framework/commit/af66b13))
+
+
+
 ## [3.20.1](https://github.com/quintype/quintype-node-framework/compare/v3.20.0...v3.20.1) (2020-02-20)
 
 
