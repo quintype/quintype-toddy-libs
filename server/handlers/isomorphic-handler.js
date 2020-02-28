@@ -168,7 +168,8 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
     appVersion,
     domainSlug,
     mobileApiEnabled,
-    mobileConfigFields
+    mobileConfigFields,
+    cdnProvider
   }
 ) {
   const url = urlLib.parse(req.query.path || "/", true);
@@ -239,7 +240,11 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
       const statusCode = result.httpStatusCode || 200;
       res.status(statusCode < 500 ? 200 : 500);
       res.setHeader("Content-Type", "application/json");
-      addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]));
+      addCacheHeadersToResult(
+        res,
+        _.get(result, ["data", "cacheKeys"]),
+        cdnProvider
+      );
       const seoInstance = getSeoInstance(seo, config, result.pageType);
       res.json(
         Object.assign({}, result, {
@@ -363,7 +368,8 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     assetHelper,
     preloadJs,
     preloadRouteData,
-    domainSlug
+    domainSlug,
+    cdnProvider
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -396,9 +402,11 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     const statusCode = result.httpStatusCode || 200;
 
     if (statusCode == 301 && result.data && result.data.location) {
-      addCacheHeadersToResult(res, [
-        customUrlToCacheKey(config["publisher-id"], "redirect")
-      ]);
+      addCacheHeadersToResult(
+        res,
+        [customUrlToCacheKey(config["publisher-id"], "redirect")],
+        cdnProvider
+      );
       return res.redirect(301, result.data.location);
     }
     const seoInstance = getSeoInstance(seo, config, result.pageType);
@@ -415,7 +423,11 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     });
 
     res.status(statusCode);
-    addCacheHeadersToResult(res, _.get(result, ["data", "cacheKeys"]));
+    addCacheHeadersToResult(
+      res,
+      _.get(result, ["data", "cacheKeys"]),
+      cdnProvider
+    );
 
     if (preloadJs) {
       res.append(
@@ -517,7 +529,8 @@ exports.handleStaticRoute = function handleStaticRoute(
     seo,
     renderParams,
     disableIsomorphicComponent,
-    domainSlug
+    domainSlug,
+    cdnProvider
   }
 ) {
   const url = urlLib.parse(path);
@@ -556,7 +569,8 @@ exports.handleStaticRoute = function handleStaticRoute(
       res.status(statusCode);
       addCacheHeadersToResult(
         res,
-        _.get(result, ["data", "cacheKeys"], ["static"])
+        _.get(result, ["data", "cacheKeys"], ["static"]),
+        cdnProvider
       );
 
       return renderLayout(

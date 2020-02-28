@@ -463,6 +463,152 @@ describe("Isomorphic Handler", function() {
     });
   });
 
+  describe("cdnProvider", () => {
+    it("Returns the right cloudflare headers for cache keys passed and no cdn provider passed", done => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host, cacheKeys: ["c/1/abcdefgh"] }
+          }),
+        [{ pageType: "home-page", path: "/" }]
+      );
+
+      supertest(app)
+        .get("/")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then(res => {
+          const cacheControl = res.header["cache-control"];
+          const cacheTag = res.header["cache-tag"];
+          assert.equal(
+            cacheControl,
+            "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
+          );
+          assert.equal(cacheTag, "c/1/abcdefgh");
+        })
+        .then(done);
+    });
+
+    it("Returns the right cloudflare headers for no cacheKeys and no cdnProvider passed", done => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host }
+          }),
+        [{ pageType: "home-page", path: "/" }]
+      );
+
+      supertest(app)
+        .get("/")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then(res => {
+          const cacheControl = res.header["cache-control"];
+          const cacheTag = res.header["cache-tag"];
+          assert.equal(
+            cacheControl,
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600"
+          );
+          assert.equal(cacheTag, undefined);
+        })
+        .then(done);
+    });
+
+    it("Returns the right headers when there is cachekeys is set to DO_NOT_CACHE", done => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host, cacheKeys: "DO_NOT_CACHE" }
+          }),
+        [{ pageType: "home-page", path: "/" }],
+        { cdnProvider: "akamai" }
+      );
+
+      supertest(app)
+        .get("/")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then(res => {
+          const cacheControl = res.header["cache-control"];
+          const edgeCacheControl = res.header["edge-control"];
+          const cacheTag = res.header["cache-tag"];
+          const edgeCacheTag = res.header["edge-cache-tag"];
+          assert.equal(cacheControl, "private,no-cache,no-store,max-age=0");
+          assert.equal(edgeCacheControl, "private,no-cache,no-store,max-age=0");
+          assert.equal(cacheTag, undefined);
+          assert.equal(edgeCacheTag, undefined);
+        })
+        .then(done);
+    });
+
+    it("Returns the right akamai headers when cachekeys are not passed", done => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host }
+          }),
+        [{ pageType: "home-page", path: "/" }],
+        { cdnProvider: "akamai" }
+      );
+
+      supertest(app)
+        .get("/")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then(res => {
+          const cacheControl = res.header["cache-control"];
+          const edgeCacheControl = res.header["edge-control"];
+          const edgeCacheTag = res.header["edge-cache-tag"];
+          assert.equal(
+            cacheControl,
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600"
+          );
+          assert.equal(
+            edgeCacheControl,
+            "public,maxage=60,stale-while-revalidate=150,stale-if-error=3600"
+          );
+          assert.equal(edgeCacheTag, undefined);
+        })
+        .then(done);
+    });
+
+    it("Returns the right akamai headers when right cachekeys are passed", done => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host, cacheKeys: ["c/1/abcdefgh"] }
+          }),
+        [{ pageType: "home-page", path: "/" }],
+        { cdnProvider: "akamai" }
+      );
+
+      supertest(app)
+        .get("/")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then(res => {
+          const cacheControl = res.header["cache-control"];
+          const edgeCacheControl = res.header["edge-control"];
+          const edgeCacheTag = res.header["edge-cache-tag"];
+          assert.equal(
+            cacheControl,
+            "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
+          );
+          assert.equal(
+            edgeCacheControl,
+            "public,maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
+          );
+          assert.equal(edgeCacheTag, "c/1/abcdefgh");
+        })
+        .then(done);
+    });
+  });
+
   describe("mountAt", function() {
     it("Gets Pages Mounted at Some Path", async function() {
       const app = express();
