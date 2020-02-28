@@ -569,7 +569,7 @@ describe("Isomorphic Handler", function() {
           );
           assert.equal(
             edgeCacheControl,
-            "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600"
+            "public,maxage=60,stale-while-revalidate=150,stale-if-error=3600"
           );
           assert.equal(edgeCacheTag, undefined);
         })
@@ -601,7 +601,7 @@ describe("Isomorphic Handler", function() {
           );
           assert.equal(
             edgeCacheControl,
-            "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
+            "public,maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
           );
           assert.equal(edgeCacheTag, "c/1/abcdefgh");
         })

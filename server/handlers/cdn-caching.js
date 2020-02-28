@@ -20,7 +20,7 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult(
       cdnProvider === "akamai" &&
         res.setHeader(
           "Edge-Control",
-          "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
+          "public,maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
         );
       res.setHeader("Vary", "Accept-Encoding");
 
@@ -61,7 +61,7 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult(
     cdnProvider === "akamai" &&
       res.setHeader(
         "Edge-Control",
-        "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600"
+        "public,maxage=60,stale-while-revalidate=150,stale-if-error=3600"
       );
     res.setHeader("Vary", "Accept-Encoding");
     res.setHeader(
