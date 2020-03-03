@@ -251,6 +251,7 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {Array<string>} opts.mobileConfigFields List of fields that are needed in the config field of the *&#47;mobile-data.json* API. This is primarily used by the React Native starter kit. (default: [])
  * @param {boolean} opts.templateOptions If set to true, then *&#47;template-options.json* will return a list of available components so that components can be sorted in the CMS. This reads data from *config/template-options.yml*. See [Adding a homepage component](https://developers.quintype.com/malibu/tutorial/adding-a-homepage-component) for more details
  * @param {boolean|function} opts.lightPages If set to true, then all story pages will render amp pages.
+ * @param {string} opts.cdnProvider The name of the cdn provider. Supported cdn providers are akamai, cloudflare. Default value is cloudflare.
  * @param {function} opts.renderLightPage A function which renders the amp layout for a page.
  * @param {function} opts.maxConfigVersion An async function which resolves to a integer version of the config. This defaults to config.theme-attributes.cache-burst
  */
@@ -278,6 +279,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     mobileConfigFields = [],
     templateOptions = false,
     lightPages = false,
+    cdnProvider = "cloudflare",
     renderLightPage = require("./impl/render-light-page"),
     serviceWorkerPaths = ["/service-worker.js"],
     maxConfigVersion = config =>
@@ -355,7 +357,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       logError,
       staticRoutes,
       seo,
-      appVersion
+      appVersion,
+      cdnProvider
     })
   );
 
@@ -384,7 +387,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         seo,
         appVersion,
         mobileApiEnabled,
-        mobileConfigFields
+        mobileConfigFields,
+        cdnProvider
       })
     );
   }
@@ -411,7 +415,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       withConfig(
         handleStaticRoute,
         Object.assign(
-          { logError, loadData, loadErrorData, renderLayout, seo },
+          { logError, loadData, loadErrorData, renderLayout, seo, cdnProvider },
           route
         )
       )
@@ -444,7 +448,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       logError,
       preloadJs,
       preloadRouteData,
-      assetHelper
+      assetHelper,
+      cdnProvider
     })
   );
 
