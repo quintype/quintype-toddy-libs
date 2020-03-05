@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.23.0](https://github.com/quintype/quintype-node-framework/compare/v3.12.0...v3.23.0) (2020-03-05)
+
+
+### Bug Fixes
+
+* createApp accepts app, and /ping works outside the mount path ([dbe77e6](https://github.com/quintype/quintype-node-framework/commit/dbe77e6))
+* Fixing a crash due to a wrong default params ([6a58968](https://github.com/quintype/quintype-node-framework/commit/6a58968))
+* **Subdirectory:** Fixing an error message ([38c1ad2](https://github.com/quintype/quintype-node-framework/commit/38c1ad2))
+* Fixing the logging message when malibu starts ([db094dd](https://github.com/quintype/quintype-node-framework/commit/db094dd))
+* **service-worker:** Fix service-worker update and added cache-tag to service-worker response ([#99](https://github.com/quintype/quintype-node-framework/issues/99)) ([5c492d8](https://github.com/quintype/quintype-node-framework/commit/5c492d8))
+* **start:** Fix port undefined :hammer: ([12d051c](https://github.com/quintype/quintype-node-framework/commit/12d051c))
+* **Subdirectory:** qlitics is also aware of subdirectory ([e204507](https://github.com/quintype/quintype-node-framework/commit/e204507))
+* generateCommonRoutes now understands mount points ([69dd8c9](https://github.com/quintype/quintype-node-framework/commit/69dd8c9))
+* initializeQServiceWorker honors the mountAt parameter ([217e721](https://github.com/quintype/quintype-node-framework/commit/217e721))
+* **Subdirectory:** Service Worker is loaded relatively ([8543c81](https://github.com/quintype/quintype-node-framework/commit/8543c81))
+* **Subdirectory:** things still work if mountpoint returns a null ([4f138d2](https://github.com/quintype/quintype-node-framework/commit/4f138d2))
+
+
+### Features
+
+* Accept mountpoint as a function ([7ee2aa0](https://github.com/quintype/quintype-node-framework/commit/7ee2aa0))
+* Add cacheTag for story template, tag and section. ([#105](https://github.com/quintype/quintype-node-framework/issues/105)) ([af66b13](https://github.com/quintype/quintype-node-framework/commit/af66b13))
+* Adding SSO Proxy urls ([78e2cf0](https://github.com/quintype/quintype-node-framework/commit/78e2cf0))
+* generateServiceWorker now gets config ([f63d80d](https://github.com/quintype/quintype-node-framework/commit/f63d80d))
+* Mount Quintype at a subdirectory ([#102](https://github.com/quintype/quintype-node-framework/issues/102)) ([68504f0](https://github.com/quintype/quintype-node-framework/commit/68504f0))
+* Reimplement cache tags logic ([#93](https://github.com/quintype/quintype-node-framework/issues/93)) ([d08fd01](https://github.com/quintype/quintype-node-framework/commit/d08fd01))
+* **akamai:** Add cache headers for akamai ([#108](https://github.com/quintype/quintype-node-framework/issues/108)) ([858bd47](https://github.com/quintype/quintype-node-framework/commit/858bd47))
+* **defaultAmpStoryPages:** Render Amp Story pages by default ([#103](https://github.com/quintype/quintype-node-framework/issues/103)) ([af25079](https://github.com/quintype/quintype-node-framework/commit/af25079))
+* **mobileData:** Select config fields for mobile ([#96](https://github.com/quintype/quintype-node-framework/issues/96)) ([eac3bfa](https://github.com/quintype/quintype-node-framework/commit/eac3bfa))
+* **ServiceWorker:** Add configure service-worker paths ([#95](https://github.com/quintype/quintype-node-framework/issues/95)) ([679a24e](https://github.com/quintype/quintype-node-framework/commit/679a24e))
+
+
+
 ## [3.22.1](https://github.com/quintype/quintype-node-framework/compare/v3.22.0...v3.22.1) (2020-03-03)
 
 
