@@ -32,11 +32,18 @@ function updateToken(firebaseInstance) {
     .then(token => {
       return registerFCMTopic(token);
     })
-    .catch(() => {
+    .catch(err => {
+      console.log(err, "Could not retrieve token from firebase");
       throw new Error("Could not retrieve token from firebase");
     });
 }
 
 function registerFCMTopic(token) {
-  return global.wretch("/register-fcm-topic").post({ token: token });
+  return fetch("/register-fcm-topic", {
+    method: "post",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ token: token })
+  });
 }
