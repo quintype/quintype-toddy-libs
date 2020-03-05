@@ -33,8 +33,7 @@ function updateToken(firebaseInstance) {
       return registerFCMTopic(token);
     })
     .catch(err => {
-      console.log(err, "Could not retrieve token from firebase");
-      throw new Error("Could not retrieve token from firebase");
+      throw new Error(err);
     });
 }
 
