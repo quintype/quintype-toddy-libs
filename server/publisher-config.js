@@ -1,7 +1,7 @@
 /**
  * This namespace exposes a the publisher config from publisher.yml
  * ```javascript
- * import config from "@quintype/framework/server/logger";
+ * import config from "@quintype/framework/server/publisher";
  *
  * config["sketches_host"]
  * ```
