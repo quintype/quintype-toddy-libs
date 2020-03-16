@@ -551,7 +551,7 @@ exports.mountQuintypeAt = function(app, mountAt) {
 
 /**
  * ampRoutes uses quintype-amp library to handle amp pages
- * currently, only story pages with default styling is supported
+ * currently, only story pages with default styling are supported
  */
 exports.ampRoutes = function(
   app,
