@@ -548,3 +548,43 @@ exports.mountQuintypeAt = function(app, mountAt) {
     }
   });
 };
+
+/**
+ * ampRoutes uses quintype-amp library to handle amp pages
+ * currently, only story pages with default styling is supported
+ */
+exports.ampRoutes = function(
+  app,
+  {
+    ampConfig = require("./temporary/config").ampConfig,
+    ampifyStory = require("./temporary/bundle.js").ampifyStory
+  } = {}
+) {
+  const { Story } = require("./api-client");
+  getWithConfig(
+    app,
+    "/amp/story/*",
+    async (req, res, next, { client, config }) => {
+      try {
+        const slug = req.path.replace("^/amp/story", "");
+        const story = await Story.getStoryBySlug(client, slug);
+        const finalConfig = mergeConfigs({
+          ampConfig,
+          publisherConfig: config
+        });
+        story
+          ? res.send(ampifyStory({ story, config: finalConfig, client }))
+          : next();
+      } catch (e) {
+        next(e);
+      }
+    }
+  );
+};
+
+// This should ideally not exist, ampConfig should be the only config
+const mergeConfigs = function({ ampConfig, publisherConfig }) {
+  const finalConfig = { ...ampConfig };
+  finalConfig.cdn_image = `//${publisherConfig["cdn-image"]}`;
+  return finalConfig;
+};
