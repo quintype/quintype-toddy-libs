@@ -553,38 +553,20 @@ exports.mountQuintypeAt = function(app, mountAt) {
  * ampRoutes uses quintype-amp library to handle amp pages
  * currently, only story pages with default styling are supported
  */
-exports.ampRoutes = function(
-  app,
-  {
-    ampConfig = require("./temporary/config").ampConfig,
-    ampifyStory = require("./temporary/bundle.js").ampifyStory
-  } = {}
-) {
+exports.ampRoutes = function(app) {
   const { Story } = require("./api-client");
-  getWithConfig(
-    app,
-    "/amp/story/*",
-    async (req, res, next, { client, config }) => {
-      try {
-        const slug = req.path.replace("^/amp/story", "");
-        const story = await Story.getStoryBySlug(client, slug);
-        const finalConfig = mergeConfigs({
-          ampConfig,
-          publisherConfig: config
-        });
-        story
-          ? res.send(ampifyStory({ story, config: finalConfig, client }))
-          : next();
-      } catch (e) {
-        next(e);
-      }
-    }
-  );
-};
+  const { ampifyStory } = require("@quintype/amp");
+  getWithConfig(app, "/amp/story/*", async (req, res, next, { client }) => {
+    try {
+      const slug = req.path.replace("^/amp/story", "");
+      const ampConfig = await client.getAmpConfig();
+      const story = await Story.getStoryBySlug(client, slug);
+      const ampHtml = ampifyStory({ story, config: ampConfig, client });
 
-// This should ideally not exist, ampConfig should be the only config
-const mergeConfigs = function({ ampConfig, publisherConfig }) {
-  const finalConfig = { ...ampConfig };
-  finalConfig.cdn_image = `//${publisherConfig["cdn-image"]}`;
-  return finalConfig;
+      if (ampHtml instanceof Error) throw ampHtml;
+      story ? res.send(ampHtml) : next();
+    } catch (e) {
+      next(e);
+    }
+  });
 };

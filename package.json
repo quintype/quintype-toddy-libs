@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
+    "@quintype/amp": "0.0.0",
     "@quintype/backend": "^1.22.0",
     "@quintype/components": "^2.16.1",
     "atob": "^2.1.2",
