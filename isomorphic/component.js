@@ -19,7 +19,7 @@ class IsomorphicComponentBase extends React.Component {
       key: this.props.currentPath || ""
     });
     return React.createElement(
-      this.props.pickComponent(this.props.pageType),
+      this.props.pickComponent(this.props.pageType, this.props.subPageType),
       props
     );
   }
@@ -28,6 +28,7 @@ class IsomorphicComponentBase extends React.Component {
 function mapStateToProps(state) {
   return {
     pageType: state.qt.pageType,
+    subPageType: state.qt.subPageType,
     config: state.qt.config,
     data: state.qt.data,
     currentPath: state.qt.currentPath,

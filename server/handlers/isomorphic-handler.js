@@ -140,6 +140,7 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
 function createStoreFromResult(url, result, opts = {}) {
   const qt = {
     pageType: result.pageType || opts.defaultPageType,
+    subPageType: result.subPageType,
     data: result.data,
     currentPath: `${url.pathname}${url.search || ""}`,
     currentHostUrl: result.currentHostUrl,
@@ -328,9 +329,11 @@ exports.notFoundHandler = function notFoundHandler(
       );
       res.setHeader("Vary", "Accept-Encoding");
       res.setHeader("Content-Type", "text/html; charset=utf-8");
-
       return pickComponent
-        .preloadComponent(store.getState().qt.pageType)
+        .preloadComponent(
+          store.getState().qt.pageType,
+          store.getState().qt.subPageType
+        )
         .then(() =>
           renderLayout(res, {
             config,
@@ -339,7 +342,8 @@ exports.notFoundHandler = function notFoundHandler(
               pickComponent
             }),
             store,
-            pageType: store.getState().qt.pageType
+            pageType: store.getState().qt.pageType,
+            subPageType: store.getState().qt.subPageType
           })
         );
     })
@@ -374,30 +378,6 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
 ) {
   const url = urlLib.parse(req.url, true);
 
-  return loadDataForIsomorphicRoute(
-    loadData,
-    loadErrorData,
-    url,
-    generateRoutes(config, domainSlug),
-    { config, client, logError, host: req.hostname, domainSlug }
-  )
-    .catch(e => {
-      logError(e);
-      return { httpStatusCode: 500, pageType: "error" };
-    })
-    .then(result => {
-      if (!result) {
-        return next();
-      }
-      return new Promise(resolve => resolve(writeResponse(result)))
-        .catch(e => {
-          logError(e);
-          res.status(500);
-          res.send(e.message);
-        })
-        .finally(() => res.end());
-    });
-
   function writeResponse(result) {
     const statusCode = result.httpStatusCode || 200;
 
@@ -412,12 +392,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     const seoInstance = getSeoInstance(seo, config, result.pageType);
     const seoTags =
       seoInstance &&
-      seoInstance.getMetaTags(
-        config,
-        result.pageType || match.pageType,
-        result,
-        { url }
-      );
+      seoInstance.getMetaTags(config, result.pageType, result, { url });
     const store = createStoreFromResult(url, result, {
       disableIsomorphicComponent: statusCode != 200
     });
@@ -446,7 +421,10 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     }
 
     return pickComponent
-      .preloadComponent(store.getState().qt.pageType)
+      .preloadComponent(
+        store.getState().qt.pageType,
+        store.getState().qt.subPageType
+      )
       .then(() =>
         renderLayout(res, {
           config,
@@ -456,10 +434,35 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
           }),
           store,
           seoTags,
-          pageType: store.getState().qt.pageType
+          pageType: store.getState().qt.pageType,
+          subPageType: store.getState().qt.subPageType
         })
       );
   }
+
+  return loadDataForIsomorphicRoute(
+    loadData,
+    loadErrorData,
+    url,
+    generateRoutes(config, domainSlug),
+    { config, client, logError, host: req.hostname, domainSlug }
+  )
+    .catch(e => {
+      logError(e);
+      return { httpStatusCode: 500, pageType: "error" };
+    })
+    .then(result => {
+      if (!result) {
+        return next();
+      }
+      return new Promise(resolve => resolve(writeResponse(result)))
+        .catch(e => {
+          logError(e);
+          res.status(500);
+          res.send(e.message);
+        })
+        .finally(() => res.end());
+    });
 };
 
 exports.handleLightPagesRoute = async (

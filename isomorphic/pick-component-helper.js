@@ -39,9 +39,11 @@ exports.pickComponentHelper = function pickComponentHelper(
     getChunkName
   };
 
-  function pickComponent(pageType) {
+  function pickComponent(pageType, subPageType) {
     const { chunk, component } = components[pageType] || components.default;
-    return loadChunk[chunk]().then(chunk => chunk[component]);
+    return loadChunk[chunk](pageType, subPageType).then(
+      chunk => chunk[component]
+    );
   }
 
   function getChunkName(pageType) {

@@ -5,14 +5,15 @@ function makePickComponentSync(pickComponent) {
     return loadedComponents[pageType];
   };
 
-  wrappedPickComponent.preloadComponent = function(pageType) {
+  wrappedPickComponent.preloadComponent = function(pageType, subPageType) {
     if (loadedComponents[pageType]) {
       return Promise.resolve();
-    } else {
-      return Promise.resolve(pickComponent(pageType))
-        .then(component => (loadedComponents[pageType] = component))
-        .then(() => Promise.resolve());
     }
+    return Promise.resolve(pickComponent(pageType, subPageType))
+      .then(component => {
+        loadedComponents[pageType] = component;
+      })
+      .then(() => Promise.resolve());
   };
 
   return wrappedPickComponent;
