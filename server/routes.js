@@ -556,17 +556,26 @@ exports.mountQuintypeAt = function(app, mountAt) {
 exports.ampRoutes = function(app, { opts } = {}) {
   const { Story } = require("./api-client");
   const { ampifyStory } = require("@quintype/amp");
-  getWithConfig(app, "/amp/story/*", async (req, res, next, { client }) => {
-    try {
-      const slug = req.path.replace("^/amp/story", "");
-      const ampConfig = await client.getAmpConfig();
-      const story = await Story.getStoryBySlug(client, slug);
-      const ampHtml = ampifyStory({ story, config: ampConfig, client, opts });
+  getWithConfig(
+    app,
+    "/amp/story/*",
+    async (req, res, next, { client, config }) => {
+      try {
+        const slug = req.path.replace("^/amp/story", "");
+        const ampConfig = await client.getAmpConfig();
+        const story = await Story.getStoryBySlug(client, slug);
+        const ampHtml = ampifyStory({
+          story,
+          config: { ...ampConfig, ...config },
+          client,
+          opts
+        });
 
-      if (ampHtml instanceof Error) throw ampHtml;
-      story ? res.send(ampHtml) : next();
-    } catch (e) {
-      next(e);
+        if (ampHtml instanceof Error) throw ampHtml;
+        story ? res.send(ampHtml) : next();
+      } catch (e) {
+        next(e);
+      }
     }
-  });
+  );
 };
