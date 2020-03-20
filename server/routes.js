@@ -551,7 +551,6 @@ exports.mountQuintypeAt = function(app, mountAt) {
 
 /**
  * *ampRoutes* handles all the amp page routes using the *@quintype/amp* library
- * *proxyGetRequest* can be used to forward requests to another host, and cache the results on our CDN. This can be done as follows in `app/server/app.js`.
  *
  * @param {Express} app Express app to add the routes to
  * @param {Object} opts Options
