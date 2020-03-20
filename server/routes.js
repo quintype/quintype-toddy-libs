@@ -554,23 +554,23 @@ exports.mountQuintypeAt = function(app, mountAt) {
  * currently, only story pages with default styling are supported
  */
 exports.ampRoutes = function(app, { opts } = {}) {
-  const { Story } = require("./api-client");
+  const { Story, AmpConfig } = require("./api-client");
   const { ampifyStory } = require("@quintype/amp");
+  const AmpConfigInstance = new AmpConfig();
   getWithConfig(
     app,
-    "/amp/story/*",
+    "/amp/story/:storyId",
     async (req, res, next, { client, config }) => {
       try {
-        const slug = req.path.replace("^/amp/story", "");
-        const ampConfig = await client.getAmpConfig();
-        const story = await Story.getStoryBySlug(client, slug);
+        const ampConfig = await AmpConfigInstance.getConfig(client);
+        const story = await Story.getStoryById(client, req.params.storyId);
         const ampHtml = ampifyStory({
           story,
-          config: { ...ampConfig, ...config },
+          publisherConfig: config,
+          ampConfig,
           client,
           opts
         });
-
         if (ampHtml instanceof Error) throw ampHtml;
         story ? res.send(ampHtml) : next();
       } catch (e) {
