@@ -550,8 +550,16 @@ exports.mountQuintypeAt = function(app, mountAt) {
 };
 
 /**
- * ampRoutes uses quintype-amp library to handle amp pages
- * currently, only story pages with default styling are supported
+ * *ampRoutes* handles all the amp page routes using the *@quintype/amp* library
+ * *proxyGetRequest* can be used to forward requests to another host, and cache the results on our CDN. This can be done as follows in `app/server/app.js`.
+ *
+ * @param {Express} app Express app to add the routes to
+ * @param {Object} opts Options
+ * @param {Object} opts.templates An object each key corresponding to the template name and its value being the template itself
+ * @param {Object} opts.slots An object each key corresponding to a slot name and value being the component to be rendered in that slot
+ *
+ * The following amp routes are matched:
+ * *"/amp/story/:storyId"* returns the amp story page
  */
 exports.ampRoutes = function(app, { opts } = {}) {
   const { Story, AmpConfig } = require("./api-client");
