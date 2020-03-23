@@ -569,5 +569,5 @@ exports.mountQuintypeAt = function (app, mountAt) {
  * *"/amp/story/:storyId"* returns the amp story page
  */
 exports.ampRoutes = function ampRoutes(app, ampOpts = {}) {
-  getWithConfig(app, "/amp/story/:storyId", handleAmpRequest, { ampOpts });
+  getWithConfig(app, "/amp/story/:slug", handleAmpRequest, { ampOpts });
 };

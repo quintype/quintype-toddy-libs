@@ -4,8 +4,9 @@ const { Story, AmpConfig } = require("../api-client");
 exports.handleAmpRequest = async function handleAmpRequest(req, res, next, { client, config, ampOpts }) {
   try {
     // eslint-disable-next-line no-return-await
-    const ampConfig = client.memoizeAsync("amp-config", async () => await AmpConfig.getAmpConfig(client))
-    const story = await Story.getStoryById(client, req.params.storyId);
+    const ampConfig = await config.memoizeAsync("amp-config", async () => await AmpConfig.getAmpConfig(client))
+    const story = await Story.getStoryBySlug(client, req.params.slug);
+
     if (!story) {
       return next();
     }
