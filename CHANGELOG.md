@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.24.0](https://github.com/quintype/quintype-node-framework/compare/v3.23.1...v3.24.0) (2020-03-23)
+
+
+### Features
+
+* Add subPageType param to pickComponent ([#112](https://github.com/quintype/quintype-node-framework/issues/112)) ([3635c03](https://github.com/quintype/quintype-node-framework/commit/3635c03))
+
+
+
 ## [3.23.1](https://github.com/quintype/quintype-node-framework/compare/v3.23.0...v3.23.1) (2020-03-05)
 
 
