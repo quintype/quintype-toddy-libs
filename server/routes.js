@@ -16,6 +16,7 @@ const {
   handleStaticRoute,
   notFoundHandler
 } = require("./handlers/isomorphic-handler");
+const { handleAmpRequest } = require("./handlers/amp-handler");
 const { oneSignalImport } = require("./handlers/one-signal");
 const { customRouteHandler } = require("./handlers/custom-route-handler");
 const {
@@ -133,7 +134,7 @@ function withConfigPartial(
   publisherConfig = require("./publisher-config")
 ) {
   return function withConfig(f, staticParams) {
-    return function(req, res, next) {
+    return function (req, res, next) {
       const client = getClient(req.hostname);
       return client
         .getConfig()
@@ -497,7 +498,7 @@ exports.getWithConfig = getWithConfig;
  * @param opts
  * @param opts.cacheControl The cache control header to set on proxied requests (default: *"public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600"*)
  */
-exports.proxyGetRequest = function(app, route, handler, opts = {}) {
+exports.proxyGetRequest = function (app, route, handler, opts = {}) {
   const {
     cacheControl = "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600"
   } = opts;
@@ -531,8 +532,8 @@ exports.proxyGetRequest = function(app, route, handler, opts = {}) {
 };
 
 // This could also be done using express's mount point, but /ping stops working
-exports.mountQuintypeAt = function(app, mountAt) {
-  app.use(function(req, res, next) {
+exports.mountQuintypeAt = function (app, mountAt) {
+  app.use(function (req, res, next) {
     const mountPoint =
       typeof mountAt === "function" ? mountAt(req.hostname) : mountAt;
 
@@ -550,39 +551,23 @@ exports.mountQuintypeAt = function(app, mountAt) {
 };
 
 /**
- * *ampRoutes* handles all the amp page routes using the *@quintype/amp* library
+ * *ampRoutes* handles all the amp page routes using the *[@quintype/amp](https://developers.quintype.com/quintype-node-amp)* library
  *
  * @param {Express} app Express app to add the routes to
  * @param {Object} opts Options
  * @param {Object} opts.templates An object each key corresponding to the template name and its value being the template itself
  * @param {Object} opts.slots An object each key corresponding to a slot name and value being the component to be rendered in that slot
  *
+ * ```javascript
+ * ampRoutes(app, {
+ *  templates: { text: TextTemplate },
+ *  slots: { slotName: Component }
+ * })
+ * ```
+ *
  * The following amp routes are matched:
  * *"/amp/story/:storyId"* returns the amp story page
  */
-exports.ampRoutes = function(app, { opts } = {}) {
-  const { Story, AmpConfig } = require("./api-client");
-  const { ampifyStory } = require("@quintype/amp");
-  const AmpConfigInstance = new AmpConfig();
-  getWithConfig(
-    app,
-    "/amp/story/:storyId",
-    async (req, res, next, { client, config }) => {
-      try {
-        const ampConfig = await AmpConfigInstance.getConfig(client);
-        const story = await Story.getStoryById(client, req.params.storyId);
-        const ampHtml = ampifyStory({
-          story,
-          publisherConfig: config,
-          ampConfig,
-          client,
-          opts
-        });
-        if (ampHtml instanceof Error) throw ampHtml;
-        story ? res.send(ampHtml) : next();
-      } catch (e) {
-        next(e);
-      }
-    }
-  );
+exports.ampRoutes = function ampRoutes(app, ampOpts = {}) {
+  getWithConfig(app, "/amp/story/:storyId", handleAmpRequest, { ampOpts });
 };
