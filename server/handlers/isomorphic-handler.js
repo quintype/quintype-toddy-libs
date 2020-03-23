@@ -392,7 +392,12 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     const seoInstance = getSeoInstance(seo, config, result.pageType);
     const seoTags =
       seoInstance &&
-      seoInstance.getMetaTags(config, result.pageType, result, { url });
+      seoInstance.getMetaTags(
+        config,
+        result.pageType || match.pageType,
+        result,
+        { url }
+      );
     const store = createStoreFromResult(url, result, {
       disableIsomorphicComponent: statusCode != 200
     });
