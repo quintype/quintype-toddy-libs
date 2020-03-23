@@ -85,35 +85,32 @@
  * @module start
  */
 
+import {
+  BreakingNews,
+  CLIENT_SIDE_RENDERED,
+  NAVIGATE_TO_PAGE,
+  PAGE_LOADING
+} from "@quintype/components";
+import { createBrowserHistory } from "history";
+import get from "lodash/get";
 import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import get from "lodash/get";
-import { createBrowserHistory } from "history";
-
-import {
-  BreakingNews,
-  NAVIGATE_TO_PAGE,
-  CLIENT_SIDE_RENDERED,
-  PAGE_LOADING,
-  PAGE_FINISHED_LOADING
-} from "@quintype/components";
-
-import { createQtStore } from "../store/create-store";
 import { IsomorphicComponent } from "../isomorphic/component";
+import { makePickComponentSync } from "../isomorphic/impl/make-pick-component-sync";
+import { createQtStore } from "../store/create-store";
 import {
-  startAnalytics,
   registerPageView,
   registerStoryShare,
-  setMemberId
+  setMemberId,
+  startAnalytics
 } from "./analytics";
-import {
-  registerServiceWorker,
-  setupServiceWorkerUpdates,
-  checkForServiceWorkerUpdates
-} from "./impl/load-service-worker";
-import { makePickComponentSync } from "../isomorphic/impl/make-pick-component-sync";
 import { initializeFCM } from "./impl/fcm";
+import {
+  checkForServiceWorkerUpdates,
+  registerServiceWorker,
+  setupServiceWorkerUpdates
+} from "./impl/load-service-worker";
 
 require("../assetify/client")();
 
@@ -226,7 +223,7 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
 
     Promise.resolve(
       pickComponentWrapper &amp;&amp;
-        pickComponentWrapper.preloadComponent(page.pageType)
+        pickComponentWrapper.preloadComponent(page.pageType, page.subPageType)
     ).then(() => {
       dispatch({
         type: NAVIGATE_TO_PAGE,
@@ -317,7 +314,10 @@ export function renderIsomorphicComponent(
   if (!store.getState().qt.disableIsomorphicComponent) {
     pickComponentWrapper = makePickComponentSync(pickComponent);
     return pickComponentWrapper
-      .preloadComponent(store.getState().qt.pageType)
+      .preloadComponent(
+        store.getState().qt.pageType,
+        store.getState().qt.subPageType
+      )
       .then(() =>
         renderComponent(
           IsomorphicComponent,
