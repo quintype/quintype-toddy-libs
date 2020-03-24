@@ -16,7 +16,7 @@ const {
   handleStaticRoute,
   notFoundHandler
 } = require("./handlers/isomorphic-handler");
-const { handleAmpRequest } = require("./handlers/amp-handler");
+
 const { oneSignalImport } = require("./handlers/one-signal");
 const { customRouteHandler } = require("./handlers/custom-route-handler");
 const {
@@ -101,7 +101,7 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
     app.get("/favicon.ico", sketchesProxy);
   }
 
-  extraRoutes.forEach(route => app.all(route, sketchesProxy));
+  extraRoutes.forEach((route) => app.all(route, sketchesProxy));
 };
 
 // istanbul ignore next
@@ -134,11 +134,11 @@ function withConfigPartial(
   publisherConfig = require("./publisher-config")
 ) {
   return function withConfig(f, staticParams) {
-    return function (req, res, next) {
+    return function(req, res, next) {
       const client = getClient(req.hostname);
       return client
         .getConfig()
-        .then(config =>
+        .then((config) =>
           f(
             req,
             res,
@@ -179,7 +179,9 @@ function wrapLoadDataWithMultiDomain(publisherConfig, f, configPos) {
     const { domainSlug } = arguments[arguments.length - 1];
     const config = arguments[configPos];
     const primaryHostUrl = convertToDomain(config["sketches-host"]);
-    const domain = (config.domains || []).find(d => d.slug === domainSlug) || {
+    const domain = (config.domains || []).find(
+      (d) => d.slug === domainSlug
+    ) || {
       "host-url": primaryHostUrl
     };
     const result = await f.apply(this, arguments);
@@ -283,7 +285,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     cdnProvider = "cloudflare",
     renderLightPage = require("./impl/render-light-page"),
     serviceWorkerPaths = ["/service-worker.js"],
-    maxConfigVersion = config =>
+    maxConfigVersion = (config) =>
       get(config, ["theme-attributes", "cache-burst"], 0),
 
     // The below are primarily for testing
@@ -410,7 +412,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     );
   }
 
-  staticRoutes.forEach(route => {
+  staticRoutes.forEach((route) => {
     app.get(
       route.path,
       withConfig(
@@ -498,7 +500,7 @@ exports.getWithConfig = getWithConfig;
  * @param opts
  * @param opts.cacheControl The cache control header to set on proxied requests (default: *"public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600"*)
  */
-exports.proxyGetRequest = function (app, route, handler, opts = {}) {
+exports.proxyGetRequest = function(app, route, handler, opts = {}) {
   const {
     cacheControl = "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600"
   } = opts;
@@ -532,8 +534,8 @@ exports.proxyGetRequest = function (app, route, handler, opts = {}) {
 };
 
 // This could also be done using express's mount point, but /ping stops working
-exports.mountQuintypeAt = function (app, mountAt) {
-  app.use(function (req, res, next) {
+exports.mountQuintypeAt = function(app, mountAt) {
+  app.use(function(req, res, next) {
     const mountPoint =
       typeof mountAt === "function" ? mountAt(req.hostname) : mountAt;
 
@@ -569,5 +571,6 @@ exports.mountQuintypeAt = function (app, mountAt) {
  * *"/amp/story/:storyId"* returns the amp story page
  */
 exports.ampRoutes = function ampRoutes(app, ampOpts = {}) {
+  const { handleAmpRequest } = require("./handlers/amp-handler");
   getWithConfig(app, "/amp/story/:slug", handleAmpRequest, { ampOpts });
 };
