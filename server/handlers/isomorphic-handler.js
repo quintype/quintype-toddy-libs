@@ -80,8 +80,8 @@ function loadDataForPageType(
     });
 }
 
-function getSeoInstance(seo, config, pageType = "") {
-  return typeof seo === "function" ? seo(config, pageType) : seo;
+function getSeoInstance(seo, config, pageType = "", domainSlug = null) {
+  return typeof seo === "function" ? seo(config, pageType, domainSlug) : seo;
 }
 
 exports.handleIsomorphicShell = async function handleIsomorphicShell(
@@ -389,7 +389,12 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
       );
       return res.redirect(301, result.data.location);
     }
-    const seoInstance = getSeoInstance(seo, config, result.pageType);
+    const seoInstance = getSeoInstance(
+      seo,
+      config,
+      result.pageType,
+      domainSlug
+    );
     const seoTags =
       seoInstance &&
       seoInstance.getMetaTags(
@@ -561,7 +566,12 @@ exports.handleStaticRoute = function handleStaticRoute(
         return res.redirect(301, result.data.location);
       }
 
-      const seoInstance = getSeoInstance(seo, config, result.pageType);
+      const seoInstance = getSeoInstance(
+        seo,
+        config,
+        result.pageType,
+        domainSlug
+      );
       const seoTags =
         seoInstance &&
         seoInstance.getMetaTags(config, result.pageType || pageType, result, {
