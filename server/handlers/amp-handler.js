@@ -14,6 +14,8 @@ exports.handleAmpRequest = async function handleAmpRequest(
       async () => await AmpConfig.getAmpConfig(client)
     );
     const story = await Story.getStoryBySlug(client, req.params.slug);
+    const relatedStories = await Story.getRelatedStories(client);
+    ampConfig["related-stories"] = relatedStories;
 
     if (!story) {
       return next();
