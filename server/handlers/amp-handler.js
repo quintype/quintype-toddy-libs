@@ -15,7 +15,6 @@ exports.handleAmpRequest = async function handleAmpRequest(
     );
     const story = await Story.getStoryBySlug(client, req.params.slug);
     const relatedStories = await Story.getRelatedStories(client);
-    ampConfig["related-stories"] = relatedStories;
 
     if (!story) {
       return next();
@@ -23,9 +22,9 @@ exports.handleAmpRequest = async function handleAmpRequest(
     const ampHtml = ampifyStory({
       story,
       publisherConfig: config,
-      ampConfig,
+      ampConfig: { "related-stories": relatedStories, ...ampConfig.asJSON() },
       client,
-      opts: ampOpts
+      opts: ampOpts,
     });
     if (ampHtml instanceof Error) return next(ampHtml);
     return res.send(ampHtml);
