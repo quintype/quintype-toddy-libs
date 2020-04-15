@@ -15,11 +15,13 @@ exports.handleAmpRequest = async function handleAmpRequest(
     );
     const story = await Story.getStoryBySlug(client, req.params.slug);
     const relatedStories = await Story.getRelatedStories(client);
+    const invalidElementsStrategy = ampConfig["invalid-elements-strategy"];
+    const storyUrl = story.url;
 
     if (!story) {
       return next();
     }
-    const ampHtml = ampifyStory({
+    const { ampHtml, invalidElementsPresent } = ampifyStory({
       story,
       publisherConfig: config,
       ampConfig: { "related-stories": relatedStories, ...ampConfig.asJSON() },
@@ -27,6 +29,11 @@ exports.handleAmpRequest = async function handleAmpRequest(
       opts: ampOpts,
     });
     if (ampHtml instanceof Error) return next(ampHtml);
+    if (
+      invalidElementsPresent &&
+      invalidElementsStrategy === "redirect-to-web-version"
+    )
+      return res.redirect(storyUrl);
     return res.send(ampHtml);
   } catch (e) {
     return next(e);
