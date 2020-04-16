@@ -24,7 +24,8 @@ exports.handleAmpRequest = async function handleAmpRequest(
     const { ampHtml, invalidElementsPresent } = ampifyStory({
       story,
       publisherConfig: config,
-      ampConfig: { "related-stories": relatedStories, ...ampConfig.asJSON() },
+      ampConfig,
+      relatedStories,
       client,
       opts: ampOpts,
     });
