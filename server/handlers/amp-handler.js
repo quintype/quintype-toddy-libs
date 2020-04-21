@@ -14,7 +14,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
       async () => await AmpConfig.getAmpConfig(client)
     );
     const story = await Story.getStoryBySlug(client, req.params.slug);
-    const relatedStories = await Story.getRelatedStories(client);
+    const relatedStories = await story.getRelatedStories(client);
     const invalidElementsStrategy = ampConfig["invalid-elements-strategy"];
     const storyUrl = story.url;
 
