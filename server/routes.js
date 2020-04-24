@@ -14,19 +14,19 @@ const {
   handleIsomorphicRoute,
   handleLightPagesRoute,
   handleStaticRoute,
-  notFoundHandler
+  notFoundHandler,
 } = require("./handlers/isomorphic-handler");
 
 const { oneSignalImport } = require("./handlers/one-signal");
 const { customRouteHandler } = require("./handlers/custom-route-handler");
 const {
   handleManifest,
-  handleAssetLink
+  handleAssetLink,
 } = require("./handlers/json-manifest-handlers");
 const { redirectStory } = require("./handlers/story-redirect");
 const { simpleJsonHandler } = require("./handlers/simple-json-handler");
 const {
-  makePickComponentSync
+  makePickComponentSync,
 } = require("../isomorphic/impl/make-pick-component-sync");
 const { registerFCMTopic } = require("./handlers/fcm-registration-handler");
 const rp = require("request-promise");
@@ -52,7 +52,7 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
     extraRoutes = [],
 
     config = require("./publisher-config"),
-    getClient = require("./api-client").getClient
+    getClient = require("./api-client").getClient,
   } = {}
 ) {
   const host = config.sketches_host;
@@ -60,7 +60,7 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
     target: host,
     ssl: host.startsWith("https")
       ? { servername: host.replace(/^https:\/\//, "") }
-      : undefined
+      : undefined,
   });
 
   apiProxy.on("proxyReq", (proxyReq, req, res, options) => {
@@ -134,7 +134,7 @@ function withConfigPartial(
   publisherConfig = require("./publisher-config")
 ) {
   return function withConfig(f, staticParams) {
-    return function(req, res, next) {
+    return function (req, res, next) {
       const client = getClient(req.hostname);
       return client
         .getConfig()
@@ -146,7 +146,7 @@ function withConfigPartial(
             Object.assign({}, staticParams, {
               config,
               client,
-              domainSlug: getDomainSlug(publisherConfig, req.hostname)
+              domainSlug: getDomainSlug(publisherConfig, req.hostname),
             })
           )
         )
@@ -182,14 +182,14 @@ function wrapLoadDataWithMultiDomain(publisherConfig, f, configPos) {
     const domain = (config.domains || []).find(
       (d) => d.slug === domainSlug
     ) || {
-      "host-url": primaryHostUrl
+      "host-url": primaryHostUrl,
     };
     const result = await f.apply(this, arguments);
     return Object.assign(
       {
         domainSlug,
         currentHostUrl: convertToDomain(domain["host-url"]),
-        primaryHostUrl
+        primaryHostUrl,
       },
       result
     );
@@ -219,7 +219,7 @@ function getWithConfig(app, route, handler, opts = {}) {
   const {
     getClient = require("./api-client").getClient,
     publisherConfig = require("./publisher-config"),
-    logError = require("./logger").error
+    logError = require("./logger").error,
   } = opts;
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
   app.get(route, withConfig(handler, opts));
@@ -293,7 +293,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     assetHelper = require("./asset-helper"),
     getClient = require("./api-client").getClient,
     renderServiceWorker = renderServiceWorkerFn,
-    publisherConfig = require("./publisher-config")
+    publisherConfig = require("./publisher-config"),
   }
 ) {
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
@@ -312,7 +312,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       generateRoutes,
       assetHelper,
       renderServiceWorker,
-      maxConfigVersion
+      maxConfigVersion,
     })
   );
 
@@ -324,7 +324,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         renderServiceWorker,
         assetHelper,
         appendFn: oneSignalImport,
-        maxConfigVersion
+        maxConfigVersion,
       })
     );
     app.get(
@@ -334,7 +334,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         renderServiceWorker,
         assetHelper,
         appendFn: oneSignalImport,
-        maxConfigVersion
+        maxConfigVersion,
       })
     );
   }
@@ -348,7 +348,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       loadErrorData,
       logError,
       preloadJs,
-      maxConfigVersion
+      maxConfigVersion,
     })
   );
   app.get(
@@ -361,7 +361,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       staticRoutes,
       seo,
       appVersion,
-      cdnProvider
+      cdnProvider,
     })
   );
 
@@ -391,7 +391,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         appVersion,
         mobileApiEnabled,
         mobileConfigFields,
-        cdnProvider
+        cdnProvider,
       })
     );
   }
@@ -407,7 +407,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     app.get(
       "/template-options.json",
       withConfig(simpleJsonHandler, {
-        jsonData: toFunction(templateOptions, "./impl/template-options")
+        jsonData: toFunction(templateOptions, "./impl/template-options"),
       })
     );
   }
@@ -434,7 +434,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         loadErrorData,
         logError,
         renderLightPage,
-        lightPages
+        lightPages,
       })
     );
   }
@@ -452,7 +452,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       preloadJs,
       preloadRouteData,
       assetHelper,
-      cdnProvider
+      cdnProvider,
     })
   );
 
@@ -475,7 +475,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         pickComponent,
         loadErrorData,
         logError,
-        assetHelper
+        assetHelper,
       })
     );
   }
@@ -500,9 +500,9 @@ exports.getWithConfig = getWithConfig;
  * @param opts
  * @param opts.cacheControl The cache control header to set on proxied requests (default: *"public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600"*)
  */
-exports.proxyGetRequest = function(app, route, handler, opts = {}) {
+exports.proxyGetRequest = function (app, route, handler, opts = {}) {
   const {
-    cacheControl = "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600"
+    cacheControl = "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600",
   } = opts;
 
   getWithConfig(app, route, proxyHandler, opts);
@@ -534,8 +534,8 @@ exports.proxyGetRequest = function(app, route, handler, opts = {}) {
 };
 
 // This could also be done using express's mount point, but /ping stops working
-exports.mountQuintypeAt = function(app, mountAt) {
-  app.use(function(req, res, next) {
+exports.mountQuintypeAt = function (app, mountAt) {
+  app.use(function (req, res, next) {
     const mountPoint =
       typeof mountAt === "function" ? mountAt(req.hostname) : mountAt;
 
@@ -570,7 +570,7 @@ exports.mountQuintypeAt = function(app, mountAt) {
  * The following amp routes are matched:
  * *"/amp/story/:storyId"* returns the amp story page
  */
-exports.ampRoutes = function ampRoutes(app, ampOpts = {}) {
+exports.ampRoutes = (app, ampOpts = {}) => {
   const { handleAmpRequest } = require("./handlers/amp-handler");
-  getWithConfig(app, "/amp/story/:slug", handleAmpRequest, { ampOpts });
+  getWithConfig(app, "/amp/story/:slug", handleAmpRequest, ampOpts);
 };
