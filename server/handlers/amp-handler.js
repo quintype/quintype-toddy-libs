@@ -1,10 +1,11 @@
+const { ampifyStory } = require("@quintype/amp");
 const { Story, AmpConfig } = require("../impl/api-client-impl");
 
 exports.handleAmpRequest = async function handleAmpRequest(
   req,
   res,
   next,
-  { client, config, ampOpts, ampifyStory = require("@quintype/amp") }
+  { client, config, ampOpts }
 ) {
   try {
     // eslint-disable-next-line no-return-await
@@ -22,15 +23,16 @@ exports.handleAmpRequest = async function handleAmpRequest(
       return next();
     }
 
-    const { ampHtml, invalidElementsPresent } = ampifyStory({
+    const ampifiedStory = ampifyStory({
       story,
-      publisherConfig: config,
-      ampConfig,
+      publisherConfig: config.config, // FIX THIS
+      ampConfig: ampConfig.ampConfig, // FIX THIS
       relatedStories,
       client,
       opts: ampOpts,
     });
-    if (ampHtml instanceof Error) return next(ampHtml);
+    if (ampifiedStory instanceof Error) return next(ampifiedStory);
+    const { ampHtml, invalidElementsPresent } = ampifiedStory;
     if (
       invalidElementsPresent &&
       invalidElementsStrategy === "redirect-to-web-version"
