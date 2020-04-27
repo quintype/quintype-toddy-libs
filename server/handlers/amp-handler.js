@@ -1,13 +1,13 @@
-const { ampifyStory } = require("@quintype/amp");
 const { Story, AmpConfig } = require("../impl/api-client-impl");
 
 exports.handleAmpRequest = async function handleAmpRequest(
   req,
   res,
   next,
-  { client, config, ampOpts }
+  { client, config, ampOpts, ampLibrary = require("@quintype/amp") }
 ) {
   try {
+    const { ampifyStory } = ampLibrary;
     // eslint-disable-next-line no-return-await
     const ampConfig = await config.memoizeAsync(
       "amp-config",
