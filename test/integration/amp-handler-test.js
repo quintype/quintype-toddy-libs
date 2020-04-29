@@ -23,6 +23,7 @@ const ampConfig = {
     "header-background": "#dd0b4d",
     "section-text-color": "#f4e842",
   },
+  "invalid-elements-strategy": "redirect-to-web-version",
 };
 
 function getClientStub(hostname) {
@@ -78,6 +79,7 @@ function getClientStub(hostname) {
           ],
           sections: [{ id: 1, name: "Sports" }],
           "story-template": "text",
+          "is-amp-supported": true,
         },
       }),
     getRelatedStories: (id, sectionId) =>
@@ -91,14 +93,12 @@ function getClientStub(hostname) {
 }
 
 function createApp(app = express()) {
-  const mockAmpLibrary = {};
-  mockAmpLibrary.ampifyStory = (opts) => {
-    return '<div data-page-type="home-page">foobar</div>';
-  };
+  const ampLibrary = {};
+  ampLibrary.ampifyStory = () => '<div data-page-type="home-page">foobar</div>';
   ampRoutes(app, {
     getClient: getClientStub,
     publisherConfig: {},
-    ampLibrary: mockAmpLibrary,
+    ampLibrary,
   });
   return app;
 }
