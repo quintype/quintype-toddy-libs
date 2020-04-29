@@ -16,28 +16,25 @@ exports.handleAmpRequest = async function handleAmpRequest(
 
     const story = await Story.getStoryBySlug(client, req.params.slug);
     const relatedStories = await story.getRelatedStories(client);
-    const invalidElementsStrategy = ampConfig["invalid-elements-strategy"];
-    const storyUrl = story.url;
 
-    if (!story) {
-      return next();
-    }
+    if (!story) return next();
 
-    const ampifiedStory = ampifyStory({
+    if (
+      !story["is-amp-supported"] &&
+      ampConfig.ampConfig["invalid-elements-strategy"] ===
+        "redirect-to-web-version"
+    )
+      return res.redirect(story.url);
+
+    const ampHtml = ampifyStory({
       story,
-      publisherConfig: config.config, // FIX THIS
-      ampConfig: ampConfig.ampConfig, // FIX THIS
+      publisherConfig: config.config,
+      ampConfig: ampConfig.ampConfig,
       relatedStories,
       client,
       opts: ampOpts,
     });
-    if (ampifiedStory instanceof Error) return next(ampifiedStory);
-    const { ampHtml, invalidElementsPresent } = ampifiedStory;
-    if (
-      invalidElementsPresent &&
-      invalidElementsStrategy === "redirect-to-web-version"
-    )
-      return res.redirect(storyUrl);
+    if (ampHtml instanceof Error) return next(ampHtml);
     res.set("Content-Type", "text/html");
     return res.send(ampHtml);
   } catch (e) {
