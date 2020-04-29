@@ -93,10 +93,7 @@ function getClientStub(hostname) {
 function createApp(app = express()) {
   const mockAmpLibrary = {};
   mockAmpLibrary.ampifyStory = (opts) => {
-    return {
-      ampHtml: '<div data-page-type="home-page">foobar</div>',
-      invalidElementsPresent: false,
-    };
+    return '<div data-page-type="home-page">foobar</div>';
   };
   ampRoutes(app, {
     getClient: getClientStub,
