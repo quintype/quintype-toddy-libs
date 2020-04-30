@@ -1,4 +1,6 @@
 const { Story, AmpConfig } = require("../impl/api-client-impl");
+const { addCacheHeadersToResult } = require("./cdn-caching");
+const { storyToCacheKey } = require("../caching");
 
 exports.handleAmpRequest = async function handleAmpRequest(
   req,
@@ -36,6 +38,13 @@ exports.handleAmpRequest = async function handleAmpRequest(
     });
     if (ampHtml instanceof Error) return next(ampHtml);
     res.set("Content-Type", "text/html");
+
+    addCacheHeadersToResult(
+      res,
+      [storyToCacheKey(config["publisher-id"], story)],
+      story
+    );
+
     return res.send(ampHtml);
   } catch (e) {
     return next(e);
