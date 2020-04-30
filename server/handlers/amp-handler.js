@@ -18,7 +18,8 @@ exports.handleAmpRequest = async function handleAmpRequest(
 
     const story = await Story.getStoryBySlug(client, req.params.slug);
     const relatedStories = await story.getRelatedStories(client);
-
+    const cdnProvider =
+      ampOpts && ampOpts.cdnProvider ? ampOpts.cdnProvider : null;
     if (!story) return next();
 
     if (
@@ -41,8 +42,8 @@ exports.handleAmpRequest = async function handleAmpRequest(
 
     addCacheHeadersToResult(
       res,
-      [storyToCacheKey(config["publisher-id"], story)],
-      story
+      storyToCacheKey(config["publisher-id"], story),
+      cdnProvider
     );
 
     return res.send(ampHtml);
