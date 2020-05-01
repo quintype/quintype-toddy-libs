@@ -572,5 +572,5 @@ exports.mountQuintypeAt = function (app, mountAt) {
  */
 exports.ampRoutes = (app, ampOpts = {}) => {
   const { handleAmpRequest } = require("./handlers/amp-handler");
-  getWithConfig(app, "/amp/story/:slug", handleAmpRequest, ampOpts);
+  getWithConfig(app, "/amp/story/:slug", handleAmpRequest, { ampOpts });
 };
