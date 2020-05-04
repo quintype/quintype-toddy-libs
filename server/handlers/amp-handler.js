@@ -1,10 +1,11 @@
+const urlLib = require("url");
 const { Story, AmpConfig } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 const { storyToCacheKey } = require("../caching");
 
-// function getSeoInstance(seo, config, pageType = "") {
-//   return typeof seo === "function" ? seo(config, pageType) : seo;
-// }
+function getSeoInstance(seo, config, pageType = "") {
+  return typeof seo === "function" ? seo(config, pageType) : seo;
+}
 
 exports.handleAmpRequest = async function handleAmpRequest(
   req,
@@ -21,6 +22,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
   }
 ) {
   try {
+    const url = urlLib.parse(req.url, true);
     const { ampifyStory } = ampLibrary;
     // eslint-disable-next-line no-return-await
     const ampConfig = await config.memoizeAsync(
@@ -39,15 +41,10 @@ exports.handleAmpRequest = async function handleAmpRequest(
     )
       return res.redirect(story.url);
 
-    // const seoInstance = getSeoInstance(seo, config, result.pageType);
-    // const seoTags =
-    //   seoInstance &&
-    //   seoInstance.getMetaTags(
-    //     config,
-    //     result.pageType || match.pageType,
-    //     result,
-    //     { url }
-    //   );
+    const seoInstance = getSeoInstance(seo, config, "story-page");
+    const seoTags =
+      seoInstance &&
+      seoInstance.getMetaTags(config, "story-page", { data: story }, { url });
 
     const ampHtml = ampifyStory({
       story,
@@ -56,6 +53,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
       relatedStories,
       client,
       opts: { slots, templates },
+      seoTags,
     });
     if (ampHtml instanceof Error) return next(ampHtml);
     res.set("Content-Type", "text/html");
