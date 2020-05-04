@@ -17,7 +17,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
     slots = {},
     templates = {},
     seo,
-    cdnProvider,
+    cdnProvider = null,
     ampLibrary = require("@quintype/amp"),
   }
 ) {
