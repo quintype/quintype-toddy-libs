@@ -570,7 +570,7 @@ exports.mountQuintypeAt = function (app, mountAt) {
  * The following amp routes are matched:
  * *"/amp/story/:storyId"* returns the amp story page
  */
-exports.ampRoutes = (app, ampOpts = {}) => {
+exports.ampRoutes = (app, opts) => {
   const { handleAmpRequest } = require("./handlers/amp-handler");
-  getWithConfig(app, "/amp/story/:slug", handleAmpRequest, { ampOpts });
+  getWithConfig(app, "/amp/story/:slug", handleAmpRequest, opts);
 };

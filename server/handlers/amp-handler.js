@@ -2,11 +2,23 @@ const { Story, AmpConfig } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 const { storyToCacheKey } = require("../caching");
 
+// function getSeoInstance(seo, config, pageType = "") {
+//   return typeof seo === "function" ? seo(config, pageType) : seo;
+// }
+
 exports.handleAmpRequest = async function handleAmpRequest(
   req,
   res,
   next,
-  { client, config, ampOpts, ampLibrary = require("@quintype/amp") }
+  {
+    client,
+    config,
+    slots = {},
+    templates = {},
+    seo,
+    cdnProvider,
+    ampLibrary = require("@quintype/amp"),
+  }
 ) {
   try {
     const { ampifyStory } = ampLibrary;
@@ -18,8 +30,6 @@ exports.handleAmpRequest = async function handleAmpRequest(
 
     const story = await Story.getStoryBySlug(client, req.params.slug);
     const relatedStories = await story.getRelatedStories(client);
-    const cdnProvider =
-      ampOpts && ampOpts.cdnProvider ? ampOpts.cdnProvider : null;
     if (!story) return next();
 
     if (
@@ -29,13 +39,23 @@ exports.handleAmpRequest = async function handleAmpRequest(
     )
       return res.redirect(story.url);
 
+    // const seoInstance = getSeoInstance(seo, config, result.pageType);
+    // const seoTags =
+    //   seoInstance &&
+    //   seoInstance.getMetaTags(
+    //     config,
+    //     result.pageType || match.pageType,
+    //     result,
+    //     { url }
+    //   );
+
     const ampHtml = ampifyStory({
       story,
       publisherConfig: config.config,
       ampConfig: ampConfig.ampConfig,
       relatedStories,
       client,
-      opts: ampOpts,
+      opts: { slots, templates },
     });
     if (ampHtml instanceof Error) return next(ampHtml);
     res.set("Content-Type", "text/html");
