@@ -31,8 +31,8 @@ exports.handleAmpRequest = async function handleAmpRequest(
     );
 
     const story = await Story.getStoryBySlug(client, req.params.slug);
-    const relatedStories = await story.getRelatedStories(client);
     if (!story) return next();
+    const relatedStories = await story.getRelatedStories(client);
 
     if (
       !story["is-amp-supported"] &&
