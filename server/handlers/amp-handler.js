@@ -41,10 +41,15 @@ exports.handleAmpRequest = async function handleAmpRequest(
     )
       return res.redirect(story.url);
 
-    const seoInstance = getSeoInstance(seo, config, "story-page");
+    const seoInstance = getSeoInstance(seo, config, "amp-story-page");
     const seoTags =
       seoInstance &&
-      seoInstance.getMetaTags(config, "story-page", { data: story }, { url });
+      seoInstance.getMetaTags(
+        config,
+        "amp-story-page",
+        { data: story },
+        { url }
+      );
 
     const ampHtml = ampifyStory({
       story,
@@ -53,7 +58,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
       relatedStories,
       client,
       opts: { slots, templates },
-      seoTags,
+      seo: seoTags ? seoTags.toString() : "",
     });
     if (ampHtml instanceof Error) return next(ampHtml);
     res.set("Content-Type", "text/html");
