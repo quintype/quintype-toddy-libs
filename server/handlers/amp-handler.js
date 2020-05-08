@@ -41,12 +41,12 @@ exports.handleAmpRequest = async function handleAmpRequest(
     )
       return res.redirect(story.url);
 
-    const seoInstance = getSeoInstance(seo, config, "amp-story-page");
+    const seoInstance = getSeoInstance(seo, config, "story-page-amp");
     const seoTags =
       seoInstance &&
       seoInstance.getMetaTags(
         config,
-        "amp-story-page",
+        "story-page-amp",
         { data: story },
         { url }
       );
