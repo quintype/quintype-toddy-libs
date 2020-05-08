@@ -32,7 +32,9 @@ exports.handleAmpRequest = async function handleAmpRequest(
 
     const story = await Story.getStoryBySlug(client, req.params.slug);
     if (!story) return next();
-    const relatedStories = await story.getRelatedStories(client);
+    const relatedStoriesObj = await client.getRelatedStories(
+      story["story-content-id"]
+    );
 
     if (
       !story["is-amp-supported"] &&
@@ -55,7 +57,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
       story,
       publisherConfig: config.config,
       ampConfig: ampConfig.ampConfig,
-      relatedStories,
+      relatedStories: relatedStoriesObj["related-stories"],
       client,
       opts: { slots, templates },
       seo: seoTags ? seoTags.toString() : "",
