@@ -24,6 +24,7 @@ const ampConfig = {
     "section-text-color": "#f4e842",
   },
   "invalid-elements-strategy": "redirect-to-web-version",
+  "related-collection-id": 1234,
 };
 
 function getClientStub(hostname) {
@@ -82,11 +83,11 @@ function getClientStub(hostname) {
           "is-amp-supported": true,
         },
       }),
-    getRelatedStories: (id, sectionId) =>
+    getCollectionBySlug: (slug) =>
       Promise.resolve({
-        "related-stories": [
-          { id: "2", cards: [] },
-          { id: "3", cards: [] },
+        items: [
+          { id: "1111", type: "story", story: { "story-content-id": "abc" } },
+          { id: "2222", type: "story", story: { "story-content-id": "def" } },
         ],
       }),
   };
