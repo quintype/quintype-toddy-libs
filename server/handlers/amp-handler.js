@@ -35,12 +35,16 @@ exports.handleAmpRequest = async function handleAmpRequest(
     const relatedStoriesCollection = await client.getCollectionBySlug(
       ampConfig["related-collection-id"]
     );
-    const relatedStories = relatedStoriesCollection.items
-      .filter(
-        (item) => item.type === "story" && item.id !== story["story-content-id"]
-      )
-      .slice(0, 5)
-      .map((item) => item.story);
+    let relatedStories = [];
+    if (relatedStoriesCollection) {
+      relatedStories = relatedStoriesCollection.items
+        .filter(
+          (item) =>
+            item.type === "story" && item.id !== story["story-content-id"]
+        )
+        .slice(0, 5)
+        .map((item) => item.story);
+    }
 
     if (
       !story["is-amp-supported"] &&
