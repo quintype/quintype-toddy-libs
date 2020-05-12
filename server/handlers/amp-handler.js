@@ -31,11 +31,14 @@ exports.handleAmpRequest = async function handleAmpRequest(
     );
 
     const story = await Story.getStoryBySlug(client, req.params.slug);
-    if (!story) return next();
-    const relatedStoriesCollection = await client.getCollectionBySlug(
-      ampConfig["related-collection-id"]
-    );
+    let relatedStoriesCollection;
     let relatedStories = [];
+
+    if (!story) return next();
+    if (ampConfig["related-collection-id"])
+      relatedStoriesCollection = await client.getCollectionBySlug(
+        ampConfig["related-collection-id"]
+      );
     if (relatedStoriesCollection) {
       relatedStories = relatedStoriesCollection.items
         .filter(
