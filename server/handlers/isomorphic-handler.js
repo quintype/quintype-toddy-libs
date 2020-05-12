@@ -153,6 +153,26 @@ function selectFieldsForMobile(config, fields) {
   return fields.length > 0 ? _.pick(config, fields) : config;
 }
 
+function chunkDataForMobile(data, fields){
+
+    /* Pick data field from whitelisted config */
+    const {data: dataKey} = fields;
+
+    /* Extract keys from data field in config */
+    const dataConfigFields = Object.keys(dataKey);
+
+    /* pick the keys matching whitelisted data */
+    const dataChildren = _.pick(data, dataConfigFields);
+
+
+    /* Second level of filtering */
+    return dataConfigFields.reduce((acc, currEle) => {
+        acc[currEle] = _.pick(dataChildren[currEle], dataKey[currEle]);
+        return acc;
+    }, {});
+
+}
+
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
   req,
   res,
@@ -236,33 +256,34 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
     return res.json({ error: { message: e.message } });
   }
 
-  function returnJson(result) {
-    return new Promise(() => {
-      const statusCode = result.httpStatusCode || 200;
-      res.status(statusCode < 500 ? 200 : 500);
-      res.setHeader("Content-Type", "application/json");
-      addCacheHeadersToResult(
-        res,
-        _.get(result, ["data", "cacheKeys"]),
-        cdnProvider
-      );
-      const seoInstance = getSeoInstance(seo, config, result.pageType);
-      res.json(
-        Object.assign({}, result, {
-          appVersion,
-          data: _.omit(result.data, ["cacheKeys"]),
-          config: mobileApiEnabled
-            ? selectFieldsForMobile(result.config, mobileConfigFields)
-            : result.config,
-          title: seoInstance
-            ? seoInstance.getTitle(config, result.pageType, result)
-            : result.title
+    function returnJson(result) {
+        return new Promise(() => {
+            const statusCode = result.httpStatusCode || 200;
+            res.status(statusCode < 500 ? 200 : 500);
+            res.setHeader("Content-Type", "application/json");
+            addCacheHeadersToResult(
+                res,
+                _.get(result, ["data", "cacheKeys"]),
+                cdnProvider
+            );
+            const seoInstance = getSeoInstance(seo, config, result.pageType);
+            res.json(
+                Object.assign({}, result, {
+                    appVersion,
+                    data: mobileApiEnabled
+                        ?  chunkDataForMobile(result.data, mobileConfigFields) : _.omit(result.data, ["cacheKeys"]),
+                    config: mobileApiEnabled
+                        ? selectFieldsForMobile(result.config, mobileConfigFields)
+                        : result.config,
+                    title: seoInstance
+                        ? seoInstance.getTitle(config, result.pageType, result)
+                        : result.title
+                })
+            );
         })
-      );
-    })
-      .catch(handleException)
-      .finally(() => res.end());
-  }
+            .catch(handleException)
+            .finally(() => res.end());
+    }
 
   function returnNotFound() {
     return new Promise(resolve =>
