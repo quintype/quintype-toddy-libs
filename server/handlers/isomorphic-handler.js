@@ -150,7 +150,8 @@ function createStoreFromResult(url, result, opts = {}) {
 }
 
 function selectFieldsForMobile(config, fields) {
-  return fields.length > 0 ? _.pick(config, fields) : config;
+    const {config: configKey} = fields;
+  return configKey.length > 0 ? _.pick(config, configKey) : config;
 }
 
 function chunkDataForMobile(data, fields){
@@ -164,13 +165,26 @@ function chunkDataForMobile(data, fields){
     /* pick the keys matching whitelisted data */
     const dataChildren = _.pick(data, dataConfigFields);
 
-
     /* Second level of filtering */
-    return dataConfigFields.reduce((acc, currEle) => {
-        acc[currEle] = _.pick(dataChildren[currEle], dataKey[currEle]);
+     return dataConfigFields.reduce((acc, currEle) => {
+
+         /* If whitelisted key turn out to be an object */
+        if(_.isObject(dataChildren[currEle]) && _.isArray(dataKey[currEle])){
+            acc[currEle] = _.pick(dataChildren[currEle], dataKey[currEle]);
+
+            /* If whitelisted key turn out to be an array */
+        }else if(_.isArray(dataChildren[currEle]) && _.isArray(dataKey[currEle])){
+            acc[currEle] = dataChildren[currEle].reduce((xAcc, xCurrEle) => {
+                _.isObject(xCurrEle) ? xAcc.push(_.pick(xCurrEle, dataKey[currEle])) : xAcc.push(xCurrEle);
+                return xAcc;
+            }, []);
+
+            /* If whitelisted exists in data */
+        } else if(dataChildren[currEle]){
+            acc[currEle] = dataChildren[currEle];
+        }
         return acc;
     }, {});
-
 }
 
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(

@@ -1,8 +1,30 @@
-const assert = require("assert");
+const assert = require("assert").strict;
 const express = require("express");
 
 const { isomorphicRoutes } = require("../../server/routes");
 const supertest = require("supertest");
+
+const WHITELIST_MOBILE_CONFIG = {
+    config: ["cdn-image"],
+    data: {
+        pageType: null,
+        clientHost: null,
+        host: null,
+        collection: ["slug", "name", "summary", "total-count", "items", "metadata"],
+        navigationMenu: [
+            "menu-group-slug",
+            "title",
+            "item-type",
+            "section-slug",
+            "tag-slug",
+            "url",
+            "children",
+            "completeUrl",
+            "isExternalLink",
+            "section-name"
+        ]
+    }
+};
 
 function getClientStub() {
   return {
@@ -514,7 +536,7 @@ describe("Isomorphic Data Load", function() {
               "publisher-name": "Awesome Publisher"
             }
           }),
-        { mobileApiEnabled: true, mobileConfigFields: ["cdn-image"] }
+        { mobileApiEnabled: true, mobileConfigFields: WHITELIST_MOBILE_CONFIG }
       );
       supertest(app)
         .get("/mobile-data.json?path=%2F")
@@ -522,13 +544,14 @@ describe("Isomorphic Data Load", function() {
         .expect(200)
         .then(res => {
           const response = JSON.parse(res.text);
+          console.log(response);
           assert.equal("home-page", response.data.pageType);
-          assert.equal(null, response.config.foo);
+          assert.equal(undefined, response.config.foo);
           assert.equal(
             "https://image.foobar.com",
             response.config["cdn-image"]
           );
-          assert.equal(null, response.config["polltype-host"]);
+          assert.equal(undefined, response.config["polltype-host"]);
           assert.equal(
             JSON.stringify(["cdn-image"]),
             JSON.stringify(Object.keys(response.config))
@@ -558,7 +581,7 @@ describe("Isomorphic Data Load", function() {
               "publisher-name": "Awesome Publisher"
             }
           }),
-        { mobileApiEnabled: true, mobileConfigFields: [] }
+        { mobileApiEnabled: true, mobileConfigFields: {} }
       );
       supertest(app)
         .get("/mobile-data.json?path=%2F")
@@ -591,5 +614,100 @@ describe("Isomorphic Data Load", function() {
         })
         .then(done);
     });
+
+
+
+      it("third level of data remain as original", done => {
+          const app = createApp(
+              (pageType, params, config, client, { host }) =>
+                  Promise.resolve({
+                      data: {
+                          pageType,
+                          clientHost: client.getHostname(),
+                          host,
+                          collection: {
+                              "summary": "Home collection",
+                              "id": 2688,
+                              "total-count": 3,
+                              "collection-date": null,
+                              "items": [
+                                  {
+                                      "id": 89215,
+                                      "associated-metadata": {
+                                          "layout": "OneColStoryList",
+                                          "enable_load_more_button": true,
+                                          "initial_stories_load_count": 6,
+                                          "subsequent_stories_load_count": 10
+                                      }
+                                  }]
+                          }
+                      },
+                      config: {
+                          "cdn-image": "https://image.foobar.com",
+                      }
+                  }),
+              { mobileApiEnabled: true, mobileConfigFields: WHITELIST_MOBILE_CONFIG }
+          );
+          supertest(app)
+              .get("/mobile-data.json?path=%2F")
+              .expect("Content-Type", /json/)
+              .expect(200)
+              .then(res => {
+                  const response = JSON.parse(res.text);
+                  assert.strictEqual(89215, response.data.collection.items[0].id)
+              })
+              .then(done);
+      });
+
+
+
+
+      it("loads only data listed in the whitelisted keys", done => {
+          const app = createApp(
+              (pageType, params, config, client, { host }) =>
+                  Promise.resolve({
+                      data: {
+                          pageType,
+                          clientHost: client.getHostname(),
+                          host,
+                          collection: {
+                              "summary": "Home collection",
+                              "id": 2688,
+                              "total-count": 3,
+                              "collection-date": null,
+                              "items": [
+                                  {
+                                      "id": 89215,
+                                      "associated-metadata": {
+                                          "layout": "OneColStoryList",
+                                          "enable_load_more_button": true,
+                                          "initial_stories_load_count": 6,
+                                          "subsequent_stories_load_count": 10
+                                      }
+                                  }]
+                          }
+                      },
+                      config: {
+                          "cdn-image": "https://image.foobar.com",
+                      }
+                  }),
+              { mobileApiEnabled: true, mobileConfigFields: WHITELIST_MOBILE_CONFIG }
+          );
+          supertest(app)
+              .get("/mobile-data.json?path=%2F")
+              .expect("Content-Type", /json/)
+              .expect(200)
+              .then(res => {
+                  const response = JSON.parse(res.text);
+
+                  //TODO: Fix me
+                  assert.strictEqual(89215, response.data.collection)
+              })
+              .then(done);
+      });
+
+
+
+
   });
 });
