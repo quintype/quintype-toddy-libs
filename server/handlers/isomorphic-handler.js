@@ -150,14 +150,17 @@ function createStoreFromResult(url, result, opts = {}) {
 }
 
 function selectFieldsForMobile(config, fields) {
-    const {config: configKey} = fields;
+    const {config: configKey = []} = fields;
   return configKey.length > 0 ? _.pick(config, configKey) : config;
 }
 
 function chunkDataForMobile(data, fields){
 
+    /* return data if no fields are passed */
+    if(_.isEmpty(fields)) return data;
+
     /* Pick data field from whitelisted config */
-    const {data: dataKey} = fields;
+    const {data: dataKey = {}} = fields;
 
     /* Extract keys from data field in config */
     const dataConfigFields = Object.keys(dataKey);
@@ -179,7 +182,7 @@ function chunkDataForMobile(data, fields){
                 return xAcc;
             }, []);
 
-            /* If whitelisted exists in data */
+            /* If whitelisted key exists in data */
         } else if(dataChildren[currEle]){
             acc[currEle] = dataChildren[currEle];
         }
