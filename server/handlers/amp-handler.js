@@ -22,8 +22,6 @@ exports.handleAmpRequest = async function handleAmpRequest(
   }
 ) {
   try {
-    console.log("*************** config ********************");
-    console.log(JSON.stringify(config));
     const url = urlLib.parse(req.url, true);
     const { ampifyStory } = ampLibrary;
     // eslint-disable-next-line no-return-await
