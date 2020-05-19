@@ -150,12 +150,12 @@ function createStoreFromResult(url, result, opts = {}) {
 }
 
 function chunkDataForMobile(data, fieldsCallback, pageType){
-    const fields = fieldsCallback(pageType);
+    const fields = typeof fieldsCallback === "function" ? fieldsCallback(pageType) : fieldsCallback;
     /* return data if no fields are passed */
     if(_.isEmpty(fields)) return data;
 
     /* If the incoming config is an array, filter and return */
-    if(_.isArray(fields)) return _.pick(data, fields)
+    if(_.isArray(fields)) return _.pick(data, fields);
 
     /* Extract keys from data field in config */
     const dataConfigFields = Object.keys(fields);
