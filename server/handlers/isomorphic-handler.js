@@ -151,6 +151,7 @@ function createStoreFromResult(url, result, opts = {}) {
 
 function chunkDataForMobile(data, fieldsCallback, pageType){
     const fields = typeof fieldsCallback === "function" ? fieldsCallback(pageType) : fieldsCallback;
+
     /* return data if no fields are passed */
     if(_.isEmpty(fields)) return data;
 
@@ -160,12 +161,12 @@ function chunkDataForMobile(data, fieldsCallback, pageType){
     /* Extract keys from data field in config */
     const dataConfigFields = Object.keys(fields);
 
+
     /* pick the keys matching whitelisted data */
     const dataChildren = _.pick(data, dataConfigFields);
 
     /* Second level of filtering */
     return dataConfigFields.reduce((acc, currEle) => {
-
         /* If whitelisted key turn out to be an array */
         if(_.isArray(dataChildren[currEle]) && _.isArray(fields[currEle])){
 
@@ -177,11 +178,11 @@ function chunkDataForMobile(data, fieldsCallback, pageType){
         }
 
         /* If whitelisted key turn out to be an object */
-
         else if(_.isPlainObject(dataChildren[currEle]) && _.isArray(fields[currEle])){
+
             acc[currEle] = _.pick(dataChildren[currEle], fields[currEle]);
 
-            /* If whitelisted key exists in data */
+          /* If whitelisted key exists in data */
         } else if(dataChildren[currEle]){
             acc[currEle] = dataChildren[currEle];
         }

@@ -1,30 +1,11 @@
+
 const assert = require("assert").strict;
 const express = require("express");
 
 const { isomorphicRoutes } = require("../../server/routes");
 const supertest = require("supertest");
 
-const WHITELIST_MOBILE_CONFIG = {
-    config: ["cdn-image"],
-    data: {
-        pageType: null,
-        clientHost: null,
-        host: null,
-        collection: ["slug", "name", "summary", "total-count", "items", "metadata"],
-        navigationMenu: [
-            "menu-group-slug",
-            "title",
-            "item-type",
-            "section-slug",
-            "tag-slug",
-            "url",
-            "children",
-            "completeUrl",
-            "isExternalLink",
-            "section-name"
-        ]
-    }
-};
+const {MOCK_WHITELIST_MOBILE_CONFIG} = require("../data/whitelist-mobile-config");
 
 function getClientStub() {
   return {
@@ -536,7 +517,7 @@ describe("Isomorphic Data Load", function() {
               "publisher-name": "Awesome Publisher"
             }
           }),
-        { mobileApiEnabled: true, mobileConfigFields: WHITELIST_MOBILE_CONFIG }
+        { mobileApiEnabled: true, mobileConfigFields: MOCK_WHITELIST_MOBILE_CONFIG }
       );
       supertest(app)
         .get("/mobile-data.json?path=%2F")
@@ -544,7 +525,6 @@ describe("Isomorphic Data Load", function() {
         .expect(200)
         .then(res => {
           const response = JSON.parse(res.text);
-          console.log(response);
           assert.equal("home-page", response.data.pageType);
           assert.equal(undefined, response.config.foo);
           assert.equal(
@@ -646,7 +626,7 @@ describe("Isomorphic Data Load", function() {
                           "cdn-image": "https://image.foobar.com",
                       }
                   }),
-              { mobileApiEnabled: true, mobileConfigFields: WHITELIST_MOBILE_CONFIG }
+              { mobileApiEnabled: true, mobileConfigFields: MOCK_WHITELIST_MOBILE_CONFIG }
           );
           supertest(app)
               .get("/mobile-data.json?path=%2F")
@@ -666,8 +646,8 @@ describe("Isomorphic Data Load", function() {
           const app = createApp(
               (pageType, params, config, client, { host }) =>
                   Promise.resolve({
+                      pageType,
                       data: {
-                          pageType,
                           clientHost: client.getHostname(),
                           host,
                           collection: {
@@ -691,7 +671,7 @@ describe("Isomorphic Data Load", function() {
                           "cdn-image": "https://image.foobar.com",
                       }
                   }),
-              { mobileApiEnabled: true, mobileConfigFields: WHITELIST_MOBILE_CONFIG }
+              { mobileApiEnabled: true, mobileConfigFields: MOCK_WHITELIST_MOBILE_CONFIG }
           );
           supertest(app)
               .get("/mobile-data.json?path=%2F")
