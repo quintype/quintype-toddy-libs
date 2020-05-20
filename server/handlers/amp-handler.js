@@ -29,8 +29,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
       "amp-config",
       async () => await AmpConfig.getAmpConfig(client)
     );
-
-    const story = await Story.getStoryBySlug(client, req.params.slug);
+    const story = await Story.getStoryBySlug(client, req.params[0]);
     let relatedStoriesCollection;
     let relatedStories = [];
 

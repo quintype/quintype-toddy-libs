@@ -35,6 +35,29 @@ const get = require("lodash/get");
 const { URL } = require("url");
 
 /**
+ * *ampRoutes* handles all the amp page routes using the *[@quintype/amp](https://developers.quintype.com/quintype-node-amp)* library
+ *
+ * @param {Express} app Express app to add the routes to
+ * @param {Object} opts Options
+ * @param {Object} opts.templates An object each key corresponding to the template name and its value being the template itself
+ * @param {Object} opts.slots An object each key corresponding to a slot name and value being the component to be rendered in that slot
+ *
+ * ```javascript
+ * ampRoutes(app, {
+ *  templates: { text: TextTemplate },
+ *  slots: { slotName: Component }
+ * })
+ * ```
+ *
+ * The following amp routes are matched:
+ * *"/amp/story/:slug"* returns the amp story page
+ */
+exports.ampRoutes = (app, opts = {}) => {
+  const { handleAmpRequest } = require("./handlers/amp-handler");
+  getWithConfig(app, "/amp/story/*", handleAmpRequest, opts);
+};
+
+/**
  * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
  *
  * Requests like *&#47;api&#47;&ast;* and *&#47;stories.rss* are directly forwarded, but also it is also possible to forward other routes.
@@ -550,27 +573,4 @@ exports.mountQuintypeAt = function (app, mountAt) {
       next();
     }
   });
-};
-
-/**
- * *ampRoutes* handles all the amp page routes using the *[@quintype/amp](https://developers.quintype.com/quintype-node-amp)* library
- *
- * @param {Express} app Express app to add the routes to
- * @param {Object} opts Options
- * @param {Object} opts.templates An object each key corresponding to the template name and its value being the template itself
- * @param {Object} opts.slots An object each key corresponding to a slot name and value being the component to be rendered in that slot
- *
- * ```javascript
- * ampRoutes(app, {
- *  templates: { text: TextTemplate },
- *  slots: { slotName: Component }
- * })
- * ```
- *
- * The following amp routes are matched:
- * *"/amp/story/:slug"* returns the amp story page
- */
-exports.ampRoutes = (app, opts = {}) => {
-  const { handleAmpRequest } = require("./handlers/amp-handler");
-  getWithConfig(app, "/amp/story/:slug", handleAmpRequest, opts);
 };
