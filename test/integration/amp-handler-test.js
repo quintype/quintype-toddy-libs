@@ -116,4 +116,26 @@ describe("AmpHandler", () => {
       })
       .then(done);
   });
+  it("mounts an amp page with sections", (done) => {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/story/foo/bar/foobar")
+      .expect("Content-Type", /html/)
+      .expect(200)
+      .then((res) => {
+        assert.equal('<div data-page-type="home-page">foobar</div>', res.text);
+      })
+      .then(done);
+  });
+  it("mounts an amp page with slug encoded", (done) => {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/story/foo%2Fbar%2Ffoobar")
+      .expect("Content-Type", /html/)
+      .expect(200)
+      .then((res) => {
+        assert.equal('<div data-page-type="home-page">foobar</div>', res.text);
+      })
+      .then(done);
+  });
 });
