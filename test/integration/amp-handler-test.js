@@ -93,7 +93,7 @@ function getClientStub(hostname) {
   };
 }
 
-function createHomePageApp(app = express()) {
+function createApp(app = express()) {
   const ampLibrary = {};
   ampLibrary.ampifyStory = () => '<div data-page-type="home-page">foobar</div>';
   ampRoutes(app, {
@@ -104,21 +104,9 @@ function createHomePageApp(app = express()) {
   return app;
 }
 
-function createStoryPageApp(app = express()) {
-  const ampLibrary = {};
-  ampLibrary.ampifyStory = () =>
-    '<div data-page-type="story-page">foobar</div>';
-  ampRoutes(app, {
-    getClient: getClientStub,
-    publisherConfig: {},
-    ampLibrary,
-  });
-  return app;
-}
-
 describe("AmpHandler", () => {
   it("mounts an amp page", (done) => {
-    const app = createHomePageApp();
+    const app = createApp();
     supertest(app)
       .get("/amp/story/foo")
       .expect("Content-Type", /html/)
@@ -128,25 +116,25 @@ describe("AmpHandler", () => {
       })
       .then(done);
   });
-  it("mounts an amp story page ", (done) => {
-    const app = createStoryPageApp();
+  it("mounts an amp page with sections", (done) => {
+    const app = createApp();
     supertest(app)
       .get("/amp/story/foo/bar/foobar")
       .expect("Content-Type", /html/)
       .expect(200)
       .then((res) => {
-        assert.equal('<div data-page-type="story-page">foobar</div>', res.text);
+        assert.equal('<div data-page-type="home-page">foobar</div>', res.text);
       })
       .then(done);
   });
-  it("mounts an amp story page with slug encoded", (done) => {
-    const app = createStoryPageApp();
+  it("mounts an amp page with slug encoded", (done) => {
+    const app = createApp();
     supertest(app)
       .get("/amp/story/foo%2Fbar%2Ffoobar")
       .expect("Content-Type", /html/)
       .expect(200)
       .then((res) => {
-        assert.equal('<div data-page-type="story-page">foobar</div>', res.text);
+        assert.equal('<div data-page-type="home-page">foobar</div>', res.text);
       })
       .then(done);
   });
