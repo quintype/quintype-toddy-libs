@@ -25,7 +25,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
     const url = urlLib.parse(req.url, true);
     const { ampifyStory } = ampLibrary;
     // eslint-disable-next-line no-return-await
-    const ampConfig = await config.memoizeAsync(
+    const { ampConfig } = await config.memoizeAsync(
       "amp-config",
       async () => await AmpConfig.getAmpConfig(client)
     );
@@ -51,8 +51,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
 
     if (
       !story["is-amp-supported"] &&
-      ampConfig.ampConfig["invalid-elements-strategy"] ===
-        "redirect-to-web-version"
+      ampConfig["invalid-elements-strategy"] === "redirect-to-web-version"
     )
       return res.redirect(story.url);
 
@@ -69,7 +68,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
     const ampHtml = ampifyStory({
       story,
       publisherConfig: config.config,
-      ampConfig: ampConfig.ampConfig,
+      ampConfig,
       relatedStories,
       client,
       opts: { slots, templates },
