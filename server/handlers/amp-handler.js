@@ -62,7 +62,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
       seoInstance.getMetaTags(
         config,
         "story-page-amp",
-        { data: story },
+        { data: story, config },
         { url }
       );
 
