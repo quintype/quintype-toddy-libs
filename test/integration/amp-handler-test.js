@@ -92,10 +92,10 @@ function getClientStub(hostname) {
       }),
   };
 }
+const sampleTextStory = `{"story":{"id":"1","hero-image-metadata":{"width":5472,"height":3648,"mime-type":"image/jpeg","file-size":6127839,"file-name":"Sample file","focus-point":[2609,1102]},"hero-image-s3-key":"barandbench/2020-01/sample.jpg","cards":[{"story-elements":[{"description":"","page-url":"/story/7f3d5bdb-ec52-4047-ac0d-df4036ec974b/element/9eb8f5cc-6ebe-4fb0-88b8-eca79efde210","type":"text","family-id":"e9e12f9f-8b9f-4b93-a8c8-83c7b278000f","title":"abcdefgh","id":"9eb8f5cc-6ebe-4fb0-88b8-eca79efde210","metadata":{},"subtype":null,"text":"<p>In India today, the legal profession is growing in lockstep with one of the world’s most dynamic economies. It’s no surprise then— that in terms of absolute numbers— India’s legal profession is the world’s second largest, with over 1.4 million enrolled lawyers in legal practices nationwide.</p>"}],"card-updated-at":1581327522163,"content-version-id":"efaf78de-c90b-4d15-b040-c84ebb29cabf","card-added-at":1581327522163,"status":"draft","id":"bf486412-1e8b-45d1-a5fd-51939cfe1ce1","content-id":"bf486412-1e8b-45d1-a5fd-51939cfe1ce1","version":1,"metadata":{}}],"sections":[{"id":1,"name":"Sports"}],"story-template":"text","is-amp-supported":true}}`;
 
 function createApp(app = express()) {
-  const ampLibrary = {};
-  ampLibrary.ampifyStory = () => '<div data-page-type="home-page">foobar</div>';
+  const ampLibrary = require("@quintype/amp");
   ampRoutes(app, {
     getClient: getClientStub,
     publisherConfig: {},
@@ -107,34 +107,108 @@ function createApp(app = express()) {
 describe("AmpHandler", () => {
   it("mounts an amp page", (done) => {
     const app = createApp();
+    const ampLibrary = require("@quintype/amp");
+    ampLibrary.ampifyStory = ({ story }) => story;
     supertest(app)
       .get("/amp/story/foo")
       .expect("Content-Type", /html/)
       .expect(200)
       .then((res) => {
-        assert.equal('<div data-page-type="home-page">foobar</div>', res.text);
+        assert.equal(sampleTextStory, res.text);
       })
       .then(done);
   });
   it("mounts an amp page with sections", (done) => {
     const app = createApp();
+    const ampLibrary = require("@quintype/amp");
+    ampLibrary.ampifyStory = ({ story }) => story;
     supertest(app)
       .get("/amp/story/foo/bar/foobar")
       .expect("Content-Type", /html/)
       .expect(200)
       .then((res) => {
-        assert.equal('<div data-page-type="home-page">foobar</div>', res.text);
+        assert.equal(sampleTextStory, res.text);
       })
       .then(done);
   });
   it("mounts an amp page with slug encoded", (done) => {
     const app = createApp();
+    const ampLibrary = require("@quintype/amp");
+    ampLibrary.ampifyStory = ({ story }) => story;
     supertest(app)
       .get("/amp/story/foo%2Fbar%2Ffoobar")
       .expect("Content-Type", /html/)
       .expect(200)
       .then((res) => {
-        assert.equal('<div data-page-type="home-page">foobar</div>', res.text);
+        assert.equal(sampleTextStory, res.text);
+      })
+      .then(done);
+  });
+  it("renders story", (done) => {
+    const app = createApp();
+    const ampLibrary = require("@quintype/amp");
+    ampLibrary.ampifyStory = ({ story }) => story;
+    supertest(app)
+      .get("/amp/story/foo/bar/foobar")
+      .expect("Content-Type", /html/)
+      .expect(200)
+      .then((res) => {
+        assert.equal(sampleTextStory, res.text);
+      })
+      .then(done);
+  });
+  it("renders related stories", (done) => {
+    const app = createApp();
+    const ampLibrary = require("@quintype/amp");
+    ampLibrary.ampifyStory = ({ relatedStories }) => relatedStories;
+    supertest(app)
+      .get("/amp/story/foo/bar/foobar")
+      .expect("Content-Type", /html/)
+      .expect(200)
+      .then((res) => {
+        assert.equal(
+          '[{"story-content-id":"abc"},{"story-content-id":"def"}]',
+          res.text
+        );
+      })
+      .then(done);
+  });
+  it("renders opts", (done) => {
+    const app = createApp();
+    const ampLibrary = require("@quintype/amp");
+    ampLibrary.ampifyStory = ({ opts }) => opts;
+    supertest(app)
+      .get("/amp/story/foo/bar/foobar")
+      .expect("Content-Type", /html/)
+      .expect(200)
+      .then((res) => {
+        assert.equal('{"slots":{},"templates":{}}', res.text);
+      })
+      .then(done);
+  });
+  it("renders seo", (done) => {
+    const app = createApp();
+    const ampLibrary = require("@quintype/amp");
+    ampLibrary.ampifyStory = ({ seo }) => seo;
+    supertest(app)
+      .get("/amp/story/foo/bar/foobar")
+      .expect("Content-Type", /html/)
+      .expect(200)
+      .then((res) => {
+        assert.equal("", res.text);
+      })
+      .then(done);
+  });
+  it("renders amp config", (done) => {
+    const app = createApp();
+    const ampLibrary = require("@quintype/amp");
+    ampLibrary.ampifyStory = ({ ampConfig }) => ampConfig;
+    supertest(app)
+      .get("/amp/story/foo/bar/foobar")
+      .expect("Content-Type", /html/)
+      .expect(200)
+      .then((res) => {
+        assert.equal("", res.text);
       })
       .then(done);
   });
