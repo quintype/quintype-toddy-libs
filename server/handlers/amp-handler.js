@@ -19,6 +19,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
     seo,
     cdnProvider = null,
     ampLibrary = require("@quintype/amp"),
+    ...opts
   }
 ) {
   try {
@@ -72,7 +73,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
       ampConfig: ampConfig.ampConfig,
       relatedStories,
       client,
-      opts: { slots, templates },
+      opts: { slots, templates, ...opts },
       seo: seoTags ? seoTags.toString() : "",
     });
     if (ampHtml instanceof Error) return next(ampHtml);
