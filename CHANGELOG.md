@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.25.0](https://github.com/quintype/quintype-node-framework/compare/v3.24.2...v3.25.0) (2020-05-29)
+
+
+### Features
+
+* Support for `getStoryLimits` in `homeCollectionOrStories` ([#120](https://github.com/quintype/quintype-node-framework/issues/120)) ([574a57d](https://github.com/quintype/quintype-node-framework/commit/574a57d))
+
+
+
 ## [3.24.2](https://github.com/quintype/quintype-node-framework/compare/v3.24.1...v3.24.2) (2020-05-20)
 
 
