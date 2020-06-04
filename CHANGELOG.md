@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.26.0](https://github.com/quintype/quintype-node-framework/compare/v3.25.0...v3.26.0) (2020-06-04)
+
+
+### Features
+
+* **mobile-data:** Implement mobile data API :zap: ([#116](https://github.com/quintype/quintype-node-framework/issues/116)) ([0fbe85e](https://github.com/quintype/quintype-node-framework/commit/0fbe85e))
+
+
+
 # [3.25.0](https://github.com/quintype/quintype-node-framework/compare/v3.24.2...v3.25.0) (2020-05-29)
 
 
