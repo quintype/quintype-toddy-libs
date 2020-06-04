@@ -16,13 +16,14 @@ exports.catalogDataLoader = function catalogDataLoader(client, config) {
 
 exports.homeCollectionOrStories = function homeCollectionOrStories(
   client,
-  depth = 1
+  depth = 1,
+  getStoryLimits
 ) {
   return Collection.getCollectionBySlug(
     client,
     "home",
     { "item-type": "collection" },
-    { depth }
+    { depth, ...(getStoryLimits && { storyLimits: getStoryLimits() }) }
   ).then(collection => {
     if (collection) return collection;
     return Story.getStories(client).then(stories =>
