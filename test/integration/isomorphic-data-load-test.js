@@ -1,8 +1,11 @@
-const assert = require("assert");
+
+const assert = require("assert").strict;
 const express = require("express");
 
 const { isomorphicRoutes } = require("../../server/routes");
 const supertest = require("supertest");
+
+const {MOCK_WHITELIST_MOBILE_CONFIG} = require("../data/whitelist-mobile-config");
 
 function getClientStub() {
   return {
@@ -514,7 +517,7 @@ describe("Isomorphic Data Load", function() {
               "publisher-name": "Awesome Publisher"
             }
           }),
-        { mobileApiEnabled: true, mobileConfigFields: ["cdn-image"] }
+        { mobileApiEnabled: true, mobileConfigFields: MOCK_WHITELIST_MOBILE_CONFIG }
       );
       supertest(app)
         .get("/mobile-data.json?path=%2F")
@@ -523,12 +526,12 @@ describe("Isomorphic Data Load", function() {
         .then(res => {
           const response = JSON.parse(res.text);
           assert.equal("home-page", response.data.pageType);
-          assert.equal(null, response.config.foo);
+          assert.equal(undefined, response.config.foo);
           assert.equal(
             "https://image.foobar.com",
             response.config["cdn-image"]
           );
-          assert.equal(null, response.config["polltype-host"]);
+          assert.equal(undefined, response.config["polltype-host"]);
           assert.equal(
             JSON.stringify(["cdn-image"]),
             JSON.stringify(Object.keys(response.config))
@@ -558,7 +561,7 @@ describe("Isomorphic Data Load", function() {
               "publisher-name": "Awesome Publisher"
             }
           }),
-        { mobileApiEnabled: true, mobileConfigFields: [] }
+        { mobileApiEnabled: true, mobileConfigFields: {} }
       );
       supertest(app)
         .get("/mobile-data.json?path=%2F")
@@ -566,17 +569,17 @@ describe("Isomorphic Data Load", function() {
         .expect(200)
         .then(res => {
           const response = JSON.parse(res.text);
-          assert.equal("home-page", response.data.pageType);
-          assert.equal("bar", response.config.foo);
-          assert.equal(
+          assert.strictEqual("home-page", response.data.pageType);
+          assert.strictEqual("bar", response.config.foo);
+          assert.strictEqual(
             "https://image.foobar.com",
             response.config["cdn-image"]
           );
-          assert.equal(
+          assert.strictEqual(
             "https://poll.foobar.com",
             response.config["polltype-host"]
           );
-          assert.equal(
+          assert.strictEqual(
             JSON.stringify([
               "foo",
               "cdn-image",
@@ -586,10 +589,161 @@ describe("Isomorphic Data Load", function() {
             ]),
             JSON.stringify(Object.keys(response.config))
           );
-          assert.equal("demo.quintype.io", response.data.clientHost);
-          assert.equal("127.0.0.1", response.data.host);
+          assert.strictEqual("demo.quintype.io", response.data.clientHost);
+          assert.strictEqual("127.0.0.1", response.data.host);
         })
         .then(done);
     });
+
+
+
+      it("third level of data remain as original", done => {
+          const app = createApp(
+              (pageType, params, config, client, { host }) =>
+                  Promise.resolve({
+                      data: {
+                          pageType,
+                          clientHost: client.getHostname(),
+                          host,
+                          collection: {
+                              "summary": "Home collection",
+                              "id": 2688,
+                              "total-count": 3,
+                              "collection-date": null,
+                              "items": [
+                                  {
+                                      "id": 89215,
+                                      "associated-metadata": {
+                                          "layout": "OneColStoryList",
+                                          "enable_load_more_button": true,
+                                          "initial_stories_load_count": 6,
+                                          "subsequent_stories_load_count": 10
+                                      }
+                                  }]
+                          }
+                      },
+                      config: {
+                          "cdn-image": "https://image.foobar.com",
+                      }
+                  }),
+              { mobileApiEnabled: true, mobileConfigFields: MOCK_WHITELIST_MOBILE_CONFIG }
+          );
+          supertest(app)
+              .get("/mobile-data.json?path=%2F")
+              .expect("Content-Type", /json/)
+              .expect(200)
+              .then(res => {
+                  const response = JSON.parse(res.text);
+                  assert.strictEqual(89215, response.data.collection.items[0].id)
+              })
+              .then(done);
+      });
+
+
+
+
+      it("loads only data listed in the whitelisted keys", done => {
+          const app = createApp(
+              (pageType, params, config, client, { host }) =>
+                  Promise.resolve({
+                      pageType,
+                      data: {
+                          clientHost: client.getHostname(),
+                          host,
+                          collection: {
+                              "summary": "Home collection",
+                              "id": 2688,
+                              "total-count": 3,
+                              "collection-date": null,
+                              "items": [
+                                  {
+                                      "id": 89215,
+                                      "associated-metadata": {
+                                          "layout": "OneColStoryList",
+                                          "enable_load_more_button": true,
+                                          "initial_stories_load_count": 6,
+                                          "subsequent_stories_load_count": 10
+                                      }
+                                  }]
+                          }
+                      },
+                      config: {
+                          "cdn-image": "https://image.foobar.com",
+                      }
+                  }),
+              { mobileApiEnabled: true, mobileConfigFields: MOCK_WHITELIST_MOBILE_CONFIG }
+          );
+          supertest(app)
+              .get("/mobile-data.json?path=%2F")
+              .expect("Content-Type", /json/)
+              .expect(200)
+              .then(res => {
+                  const response = JSON.parse(res.text);
+                  assert.strictEqual(JSON.stringify({
+                      "summary": "Home collection",
+                      "total-count": 3,
+                      "items": [
+                          {
+                              "id": 89215,
+                              "associated-metadata": {
+                                  "layout": "OneColStoryList",
+                                  "enable_load_more_button": true,
+                                  "initial_stories_load_count": 6,
+                                  "subsequent_stories_load_count": 10
+                              }
+                          }]
+                  }), JSON.stringify(response.data.collection))
+              })
+              .then(done);
+      });
+
+
+
+
+      it("does not filter data if no whitelist is passed", done => {
+          const app = createApp(
+              (pageType, params, config, client, { host }) =>
+                  Promise.resolve({
+                      data: {
+                          pageType,
+                          clientHost: client.getHostname(),
+                          host,
+                          collection: {
+                              "summary": "Home collection",
+                              "randomKey": true,
+                              "id": 2688,
+                              "total-count": 3,
+                              "collection-date": null,
+                              "items": [
+                                  {
+                                      "id": 89215,
+                                      "associated-metadata": {
+                                          "layout": "OneColStoryList",
+                                          "enable_load_more_button": true,
+                                          "initial_stories_load_count": 6,
+                                          "subsequent_stories_load_count": 10
+                                      }
+                                  }]
+                          }
+                      },
+                      config: {
+                          "cdn-image": "https://image.foobar.com",
+                      }
+                  }),
+              { mobileApiEnabled: true, mobileConfigFields: {} }
+          );
+          supertest(app)
+              .get("/mobile-data.json?path=%2F")
+              .expect("Content-Type", /json/)
+              .expect(200)
+              .then(res => {
+                  const response = JSON.parse(res.text);
+                  assert.strictEqual(true, response.data.collection.randomKey)
+              })
+              .then(done);
+      });
+
+
+
   });
 });
