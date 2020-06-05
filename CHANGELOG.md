@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.26.1](https://github.com/quintype/quintype-node-framework/compare/v3.26.0...v3.26.1) (2020-06-05)
+
+
+### Bug Fixes
+
+* update package-lock ([194dfb2](https://github.com/quintype/quintype-node-framework/commit/194dfb2))
+
+
+
 # [3.26.0](https://github.com/quintype/quintype-node-framework/compare/v3.25.0...v3.26.0) (2020-06-04)
 
 
