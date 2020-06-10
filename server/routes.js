@@ -53,8 +53,17 @@ const { URL } = require("url");
  * *"/amp/story/:slug"* returns the amp story page
  */
 exports.ampRoutes = (app, opts = {}) => {
-  const { handleAmpRequest } = require("./handlers/amp-handler");
+  const {
+    handleAmpRequest,
+    handleInfiniteScrollRequest,
+  } = require("./handlers/amp-handler");
+
   getWithConfig(app, "/amp/story/*", handleAmpRequest, opts);
+  getWithConfig(
+    app,
+    "/amp/api/v1/amp-infinite-scroll",
+    handleInfiniteScrollRequest
+  );
 };
 
 /**

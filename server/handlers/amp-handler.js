@@ -2,10 +2,39 @@ const urlLib = require("url");
 const { Story, AmpConfig } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 const { storyToCacheKey } = require("../caching");
+const { InfiniteScrollData } = require("../amp-helpers");
 
 function getSeoInstance(seo, config, pageType = "") {
   return typeof seo === "function" ? seo(config, pageType) : seo;
 }
+
+exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest(
+  req,
+  res,
+  next,
+  { client, config }
+) {
+  const ampConfig = await config.memoizeAsync(
+    "amp-config",
+    async () => await AmpConfig.getAmpConfig(client)
+  );
+  const { "story-id": storyId } = req.query;
+  if (!storyId)
+    return next(
+      new Error(
+        `Please pass "story-id" query parameter while calling amp-infinite-scroll API`
+      )
+    );
+  const infiniteScrollData = new InfiniteScrollData({
+    storyId,
+    ampConfig,
+    publisherConfig: config,
+    client,
+  });
+  const jsonResponse = await infiniteScrollData.getJson();
+  if (jsonResponse instanceof Error) return next(jsonResponse);
+  res.set("Content-Type", "application/json").send(jsonResponse);
+};
 
 exports.handleAmpRequest = async function handleAmpRequest(
   req,
