@@ -33,7 +33,7 @@ exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest
   });
   const jsonResponse = await infiniteScrollData.getJson();
   if (jsonResponse instanceof Error) return next(jsonResponse);
-  res.set("Content-Type", "application/json").send(jsonResponse);
+  return res.set("Content-Type", "application/json").send(jsonResponse);
 };
 
 exports.handleAmpRequest = async function handleAmpRequest(
