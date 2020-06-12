@@ -30,12 +30,17 @@ class InfiniteScrollData {
 
   async getJson() {
     // const collId = this.ampConfig["infinite-scroll-collection-id"];
+    // const collId = this.ampConfig["related-collection-id"];
     const collId = "india-news"; // REMOVE THIS!!
     if (!collId)
       return new Error(
         `"infinite-scroll-collection-id" not specified in amp config`
       );
     const collection = await this.client.getCollectionBySlug(collId);
+    if (!collection)
+      return new Error(
+        `Infinite scroll collection ${collId} returned falsy value`
+      );
     const filteredItems = this.getFilteredCollItems(collection);
     const formattedObj = this.buildObj(filteredItems);
     return JSON.stringify(formattedObj);
