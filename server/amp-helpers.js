@@ -21,11 +21,12 @@ class InfiniteScrollData {
     //   "title": "This article shows first",
     //   "url": "https://example.com/article1.amp.html"
     // }
-    return collItems.map((item) => ({
+    const pages = collItems.map((item) => ({
       image: `${this.publisherConfig["cdn-image"]}/${item.story["hero-image-s3-key"]}?format=webp&w=250`,
       title: item.story.headline,
       url: item.story.url,
     }));
+    return { pages };
   }
 
   async getJson() {
