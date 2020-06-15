@@ -14,10 +14,6 @@ exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest
   next,
   { client, config }
 ) {
-  console.log(
-    "********************* Hit /amp/api/v1/amp-infinite-scroll endpoint ******************"
-  );
-  console.log(req.headers);
   const ampConfig = await config.memoizeAsync(
     "amp-config",
     async () => await AmpConfig.getAmpConfig(client)

@@ -24,7 +24,8 @@ class InfiniteScrollData {
     const pages = collItems.map((item) => ({
       image: `${this.publisherConfig["cdn-image"]}/${item.story["hero-image-s3-key"]}?format=webp&w=250`,
       title: item.story.headline,
-      url: item.story.url,
+      // url: item.story.url,
+      url: `/amp/story/${item.story.slug}`,
     }));
     return { pages };
   }
