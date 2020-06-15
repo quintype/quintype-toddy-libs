@@ -30,7 +30,8 @@ function writeStaticPageResponse(
 ) {
   const qt = {
     pageType: page.type,
-    data: Object.assign({}, page, result.data),
+    //remove content from data to avoid the script tag inside json breaking the page
+    data: Object.assign({}, page, result.data, { content: "" }),
     currentPath: `${url.pathname}${url.search || ""}`
   };
   const store = createBasicStore(result, qt, {
