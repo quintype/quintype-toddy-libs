@@ -56,13 +56,13 @@ class InfiniteScrollData {
   }
 }
 
-function setCorsHeaders(req, res, next) {
+function setCorsHeaders({ req, res, next, publisherConfig }) {
   // https://amp.dev/documentation/guides-and-tutorials/learn/amp-caches-and-cors/amp-cors-requests/
   const { origin, "amp-same-origin": ampSameOrigin } = req.headers;
   const whiteList = [
-    this.publisherConfig["sketches-host"],
-    `${this.publisherConfig["sketches-host"]}.cdn.ampproject.org`,
-    `${this.publisherConfig["sketches-host"]}.www.bing-amp.com`,
+    publisherConfig["sketches-host"],
+    `${publisherConfig["sketches-host"]}.cdn.ampproject.org`,
+    `${publisherConfig["sketches-host"]}.www.bing-amp.com`,
     `http://localhost:3000`,
   ];
   if ((!origin && ampSameOrigin) || whiteList.includes(origin))
