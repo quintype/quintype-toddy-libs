@@ -24,7 +24,6 @@ class InfiniteScrollData {
     const pages = collItems.map((item) => ({
       image: this.getImagePath(item),
       title: item.story.headline,
-      // url: item.story.url,
       url: `/amp/story/${item.story.slug}`,
     }));
     return { pages };
@@ -41,8 +40,7 @@ class InfiniteScrollData {
 
   async getJson() {
     // const collId = this.ampConfig["infinite-scroll-collection-id"];
-    // const collId = this.ampConfig["related-collection-id"];
-    const collId = "india-news"; // REMOVE THIS!!
+    const collId = this.ampConfig["related-collection-id"];
     if (!collId)
       return new Error(
         `"infinite-scroll-collection-id" not specified in amp config`
@@ -58,4 +56,18 @@ class InfiniteScrollData {
   }
 }
 
-module.exports = { InfiniteScrollData };
+function setCorsHeaders(req, res, next) {
+  // https://amp.dev/documentation/guides-and-tutorials/learn/amp-caches-and-cors/amp-cors-requests/
+  const { origin, "amp-same-origin": ampSameOrigin } = req.headers;
+  const whiteList = [
+    this.publisherConfig["sketches-host"],
+    `${this.publisherConfig["sketches-host"]}.cdn.ampproject.org`,
+    `${this.publisherConfig["sketches-host"]}.www.bing-amp.com`,
+    `http://localhost:3000`,
+  ];
+  if ((!origin && ampSameOrigin) || whiteList.includes(origin))
+    res.set("Access-Control-Allow-Origin", origin);
+  else next(new Error("Origin of CORS request not whitelisted"));
+}
+
+module.exports = { InfiniteScrollData, setCorsHeaders };

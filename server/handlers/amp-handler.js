@@ -2,7 +2,7 @@ const urlLib = require("url");
 const { Story, AmpConfig } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 const { storyToCacheKey } = require("../caching");
-const { InfiniteScrollData } = require("../amp-helpers");
+const { InfiniteScrollData, setCorsHeaders } = require("../amp-helpers");
 
 function getSeoInstance(seo, config, pageType = "") {
   return typeof seo === "function" ? seo(config, pageType) : seo;
@@ -34,8 +34,10 @@ exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest
   const jsonResponse = await infiniteScrollData.getJson();
   if (jsonResponse instanceof Error) return next(jsonResponse);
   res.set("Content-Type", "application/json; charset=utf-8");
-  res.set("Access-Control-Allow-Origin", "*");
-  return res.send(jsonResponse);
+  console.log("*************** req.HEADErS ***************");
+  console.log(req.headers);
+  setCorsHeaders(req, res, next);
+  if (!res.headersSent) return res.send(jsonResponse);
 };
 
 exports.handleAmpRequest = async function handleAmpRequest(
