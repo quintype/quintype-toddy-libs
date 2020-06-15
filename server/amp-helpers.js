@@ -22,12 +22,21 @@ class InfiniteScrollData {
     //   "url": "https://example.com/article1.amp.html"
     // }
     const pages = collItems.map((item) => ({
-      image: `${this.publisherConfig["cdn-image"]}/${item.story["hero-image-s3-key"]}?format=webp&w=250`,
+      image: this.getImagePath(item),
       title: item.story.headline,
       // url: item.story.url,
       url: `/amp/story/${item.story.slug}`,
     }));
     return { pages };
+  }
+
+  getImagePath(item) {
+    const cdnImage = this.publisherConfig["cdn-image"];
+    const s3Key = item.story["hero-image-s3-key"];
+    const hostWithProtocol = /^https:\/\//.test(cdnImage)
+      ? cdnImage
+      : `https://${cdnImage}`;
+    return `${hostWithProtocol}/${s3Key}?format=webp&w=250`;
   }
 
   async getJson() {
