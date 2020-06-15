@@ -14,6 +14,10 @@ exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest
   next,
   { client, config }
 ) {
+  console.log(
+    "********************* Hit /amp/api/v1/amp-infinite-scroll endpoint ******************"
+  );
+  console.log(req.headers);
   const ampConfig = await config.memoizeAsync(
     "amp-config",
     async () => await AmpConfig.getAmpConfig(client)
@@ -33,7 +37,13 @@ exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest
   });
   const jsonResponse = await infiniteScrollData.getJson();
   if (jsonResponse instanceof Error) return next(jsonResponse);
-  return res.set("Content-Type", "application/json").send(jsonResponse);
+  res.set("Content-Type", "application/json; charset=utf-8");
+  res.set("Access-Control-Allow-Origin", "https://vikatan-gamma.quintype.io");
+  res.set(
+    "AMP-Access-Control-Allow-Source-Origin",
+    "https://vikatan-gamma.quintype.io"
+  );
+  return res.send(jsonResponse);
 };
 
 exports.handleAmpRequest = async function handleAmpRequest(
