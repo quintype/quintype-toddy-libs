@@ -34,8 +34,6 @@ exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest
   const jsonResponse = await infiniteScrollData.getJson();
   if (jsonResponse instanceof Error) return next(jsonResponse);
   res.set("Content-Type", "application/json; charset=utf-8");
-  console.log("*************** req.HEADErS ***************");
-  console.log(req.headers);
   setCorsHeaders({ req, res, next, publisherConfig: config });
   if (!res.headersSent) return res.send(jsonResponse);
 };
