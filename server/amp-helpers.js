@@ -53,19 +53,21 @@ class InfiniteScrollData {
 
 function setCorsHeaders({ req, res, publisherConfig }) {
   // https://amp.dev/documentation/guides-and-tutorials/learn/amp-caches-and-cors/amp-cors-requests/
-  const { origin, "amp-same-origin": ampSameOrigin } = req.headers;
-  const ampCacheHost = publisherConfig["sketches-host"]
-    .replace(/-/g, "--")
-    .replace(/\./g, "-");
-  const whiteList = [
-    publisherConfig["sketches-host"],
-    `${ampCacheHost}.cdn.ampproject.org`,
-    `${ampCacheHost}.www.bing-amp.com`,
-    `http://localhost:3000`,
-  ];
-  if ((!origin && ampSameOrigin) || whiteList.includes(origin))
-    res.set("Access-Control-Allow-Origin", origin);
-  else res.status(401).send(`Origin ${origin} not whitelisted`);
+  // const { origin, "amp-same-origin": ampSameOrigin } = req.headers;
+  // const ampCacheHost = publisherConfig["sketches-host"]
+  //   .replace(/-/g, "--")
+  //   .replace(/\./g, "-");
+  // const whiteList = [
+  //   publisherConfig["sketches-host"],
+  //   `${ampCacheHost}.cdn.ampproject.org`,
+  //   `${ampCacheHost}.www.bing-amp.com`,
+  //   `http://localhost:3000`,
+  // ];
+  // if ((!origin && ampSameOrigin) || whiteList.includes(origin))
+  //   res.set("Access-Control-Allow-Origin", origin);
+  // else res.status(401).send(`Origin ${origin} not whitelisted`);
+  //
+  res.set("Access-Control-Allow-Origin", "*"); // TEMPORARY
 }
 
 module.exports = { InfiniteScrollData, setCorsHeaders };
