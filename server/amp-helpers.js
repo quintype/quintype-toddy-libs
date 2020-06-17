@@ -61,7 +61,6 @@ function setCorsHeaders({ req, res, publisherConfig }) {
   //   publisherConfig["sketches-host"],
   //   `${ampCacheHost}.cdn.ampproject.org`,
   //   `${ampCacheHost}.www.bing-amp.com`,
-  //   `http://localhost:3000`,
   // ];
   // if ((!origin && ampSameOrigin) || whiteList.includes(origin))
   //   res.set("Access-Control-Allow-Origin", origin);
