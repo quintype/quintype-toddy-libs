@@ -2,7 +2,7 @@ const urlLib = require("url");
 const { Story, AmpConfig } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 const { storyToCacheKey } = require("../caching");
-const { InfiniteScrollData, setCorsHeaders } = require("../amp-helpers");
+const { InfiniteScrollAmp, setCorsHeaders } = require("../amp-helpers");
 
 function getSeoInstance(seo, config, pageType = "") {
   return typeof seo === "function" ? seo(config, pageType) : seo;
@@ -18,23 +18,37 @@ exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest
     "amp-config",
     async () => await AmpConfig.getAmpConfig(client)
   );
-  const { "story-id": storyId, start, end } = req.query;
-  if (!storyId)
-    return next(
-      new Error(
-        `Please pass "story-id" query parameter while calling amp-infinite-scroll API`
-      )
-    );
 
-  const infiniteScrollData = new InfiniteScrollData({
-    storyId,
+  const infiniteScrollAmp = new InfiniteScrollAmp({
     ampConfig,
     publisherConfig: config,
     client,
-    start,
-    end,
+    queryParams: req.query,
   });
-  const jsonResponse = await infiniteScrollData.getJson();
+  const jsonResponse = await infiniteScrollAmp.getJson();
+  if (jsonResponse instanceof Error) return next(jsonResponse);
+  res.set("Content-Type", "application/json; charset=utf-8");
+  setCorsHeaders({ req, res, next, publisherConfig: config });
+  if (!res.headersSent) return res.send(jsonResponse);
+};
+
+exports.handleInfiniteScrollNext = async function handleInfiniteScrollNext(
+  req,
+  res,
+  next,
+  { client, config }
+) {
+  const ampConfig = await config.memoizeAsync(
+    "amp-config",
+    async () => await AmpConfig.getAmpConfig(client)
+  );
+  const infiniteScrollAmp = new InfiniteScrollAmp({
+    ampConfig,
+    publisherConfig: config,
+    client,
+    queryParams: req.query,
+  });
+  const jsonResponse = await infiniteScrollAmp.getNext();
   if (jsonResponse instanceof Error) return next(jsonResponse);
   res.set("Content-Type", "application/json; charset=utf-8");
   setCorsHeaders({ req, res, next, publisherConfig: config });

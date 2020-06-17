@@ -1,24 +1,35 @@
-class InfiniteScrollData {
-  constructor({ storyId, ampConfig, client, publisherConfig, start, end }) {
-    this.storyId = storyId;
-    this.ampConfig = ampConfig;
+class InfiniteScrollAmp {
+  constructor({ ampConfig, client, publisherConfig, queryParams }) {
     this.client = client;
     this.publisherConfig = publisherConfig;
-    this.start = start;
-    this.end = end;
+    this.queryParams = queryParams;
+    this.collId = ampConfig["related-collection-id"]; // !!!! change to infinite-scroll-collection-id later
   }
 
-  getFilteredCollItems(coll) {
+  // eslint-disable-next-line class-methods-use-this
+  getFilteredCollItems(coll, storyId) {
     // removes current story from infinite scroll collection items
     return coll.items.filter(
       (item) =>
-        item.type === "story" && item.story["story-content-id"] !== this.storyId
+        item.type === "story" && item.story["story-content-id"] !== storyId
     );
   }
 
-  buildObj(collItems) {
+  buildObj({ itemsArr, nextHost, firstTakeCount, storyId }) {
     // builds configuration obj thats needed for amp infinite scroll
-    const pages = collItems.map((item) => ({
+    const pages = itemsArr.map((item) => ({
+      image: this.getImagePath(item),
+      title: item.story.headline,
+      url: `/amp/story/${item.story.slug}`,
+    }));
+    return {
+      pages,
+      next: `${nextHost}/amp/api/v1/amp-infinite-scroll-next?story-id=${storyId}&items-taken-count=${firstTakeCount}`,
+    };
+  }
+
+  buildNextObj(itemsArr) {
+    const pages = itemsArr.map((item) => ({
       image: this.getImagePath(item),
       title: item.story.headline,
       url: `/amp/story/${item.story.slug}`,
@@ -36,19 +47,50 @@ class InfiniteScrollData {
   }
 
   async getJson() {
-    const collId = this.ampConfig["related-collection-id"]; // !!!! change to infinite-scroll-collection-id later
-    if (!collId)
+    const {
+      "story-id": storyId,
+      "first-take-count": firstTakeCountQueryParam,
+      "next-host": nextHost,
+    } = this.queryParams;
+    const firstTakeCount = firstTakeCountQueryParam || 5;
+    if (!nextHost) return new Error(`Query param "next-host" missing`);
+    if (!storyId) return new Error(`Query param "story-id" missing`);
+    if (!this.collId)
       return new Error(
         `"infinite-scroll-collection-id" not specified in amp config`
       );
-    const collection = await this.client.getCollectionBySlug(collId);
+    const collection = await this.client.getCollectionBySlug(this.collId);
     if (!collection)
       return new Error(
-        `Infinite scroll collection ${collId} returned falsy value`
+        `Infinite scroll collection ${this.collId} returned falsy value`
       );
-    const filteredItems = this.getFilteredCollItems(collection);
-    const slicedItems = filteredItems.slice(this.start, this.end);
-    const formattedObj = this.buildObj(slicedItems);
+    const filteredItems = this.getFilteredCollItems(collection, storyId);
+    const slicedItems = filteredItems.slice(0, firstTakeCount);
+    const formattedObj = this.buildObj({
+      itemsArr: slicedItems,
+      nextHost,
+      firstTakeCount,
+      storyId,
+    });
+    return JSON.stringify(formattedObj);
+  }
+
+  async getNext() {
+    const {
+      "story-id": storyId,
+      "items-taken-count": itemsTakenCount,
+    } = this.queryParams;
+    if (!storyId) return new Error(`Query param "story-id" missing`);
+    if (!itemsTakenCount)
+      return new Error(`Query param "items-taken-count" missing`);
+    if (!this.collId)
+      return new Error(
+        `"infinite-scroll-collection-id" not specified in amp config`
+      );
+    const collection = await this.client.getCollectionBySlug(this.collId);
+    const filteredItems = this.getFilteredCollItems(collection, storyId);
+    const slicedItems = filteredItems.slice(itemsTakenCount);
+    const formattedObj = this.buildNextObj(slicedItems);
     return JSON.stringify(formattedObj);
   }
 }
@@ -71,4 +113,4 @@ function setCorsHeaders({ req, res, publisherConfig }) {
   res.set("Access-Control-Allow-Origin", "*"); // TEMPORARY
 }
 
-module.exports = { InfiniteScrollData, setCorsHeaders };
+module.exports = { InfiniteScrollAmp, setCorsHeaders };
