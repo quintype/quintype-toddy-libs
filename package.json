@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
-    "@quintype/amp": "^1.1.0-webpack-infinite-scroll.5",
+    "@quintype/amp": "^1.1.0-webpack-infinite-scroll.6",
     "@quintype/backend": "^1.23.1",
     "@quintype/components": "^2.16.1",
     "@quintype/seo": "^1.38.1",
