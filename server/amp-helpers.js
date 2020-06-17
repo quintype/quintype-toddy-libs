@@ -1,9 +1,11 @@
 class InfiniteScrollData {
-  constructor({ storyId, ampConfig, client, publisherConfig }) {
+  constructor({ storyId, ampConfig, client, publisherConfig, start, end }) {
     this.storyId = storyId;
     this.ampConfig = ampConfig;
     this.client = client;
     this.publisherConfig = publisherConfig;
+    this.start = start;
+    this.end = end;
   }
 
   getFilteredCollItems(coll) {
@@ -34,8 +36,7 @@ class InfiniteScrollData {
   }
 
   async getJson() {
-    // const collId = this.ampConfig["infinite-scroll-collection-id"];
-    const collId = this.ampConfig["related-collection-id"];
+    const collId = this.ampConfig["related-collection-id"]; // !!!! change to infinite-scroll-collection-id later
     if (!collId)
       return new Error(
         `"infinite-scroll-collection-id" not specified in amp config`
@@ -46,7 +47,8 @@ class InfiniteScrollData {
         `Infinite scroll collection ${collId} returned falsy value`
       );
     const filteredItems = this.getFilteredCollItems(collection);
-    const formattedObj = this.buildObj(filteredItems);
+    const slicedItems = filteredItems.slice(this.start, this.end);
+    const formattedObj = this.buildObj(slicedItems);
     return JSON.stringify(formattedObj);
   }
 }

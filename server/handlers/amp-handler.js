@@ -18,18 +18,21 @@ exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest
     "amp-config",
     async () => await AmpConfig.getAmpConfig(client)
   );
-  const { "story-id": storyId } = req.query;
+  const { "story-id": storyId, start, end } = req.query;
   if (!storyId)
     return next(
       new Error(
         `Please pass "story-id" query parameter while calling amp-infinite-scroll API`
       )
     );
+
   const infiniteScrollData = new InfiniteScrollData({
     storyId,
     ampConfig,
     publisherConfig: config,
     client,
+    start,
+    end,
   });
   const jsonResponse = await infiniteScrollData.getJson();
   if (jsonResponse instanceof Error) return next(jsonResponse);
