@@ -49,24 +49,24 @@ async function handleBookend(req, res, next, { config, client }) {
       "email",
       {
         provider: "facebook",
-        app_id: fbAppId
+        app_id: fbAppId,
       },
       "whatsapp",
       "linkedin",
-      "gplus"
+      "gplus",
     ],
     components: [].concat(
       [
         {
           type: "heading",
-          text: "More to read"
-        }
+          text: "More to read",
+        },
       ],
-      relatedStories.map(story => ({
+      relatedStories.map((story) => ({
         type: "small",
         title: `${story.headline}`,
         image: `${config["cdn-name"]}${story["hero-image-s3-key"]}?w=480&auto=format&compress`,
-        url: getImageUrl(story, config)
+        url: getImageUrl(story, config),
       })),
       [
         {
@@ -74,12 +74,12 @@ async function handleBookend(req, res, next, { config, client }) {
           links: [
             {
               text: "More stories",
-              url: `${config["sketches-host"]}`
-            }
-          ]
-        }
+              url: `${config["sketches-host"]}`,
+            },
+          ],
+        },
       ]
-    )
+    ),
   };
 
   if (relatedStories.length > 0) {
@@ -114,7 +114,7 @@ async function handleVisualStory(
       seoInstance.getMetaTags(config, story["story-template"], story, { url });
 
     addCacheHeadersToResult(res, [
-      storyToCacheKey(config["publisher-id"], story)
+      storyToCacheKey(config["publisher-id"], story),
     ]);
     await renderVisualStory(res, story, { config, client, seoTags });
   }

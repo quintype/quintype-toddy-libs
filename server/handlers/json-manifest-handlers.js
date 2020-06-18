@@ -7,8 +7,8 @@ exports.handleManifest = function handleManifest(
   next,
   { config, logError, manifestFn }
 ) {
-  return new Promise(resolve => resolve(manifestFn(config)))
-    .then(result => {
+  return new Promise((resolve) => resolve(manifestFn(config)))
+    .then((result) => {
       res.setHeader("Cache-Control", "public,max-age=900");
       res.setHeader("Vary", "Accept-Encoding");
       res.json(
@@ -18,13 +18,13 @@ exports.handleManifest = function handleManifest(
             short_name: get(config, ["publisher-settings", "title"]),
             start_url: "/",
             display: "standalone",
-            background_color: "#eee"
+            background_color: "#eee",
           },
           result
         )
       );
     })
-    .catch(e => {
+    .catch((e) => {
       logError(e);
       res.status(500);
       res.send(e.message);
@@ -38,7 +38,7 @@ exports.handleAssetLink = function handleAssetLink(
   next,
   { config, logError, assetLinkFn }
 ) {
-  return new Promise(resolve => resolve(assetLinkFn(config)))
+  return new Promise((resolve) => resolve(assetLinkFn(config)))
     .then(({ packageName, authorizedKeys }) => {
       res.setHeader("Cache-Control", "public,max-age=900");
       res.setHeader("Vary", "Accept-Encoding");
@@ -48,12 +48,12 @@ exports.handleAssetLink = function handleAssetLink(
           target: {
             namespace: "android_app",
             package_name: packageName,
-            sha256_cert_fingerprints: authorizedKeys
-          }
-        }
+            sha256_cert_fingerprints: authorizedKeys,
+          },
+        },
       ]);
     })
-    .catch(e => {
+    .catch((e) => {
       logError(e);
       res.status(500);
       res.send(e.message);

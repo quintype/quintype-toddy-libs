@@ -25,33 +25,18 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult(
       res.setHeader("Vary", "Accept-Encoding");
 
       // Cloudflare Headers
-      res.setHeader(
-        "Cache-Tag",
-        _(cacheKeys)
-          .uniq()
-          .join(",")
-      );
+      res.setHeader("Cache-Tag", _(cacheKeys).uniq().join(","));
 
       //Akamai Headers
       cdnProvider === "akamai" &&
-        res.setHeader(
-          "Edge-Cache-Tag",
-          _(cacheKeys)
-            .uniq()
-            .join(",")
-        );
+        res.setHeader("Edge-Cache-Tag", _(cacheKeys).uniq().join(","));
 
       // Fastly Header
       res.setHeader(
         "Surrogate-Control",
         "public,max-age=240,stale-while-revalidate=300,stale-if-error=14400"
       );
-      res.setHeader(
-        "Surrogate-Key",
-        _(cacheKeys)
-          .uniq()
-          .join(" ")
-      );
+      res.setHeader("Surrogate-Key", _(cacheKeys).uniq().join(" "));
     }
   } else {
     res.setHeader(

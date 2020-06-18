@@ -5,17 +5,17 @@ const yaml = require("js-yaml");
 
 function addLazyOptions(templateOptions) {
   const collectionLayouts = templateOptions["collection-layouts"].map(
-    template => {
+    (template) => {
       return Object.assign({}, template, {
         options: (template.options || []).concat([
           { name: "lazy_load_images", type: "boolean" },
-          { name: "client_side_only", type: "boolean" }
-        ])
+          { name: "client_side_only", type: "boolean" },
+        ]),
       });
     }
   );
   return Object.assign({}, templateOptions, {
-    "collection-layouts": collectionLayouts
+    "collection-layouts": collectionLayouts,
   });
 }
 

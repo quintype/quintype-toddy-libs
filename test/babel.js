@@ -5,5 +5,5 @@ require("babel-register")({
   plugins: ["transform-es2015-modules-commonjs", "quintype-assets"],
   ignore(file) {
     return file.startsWith(ROOT_PATH + "/node_modules");
-  }
+  },
 });

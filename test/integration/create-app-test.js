@@ -3,10 +3,10 @@ const createApp = require("../../server/create-app");
 const supertest = require("supertest");
 const fs = require("fs");
 
-describe("createApp", function() {
+describe("createApp", function () {
   const app = createApp({
     publicFolder: "test",
-    assetHelper: { assetFiles: () => new Set(["/babel.js"]) }
+    assetHelper: { assetFiles: () => new Set(["/babel.js"]) },
   });
 
   app.get("/foo", (req, res) => {
@@ -14,7 +14,7 @@ describe("createApp", function() {
     res.send(fs.readFileSync("package.json"));
   });
 
-  it("correctly gzips content", function(done) {
+  it("correctly gzips content", function (done) {
     supertest(app)
       .get("/foo")
       .set("Accept-Encoding", "deflate, gzip")
@@ -23,7 +23,7 @@ describe("createApp", function() {
       .expect(200, done);
   });
 
-  it("returns static files", function(done) {
+  it("returns static files", function (done) {
     supertest(app)
       .get("/integration/create-app-test.js")
       .set("Accept-Encoding", "deflate, gzip")
@@ -32,7 +32,7 @@ describe("createApp", function() {
       .expect(200, done);
   });
 
-  it("static files that are assets have a long cache header", function(done) {
+  it("static files that are assets have a long cache header", function (done) {
     supertest(app)
       .get("/babel.js")
       .set("Accept-Encoding", "deflate, gzip")

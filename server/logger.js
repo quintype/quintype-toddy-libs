@@ -18,10 +18,10 @@ const { combine, timestamp } = winston.format;
 
 function trimNewline() {
   return {
-    transform: msg => {
+    transform: (msg) => {
       if (msg.message) msg.message = msg.message.trim();
       return msg;
-    }
+    },
   };
 }
 
@@ -30,9 +30,9 @@ function createTestLogger() {
     format: combine(timestamp(), trimNewline(), winston.format.json()),
     transports: [
       new winston.transports.File({
-        filename: "/dev/null"
-      })
-    ]
+        filename: "/dev/null",
+      }),
+    ],
   });
 }
 
@@ -41,9 +41,9 @@ function createDevLogger() {
     format: combine(timestamp(), trimNewline(), winston.format.json()),
     transports: [
       new winston.transports.Console({
-        colorize: true
-      })
-    ]
+        colorize: true,
+      }),
+    ],
   });
 }
 
@@ -53,14 +53,14 @@ function createProdLogger() {
     transports: [
       new winston.transports.Console({
         colorize: false,
-        level: "error"
+        level: "error",
       }),
       new winston.transports.File({
-        filename: "log/production.log"
-      })
+        filename: "log/production.log",
+      }),
     ],
     exceptionHandlers: [new winston.transports.Console()],
-    exitOnError: false
+    exitOnError: false,
   });
 }
 
@@ -85,7 +85,7 @@ function truncateStack(message) {
 const logger = createLogger();
 const errorFn = logger.error.bind(logger);
 
-logger.error = function(e) {
+logger.error = function (e) {
   if (e && e.stack) {
     errorFn({ message: e.message, stack: truncateStack(e.stack) });
   } else {

@@ -4,7 +4,7 @@ export function registerServiceWorker({
   enableServiceWorker = false,
   serviceWorkerLocation = "/service-worker.js",
   navigator = global.navigator,
-  mountAt = global.qtMountAt || ""
+  mountAt = global.qtMountAt || "",
 }) {
   if (enableServiceWorker && navigator.serviceWorker) {
     return navigator.serviceWorker.register(
@@ -22,7 +22,7 @@ export function setupServiceWorkerUpdates(
 ) {
   if (!serviceWorkerPromise) return Promise.resolve();
 
-  return serviceWorkerPromise.then(registration => {
+  return serviceWorkerPromise.then((registration) => {
     if (!registration) return;
 
     if (registration.update) {
@@ -47,11 +47,10 @@ export function checkForServiceWorkerUpdates(app, page = {}) {
     console && console.log("Updating the Service Worker");
     app.updateServiceWorker && app.updateServiceWorker();
   } else if (global && global.qtVersion) {
-
-  /* Check if the config is updated and update the service worker if true */
+    /* Check if the config is updated and update the service worker if true */
     const { qtVersion: { configVersion = 0 } = {} } = global;
     const {
-      config: { "theme-attributes": pageThemeAttributes = {} } = {}
+      config: { "theme-attributes": pageThemeAttributes = {} } = {},
     } = page;
     if ((pageThemeAttributes["cache-burst"] || 0) > parseInt(configVersion)) {
       console.log(`updating service worker due to config change`);

@@ -8,18 +8,18 @@ function getClientStub(hostname) {
   return {
     getHostname: () => hostname,
     getConfig: () =>
-      Promise.resolve({ "publisher-settings": { title: "Madrid" } })
+      Promise.resolve({ "publisher-settings": { title: "Madrid" } }),
   };
 }
 
-describe("TemplateOptionsHandler", function() {
-  it("returns the template options", function(done) {
+describe("TemplateOptionsHandler", function () {
+  it("returns the template options", function (done) {
     const app = express();
     isomorphicRoutes(app, {
       assetHelper: {},
       getClient: getClientStub,
       templateOptions: { name: "Madrid", foo: "bar" },
-      publisherConfig: {}
+      publisherConfig: {},
     });
 
     supertest(app)
@@ -29,7 +29,7 @@ describe("TemplateOptionsHandler", function() {
       .expect("Vary", "Accept-Encoding")
       .expect("Access-Control-Allow-Origin", "*")
       .expect(200)
-      .then(res => {
+      .then((res) => {
         const { name, foo } = JSON.parse(res.text);
         assert.equal("Madrid", name);
         assert.equal("bar", foo);
@@ -37,13 +37,15 @@ describe("TemplateOptionsHandler", function() {
       .then(done);
   });
 
-  it("does template options when passed in a function", function(done) {
+  it("does template options when passed in a function", function (done) {
     const app = express();
     isomorphicRoutes(app, {
       assetHelper: {},
       getClient: getClientStub,
-      templateOptions: config => ({ name: config["publisher-settings"].title }),
-      publisherConfig: {}
+      templateOptions: (config) => ({
+        name: config["publisher-settings"].title,
+      }),
+      publisherConfig: {},
     });
 
     supertest(app)
@@ -52,7 +54,7 @@ describe("TemplateOptionsHandler", function() {
       .expect("Cache-Control", /public/)
       .expect("Vary", "Accept-Encoding")
       .expect(200)
-      .then(res => {
+      .then((res) => {
         const { name, foo } = JSON.parse(res.text);
         assert.equal("Madrid", name);
       })

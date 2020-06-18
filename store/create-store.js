@@ -1,12 +1,15 @@
-import { createStore, combineReducers } from "redux";
-import { NAVIGATE_TO_PAGE, SERVICE_WORKER_UPDATED } from "@quintype/components";
-import { ComponentReducers } from "@quintype/components";
+import {
+  ComponentReducers,
+  NAVIGATE_TO_PAGE,
+  SERVICE_WORKER_UPDATED,
+} from "@quintype/components";
+import { combineReducers, createStore } from "redux";
 
 function internalReducers(state = {}, action) {
   switch (action.type) {
     case NAVIGATE_TO_PAGE:
       return Object.assign({}, state, action.page, {
-        currentPath: action.currentPath
+        currentPath: action.currentPath,
       });
     default:
       return state;
@@ -32,7 +35,7 @@ export function createQtStore(
     Object.assign(
       {
         qt: internalReducers,
-        serviceWorkerStatus: serviceWorkerStatusReducer
+        serviceWorkerStatus: serviceWorkerStatusReducer,
       },
       ComponentReducers,
       customReducers
