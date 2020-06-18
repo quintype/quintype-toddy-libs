@@ -15,26 +15,21 @@ class InfiniteScrollAmp {
     );
   }
 
-  buildObj({ itemsArr, nextHost, firstTakeCount, storyId }) {
-    // builds configuration obj thats needed for amp infinite scroll
-    const pages = itemsArr.map((item) => ({
+  formatData({ itemsArr, type }) {
+    // formats configuration as per need of amp infinite scroll
+    const arr = itemsArr.map((item) => ({
       image: this.getImagePath(item),
       title: item.story.headline,
       url: `/amp/story/${item.story.slug}`,
     }));
-    return {
-      pages,
-      next: `${nextHost}/amp/api/v1/amp-infinite-scroll-next?story-id=${storyId}&items-taken-count=${firstTakeCount}`,
-    };
-  }
-
-  buildNextObj(itemsArr) {
-    const pages = itemsArr.map((item) => ({
-      image: this.getImagePath(item),
-      title: item.story.headline,
-      url: `/amp/story/${item.story.slug}`,
-    }));
-    return { pages };
+    switch (type) {
+      case "inline":
+        return arr;
+      default:
+        return {
+          pages: arr,
+        };
+    }
   }
 
   getImagePath(item) {
@@ -46,14 +41,8 @@ class InfiniteScrollAmp {
     return `${hostWithProtocol}/${s3Key}?format=webp&w=250`;
   }
 
-  async getJson() {
-    const {
-      "story-id": storyId,
-      "first-take-count": firstTakeCountQueryParam,
-      "next-host": nextHost,
-    } = this.queryParams;
-    const firstTakeCount = firstTakeCountQueryParam || 5;
-    if (!nextHost) return new Error(`Query param "next-host" missing`);
+  async getResponse({ itemsTaken }) {
+    const { "story-id": storyId } = this.queryParams;
     if (!storyId) return new Error(`Query param "story-id" missing`);
     if (!this.collId)
       return new Error(
@@ -65,33 +54,26 @@ class InfiniteScrollAmp {
         `Infinite scroll collection ${this.collId} returned falsy value`
       );
     const filteredItems = this.getFilteredCollItems(collection, storyId);
-    const slicedItems = filteredItems.slice(0, firstTakeCount);
-    const formattedObj = this.buildObj({
-      itemsArr: slicedItems,
-      nextHost,
-      firstTakeCount,
-      storyId,
-    });
-    return JSON.stringify(formattedObj);
+    const slicedItems = filteredItems.slice(itemsTaken);
+    const formattedData = this.formatData({ itemsArr: slicedItems });
+    return JSON.stringify(formattedData);
   }
 
-  async getNext() {
-    const {
-      "story-id": storyId,
-      "items-taken-count": itemsTakenCount,
-    } = this.queryParams;
-    if (!storyId) return new Error(`Query param "story-id" missing`);
-    if (!itemsTakenCount)
-      return new Error(`Query param "items-taken-count" missing`);
-    if (!this.collId)
-      return new Error(
-        `"infinite-scroll-collection-id" not specified in amp config`
-      );
+  async getInitialInlineConfig({ itemsToTake, storyId }) {
+    if (!itemsToTake || !storyId)
+      return new Error("Required params for getInitialInlineConfig missing");
     const collection = await this.client.getCollectionBySlug(this.collId);
+    if (!collection)
+      return new Error(
+        `Infinite scroll collection ${this.collId} returned falsy value`
+      );
     const filteredItems = this.getFilteredCollItems(collection, storyId);
-    const slicedItems = filteredItems.slice(itemsTakenCount);
-    const formattedObj = this.buildNextObj(slicedItems);
-    return JSON.stringify(formattedObj);
+    const slicedItems = filteredItems.slice(0, itemsToTake);
+    const formattedData = this.formatData({
+      itemsArr: slicedItems,
+      type: "inline",
+    });
+    return JSON.stringify(formattedData);
   }
 }
 

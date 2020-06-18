@@ -56,7 +56,6 @@ exports.ampRoutes = (app, opts = {}) => {
   const {
     handleAmpRequest,
     handleInfiniteScrollRequest,
-    handleInfiniteScrollNext,
   } = require("./handlers/amp-handler");
 
   getWithConfig(app, "/amp/story/*", handleAmpRequest, opts);
@@ -64,11 +63,6 @@ exports.ampRoutes = (app, opts = {}) => {
     app,
     "/amp/api/v1/amp-infinite-scroll",
     handleInfiniteScrollRequest
-  );
-  getWithConfig(
-    app,
-    "/amp/api/v1/amp-infinite-scroll-next",
-    handleInfiniteScrollNext
   );
 };
 
