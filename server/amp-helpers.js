@@ -79,7 +79,7 @@ class InfiniteScrollAmp {
 
 function setCorsHeaders({ req, res, publisherConfig }) {
   // https://amp.dev/documentation/guides-and-tutorials/learn/amp-caches-and-cors/amp-cors-requests/
-  const { origin, "amp-same-origin": ampSameOrigin } = req.headers;
+  const { origin, "amp-same-origin": ampSameOrigin, host } = req.headers;
   const ampCacheHost = publisherConfig["sketches-host"]
     .replace(/-/g, "--")
     .replace(/\./g, "-");
@@ -88,9 +88,13 @@ function setCorsHeaders({ req, res, publisherConfig }) {
     `${ampCacheHost}.cdn.ampproject.org`,
     `${ampCacheHost}.www.bing-amp.com`,
   ];
-  if ((!origin && ampSameOrigin) || whiteList.includes(origin))
+  if (!origin && ampSameOrigin) {
+    // allow same origin
+    res.set("Access-Control-Allow-Origin", host);
+  } else if (whiteList.includes(origin)) {
+    // allow whitelisted origins
     res.set("Access-Control-Allow-Origin", origin);
-  else res.status(401).send(`Origin not whitelisted`);
+  } else res.status(401).send(`Origin Not Whitelisted`);
 }
 
 module.exports = { InfiniteScrollAmp, setCorsHeaders };
