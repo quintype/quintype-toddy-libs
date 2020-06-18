@@ -5,11 +5,11 @@ export function initializeFCM(messageSenderId) {
   }
   Promise.all([
     import(/* webpackChunkName: "firebase-app" */ "firebase/app"),
-    import(/* webpackChunkName: "firebase-messaging" */ "firebase/messaging")
+    import(/* webpackChunkName: "firebase-messaging" */ "firebase/messaging"),
   ]).then(([firebase, m]) => {
     try {
       firebase.initializeApp({
-        messagingSenderId: messageSenderId.toString()
+        messagingSenderId: messageSenderId.toString(),
       });
       const messaging = firebase.messaging();
       messaging.requestPermission().then(() => {
@@ -29,10 +29,10 @@ function updateToken(firebaseInstance) {
   return firebaseInstance
     .messaging()
     .getToken()
-    .then(token => {
+    .then((token) => {
       return registerFCMTopic(token);
     })
-    .catch(err => {
+    .catch((err) => {
       throw new Error(err);
     });
 }
@@ -41,8 +41,8 @@ function registerFCMTopic(token) {
   return fetch("/register-fcm-topic", {
     method: "post",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ token: token })
+    body: JSON.stringify({ token: token }),
   });
 }

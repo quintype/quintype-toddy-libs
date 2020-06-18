@@ -16,21 +16,21 @@ function createApp(opts = {}) {
     Object.assign(
       {
         assetHelper: {
-          assetHash: file => (file == "app.js" ? "abcdef" : null),
-          assetPath: file => `/assets/${file}`
+          assetHash: (file) => (file == "app.js" ? "abcdef" : null),
+          assetPath: (file) => `/assets/${file}`,
         },
         generateRoutes: () => [],
         pickComponent: pickComponent,
         loadErrorData: (err, config) => ({
           httpStatusCode: err.httpStatusCode,
           pageType: "not-found",
-          data: { text: "foobar" }
+          data: { text: "foobar" },
         }),
         renderLayout: (res, { store, title, content }) =>
           res.send(JSON.stringify({ store: store.getState(), title, content })),
         redirectRootLevelStories: true,
         handleCustomRoute: false,
-        publisherConfig: {}
+        publisherConfig: {},
       },
       opts
     )
@@ -39,16 +39,16 @@ function createApp(opts = {}) {
   return app;
 }
 
-describe("Redirect Handler", function() {
-  it("Redirects to a story on the root level", function(done) {
+describe("Redirect Handler", function () {
+  it("Redirects to a story on the root level", function (done) {
     const app = createApp({
-      getClient: hostname => ({
+      getClient: (hostname) => ({
         getConfig: () => Promise.resolve({ "publisher-id": 42 }),
-        getStoryBySlug: slug =>
+        getStoryBySlug: (slug) =>
           Promise.resolve({
-            story: { slug: `section/${slug}`, id: "abcdefgh-blah" }
-          })
-      })
+            story: { slug: `section/${slug}`, id: "abcdefgh-blah" },
+          }),
+      }),
     });
 
     supertest(app)
@@ -59,15 +59,15 @@ describe("Redirect Handler", function() {
       .expect(301, done);
   });
 
-  it("Redirects to a story on the root level even if there is a trailing /", function(done) {
+  it("Redirects to a story on the root level even if there is a trailing /", function (done) {
     const app = createApp({
-      getClient: hostname => ({
+      getClient: (hostname) => ({
         getConfig: () => Promise.resolve({ "publisher-id": 42 }),
-        getStoryBySlug: slug =>
+        getStoryBySlug: (slug) =>
           Promise.resolve({
-            story: { slug: `section/${slug}`, id: "abcdefgh-blah" }
-          })
-      })
+            story: { slug: `section/${slug}`, id: "abcdefgh-blah" },
+          }),
+      }),
     });
 
     supertest(app)
@@ -78,16 +78,14 @@ describe("Redirect Handler", function() {
       .expect(301, done);
   });
 
-  it("Does not redirect if story is not found", function(done) {
+  it("Does not redirect if story is not found", function (done) {
     const app = createApp({
-      getClient: hostname => ({
+      getClient: (hostname) => ({
         getConfig: () => Promise.resolve({ foo: "bar" }),
-        getStoryBySlug: slug => Promise.reject({ message: "Not Found" })
-      })
+        getStoryBySlug: (slug) => Promise.reject({ message: "Not Found" }),
+      }),
     });
 
-    supertest(app)
-      .get("/story-slug")
-      .expect(404, done);
+    supertest(app).get("/story-slug").expect(404, done);
   });
 });

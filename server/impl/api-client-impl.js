@@ -7,14 +7,14 @@ const {
   Collection,
   Entity,
   MenuGroups,
-  Config
+  Config,
 } = require("@quintype/backend");
 const {
   storyToCacheKey,
   collectionToCacheKey,
   authorToCacheKey,
   sorterToCacheKey,
-  customUrlToCacheKey
+  customUrlToCacheKey,
 } = require("../caching");
 const _ = require("lodash");
 
@@ -30,7 +30,7 @@ function createTemporaryClient(config, hostname) {
     return new Client(configuredHosts[hostname], true);
   }
 
-  const matchedString = (config.host_to_automatic_api_host || []).find(str =>
+  const matchedString = (config.host_to_automatic_api_host || []).find((str) =>
     hostname.includes(str)
   );
   if (matchedString)
@@ -42,9 +42,7 @@ function itemToCacheKey(publisherId, item) {
     case "story":
       return [storyToCacheKey(publisherId, item.story)];
     case "collection":
-      return Collection.build(item)
-        .cacheKeys(publisherId)
-        .slice(0, 5);
+      return Collection.build(item).cacheKeys(publisherId).slice(0, 5);
     default:
       return [];
   }
@@ -53,7 +51,7 @@ function itemToCacheKey(publisherId, item) {
 function getItemCacheKeys(publisherId, items, depth) {
   const storyCacheKeys = [];
   const collectionCacheKeys = [];
-  items.map(item => {
+  items.map((item) => {
     switch (item.type) {
       case "story":
         storyCacheKeys.push(storyToCacheKey(publisherId, item.story));
@@ -71,11 +69,11 @@ function getItemCacheKeys(publisherId, items, depth) {
   return { storyCacheKeys, collectionCacheKeys };
 }
 
-Collection.prototype.getCollectionCacheKeys = function(publisherId, depth) {
+Collection.prototype.getCollectionCacheKeys = function (publisherId, depth) {
   if (!depth) {
     return {
       storyCacheKeys: [],
-      collectionCacheKeys: [collectionToCacheKey(publisherId, this)]
+      collectionCacheKeys: [collectionToCacheKey(publisherId, this)],
     };
   }
   const { storyCacheKeys, collectionCacheKeys } = getItemCacheKeys(
@@ -87,11 +85,11 @@ Collection.prototype.getCollectionCacheKeys = function(publisherId, depth) {
   return { storyCacheKeys, collectionCacheKeys };
 };
 
-Collection.prototype.cacheKeys = function(publisherId, depth) {
+Collection.prototype.cacheKeys = function (publisherId, depth) {
   if (!depth) {
     return [collectionToCacheKey(publisherId, this)].concat([
-      ..._.flatMap(this.items, item => itemToCacheKey(publisherId, item)),
-      ...(this["collection-cache-keys"] ? this["collection-cache-keys"] : [])
+      ..._.flatMap(this.items, (item) => itemToCacheKey(publisherId, item)),
+      ...(this["collection-cache-keys"] ? this["collection-cache-keys"] : []),
     ]);
   }
   const { storyCacheKeys, collectionCacheKeys } = getItemCacheKeys(
@@ -102,24 +100,24 @@ Collection.prototype.cacheKeys = function(publisherId, depth) {
   return [collectionToCacheKey(publisherId, this)].concat([
     ...collectionCacheKeys,
     ...storyCacheKeys.slice(0, 200 - collectionCacheKeys.length),
-    ...(this["collection-cache-keys"] ? this["collection-cache-keys"] : [])
+    ...(this["collection-cache-keys"] ? this["collection-cache-keys"] : []),
   ]);
 };
 
-Story.prototype.cacheKeys = function(publisherId) {
+Story.prototype.cacheKeys = function (publisherId) {
   return [storyToCacheKey(publisherId, this)].concat(
-    (this.authors || []).map(author => authorToCacheKey(publisherId, author))
+    (this.authors || []).map((author) => authorToCacheKey(publisherId, author))
   );
 };
 
 Story.sorterToCacheKey = sorterToCacheKey;
 
-Author.prototype.cacheKeys = function(publisherId) {
+Author.prototype.cacheKeys = function (publisherId) {
   const { author } = this;
   return author && author.id ? [authorToCacheKey(publisherId, author)] : null;
 };
 
-CustomPath.prototype.cacheKeys = function(publisherId) {
+CustomPath.prototype.cacheKeys = function (publisherId) {
   const { page } = this;
   return page && page.id ? [customUrlToCacheKey(publisherId, page)] : null;
 };
@@ -134,5 +132,5 @@ module.exports = {
   Collection,
   Entity,
   MenuGroups,
-  Config
+  Config,
 };

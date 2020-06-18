@@ -8,30 +8,30 @@ function getClientStub(hostname) {
   return {
     getHostname: () => hostname,
     getConfig: () =>
-      Promise.resolve({ "publisher-settings": { title: "Madrid" } })
+      Promise.resolve({ "publisher-settings": { title: "Madrid" } }),
   };
 }
 
-describe("ManifestHandler", function() {
+describe("ManifestHandler", function () {
   const app = express();
   isomorphicRoutes(app, {
     assetHelper: {},
     getClient: getClientStub,
-    manifestFn: config =>
+    manifestFn: (config) =>
       Promise.resolve({
-        foo: "bar"
+        foo: "bar",
       }),
-    publisherConfig: {}
+    publisherConfig: {},
   });
 
-  it("returns a manifest", function(done) {
+  it("returns a manifest", function (done) {
     supertest(app)
       .get("/manifest.json")
       .expect("Content-Type", /json/)
       .expect("Cache-Control", /public/)
       .expect("Vary", "Accept-Encoding")
       .expect(200)
-      .then(res => {
+      .then((res) => {
         const { name, foo } = JSON.parse(res.text);
         assert.equal("Madrid", name);
         assert.equal("bar", foo);

@@ -16,7 +16,7 @@ class IsomorphicComponentBase extends React.Component {
 
   render() {
     const props = Object.assign({}, this.props, {
-      key: this.props.currentPath || ""
+      key: this.props.currentPath || "",
     });
     return React.createElement(
       this.props.pickComponent(this.props.pageType, this.props.subPageType),
@@ -32,7 +32,7 @@ function mapStateToProps(state) {
     config: state.qt.config,
     data: state.qt.data,
     currentPath: state.qt.currentPath,
-    title: state.qt.title || ""
+    title: state.qt.title || "",
   };
 }
 

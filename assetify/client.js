@@ -21,6 +21,6 @@ function appendCDN(path) {
   else return path;
 }
 
-module.exports = function() {
+module.exports = function () {
   setAssetifyFn(appendCDN);
 };

@@ -6,12 +6,12 @@ const {
   Story,
   Author,
   Collection,
-  CustomPath
+  CustomPath,
 } = require("../../server/impl/api-client-impl");
 
-describe("ApiClient", function() {
-  describe("getClient", function() {
-    it("returns a cachedSecondaryClient if present", function() {
+describe("ApiClient", function () {
+  describe("getClient", function () {
+    it("returns a cachedSecondaryClient if present", function () {
       const expectedClient = new Client("foo.staging.quintype.io", true);
       const client = getClientImpl(
         {},
@@ -21,7 +21,7 @@ describe("ApiClient", function() {
       assert.equal(expectedClient, client);
     });
 
-    it("creates a temporary client if it matches a string", function() {
+    it("creates a temporary client if it matches a string", function () {
       const client = getClientImpl(
         { host_to_automatic_api_host: ["-web"] },
         {},
@@ -30,7 +30,7 @@ describe("ApiClient", function() {
       assert.equal("https://foo.staging.quintype.io", client.baseUrl);
     });
 
-    it("creates a temporary client if it matches a string with a .", function() {
+    it("creates a temporary client if it matches a string with a .", function () {
       const client = getClientImpl(
         { host_to_automatic_api_host: [".madrid"] },
         {},
@@ -39,12 +39,12 @@ describe("ApiClient", function() {
       assert.equal("https://foo.quintype.io", client.baseUrl);
     });
 
-    it("creates a temporary client if host_to_api_host_is set", function() {
+    it("creates a temporary client if host_to_api_host_is set", function () {
       const client = getClientImpl(
         {
           host_to_api_host: {
-            "foo.madrid.quintype.io": "https://foo.quintype.io"
-          }
+            "foo.madrid.quintype.io": "https://foo.quintype.io",
+          },
         },
         {},
         "foo.madrid.quintype.io"
@@ -52,31 +52,31 @@ describe("ApiClient", function() {
       assert.equal("https://foo.quintype.io", client.baseUrl);
     });
 
-    it("returns null if no client is found", function() {
+    it("returns null if no client is found", function () {
       const client = getClientImpl({}, {}, "www.unknown.com");
       assert.equal(null, client);
     });
   });
 
-  describe("caching", function() {
-    it("returns cache keys for the story", function() {
+  describe("caching", function () {
+    it("returns cache keys for the story", function () {
       const story = Story.build({
         id: "264f46f9-e624-4718-b391-45e4bca7aeb6",
-        authors: [{ id: 42 }]
+        authors: [{ id: 42 }],
       });
       assert.deepEqual(["s/1/264f46f9", "a/1/42"], story.cacheKeys(1));
     });
 
-    it("returns cache keys for a collection", function() {
+    it("returns cache keys for a collection", function () {
       const collection = Collection.build({
         id: "42",
         "collection-cache-keys": ["sc/1/38586"],
         items: [
           {
             type: "story",
-            story: { id: "264f46f9-e624-4718-b391-45e4bca7aeb6" }
-          }
-        ]
+            story: { id: "264f46f9-e624-4718-b391-45e4bca7aeb6" },
+          },
+        ],
       });
       assert.deepEqual(
         ["c/1/42", "s/1/264f46f9", "sc/1/38586"],
@@ -84,7 +84,7 @@ describe("ApiClient", function() {
       );
     });
 
-    it("adds nested collections when depth is passed", function() {
+    it("adds nested collections when depth is passed", function () {
       const collection = Collection.build({
         id: "42",
         "collection-cache-keys": ["sc/1/38586"],
@@ -100,9 +100,9 @@ describe("ApiClient", function() {
                   {
                     type: "collection",
                     id: "700",
-                    items: [{ type: "story", story: { id: "abcdef12" } }]
-                  }
-                ]
+                    items: [{ type: "story", story: { id: "abcdef12" } }],
+                  },
+                ],
               },
               {
                 type: "collection",
@@ -111,13 +111,13 @@ describe("ApiClient", function() {
                   {
                     type: "collection",
                     id: "900",
-                    items: [{ type: "story", story: { id: "xyz12" } }]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
+                    items: [{ type: "story", story: { id: "xyz12" } }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       });
       assert.deepEqual(
         [
@@ -129,13 +129,13 @@ describe("ApiClient", function() {
           "c/1/900",
           "s/1/abcdef12",
           "s/1/xyz12",
-          "sc/1/38586"
+          "sc/1/38586",
         ],
         collection.cacheKeys(1, 3)
       );
     });
 
-    it("adds nested collections when depth is not passed", function() {
+    it("adds nested collections when depth is not passed", function () {
       const collection = Collection.build({
         id: "42",
         "collection-cache-keys": ["sc/1/38586"],
@@ -143,9 +143,9 @@ describe("ApiClient", function() {
           {
             type: "collection",
             id: "500",
-            items: [{ type: "story", story: { id: "abcdef12" } }]
-          }
-        ]
+            items: [{ type: "story", story: { id: "abcdef12" } }],
+          },
+        ],
       });
       assert.deepEqual(
         ["c/1/42", "c/1/500", "s/1/abcdef12", "sc/1/38586"],
@@ -153,31 +153,31 @@ describe("ApiClient", function() {
       );
     });
 
-    it("can also find the cache key for a sorter", function() {
+    it("can also find the cache key for a sorter", function () {
       assert.equal("q/1/top/home", Story.sorterToCacheKey(1, "top"));
       assert.equal("q/1/top/section-15", Story.sorterToCacheKey(1, "top", 15));
     });
   });
 
-  describe("Author", function() {
-    it("returns cache keys", function() {
+  describe("Author", function () {
+    it("returns cache keys", function () {
       const author = Author.build({ id: 101 });
       assert.deepStrictEqual(["a/1/101"], author.cacheKeys(1));
     });
 
-    it("returns cache keys as null if author is invalid", function() {
+    it("returns cache keys as null if author is invalid", function () {
       const author = Author.build({});
       assert.deepStrictEqual(null, author.cacheKeys(1));
     });
   });
 
-  describe("Custom urls", function() {
-    it("returns cache keys", function() {
+  describe("Custom urls", function () {
+    it("returns cache keys", function () {
       const page = CustomPath.build({ id: 101 });
       assert.deepStrictEqual(["u/1/101"], page.cacheKeys(1));
     });
 
-    it("returns cache keys as null if page is invalid", function() {
+    it("returns cache keys as null if page is invalid", function () {
       const page = CustomPath.build({});
       assert.deepStrictEqual(null, page.cacheKeys(1));
     });

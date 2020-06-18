@@ -11,9 +11,9 @@ function getClientStub(hostname) {
     getConfig: () =>
       Promise.resolve({
         config: { foo: "bar", "theme-attributes": {} },
-        "publisher-id": 42
+        "publisher-id": 42,
       }),
-    getCustomPathData: path => {
+    getCustomPathData: (path) => {
       switch (path) {
         case "/moved-permanently":
           return Promise.resolve({
@@ -21,8 +21,8 @@ function getClientStub(hostname) {
               id: 101,
               type: "redirect",
               "status-code": 301,
-              "destination-path": "/permanent-location"
-            }
+              "destination-path": "/permanent-location",
+            },
           });
         case "/moved-temporarily":
           return Promise.resolve({
@@ -30,8 +30,8 @@ function getClientStub(hostname) {
               id: 102,
               type: "redirect",
               "status-code": 302,
-              "destination-path": "/temporary-location"
-            }
+              "destination-path": "/temporary-location",
+            },
           });
         case "/moved-absolute":
           // FIXME: the /http on the next line is garbage from API.
@@ -40,8 +40,8 @@ function getClientStub(hostname) {
               id: 105,
               type: "redirect",
               "status-code": 301,
-              "destination-path": "/https://www.google.com"
-            }
+              "destination-path": "/https://www.google.com",
+            },
           });
         case "/static-with-header-footer":
           return Promise.resolve({
@@ -52,8 +52,8 @@ function getClientStub(hostname) {
                 "<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>",
               metadata: { header: true, footer: false },
               type: "static-page",
-              "status-code": 200
-            }
+              "status-code": 200,
+            },
           });
         case "/static-without-header-footer":
           return Promise.resolve({
@@ -64,13 +64,13 @@ function getClientStub(hostname) {
                 "<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>",
               metadata: { header: false, footer: false },
               type: "static-page",
-              "status-code": 200
-            }
+              "status-code": 200,
+            },
           });
         default:
           return Promise.resolve({ page: null, "status-code": 404 });
       }
-    }
+    },
   };
 }
 
@@ -81,8 +81,8 @@ function createApp(loadData, routes, opts = {}) {
     Object.assign(
       {
         assetHelper: {
-          assetHash: file => (file == "app.js" ? "abcdef" : null),
-          assetPath: file => `/assets/${file}`
+          assetHash: (file) => (file == "app.js" ? "abcdef" : null),
+          assetPath: (file) => `/assets/${file}`,
         },
         getClient: getClientStub,
         generateRoutes: () => routes,
@@ -92,7 +92,7 @@ function createApp(loadData, routes, opts = {}) {
             JSON.stringify({ contentTemplate, store: store.getState() })
           ),
         handleNotFound: false,
-        publisherConfig: {}
+        publisherConfig: {},
       },
       opts
     )
@@ -101,8 +101,8 @@ function createApp(loadData, routes, opts = {}) {
   return app;
 }
 
-describe("Custom Route Handler", function() {
-  it("Redirects with status code 301 if API has 301 redirection setup", function(done) {
+describe("Custom Route Handler", function () {
+  it("Redirects with status code 301 if API has 301 redirection setup", function (done) {
     const app = createApp(
       (pageType, params, config, client, { host, next }) => next(),
       [{ pageType: "story-page", path: "/*" }]
@@ -121,7 +121,7 @@ describe("Custom Route Handler", function() {
       .expect(301, done);
   });
 
-  it("Redirects with status code 302 if API has 302 redirection setup", function(done) {
+  it("Redirects with status code 302 if API has 302 redirection setup", function (done) {
     const app = createApp(
       (pageType, params, config, client, { host, next }) => next(),
       [{ pageType: "story-page", path: "/*" }]
@@ -140,7 +140,7 @@ describe("Custom Route Handler", function() {
       .expect(302, done);
   });
 
-  it("Renders the page in the normal flow if it's a static page and either header or footer is enabled", function(done) {
+  it("Renders the page in the normal flow if it's a static page and either header or footer is enabled", function (done) {
     const app = createApp(
       (pageType, params, config, client, { host, next }) =>
         pageType === "custom-static-page" ? Promise.resolve({}) : next(),
@@ -158,7 +158,7 @@ describe("Custom Route Handler", function() {
       .expect("Surrogate-Key", "u/42/103")
       .expect("Cache-Tag", "u/42/103")
       .expect(200)
-      .then(res => {
+      .then((res) => {
         const response = JSON.parse(res.text);
         assert.equal(
           "<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>",
@@ -169,7 +169,7 @@ describe("Custom Route Handler", function() {
       .then(done);
   });
 
-  it("Renders the page by sending the content if it's a static page with disabled header and footer", function(done) {
+  it("Renders the page by sending the content if it's a static page with disabled header and footer", function (done) {
     const app = createApp(
       (pageType, params, config, client, { host, next }) => next(),
       [{ pageType: "story-page", path: "/*" }]
@@ -186,7 +186,7 @@ describe("Custom Route Handler", function() {
       .expect("Surrogate-Key", "u/42/104")
       .expect("Cache-Tag", "u/42/104")
       .expect(200)
-      .then(res => {
+      .then((res) => {
         assert.equal(
           "<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>",
           res.text
@@ -195,17 +195,15 @@ describe("Custom Route Handler", function() {
       .then(done);
   });
 
-  it("Returns 404 if the route doesn't exist", function(done) {
+  it("Returns 404 if the route doesn't exist", function (done) {
     const app = createApp(
       (pageType, params, config, client, { host, next }) => next(),
       [{ pageType: "story-page", path: "/*" }]
     );
-    supertest(app)
-      .get("/does-not-exist")
-      .expect(404, done);
+    supertest(app).get("/does-not-exist").expect(404, done);
   });
 
-  it("DisableIsomorphicComponent is set to true", function(done) {
+  it("DisableIsomorphicComponent is set to true", function (done) {
     const app = createApp(
       (pageType, params, config, client, { host, next }) =>
         pageType === "custom-static-page" ? Promise.resolve({}) : next(),
@@ -215,14 +213,14 @@ describe("Custom Route Handler", function() {
       .get("/static-with-header-footer")
       .expect("Content-Type", /html/)
       .expect(200)
-      .then(res => {
+      .then((res) => {
         const response = JSON.parse(res.text);
         assert.equal(true, response.store.qt.disableIsomorphicComponent);
       })
       .then(done);
   });
 
-  it("Store reads config and data from data-loader response", function(done) {
+  it("Store reads config and data from data-loader response", function (done) {
     const app = createApp(
       (pageType, params, config, client, { host, next }) =>
         pageType === "custom-static-page"
@@ -234,7 +232,7 @@ describe("Custom Route Handler", function() {
       .get("/static-with-header-footer")
       .expect("Content-Type", /html/)
       .expect(200)
-      .then(res => {
+      .then((res) => {
         const response = JSON.parse(res.text);
         assert.deepEqual({}, response.store.qt.config);
         assert.deepEqual([], response.store.qt.data.navigationMenu);
@@ -242,7 +240,7 @@ describe("Custom Route Handler", function() {
       .then(done);
   });
 
-  it("Redirects to an absolute route, even if sketches gives a junk response", function(done) {
+  it("Redirects to an absolute route, even if sketches gives a junk response", function (done) {
     const app = createApp(
       (pageType, params, config, client, { host, next }) => next(),
       [{ pageType: "story-page", path: "/*" }]

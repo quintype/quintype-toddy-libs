@@ -8,16 +8,16 @@ function getClientStub(hostname) {
   return {
     getHostname: () => hostname,
     getConfig: () =>
-      Promise.resolve({ "publisher-settings": { title: "Madrid" } })
+      Promise.resolve({ "publisher-settings": { title: "Madrid" } }),
   };
 }
 
-describe("proxyGetHandler", function() {
-  it("can proxy a request to a handler which returs some data", function(done) {
+describe("proxyGetHandler", function () {
+  it("can proxy a request to a handler which returs some data", function (done) {
     const app = express();
-    proxyGetRequest(app, "/some/:api.json", params => ({ foo: params.api }), {
+    proxyGetRequest(app, "/some/:api.json", (params) => ({ foo: params.api }), {
       getClient: getClientStub,
-      publisherConfig: {}
+      publisherConfig: {},
     });
 
     supertest(app)
@@ -26,18 +26,18 @@ describe("proxyGetHandler", function() {
       .expect("Cache-Control", /public/)
       .expect("Vary", "Accept-Encoding")
       .expect(200)
-      .then(res => {
+      .then((res) => {
         const { foo } = JSON.parse(res.text);
         assert.equal("bar", foo);
       })
       .then(done);
   });
 
-  it("returns a 503 if there is no data", function(done) {
+  it("returns a 503 if there is no data", function (done) {
     const app = express();
-    proxyGetRequest(app, "/some/:api.json", params => null, {
+    proxyGetRequest(app, "/some/:api.json", (params) => null, {
       getClient: getClientStub,
-      publisherConfig: {}
+      publisherConfig: {},
     });
 
     supertest(app)
@@ -46,34 +46,34 @@ describe("proxyGetHandler", function() {
       .then(() => done());
   });
 
-  describe("proxying to another host", function() {
+  describe("proxying to another host", function () {
     var upstreamServer;
 
-    before(function(next) {
+    before(function (next) {
       const upstreamApp = express();
       upstreamApp.all("/*", (req, res) =>
         res.send(
           JSON.stringify({
             method: req.method,
             url: req.url,
-            host: req.headers.host
+            host: req.headers.host,
           })
         )
       );
       upstreamServer = upstreamApp.listen(next);
     });
 
-    it("forwards the call upstream", function(done) {
+    it("forwards the call upstream", function (done) {
       const app = express();
 
       proxyGetRequest(
         app,
         "/some/:api.json",
-        params =>
+        (params) =>
           `http://127.0.0.1:${upstreamServer.address().port}/${params.api}`,
         {
           getClient: getClientStub,
-          publisherConfig: {}
+          publisherConfig: {},
         }
       );
 
@@ -83,7 +83,7 @@ describe("proxyGetHandler", function() {
         .expect("Cache-Control", /public/)
         .expect("Vary", "Accept-Encoding")
         .expect(200)
-        .then(res => {
+        .then((res) => {
           const { method, url } = JSON.parse(res.text);
           assert.equal(method, "GET");
           assert.equal(url, "/bar");
@@ -91,7 +91,7 @@ describe("proxyGetHandler", function() {
         .then(done);
     });
 
-    after(function() {
+    after(function () {
       upstreamServer.close();
     });
   });
