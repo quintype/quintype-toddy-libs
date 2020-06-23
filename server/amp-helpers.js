@@ -3,7 +3,7 @@ class InfiniteScrollAmp {
     this.client = client;
     this.publisherConfig = publisherConfig;
     this.queryParams = queryParams;
-    this.collId = ampConfig["related-collection-id"]; // !!!! change to infinite-scroll-collection-id later
+    this.collSlug = "amp-infinite-scroll"; // this is hardcoded to "amp-infinite-scroll" temporarily. Ideally it should come from ampConfig from platform
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -44,14 +44,14 @@ class InfiniteScrollAmp {
   async getResponse({ itemsTaken }) {
     const { "story-id": storyId } = this.queryParams;
     if (!storyId) return new Error(`Query param "story-id" missing`);
-    if (!this.collId)
-      return new Error(
-        `"infinite-scroll-collection-id" not specified in amp config`
-      );
-    const collection = await this.client.getCollectionBySlug(this.collId);
+    // if (!this.collSlug)
+    //   return new Error(
+    //     `"amp-infinite-scroll" not specified in amp config`
+    //   );
+    const collection = await this.client.getCollectionBySlug(this.collSlug);
     if (!collection)
       return new Error(
-        `Infinite scroll collection ${this.collId} returned falsy value`
+        `Infinite scroll collection ${this.collSlug} returned falsy value`
       );
     const filteredItems = this.getFilteredCollItems(collection, storyId);
     const slicedItems = filteredItems.slice(itemsTaken);
@@ -62,10 +62,10 @@ class InfiniteScrollAmp {
   async getInitialInlineConfig({ itemsToTake, storyId }) {
     if (!itemsToTake || !storyId)
       return new Error("Required params for getInitialInlineConfig missing");
-    const collection = await this.client.getCollectionBySlug(this.collId);
+    const collection = await this.client.getCollectionBySlug(this.collSlug);
     if (!collection)
       return new Error(
-        `Infinite scroll collection ${this.collId} returned falsy value`
+        `Infinite scroll collection ${this.collSlug} returned falsy value`
       );
     const filteredItems = this.getFilteredCollItems(collection, storyId);
     const slicedItems = filteredItems.slice(0, itemsToTake);
