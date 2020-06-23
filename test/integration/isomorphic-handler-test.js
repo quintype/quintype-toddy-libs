@@ -420,7 +420,7 @@ describe("Isomorphic Handler", function () {
           }),
         [{ pageType: "story-page", path: "/*/:storySlug" }],
         {
-          lightPages: () => true,
+          lightPages: (config) => true,
         }
       );
 

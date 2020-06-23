@@ -15,7 +15,7 @@ const { createStore } = require("redux");
 const Promise = require("bluebird");
 const { getDefaultState, createBasicStore } = require("./create-store");
 const { customUrlToCacheKey } = require("../caching");
-
+const { addLightPageHeaders } = require("../impl/light-page-impl");
 const ABORT_HANDLER = "__ABORT__";
 function abortHandler() {
   return Promise.resolve({ pageType: ABORT_HANDLER, [ABORT_HANDLER]: true });
@@ -448,21 +448,8 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
       disableIsomorphicComponent: statusCode != 200,
     });
 
-    if (
-      lightPages ||
-      (typeof lightPages === "function" && lightPages(config))
-    ) {
-      const isAmpSupported = _.get(
-        result,
-        ["data", "story", "is-amp-supported"],
-        false
-      );
-
-      isAmpSupported &&
-        res.set(
-          "X-QT-Light-Pages-Url",
-          `${client.baseUrl}/amp/story/${encodeURIComponent(req.path)}`
-        );
+    if (lightPages) {
+      addLightPageHeaders(result, lightPages, { config, res, client, req });
     }
 
     res.status(statusCode);
