@@ -154,7 +154,7 @@ export function initializeQServiceWorker(self, params = {}) {
   };
   const shell = params.shell || "/shell.html";
   const shellHandler = ({ event }) =>
-    caches.match(shell).then(r => r || fetch(event.request));
+    caches.match(shell).then((r) => r || fetch(event.request));
 
   const workbox = new WorkboxSW({ clientsClaim: true, skipWaiting: true });
   workbox.precache(params.assets);

@@ -125,7 +125,7 @@ function startMaster({ workers = 4 }) {
   cluster.on("exit", (worker, code, signal) => {
     logger.error(`worker ${worker.process.pid} died`);
     const aliveWorkers = Object.values(cluster.workers).filter(
-      worker => worker.state !== "dead"
+      (worker) => worker.state !== "dead"
     );
 
     if (terminating) {
@@ -182,7 +182,7 @@ async function startWorker(appThunk, opts) {
  * @param {number} opts.port The port to start on (default 3000)
  * @param {number} opts.sleep Number of milliseconds to wait to respawn a terminated worker (default 250)
  */
-module.exports.startApp = function(appThunk, opts = {}) {
+module.exports.startApp = function (appThunk, opts = {}) {
   if (cluster.isMaster) {
     startMaster(opts);
   } else {
