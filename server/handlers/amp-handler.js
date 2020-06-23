@@ -2,10 +2,35 @@ const urlLib = require("url");
 const { Story, AmpConfig } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 const { storyToCacheKey } = require("../caching");
+const { InfiniteScrollAmp, setCorsHeaders } = require("../amp-helpers");
 
 function getSeoInstance(seo, config, pageType = "") {
   return typeof seo === "function" ? seo(config, pageType) : seo;
 }
+
+exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest(
+  req,
+  res,
+  next,
+  { client, config }
+) {
+  const ampConfig = await config.memoizeAsync(
+    "amp-config",
+    async () => await AmpConfig.getAmpConfig(client)
+  );
+
+  const infiniteScrollAmp = new InfiniteScrollAmp({
+    ampConfig,
+    publisherConfig: config,
+    client,
+    queryParams: req.query,
+  });
+  const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 5 }); // itemsTaken has to match with itemsToTake in getInitialInlineConfig method
+  if (jsonResponse instanceof Error) return next(jsonResponse);
+  res.set("Content-Type", "application/json; charset=utf-8");
+  setCorsHeaders({ req, res, next, publisherConfig: config });
+  if (!res.headersSent) return res.send(jsonResponse);
+};
 
 exports.handleAmpRequest = async function handleAmpRequest(
   req,
@@ -67,6 +92,20 @@ exports.handleAmpRequest = async function handleAmpRequest(
         { url }
       );
 
+    const infiniteScrollAmp = new InfiniteScrollAmp({
+      ampConfig,
+      publisherConfig: config,
+      client,
+    });
+    const infiniteScrollInlineConfig = await infiniteScrollAmp.getInitialInlineConfig(
+      {
+        itemsToTake: 5,
+        storyId: story["story-content-id"],
+      }
+    );
+    if (infiniteScrollInlineConfig instanceof Error)
+      return next(infiniteScrollInlineConfig);
+
     const ampHtml = ampifyStory({
       story,
       publisherConfig: config.config,
@@ -75,6 +114,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
       client,
       opts: { slots, templates, ...opts },
       seo: seoTags ? seoTags.toString() : "",
+      infiniteScrollInlineConfig,
     });
     if (ampHtml instanceof Error) return next(ampHtml);
     res.set("Content-Type", "text/html");
