@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.28.0](https://github.com/quintype/quintype-node-framework/compare/v3.26.2...v3.28.0) (2020-06-23)
+
+
+### Features
+
+* **lightPages:** Send the right headers for amp pages ([#125](https://github.com/quintype/quintype-node-framework/issues/125)) ([04aa918](https://github.com/quintype/quintype-node-framework/commit/04aa918))
+
+
+
+# [3.27.0](https://github.com/quintype/quintype-node-framework/compare/v3.26.2...v3.27.0) (2020-06-23)
+
+
+### Features
+
+* **lightPages:** Send the right headers for amp pages ([#125](https://github.com/quintype/quintype-node-framework/issues/125)) ([04aa918](https://github.com/quintype/quintype-node-framework/commit/04aa918))
+
+
+
 ## [3.26.2](https://github.com/quintype/quintype-node-framework/compare/v3.26.1...v3.26.2) (2020-06-11)
 
 ## [3.26.1](https://github.com/quintype/quintype-node-framework/compare/v3.26.0...v3.26.1) (2020-06-05)
