@@ -15,7 +15,7 @@ const { createStore } = require("redux");
 const Promise = require("bluebird");
 const { getDefaultState, createBasicStore } = require("./create-store");
 const { customUrlToCacheKey } = require("../caching");
-
+const { addLightPageHeaders } = require("../impl/light-page-impl");
 const ABORT_HANDLER = "__ABORT__";
 function abortHandler() {
   return Promise.resolve({ pageType: ABORT_HANDLER, [ABORT_HANDLER]: true });
@@ -419,6 +419,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     preloadRouteData,
     domainSlug,
     cdnProvider,
+    lightPages,
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -446,6 +447,10 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     const store = createStoreFromResult(url, result, {
       disableIsomorphicComponent: statusCode != 200,
     });
+
+    if (lightPages) {
+      addLightPageHeaders(result, lightPages, { config, res, client, req });
+    }
 
     res.status(statusCode);
     addCacheHeadersToResult(
@@ -513,57 +518,6 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
         })
         .finally(() => res.end());
     });
-};
-
-exports.handleLightPagesRoute = async (
-  req,
-  res,
-  next,
-  {
-    config,
-    client,
-    generateRoutes,
-    loadData,
-    loadErrorData,
-    logError,
-    domainSlug,
-    renderLightPage,
-    lightPages,
-  }
-) => {
-  const url = urlLib.parse(req.url, true);
-
-  if (typeof lightPages === "function" && !lightPages(config)) {
-    return next();
-  }
-
-  try {
-    const result = await loadDataForIsomorphicRoute(
-      loadData,
-      loadErrorData,
-      url,
-      generateRoutes(config, domainSlug),
-      { config, client, logError, host: req.hostname, domainSlug }
-    );
-    if (!result) {
-      return next();
-    }
-
-    const isAmpSupported = _.get(
-      result,
-      ["data", "story", "is-amp-supported"],
-      false
-    );
-
-    if (isAmpSupported) {
-      renderLightPage(req, res, client);
-    } else {
-      return next();
-    }
-  } catch (e) {
-    logError(e);
-    return { httpStatusCode: 500, pageType: "error" };
-  }
 };
 
 exports.handleStaticRoute = function handleStaticRoute(

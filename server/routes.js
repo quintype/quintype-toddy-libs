@@ -12,7 +12,6 @@ const {
   handleIsomorphicShell,
   handleIsomorphicDataLoad,
   handleIsomorphicRoute,
-  handleLightPagesRoute,
   handleStaticRoute,
   notFoundHandler,
 } = require("./handlers/isomorphic-handler");
@@ -254,7 +253,6 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {boolean} opts.templateOptions If set to true, then *&#47;template-options.json* will return a list of available components so that components can be sorted in the CMS. This reads data from *config/template-options.yml*. See [Adding a homepage component](https://developers.quintype.com/malibu/tutorial/adding-a-homepage-component) for more details
  * @param {boolean|function} opts.lightPages If set to true, then all story pages will render amp pages.
  * @param {string} opts.cdnProvider The name of the cdn provider. Supported cdn providers are akamai, cloudflare. Default value is cloudflare.
- * @param {function} opts.renderLightPage A function which renders the amp layout for a page.
  * @param {function} opts.maxConfigVersion An async function which resolves to a integer version of the config. This defaults to config.theme-attributes.cache-burst
  */
 exports.isomorphicRoutes = function isomorphicRoutes(
@@ -282,7 +280,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     templateOptions = false,
     lightPages = false,
     cdnProvider = "cloudflare",
-    renderLightPage = require("./impl/render-light-page"),
     serviceWorkerPaths = ["/service-worker.js"],
     maxConfigVersion = (config) =>
       get(config, ["theme-attributes", "cache-burst"], 0),
@@ -424,20 +421,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     );
   });
 
-  if (lightPages) {
-    app.get(
-      "/*",
-      withConfig(handleLightPagesRoute, {
-        generateRoutes,
-        loadData,
-        loadErrorData,
-        logError,
-        renderLightPage,
-        lightPages,
-      })
-    );
-  }
-
   app.get(
     "/*",
     withConfig(handleIsomorphicRoute, {
@@ -452,6 +435,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       preloadRouteData,
       assetHelper,
       cdnProvider,
+      lightPages,
     })
   );
 

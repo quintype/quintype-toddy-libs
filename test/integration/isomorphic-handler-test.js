@@ -9,7 +9,11 @@ function getClientStub(hostname) {
   return {
     getHostname: () => "demo.quintype.io",
     getConfig: () =>
-      Promise.resolve({ foo: "bar", "sketches-host": "https://www.foo.com" }),
+      Promise.resolve({
+        foo: "bar",
+        "sketches-host": "https://www.foo.com",
+      }),
+    baseUrl: "https://www.foo.com",
   };
 }
 
@@ -391,8 +395,6 @@ describe("Isomorphic Handler", function () {
         [{ pageType: "story-page", path: "/*/:storySlug" }],
         {
           lightPages: true,
-          renderLightPage: (req, res, result) =>
-            res.send("<h1> Amp Page </h1>"),
         }
       );
 
@@ -401,7 +403,10 @@ describe("Isomorphic Handler", function () {
         .expect("Content-Type", /html/)
         .expect(200)
         .then((res) => {
-          assert.equal("<h1> Amp Page </h1>", res.text);
+          assert.equal(
+            "https://www.foo.com/amp/story/%2Ffoo%2Fbar",
+            res.get("X-QT-Light-Pages-Url")
+          );
         })
         .then(done);
     });
@@ -415,9 +420,7 @@ describe("Isomorphic Handler", function () {
           }),
         [{ pageType: "story-page", path: "/*/:storySlug" }],
         {
-          lightPages: () => true,
-          renderLightPage: (req, res, result) =>
-            res.send("<h1> Amp Page </h1>"),
+          lightPages: (config) => true,
         }
       );
 
@@ -426,7 +429,10 @@ describe("Isomorphic Handler", function () {
         .expect("Content-Type", /html/)
         .expect(200)
         .then((res) => {
-          assert.equal("<h1> Amp Page </h1>", res.text);
+          assert.equal(
+            "https://www.foo.com/amp/story/%2Ffoo%2Fbar",
+            res.get("X-QT-Light-Pages-Url")
+          );
         })
         .then(done);
     });
