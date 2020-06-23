@@ -565,13 +565,6 @@ exports.mountQuintypeAt = function (app, mountAt) {
  * @param {function} opts.headerCardRender Render prop for story headerCard. If passed, the headerCard in default stories will be replaced with this
  * @param {function} opts.relatedStoriesRender Render prop for relatedStories in a story page. If passed, this will replace the related stories
  *
- * ```javascript
- * ampRoutes(app, {
- *  templates: { text: TextTemplate },
- *  slots: { slotName: Component }
- * })
- * ```
- *
  */
 exports.ampRoutes = (app, opts = {}) => {
   const {
