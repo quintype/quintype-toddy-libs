@@ -33,6 +33,7 @@
 //     getConfig: () =>
 //       Promise.resolve({
 //         "cdn-name": "images.assettype.com",
+//         "cdn-image": "gumlet.assettype.com",
 //         memoizeAsync: (key, fn) => {
 //           return ampConfig;
 //         },
@@ -50,6 +51,7 @@
 //             "focus-point": [2609, 1102],
 //           },
 //           "hero-image-s3-key": "barandbench/2020-01/sample.jpg",
+//           "story-content-id": "987c0480-41c8-41d2-ad35-36b5f92be73e",
 
 //           cards: [
 //             {
@@ -86,8 +88,24 @@
 //     getCollectionBySlug: (slug) =>
 //       Promise.resolve({
 //         items: [
-//           { id: "1111", type: "story", story: { "story-content-id": "abc" } },
-//           { id: "2222", type: "story", story: { "story-content-id": "def" } },
+//           {
+//             id: "1111",
+//             type: "story",
+//             story: {
+//               "story-content-id": "abc",
+//               headline: "headline1",
+//               slug: "/foo.com/story-a",
+//             },
+//           },
+//           {
+//             id: "2222",
+//             type: "story",
+//             story: {
+//               "story-content-id": "def",
+//               headline: "headline2",
+//               slug: "/foo.com/story-a",
+//             },
+//           },
 //         ],
 //       }),
 //   };
