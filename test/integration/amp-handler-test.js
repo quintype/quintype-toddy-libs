@@ -91,6 +91,8 @@ function getClientStub(hostname) {
             type: "story",
             story: {
               "story-content-id": "abc",
+              "cdn-image": "gumlet.assettype.com",
+              "hero-image-s3-key": "abc/heroimage.jpg",
               headline: "headline1",
               slug: "/foo.com/story-a",
             },
@@ -100,8 +102,65 @@ function getClientStub(hostname) {
             type: "story",
             story: {
               "story-content-id": "def",
+              "cdn-image": "gumlet.assettype.com",
+              "hero-image-s3-key": "def/heroimage.jpg",
               headline: "headline2",
               slug: "/foo.com/story-a",
+            },
+          },
+          {
+            id: "3333",
+            type: "story",
+            story: {
+              "story-content-id": "ghi",
+              "cdn-image": "gumlet.assettype.com",
+              "hero-image-s3-key": "ghi/heroimage.jpg",
+              headline: "headline3",
+              slug: "/foo.com/story-c",
+            },
+          },
+          {
+            id: "4444",
+            type: "story",
+            story: {
+              "story-content-id": "jkl",
+              "cdn-image": "gumlet.assettype.com",
+              "hero-image-s3-key": "jkl/heroimage.jpg",
+              headline: "headline4",
+              slug: "/foo.com/story-d",
+            },
+          },
+          {
+            id: "5555",
+            type: "story",
+            story: {
+              "story-content-id": "mno",
+              "cdn-image": "gumlet.assettype.com",
+              "hero-image-s3-key": "mno/heroimage.jpg",
+              headline: "headline5",
+              slug: "/foo.com/story-e",
+            },
+          },
+          {
+            id: "6666",
+            type: "story",
+            story: {
+              "story-content-id": "pqr",
+              "cdn-image": "gumlet.assettype.com",
+              "hero-image-s3-key": "pqr/heroimage.jpg",
+              headline: "headline6",
+              slug: "/foo.com/story-f",
+            },
+          },
+          {
+            id: "7777",
+            type: "story",
+            story: {
+              "story-content-id": "stu",
+              "cdn-image": "gumlet.assettype.com",
+              "hero-image-s3-key": "stu/heroimage.jpg",
+              headline: "headline7",
+              slug: "/foo.com/story-g",
             },
           },
         ],
@@ -120,8 +179,8 @@ function createApp(app = express()) {
   return app;
 }
 
-describe("AmpHandler", () => {
-  it("mounts an amp page", (done) => {
+describe("Amp story page handler", () => {
+  it("mounts an amp story page", (done) => {
     const app = createApp();
     supertest(app)
       .get("/amp/story/foo")
@@ -132,26 +191,38 @@ describe("AmpHandler", () => {
       })
       .then(done);
   });
-  it("mounts an amp page with sections", (done) => {
+});
+
+describe("Amp infinite scroll handler", () => {
+  it("returns infinite scroll json config for same-origin requests", (done) => {
     const app = createApp();
+    const expectedObj = {
+      pages: [
+        {
+          image:
+            "https://gumlet.assettype.com/pqr/heroimage.jpg?format=webp&w=250",
+          title: "headline6",
+          url: "/amp/story/foo.com/story-f",
+        },
+        {
+          image:
+            "https://gumlet.assettype.com/stu/heroimage.jpg?format=webp&w=250",
+          title: "headline7",
+          url: "/amp/story/foo.com/story-g",
+        },
+      ],
+    };
     supertest(app)
-      .get("/amp/story/foo/bar/foobar")
-      .expect("Content-Type", /html/)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=foo")
+      .set("amp-same-origin", "true")
       .expect(200)
-      .then((res) => {
-        assert.equal('<div data-page-type="home-page">foobar</div>', res.text);
-      })
-      .then(done);
-  });
-  it("mounts an amp page with slug encoded", (done) => {
-    const app = createApp();
-    supertest(app)
-      .get("/amp/story/foo%2Fbar%2Ffoobar")
-      .expect("Content-Type", /html/)
-      .expect(200)
-      .then((res) => {
-        assert.equal('<div data-page-type="home-page">foobar</div>', res.text);
-      })
-      .then(done);
+      .expect("Content-Type", /json/)
+      .expect("access-control-allow-origin", "*")
+      .end((err, res) => {
+        if (err) return done(err);
+        const response = res.text;
+        assert.equal(JSON.stringify(expectedObj), response);
+        return done();
+      });
   });
 });
