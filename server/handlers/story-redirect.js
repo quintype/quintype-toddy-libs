@@ -9,15 +9,15 @@ exports.redirectStory = function redirectStory(
   { logError, config, client }
 ) {
   return Story.getStoryBySlug(client, req.params.storySlug)
-    .then(story => {
+    .then((story) => {
       if (story) {
         addCacheHeadersToResult(res, [
-          storyToCacheKey(config["publisher-id"], story)
+          storyToCacheKey(config["publisher-id"], story),
         ]);
         return res.redirect(301, `/${story.slug}`);
       } else {
         return next();
       }
     })
-    .catch(e => next());
+    .catch((e) => next());
 };

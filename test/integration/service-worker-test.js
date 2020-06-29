@@ -7,7 +7,7 @@ const supertest = require("supertest");
 function getClientStub(hostname) {
   return {
     getHostname: () => hostname,
-    getConfig: () => Promise.resolve({ sections: [{ slug: "news" }] })
+    getConfig: () => Promise.resolve({ sections: [{ slug: "news" }] }),
   };
 }
 
@@ -18,41 +18,41 @@ function renderLayoutStub(res, layout, params, callback) {
     hostname: params.hostname,
     assetHash: params.assetHash("app.js"),
     routes: params.routes,
-    layout: layout
+    layout: layout,
   });
   return callback(null, content);
 }
 
-describe("ServiceWorker Generator", function() {
+describe("ServiceWorker Generator", function () {
   const app = express();
   isomorphicRoutes(app, {
     assetHelper: {
-      assetHash: file => (file == "app.js" ? "abcdef" : null),
+      assetHash: (file) => (file == "app.js" ? "abcdef" : null),
       serviceWorkerContents: () => "service-worker-contents",
-      assetPath: file => `//cdn/${file}`
+      assetPath: (file) => `//cdn/${file}`,
     },
     getClient: getClientStub,
     renderServiceWorker: renderLayoutStub,
-    generateRoutes: config =>
+    generateRoutes: (config) =>
       config.sections
-        .map(section => ({ path: `/${section.slug}` }))
+        .map((section) => ({ path: `/${section.slug}` }))
         .concat([{ skipPWA: true, path: "/skip" }]),
     oneSignalServiceWorkers: true,
-    publisherConfig: {}
+    publisherConfig: {},
   });
 
-  it("generates the service worker correctly", function(done) {
+  it("generates the service worker correctly", function (done) {
     supertest(app)
       .get("/service-worker.js")
       .expect("Content-Type", /javascript/)
       .expect(200)
-      .then(res => {
+      .then((res) => {
         const {
           serviceWorkerHelper,
           jsPath,
           hostname,
           assetHash,
-          layout
+          layout,
         } = JSON.parse(res.text);
         assert.equal("service-worker-contents", serviceWorkerHelper);
         assert.equal("//cdn/app.js", jsPath);
@@ -63,12 +63,12 @@ describe("ServiceWorker Generator", function() {
       .then(done);
   });
 
-  it("skips only includes PWA routes in the route", function(done) {
+  it("skips only includes PWA routes in the route", function (done) {
     supertest(app)
       .get("/service-worker.js")
       .expect("Content-Type", /javascript/)
       .expect(200)
-      .then(res => {
+      .then((res) => {
         const { routes } = JSON.parse(res.text);
         assert.equal(1, routes.length);
         assert.equal("/news", routes[0].path);
@@ -76,12 +76,12 @@ describe("ServiceWorker Generator", function() {
       .then(done);
   });
 
-  it("generates the one signal handler", function(done) {
+  it("generates the one signal handler", function (done) {
     supertest(app)
       .get("/OneSignalSDKWorker.js")
       .expect("Content-Type", /javascript/)
       .expect(200)
-      .then(res => {
+      .then((res) => {
         assert(res.text.match(/OneSignalSDK.js/));
       })
       .then(done);

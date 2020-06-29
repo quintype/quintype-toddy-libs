@@ -24,10 +24,9 @@ isomorphicRoutes(app, {
 
 This highlights the three important places to put stuff for an isomorphic app
 
-* Match the route against a `pageType`, typically in `app/server/routes.js` (see the routing section above)
-* Load the Data Required for that `pageType`, typically in `app/server/load-data.js`. This returns a promise with required data.
-* Render the correct component for that `pageType`, typically in `app/isomorphic/pick-component.js`. This must be a pure component
-
+- Match the route against a `pageType`, typically in `app/server/routes.js` (see the routing section above)
+- Load the Data Required for that `pageType`, typically in `app/server/load-data.js`. This returns a promise with required data.
+- Render the correct component for that `pageType`, typically in `app/isomorphic/pick-component.js`. This must be a pure component
 
 ## Forcing Updates
 
@@ -102,23 +101,23 @@ Further, `/route-data.json` will have two more fields at the root level. `domain
 In order to use the visual-stories, do the following in `app/server/app.js`
 
 ```javascript
-import {enableVisualStories} from '@quintype/framework/server/visual-stories';
+import { enableVisualStories } from "@quintype/framework/server/visual-stories";
 
-function renderVisualStory(res, story, {config, client}) {
+function renderVisualStory(res, story, { config, client }) {
   res.render("pages/visual-story", {
     seo: "",
-    content: ReactDom.renderToStaticMarkup(<amp-story></amp-story>)
-  })
+    content: ReactDom.renderToStaticMarkup(<amp-story></amp-story>),
+  });
 }
 
-enableVisualStories(app, renderVisualStory, {logError})
+enableVisualStories(app, renderVisualStory, { logError });
 ```
 
 ## Debugging
 
-* In order to use `assetify` function, please annotate the application-js with id="app-js". The hostname specified here is assumed to be the cdn
-* All code related to the browser loading the service worker can be found in [load-service-worker.js](client/load-service-worker.js)
-* All code related to the service worker itself is found in [service-worker-helper.js](client/service-worker-helper.js)
+- In order to use `assetify` function, please annotate the application-js with id="app-js". The hostname specified here is assumed to be the cdn
+- All code related to the browser loading the service worker can be found in [load-service-worker.js](client/load-service-worker.js)
+- All code related to the service worker itself is found in [service-worker-helper.js](client/service-worker-helper.js)
 
 ## Miscellaneous
 
@@ -127,13 +126,13 @@ enableVisualStories(app, renderVisualStory, {logError})
 Starting in `@quintype/framework` v3, we are introducing multi domain support. The configuration for section page locations is now controlled by the editor. Please switch to using `generateCommonRoutes` to generate story page, and section page routes.
 
 ```javascript
-import {generateCommonRoutes} from "@quintype/framework/server/generate-routes";
+import { generateCommonRoutes } from "@quintype/framework/server/generate-routes";
 
 export function generateRoutes(config, domainSlug) {
   return generateCommonRoutes(config, domainSlug, {
     sectionPageRoutes: true,
-    storyPageRoutes: true
-  })
+    storyPageRoutes: true,
+  });
 }
 ```
 
@@ -158,6 +157,7 @@ startApp(renderApplication, CUSTOM_REDUCERS, {
   serviceWorkerLocation: "/OneSignalSDKWorker.js", // OneSignal will automatically register the service worker
 })
 ```
+
 ### FCM Integration
 
 Steps to Integrate FCM in your project
@@ -165,6 +165,7 @@ Steps to Integrate FCM in your project
 1. While executing startApp in your project set enableFCM to true.
 
 An Example
+
 ```
 startApp(renderApplication,
   CUSTOM_REDUCERS,
@@ -174,7 +175,9 @@ startApp(renderApplication,
   ...
 })
 ```
+
 2. publisher_config.yml should have the fcm configuration as below:
+
 ```
     fcm:
       message_sender_id: <MessageSenderId>
@@ -185,29 +188,29 @@ startApp(renderApplication,
 
    Example of the script:
 
-      ```
-          importScripts("https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js");
-          importScripts("https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js");
-          firebase.initializeApp({
-            messagingSenderId: <your message sender Id>
-          });
-          const messaging = firebase.messaging();
-          function messageHandler(payload) {
-            const data = payload["data"];
+   ```
+       importScripts("https://www.gstatic.com/firebasejs/4.8.1/firebase-app.js");
+       importScripts("https://www.gstatic.com/firebasejs/4.8.1/firebase-messaging.js");
+       firebase.initializeApp({
+         messagingSenderId: <your message sender Id>
+       });
+       const messaging = firebase.messaging();
+       function messageHandler(payload) {
+         const data = payload["data"];
 
-            var notificationTitle = data.title;
-            var notificationOptions = {
-              body: data.body,
-              icon: data["hero_image_s3_url"],
-              image: data["hero_image_s3_url"],
-              data: data
-            };
+         var notificationTitle = data.title;
+         var notificationOptions = {
+           body: data.body,
+           icon: data["hero_image_s3_url"],
+           image: data["hero_image_s3_url"],
+           data: data
+         };
 
-            return self.registration.showNotification(notificationTitle,
-              notificationOptions);
-          }
-          messaging.setBackgroundMessageHandler(messageHandler);
-      ```
+         return self.registration.showNotification(notificationTitle,
+           notificationOptions);
+       }
+       messaging.setBackgroundMessageHandler(messageHandler);
+   ```
 
 4. Make sure that the page data should have config with key fcmMessageSenderId refer doStartApp function in app/client/start.js.
 
@@ -240,13 +243,17 @@ Make sure you do all of the following techniques to reduce page load time (notes
 ### Add a initial-page to preRender chrome such as the menu without waiting for AJAX responses
 
 ```html
-<script type="application/json" id="initial-page">{"config": {}}</script>
+<script type="application/json" id="initial-page">
+  { "config": {} }
+</script>
 ```
 
 ### Use static-page to show a full page (this will prevent fetchData from calling)
 
 ```html
-<script type="application/json" id="static-page">{"config": {}}</script>
+<script type="application/json" id="static-page">
+  { "config": {} }
+</script>
 ```
 
 ### Never require lodash directly. Always do lodash/get
@@ -277,19 +284,19 @@ FIXME: Write notes on `host_to_api_host`, `host_to_automatic_api_host` and `skip
 
 1. https://developers.google.com/web/fundamentals/performance/optimizing-javascript/tree-shaking/
 
-
-
 ## Migration to framework@3
 
 - Run the following to execute the script:
+
 ```sh
 sh <(curl https://raw.githubusercontent.com/quintype/quintype-node-framework/master/scripts/framework-2-to-3-migration)
 ```
+
 - Verify Changes with `git diff --cached`
 
 ## References
 
-* This architecture is heavily influenced by the method described in this [video](https://www.youtube.com/watch?v=atUdVSuNRjA)
-* Code for the available video is available [here](https://github.com/gja/pwa-clojure)
-* I know there is a good tutorial video I've seen. But I can't remember where.
-* Great [intro to pwa](https://developers.google.com/web/fundamentals/getting-started/codelabs/your-first-pwapp/)
+- This architecture is heavily influenced by the method described in this [video](https://www.youtube.com/watch?v=atUdVSuNRjA)
+- Code for the available video is available [here](https://github.com/gja/pwa-clojure)
+- I know there is a good tutorial video I've seen. But I can't remember where.
+- Great [intro to pwa](https://developers.google.com/web/fundamentals/getting-started/codelabs/your-first-pwapp/)

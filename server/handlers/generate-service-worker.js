@@ -9,12 +9,12 @@ async function generateServiceWorker(
     assetHelper,
     renderServiceWorker,
     domainSlug,
-    maxConfigVersion
+    maxConfigVersion,
   }
 ) {
   const configVersion = await maxConfigVersion(config);
 
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     renderServiceWorker(
       res,
       "js/service-worker",
@@ -27,8 +27,8 @@ async function generateServiceWorker(
         configVersion,
         getFilesForChunks: assetHelper.getFilesForChunks,
         routes: generateRoutes(config, domainSlug).filter(
-          route => !route.skipPWA
-        )
+          (route) => !route.skipPWA
+        ),
       },
       (err, content) => {
         // istanbul ignore if

@@ -5,7 +5,7 @@ const _ = require("lodash");
 const urlLib = require("url");
 const {
   matchBestRoute,
-  matchAllRoutes
+  matchAllRoutes,
 } = require("../../isomorphic/match-best-route");
 const { IsomorphicComponent } = require("../../isomorphic/component");
 const { addCacheHeadersToResult } = require("./cdn-caching");
@@ -15,7 +15,7 @@ const { createStore } = require("redux");
 const Promise = require("bluebird");
 const { getDefaultState, createBasicStore } = require("./create-store");
 const { customUrlToCacheKey } = require("../caching");
-
+const { addLightPageHeaders } = require("../impl/light-page-impl");
 const ABORT_HANDLER = "__ABORT__";
 function abortHandler() {
   return Promise.resolve({ pageType: ABORT_HANDLER, [ABORT_HANDLER]: true });
@@ -28,7 +28,7 @@ function loadDataForIsomorphicRoute(
   routes,
   { otherParams, config, client, host, logError, domainSlug }
 ) {
-  return loadDataForEachRoute().catch(error => {
+  return loadDataForEachRoute().catch((error) => {
     logError(error);
     return loadErrorData(error, config, client, { host, domainSlug });
   });
@@ -40,7 +40,7 @@ function loadDataForIsomorphicRoute(
       const result = await loadData(match.pageType, params, config, client, {
         host,
         next: abortHandler,
-        domainSlug
+        domainSlug,
       });
 
       if (result && result[ABORT_HANDLER]) continue;
@@ -59,22 +59,22 @@ function loadDataForPageType(
   params,
   { config, client, logError, host, domainSlug }
 ) {
-  return new Promise(resolve =>
+  return new Promise((resolve) =>
     resolve(
       loadData(pageType, params, config, client, {
         host,
         next: abortHandler,
-        domainSlug
+        domainSlug,
       })
     )
   )
-    .then(result => {
+    .then((result) => {
       if (result && result.data && result.data[ABORT_HANDLER]) {
         return null;
       }
       return result;
     })
-    .catch(error => {
+    .catch((error) => {
       logError(error);
       return loadErrorData(error, config, client, { host, domainSlug });
     });
@@ -98,7 +98,7 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
     logError,
     preloadJs,
     domainSlug,
-    maxConfigVersion
+    maxConfigVersion,
   }
 ) {
   const freshRevision = `${assetHelper.assetHash(
@@ -114,7 +114,7 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
     "shell",
     {},
     { config, client, logError, host: req.hostname, domainSlug }
-  ).then(result => {
+  ).then((result) => {
     res.status(200);
     res.setHeader("Content-Type", "text/html");
     res.setHeader("Cache-Control", "public,max-age=900");
@@ -131,8 +131,8 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
       config,
       content:
         '<div class="app-loading"><script type="text/javascript">window.qtLoadedFromShell = true</script></div>',
-      store: createStore(state => state, getDefaultState(result)),
-      shell: true
+      store: createStore((state) => state, getDefaultState(result)),
+      shell: true,
     });
   });
 };
@@ -144,13 +144,52 @@ function createStoreFromResult(url, result, opts = {}) {
     data: result.data,
     currentPath: `${url.pathname}${url.search || ""}`,
     currentHostUrl: result.currentHostUrl,
-    primaryHostUrl: result.primaryHostUrl
+    primaryHostUrl: result.primaryHostUrl,
   };
   return createBasicStore(result, qt, opts);
 }
 
-function selectFieldsForMobile(config, fields) {
-  return fields.length > 0 ? _.pick(config, fields) : config;
+function chunkDataForMobile(data, fieldsCallback, pageType) {
+  const fields =
+    typeof fieldsCallback === "function"
+      ? fieldsCallback(pageType)
+      : fieldsCallback;
+
+  /* return data if no fields are passed */
+  if (_.isEmpty(fields)) return data;
+
+  /* If the incoming config is an array, filter and return */
+  if (_.isArray(fields)) return _.pick(data, fields);
+
+  /* Extract keys from data field in config */
+  const dataConfigFields = Object.keys(fields);
+
+  /* pick the keys matching whitelisted data */
+  const dataChildren = _.pick(data, dataConfigFields);
+
+  /* Second level of filtering */
+  return dataConfigFields.reduce((acc, currEle) => {
+    /* If whitelisted key turn out to be an array */
+    if (_.isArray(dataChildren[currEle]) && _.isArray(fields[currEle])) {
+      acc[currEle] = dataChildren[currEle].reduce((xAcc, xCurrEle) => {
+        _.isObject(xCurrEle)
+          ? xAcc.push(_.pick(xCurrEle, fields[currEle]))
+          : xAcc.push(xCurrEle);
+        return xAcc;
+      }, []);
+    } else if (
+      /* If whitelisted key turn out to be an object */
+      _.isPlainObject(dataChildren[currEle]) &&
+      _.isArray(fields[currEle])
+    ) {
+      acc[currEle] = _.pick(dataChildren[currEle], fields[currEle]);
+
+      /* If whitelisted key exists in data */
+    } else if (dataChildren[currEle]) {
+      acc[currEle] = dataChildren[currEle];
+    }
+    return acc;
+  }, {});
 }
 
 exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
@@ -170,13 +209,13 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
     domainSlug,
     mobileApiEnabled,
     mobileConfigFields,
-    cdnProvider
+    cdnProvider,
   }
 ) {
   const url = urlLib.parse(req.query.path || "/", true);
   const dataLoader = staticDataLoader() || isomorphicDataLoader();
 
-  return dataLoader.then(result => {
+  return dataLoader.then((result) => {
     if (!result) {
       return returnNotFound();
     }
@@ -194,8 +233,8 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         client,
         logError,
         host: req.hostname,
-        domainSlug
-      }).then(result =>
+        domainSlug,
+      }).then((result) =>
         Object.assign({ pageType, disableIsomorphicComponent: true }, result)
       );
     }
@@ -222,9 +261,9 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         host: req.hostname,
         logError,
         otherParams: req.query,
-        domainSlug
+        domainSlug,
       }
-    ).catch(e => {
+    ).catch((e) => {
       logError(e);
       return { httpStatusCode: 500, pageType: "error" };
     });
@@ -250,13 +289,19 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
       res.json(
         Object.assign({}, result, {
           appVersion,
-          data: _.omit(result.data, ["cacheKeys"]),
+          data: mobileApiEnabled
+            ? chunkDataForMobile(
+                result.data,
+                mobileConfigFields,
+                result.pageType
+              )
+            : _.omit(result.data, ["cacheKeys"]),
           config: mobileApiEnabled
-            ? selectFieldsForMobile(result.config, mobileConfigFields)
+            ? chunkDataForMobile(result.config, mobileConfigFields, "config")
             : result.config,
           title: seoInstance
             ? seoInstance.getTitle(config, result.pageType, result)
-            : result.title
+            : result.title,
         })
       );
     })
@@ -265,16 +310,16 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
   }
 
   function returnNotFound() {
-    return new Promise(resolve =>
+    return new Promise((resolve) =>
       resolve(
         loadErrorData(new NotFoundException(), config, client, {
           host: req.hostname,
-          domainSlug
+          domainSlug,
         })
       )
     )
-      .catch(e => console.log("Exception", e))
-      .then(result => {
+      .catch((e) => console.log("Exception", e))
+      .then((result) => {
         res.status(result.httpStatusCode || 404);
         res.setHeader("Content-Type", "application/json");
         res.setHeader("Cache-Control", "public,max-age=15,s-maxage=120");
@@ -297,29 +342,29 @@ exports.notFoundHandler = function notFoundHandler(
     renderLayout,
     pickComponent,
     logError,
-    domainSlug
+    domainSlug,
   }
 ) {
   const url = urlLib.parse(req.url, true);
 
-  return new Promise(resolve =>
+  return new Promise((resolve) =>
     resolve(
       loadErrorData(new NotFoundException(), config, client, {
         host: req.hostname,
-        domainSlug
+        domainSlug,
       })
     )
   )
-    .catch(e => {
+    .catch((e) => {
       logError(e);
       return { pageType: "error" };
     })
-    .then(result => {
+    .then((result) => {
       const statusCode = result.httpStatusCode || 404;
 
       const store = createStoreFromResult(url, result, {
         disableIsomorphicComponent: false,
-        defaultPageType: "not-found"
+        defaultPageType: "not-found",
       });
 
       res.status(statusCode);
@@ -339,15 +384,15 @@ exports.notFoundHandler = function notFoundHandler(
             config,
             title: result.title,
             content: renderReduxComponent(IsomorphicComponent, store, {
-              pickComponent
+              pickComponent,
             }),
             store,
             pageType: store.getState().qt.pageType,
-            subPageType: store.getState().qt.subPageType
+            subPageType: store.getState().qt.subPageType,
           })
         );
     })
-    .catch(e => {
+    .catch((e) => {
       logError(e);
       res.status(500);
       res.send(e.message);
@@ -373,7 +418,8 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     preloadJs,
     preloadRouteData,
     domainSlug,
-    cdnProvider
+    cdnProvider,
+    lightPages,
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -399,8 +445,12 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
         { url }
       );
     const store = createStoreFromResult(url, result, {
-      disableIsomorphicComponent: statusCode != 200
+      disableIsomorphicComponent: statusCode != 200,
     });
+
+    if (lightPages) {
+      addLightPageHeaders(result, lightPages, { config, res, client, req });
+    }
 
     res.status(statusCode);
     addCacheHeadersToResult(
@@ -435,12 +485,12 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
           config,
           title: result.title,
           content: renderReduxComponent(IsomorphicComponent, store, {
-            pickComponent
+            pickComponent,
           }),
           store,
           seoTags,
           pageType: store.getState().qt.pageType,
-          subPageType: store.getState().qt.subPageType
+          subPageType: store.getState().qt.subPageType,
         })
       );
   }
@@ -452,73 +502,22 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     generateRoutes(config, domainSlug),
     { config, client, logError, host: req.hostname, domainSlug }
   )
-    .catch(e => {
+    .catch((e) => {
       logError(e);
       return { httpStatusCode: 500, pageType: "error" };
     })
-    .then(result => {
+    .then((result) => {
       if (!result) {
         return next();
       }
-      return new Promise(resolve => resolve(writeResponse(result)))
-        .catch(e => {
+      return new Promise((resolve) => resolve(writeResponse(result)))
+        .catch((e) => {
           logError(e);
           res.status(500);
           res.send(e.message);
         })
         .finally(() => res.end());
     });
-};
-
-exports.handleLightPagesRoute = async (
-  req,
-  res,
-  next,
-  {
-    config,
-    client,
-    generateRoutes,
-    loadData,
-    loadErrorData,
-    logError,
-    domainSlug,
-    renderLightPage,
-    lightPages
-  }
-) => {
-  const url = urlLib.parse(req.url, true);
-
-  if (typeof lightPages === "function" && !lightPages(config)) {
-    return next();
-  }
-
-  try {
-    const result = await loadDataForIsomorphicRoute(
-      loadData,
-      loadErrorData,
-      url,
-      generateRoutes(config, domainSlug),
-      { config, client, logError, host: req.hostname, domainSlug }
-    );
-    if (!result) {
-      return next();
-    }
-
-    const isAmpSupported = _.get(
-      result,
-      ["data", "story", "is-amp-supported"],
-      false
-    );
-
-    if (isAmpSupported) {
-      renderLightPage(req, res, client);
-    } else {
-      return next();
-    }
-  } catch (e) {
-    logError(e);
-    return { httpStatusCode: 500, pageType: "error" };
-  }
 };
 
 exports.handleStaticRoute = function handleStaticRoute(
@@ -538,7 +537,7 @@ exports.handleStaticRoute = function handleStaticRoute(
     renderParams,
     disableIsomorphicComponent,
     domainSlug,
-    cdnProvider
+    cdnProvider,
   }
 ) {
   const url = urlLib.parse(path);
@@ -548,9 +547,9 @@ exports.handleStaticRoute = function handleStaticRoute(
     client,
     logError,
     host: req.hostname,
-    domainSlug
+    domainSlug,
   })
-    .then(result => {
+    .then((result) => {
       if (!result) {
         return next();
       }
@@ -565,13 +564,13 @@ exports.handleStaticRoute = function handleStaticRoute(
       const seoTags =
         seoInstance &&
         seoInstance.getMetaTags(config, result.pageType || pageType, result, {
-          url
+          url,
         });
       const store = createStoreFromResult(url, result, {
         disableIsomorphicComponent:
           disableIsomorphicComponent === undefined
             ? true
-            : disableIsomorphicComponent
+            : disableIsomorphicComponent,
       });
 
       res.status(statusCode);
@@ -596,13 +595,13 @@ exports.handleStaticRoute = function handleStaticRoute(
               : result.title,
             store,
             disableAjaxNavigation: true,
-            seoTags
+            seoTags,
           },
           renderParams
         )
       );
     })
-    .catch(e => {
+    .catch((e) => {
       logError(e);
       res.status(500);
       res.send(e.message);

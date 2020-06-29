@@ -4,9 +4,9 @@ const assert = require("assert");
 
 const { createQtStore } = require("../../store/create-store");
 
-describe("createQtStore", function() {
-  describe("store", function() {
-    it("it can create a store with initial values", function() {
+describe("createQtStore", function () {
+  describe("store", function () {
+    it("it can create a store with initial values", function () {
       const store = createQtStore(
         {},
         { pageType: "home-page" },
@@ -16,7 +16,7 @@ describe("createQtStore", function() {
       assert.equal("home-page", store.getState().qt.pageType);
     });
 
-    it("updates the store when a navigation event happens", function() {
+    it("updates the store when a navigation event happens", function () {
       const store = createQtStore(
         {},
         { pageType: "home-page" },
@@ -25,13 +25,13 @@ describe("createQtStore", function() {
       store.dispatch({
         type: NAVIGATE_TO_PAGE,
         page: { pageType: "section-page" },
-        currentPath: "/foo2"
+        currentPath: "/foo2",
       });
       assert.equal("/foo2", store.getState().qt.currentPath);
       assert.equal("section-page", store.getState().qt.pageType);
     });
 
-    it("gets updates when the service worker is updated", function() {
+    it("gets updates when the service worker is updated", function () {
       const store = createQtStore(
         {},
         { pageType: "home-page" },
@@ -42,7 +42,7 @@ describe("createQtStore", function() {
       assert.equal(true, store.getState().serviceWorkerStatus.updated);
     });
 
-    it("can accept custom reducers too", function() {
+    it("can accept custom reducers too", function () {
       const myReducer = (value = "foo", { type }) =>
         type == "MY-ACTION" ? "bar" : value;
       const store = createQtStore(

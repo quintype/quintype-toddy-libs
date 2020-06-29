@@ -23,12 +23,12 @@ import { runWhenIdle } from "./impl/run-when-idle";
 export function startAnalytics({ mountAt = global.qtMountAt || "" } = {}) {
   global.qlitics =
     global.qlitics ||
-    function() {
+    function () {
       (qlitics.q = qlitics.q || []).push(arguments);
     };
   global.qlitics("init");
 
-  runWhenIdle(function() {
+  runWhenIdle(function () {
     const s = document.createElement("script");
     s.type = "text/javascript";
     s.async = true;
@@ -61,7 +61,7 @@ function pageTypeToQliticsPageType(pageType) {
  */
 export function registerStoryView(storyContentId) {
   global.qlitics("track", "story-view", {
-    "story-content-id": storyContentId
+    "story-content-id": storyContentId,
   });
 }
 
@@ -73,14 +73,14 @@ export function registerStoryView(storyContentId) {
  */
 export function registerPageView(page, newPath) {
   global.qlitics("track", "page-view", {
-    "page-type": pageTypeToQliticsPageType(page.pageType)
+    "page-type": pageTypeToQliticsPageType(page.pageType),
   });
   if (page.pageType == "story-page") {
     registerStoryView(get(page.data, ["story", "id"]));
   }
 
   if (newPath && global.ga && !global.qtNoAutomaticGATracking) {
-    global.ga(function(tracker) {
+    global.ga(function (tracker) {
       tracker = tracker || global.ga.getByName("gtm1");
       if (!tracker) return;
       tracker.set("page", newPath);
@@ -109,6 +109,6 @@ export function registerStoryShare(storyContentId, socialMediaType, storyUrl) {
   global.qlitics("track", "story-share", {
     "story-content-id": storyContentId,
     "social-media-type": socialMediaType,
-    url: storyUrl
+    url: storyUrl,
   });
 }

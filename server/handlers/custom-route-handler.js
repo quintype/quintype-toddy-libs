@@ -31,10 +31,10 @@ function writeStaticPageResponse(
   const qt = {
     pageType: page.type,
     data: Object.assign({}, page, result.data),
-    currentPath: `${url.pathname}${url.search || ""}`
+    currentPath: `${url.pathname}${url.search || ""}`,
   };
   const store = createBasicStore(result, qt, {
-    disableIsomorphicComponent: true
+    disableIsomorphicComponent: true,
   });
 
   const seoInstance = typeof seo === "function" ? seo(config) : seo;
@@ -48,7 +48,7 @@ function writeStaticPageResponse(
     content: renderStaticPageContent(store, page.content),
     store,
     seoTags,
-    disableAjaxNavigation: true
+    disableAjaxNavigation: true,
   });
 }
 
@@ -64,7 +64,7 @@ exports.customRouteHandler = function customRouteHandler(
     renderLayout,
     logError,
     seo,
-    domainSlug
+    domainSlug,
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -72,7 +72,7 @@ exports.customRouteHandler = function customRouteHandler(
     ? req.params[0].slice(0, -1)
     : req.params[0];
   return CustomPath.getCustomPathData(client, path)
-    .then(page => {
+    .then((page) => {
       if (!page) {
         return next();
       }
@@ -101,12 +101,12 @@ exports.customRouteHandler = function customRouteHandler(
         if (page.metadata.header || page.metadata.footer) {
           return loadData("custom-static-page", {}, config, client, {
             host: req.hostname,
-            domainSlug
-          }).then(response => {
+            domainSlug,
+          }).then((response) => {
             return writeStaticPageResponse(res, url, page.page, response, {
               config,
               renderLayout,
-              seo
+              seo,
             });
           });
         }
@@ -115,7 +115,7 @@ exports.customRouteHandler = function customRouteHandler(
 
       return next();
     })
-    .catch(e => {
+    .catch((e) => {
       logError(e);
       res.status(500);
       res.send(e.message);

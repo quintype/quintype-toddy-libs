@@ -6,7 +6,7 @@ export function runWhenIdle(
 ) {
   if (global.requestIdleCallback) {
     global.requestIdleCallback(() => global.setTimeout(f, postIdleDelay), {
-      timeout: maxIdleDelay
+      timeout: maxIdleDelay,
     });
   } else {
     global.setTimeout(f, unsupportedDelay);
