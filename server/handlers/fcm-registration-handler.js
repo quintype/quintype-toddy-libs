@@ -25,8 +25,8 @@ exports.registerFCMTopic = async function registerFCM(
       method: "POST",
       headers: {
         Authorization: `key=${serverKey}`,
-        "content-type": "application/json"
-      }
+        "content-type": "application/json",
+      },
     });
     res.status(200).send("Registration Done Suceessfuly");
     return;

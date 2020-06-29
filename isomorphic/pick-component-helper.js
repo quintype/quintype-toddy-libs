@@ -36,13 +36,13 @@ exports.pickComponentHelper = function pickComponentHelper(
 ) {
   return {
     pickComponent,
-    getChunkName
+    getChunkName,
   };
 
   function pickComponent(pageType, subPageType) {
     const { chunk, component } = components[pageType] || components.default;
     return loadChunk[chunk](pageType, subPageType).then(
-      chunk => chunk[component]
+      (chunk) => chunk[component]
     );
   }
 

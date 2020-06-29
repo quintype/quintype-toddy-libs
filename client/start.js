@@ -11,7 +11,7 @@ import {
   BreakingNews,
   CLIENT_SIDE_RENDERED,
   NAVIGATE_TO_PAGE,
-  PAGE_LOADING
+  PAGE_LOADING,
 } from "@quintype/components";
 import { createBrowserHistory } from "history";
 import get from "lodash/get";
@@ -25,13 +25,13 @@ import {
   registerPageView,
   registerStoryShare,
   setMemberId,
-  startAnalytics
+  startAnalytics,
 } from "./analytics";
 import { initializeFCM } from "./impl/fcm";
 import {
   checkForServiceWorkerUpdates,
   registerServiceWorker,
-  setupServiceWorkerUpdates
+  setupServiceWorkerUpdates,
 } from "./impl/load-service-worker";
 
 require("../assetify/client")();
@@ -51,7 +51,7 @@ export const app = {
   maybeSetUrl,
   registerPageView,
   registerStoryShare,
-  setMemberId
+  setMemberId,
 };
 
 function getRouteDataAndPath(path, mountAt) {
@@ -78,7 +78,7 @@ function getRouteData(
       { credentials: "same-origin" }
     )
   )
-    .then(response => {
+    .then((response) => {
       if (response.status == 404) {
         // There is a chance this might abort
         maybeBypassServiceWorker();
@@ -129,7 +129,7 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
   }
 
   dispatch({ type: PAGE_LOADING });
-  getRouteData(path, {}).then(page => {
+  getRouteData(path, {}).then((page) => {
     if (!page) {
       console &&
         console.log("Recieved a null page. Expecting the browser to redirect.");
@@ -150,7 +150,7 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
       dispatch({
         type: NAVIGATE_TO_PAGE,
         page,
-        currentPath: path
+        currentPath: path,
       });
 
       if (!doNotPushPath) {
@@ -323,7 +323,7 @@ export function startApp(renderApplication, reducers, opts) {
     runWithTiming("qt_preRender", () => opts.preRenderApplication(store));
   }
 
-  return dataPromise.then(page => doStartApp(page));
+  return dataPromise.then((page) => doStartApp(page));
 
   function doStartApp(page) {
     if (!page) {
@@ -341,7 +341,7 @@ export function startApp(renderApplication, reducers, opts) {
 
     runWithTiming("qt_render", () => renderApplication(store));
 
-    history.listen(change =>
+    history.listen((change) =>
       app.maybeNavigateTo(`${change.pathname}${change.search || ""}`, store)
     );
 

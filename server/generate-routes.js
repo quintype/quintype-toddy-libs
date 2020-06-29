@@ -37,7 +37,7 @@ exports.generateSectionPageRoutes = function generateSectionPageRoutes(
   }, {});
 
   return _(sections)
-    .flatMap(section => generateSectionPageRoute(section, sectionsById, opts))
+    .flatMap((section) => generateSectionPageRoute(section, sectionsById, opts))
     .value();
 };
 
@@ -52,7 +52,7 @@ function generateSectionPageRoute(section, sectionsById, opts) {
     let depth = 0;
     while (currentSection["parent-id"] && depth++ < 5) {
       currentSection = sectionsById[currentSection["parent-id"]] || {
-        slug: "invalid"
+        slug: "invalid",
       };
       slug = `${currentSection.slug}/${slug}`;
     }
@@ -64,11 +64,11 @@ function generateSectionPageRoute(section, sectionsById, opts) {
   else routes = [slug];
 
   if (opts.addSectionPrefix)
-    routes = _.flatMap(routes, route => [
+    routes = _.flatMap(routes, (route) => [
       sectionPageRoute(route, params),
-      addSectionPrefix(route, params)
+      addSectionPrefix(route, params),
     ]);
-  else routes = _.flatMap(routes, route => [sectionPageRoute(route, params)]);
+  else routes = _.flatMap(routes, (route) => [sectionPageRoute(route, params)]);
 
   return routes;
 }
@@ -82,7 +82,7 @@ function sectionPageRoute(route, params) {
     pageType: "section-page",
     exact: true,
     path: `/${route}`,
-    params
+    params,
   };
 }
 
@@ -93,10 +93,10 @@ exports.generateStoryPageRoutes = function generateStoryPageRoutes(
   deprecationWarning();
   const sections = config.getDomainSections(domainSlug);
   return _(sections)
-    .filter(section => withoutParentSection || !section["parent-id"])
-    .flatMap(section => [
+    .filter((section) => withoutParentSection || !section["parent-id"])
+    .flatMap((section) => [
       storyPageRoute(`/${section.slug}/:storySlug`, skipPWA || false),
-      storyPageRoute(`/${section.slug}/*/:storySlug`, skipPWA || false)
+      storyPageRoute(`/${section.slug}/*/:storySlug`, skipPWA || false),
     ])
     .value();
 };
@@ -106,7 +106,7 @@ function storyPageRoute(path, skipPWA = false) {
     pageType: "story-page",
     exact: true,
     path,
-    skipPWA
+    skipPWA,
   };
 }
 
@@ -134,18 +134,18 @@ exports.generateCommonRoutes = function generateSectionPageRoutes(
     sectionPageRoutes = allRoutes,
     storyPageRoutes = allRoutes,
     homePageRoute = allRoutes,
-    skipPWA = {}
+    skipPWA = {},
   } = {}
 ) {
   const sections = config.getDomainSections(domainSlug);
-  const sectionRoutes = sections.map(s =>
+  const sectionRoutes = sections.map((s) =>
     sectionToSectionRoute(config["sketches-host"], s, skipPWA.section || false)
   );
   const storyRoutes = sectionRoutes.map(({ path }) => ({
     path: `${path.replace(/^\/section\//, "/")}(/.*)?/:storySlug`,
     pageType: "story-page",
     exact: true,
-    skipPWA: skipPWA.story || false
+    skipPWA: skipPWA.story || false,
   }));
   return [].concat(
     homePageRoute
@@ -155,8 +155,10 @@ exports.generateCommonRoutes = function generateSectionPageRoutes(
             pageType: "home-page",
             exact: true,
             skipPWA: skipPWA.home || false,
-            params: { collectionSlug: config.getHomeCollectionSlug(domainSlug) }
-          }
+            params: {
+              collectionSlug: config.getHomeCollectionSlug(domainSlug),
+            },
+          },
         ]
       : [],
     sectionPageRoutes ? sectionRoutes : [],
@@ -166,7 +168,7 @@ exports.generateCommonRoutes = function generateSectionPageRoutes(
 
 function sectionToSectionRoute(baseUrl, section, skipPWA = false) {
   const params = {
-    sectionId: section.id
+    sectionId: section.id,
   };
   if (section.collection && section.collection.slug) {
     params.collectionSlug = section.collection.slug;
@@ -183,7 +185,7 @@ function sectionToSectionRoute(baseUrl, section, skipPWA = false) {
       pageType: "section-page",
       exact: true,
       params,
-      skipPWA
+      skipPWA,
     };
   } catch (e) {
     return {
@@ -191,7 +193,7 @@ function sectionToSectionRoute(baseUrl, section, skipPWA = false) {
       pageType: "section-page",
       exact: true,
       params,
-      skipPWA
+      skipPWA,
     };
   }
 }

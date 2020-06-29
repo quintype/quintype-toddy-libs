@@ -24,7 +24,7 @@ function createApp({
   assetHelper = require("./asset-helper"),
   publicFolder = "public",
   mountAt,
-  app = express()
+  app = express(),
 } = {}) {
   if (mountAt) {
     mountQuintypeAt(app, mountAt);
@@ -32,7 +32,7 @@ function createApp({
 
   app.set("view engine", "ejs");
 
-  app.use(morgan("short", { stream: { write: msg => logger.info(msg) } }));
+  app.use(morgan("short", { stream: { write: (msg) => logger.info(msg) } }));
 
   const assetFiles = assetHelper.assetFiles();
 
@@ -44,7 +44,7 @@ function createApp({
         }
         res.set("Vary", "Accept-Encoding");
       },
-      maxAge: "1h"
+      maxAge: "1h",
     })
   );
   app.use(compression());

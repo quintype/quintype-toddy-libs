@@ -5,11 +5,11 @@ const { Story, Collection } = require("./api-client");
 const templateOptions = require("./impl/template-options");
 
 exports.catalogDataLoader = function catalogDataLoader(client, config) {
-  return Story.getStories(client).then(stories => {
+  return Story.getStories(client).then((stories) => {
     return {
-      stories: stories.map(story => story.asJson()),
+      stories: stories.map((story) => story.asJson()),
       cacheKeys: [`static`],
-      templateOptions
+      templateOptions,
     };
   });
 };
@@ -24,9 +24,9 @@ exports.homeCollectionOrStories = function homeCollectionOrStories(
     "home",
     { "item-type": "collection" },
     { depth, ...(getStoryLimits && { storyLimits: getStoryLimits() }) }
-  ).then(collection => {
+  ).then((collection) => {
     if (collection) return collection;
-    return Story.getStories(client).then(stories =>
+    return Story.getStories(client).then((stories) =>
       Collection.build({
         slug: "home",
         name: "Home",
@@ -36,12 +36,12 @@ exports.homeCollectionOrStories = function homeCollectionOrStories(
             type: "collection",
             name: "Home",
             template: "default",
-            items: stories.map(story => ({
+            items: stories.map((story) => ({
               type: "story",
-              story: story.asJson()
-            }))
-          }
-        ]
+              story: story.asJson(),
+            })),
+          },
+        ],
       })
     );
   });

@@ -10,34 +10,34 @@ function getClientStub(hostname) {
     getConfig: () =>
       Promise.resolve({
         "publisher-name": "madrid",
-        "publisher-settings": { title: "Madrid" }
-      })
+        "publisher-settings": { title: "Madrid" },
+      }),
   };
 }
 
-describe("AssetLink Handler", function() {
+describe("AssetLink Handler", function () {
   const app = express();
   isomorphicRoutes(app, {
     assetHelper: {},
     getClient: getClientStub,
-    assetLinkFn: config =>
+    assetLinkFn: (config) =>
       Promise.resolve({
         packageName: `com.quintype.twa.${config["publisher-name"]}`,
         authorizedKeys: [
-          "02:0F:1B:07:EE:20:66:36:74:76:1A:3E:BC:64:17:A7:7F:E3:EE:FE:E2:3A:6B:33:C1:4B:A8:24:69:D7:44:40"
-        ]
+          "02:0F:1B:07:EE:20:66:36:74:76:1A:3E:BC:64:17:A7:7F:E3:EE:FE:E2:3A:6B:33:C1:4B:A8:24:69:D7:44:40",
+        ],
       }),
-    publisherConfig: {}
+    publisherConfig: {},
   });
 
-  it("returns a manifest", function(done) {
+  it("returns a manifest", function (done) {
     supertest(app)
       .get("/.well-known/assetlinks.json")
       .expect("Content-Type", /json/)
       .expect("Cache-Control", /public/)
       .expect("Vary", "Accept-Encoding")
       .expect(200)
-      .then(res => {
+      .then((res) => {
         const { relation, target } = JSON.parse(res.text)[0];
         assert.equal("delegate_permission/common.handle_all_urls", relation[0]);
         assert.equal("com.quintype.twa.madrid", target.package_name);

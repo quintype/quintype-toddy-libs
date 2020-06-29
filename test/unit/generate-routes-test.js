@@ -3,24 +3,24 @@ const { Config } = require("../../server/impl/api-client-impl");
 const {
   generateSectionPageRoutes,
   generateStoryPageRoutes,
-  generateCommonRoutes
+  generateCommonRoutes,
 } = require("../../server/generate-routes");
 
-describe("generateRoutes", function() {
-  it("generates section routes correctly", function() {
+describe("generateRoutes", function () {
+  it("generates section routes correctly", function () {
     const expectedRoutes = [
       {
         path: "/sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 42 }
+        params: { sectionId: 42 },
       },
       {
         path: "/sect/sub-sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 43 }
-      }
+        params: { sectionId: 43 },
+      },
     ];
     assert.deepEqual(
       expectedRoutes,
@@ -28,39 +28,39 @@ describe("generateRoutes", function() {
         Config.build({
           sections: [
             { id: 42, slug: "sect" },
-            { id: 43, slug: "sub-sect", "parent-id": 42 }
-          ]
+            { id: 43, slug: "sub-sect", "parent-id": 42 },
+          ],
         })
       )
     );
   });
 
-  it("generates section routes correctly with section prefix", function() {
+  it("generates section routes correctly with section prefix", function () {
     const expectedRoutes = [
       {
         path: "/sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 42 }
+        params: { sectionId: 42 },
       },
       {
         path: "/section/sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 42 }
+        params: { sectionId: 42 },
       },
       {
         path: "/sect/sub-sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 43 }
+        params: { sectionId: 43 },
       },
       {
         path: "/section/sect/sub-sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 43 }
-      }
+        params: { sectionId: 43 },
+      },
     ];
     assert.deepEqual(
       expectedRoutes,
@@ -68,53 +68,53 @@ describe("generateRoutes", function() {
         Config.build({
           sections: [
             { id: 42, slug: "sect" },
-            { id: 43, slug: "sub-sect", "parent-id": 42 }
-          ]
+            { id: 43, slug: "sub-sect", "parent-id": 42 },
+          ],
         }),
         { addSectionPrefix: true }
       )
     );
   });
 
-  it("generates section with collection slug", function() {
+  it("generates section with collection slug", function () {
     const expectedRoutes = [
       {
         path: "/sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 42, collectionSlug: "sect" }
-      }
+        params: { sectionId: 42, collectionSlug: "sect" },
+      },
     ];
     assert.deepEqual(
       expectedRoutes,
       generateSectionPageRoutes(
         Config.build({
-          sections: [{ id: 42, slug: "sect", collection: { slug: "sect" } }]
+          sections: [{ id: 42, slug: "sect", collection: { slug: "sect" } }],
         })
       )
     );
   });
 
-  it("generates extra sub section route when secWithoutParentPrefix is true", function() {
+  it("generates extra sub section route when secWithoutParentPrefix is true", function () {
     const expectedRoutes = [
       {
         path: "/sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 42 }
+        params: { sectionId: 42 },
       },
       {
         path: "/sub-sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 43 }
+        params: { sectionId: 43 },
       },
       {
         path: "/sect/sub-sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 43 }
-      }
+        params: { sectionId: 43 },
+      },
     ];
     assert.deepEqual(
       expectedRoutes,
@@ -122,52 +122,52 @@ describe("generateRoutes", function() {
         Config.build({
           sections: [
             { id: 42, slug: "sect" },
-            { id: 43, slug: "sub-sect", "parent-id": 42 }
-          ]
+            { id: 43, slug: "sub-sect", "parent-id": 42 },
+          ],
         }),
         { secWithoutParentPrefix: true }
       )
     );
   });
 
-  it("generates extra sub section route and with section prefix when both secWithoutParentPrefix and addSectionPrefix is true", function() {
+  it("generates extra sub section route and with section prefix when both secWithoutParentPrefix and addSectionPrefix is true", function () {
     const expectedRoutes = [
       {
         path: "/sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 42 }
+        params: { sectionId: 42 },
       },
       {
         path: "/section/sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 42 }
+        params: { sectionId: 42 },
       },
       {
         path: "/sub-sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 43 }
+        params: { sectionId: 43 },
       },
       {
         path: "/section/sub-sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 43 }
+        params: { sectionId: 43 },
       },
       {
         path: "/sect/sub-sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 43 }
+        params: { sectionId: 43 },
       },
       {
         path: "/section/sect/sub-sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 43 }
-      }
+        params: { sectionId: 43 },
+      },
     ];
 
     assert.deepEqual(
@@ -176,28 +176,28 @@ describe("generateRoutes", function() {
         Config.build({
           sections: [
             { id: 42, slug: "sect" },
-            { id: 43, slug: "sub-sect", "parent-id": 42 }
-          ]
+            { id: 43, slug: "sub-sect", "parent-id": 42 },
+          ],
         }),
         { secWithoutParentPrefix: true, addSectionPrefix: true }
       )
     );
   });
 
-  it("generates story routes correctly", function() {
+  it("generates story routes correctly", function () {
     const expectedRoutes = [
       {
         path: "/sect/:storySlug",
         pageType: "story-page",
         exact: true,
-        skipPWA: false
+        skipPWA: false,
       },
       {
         path: "/sect/*/:storySlug",
         pageType: "story-page",
         exact: true,
-        skipPWA: false
-      }
+        skipPWA: false,
+      },
     ];
     assert.deepEqual(
       expectedRoutes,
@@ -205,39 +205,39 @@ describe("generateRoutes", function() {
         Config.build({
           sections: [
             { id: 42, slug: "sect", skipPWA: false },
-            { id: 43, slug: "sub-sect", "parent-id": 42, skipPWA: false }
-          ]
+            { id: 43, slug: "sub-sect", "parent-id": 42, skipPWA: false },
+          ],
         })
       )
     );
   });
 
-  it("adds routes for subsections when withoutParentSection is set", function() {
+  it("adds routes for subsections when withoutParentSection is set", function () {
     const expectedRoutes = [
       {
         path: "/sect/:storySlug",
         pageType: "story-page",
         exact: true,
-        skipPWA: false
+        skipPWA: false,
       },
       {
         path: "/sect/*/:storySlug",
         pageType: "story-page",
         exact: true,
-        skipPWA: false
+        skipPWA: false,
       },
       {
         path: "/sub-sect/:storySlug",
         pageType: "story-page",
         exact: true,
-        skipPWA: false
+        skipPWA: false,
       },
       {
         path: "/sub-sect/*/:storySlug",
         pageType: "story-page",
         exact: true,
-        skipPWA: false
-      }
+        skipPWA: false,
+      },
     ];
     assert.deepEqual(
       expectedRoutes,
@@ -245,133 +245,133 @@ describe("generateRoutes", function() {
         Config.build({
           sections: [
             { id: 42, slug: "sect", skipPWA: false },
-            { id: 43, slug: "sub-sect", "parent-id": 42, skipPWA: false }
-          ]
+            { id: 43, slug: "sub-sect", "parent-id": 42, skipPWA: false },
+          ],
         }),
         { withoutParentSection: true }
       )
     );
   });
 
-  it("does not go into infinite loop if sections are recursive", function() {
+  it("does not go into infinite loop if sections are recursive", function () {
     const expectedRoutes = [
       {
         path: "/sect/sect/sect/sect/sect/sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 42 }
-      }
+        params: { sectionId: 42 },
+      },
     ];
     assert.deepEqual(
       expectedRoutes,
       generateSectionPageRoutes(
         Config.build({
-          sections: [{ id: 42, slug: "sect", "parent-id": 42 }]
+          sections: [{ id: 42, slug: "sect", "parent-id": 42 }],
         })
       )
     );
   });
 
-  it("handles missing parents correctly", function() {
+  it("handles missing parents correctly", function () {
     const expectedRoutes = [
       {
         path: "/invalid/sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 42 }
-      }
+        params: { sectionId: 42 },
+      },
     ];
     assert.deepEqual(
       expectedRoutes,
       generateSectionPageRoutes(
         Config.build({
-          sections: [{ id: 42, slug: "sect", "parent-id": 1 }]
+          sections: [{ id: 42, slug: "sect", "parent-id": 1 }],
         })
       )
     );
   });
 });
 
-describe("MultiDomain Support", function() {
+describe("MultiDomain Support", function () {
   const config = {
     sections: [
       { id: 42, slug: "sect", "domain-slug": "subdomain" },
       { id: 43, slug: "sub-sect", "domain-slug": "subdomain", "parent-id": 42 },
       { id: 44, slug: "sect2", "domain-slug": null },
-      { id: 45, slug: "sub-sect2", "parent-id": 44, "domain-slug": null }
-    ]
+      { id: 45, slug: "sub-sect2", "parent-id": 44, "domain-slug": null },
+    ],
   };
 
-  it("generate routes given a domainSlug", function() {
+  it("generate routes given a domainSlug", function () {
     const expectedRoutes = [
       {
         path: "/sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 42 }
+        params: { sectionId: 42 },
       },
       {
         path: "/sect/sub-sect",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 43 }
-      }
+        params: { sectionId: 43 },
+      },
     ];
     const allRoutes = generateSectionPageRoutes(Config.build(config), {
-      domainSlug: "subdomain"
+      domainSlug: "subdomain",
     });
     assert.deepEqual(expectedRoutes, allRoutes);
   });
 
-  it("generates routes for null domain", function() {
+  it("generates routes for null domain", function () {
     const expectedRoutes = [
       {
         path: "/sect2",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 44 }
+        params: { sectionId: 44 },
       },
       {
         path: "/sect2/sub-sect2",
         pageType: "section-page",
         exact: true,
-        params: { sectionId: 45 }
-      }
+        params: { sectionId: 45 },
+      },
     ];
     const allRoutes = generateSectionPageRoutes(Config.build(config), {
-      domainSlug: null
+      domainSlug: null,
     });
     assert.deepEqual(expectedRoutes, allRoutes);
   });
 
-  it("generates story page routes given a domain Slug", function() {
+  it("generates story page routes given a domain Slug", function () {
     const expectedRoutes = [
       {
         path: "/sect/:storySlug",
         pageType: "story-page",
         exact: true,
-        skipPWA: false
+        skipPWA: false,
       },
       {
         path: "/sect/*/:storySlug",
         pageType: "story-page",
         exact: true,
-        skipPWA: false
-      }
+        skipPWA: false,
+      },
     ];
     const allRoutes = generateStoryPageRoutes(Config.build(config), {
-      domainSlug: "subdomain"
+      domainSlug: "subdomain",
     });
     assert.deepEqual(expectedRoutes, allRoutes);
   });
 });
 
-describe("generateCommonRoutes", function() {
-  it("generates section and story page routes", function() {
+describe("generateCommonRoutes", function () {
+  it("generates section and story page routes", function () {
     const config = Config.build({
       sections: [
-        { id: 42, "section-url": "https://quintype-demo.quintype.io/photos" }
-      ]
+        { id: 42, "section-url": "https://quintype-demo.quintype.io/photos" },
+      ],
     });
 
     assert.deepEqual(
@@ -381,12 +381,12 @@ describe("generateCommonRoutes", function() {
           pageType: "section-page",
           exact: true,
           params: { sectionId: 42 },
-          skipPWA: false
-        }
+          skipPWA: false,
+        },
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
-        sectionPageRoutes: true
+        sectionPageRoutes: true,
       })
     );
 
@@ -396,21 +396,21 @@ describe("generateCommonRoutes", function() {
           path: "/photos(/.*)?/:storySlug",
           pageType: "story-page",
           exact: true,
-          skipPWA: false
-        }
+          skipPWA: false,
+        },
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
-        storyPageRoutes: true
+        storyPageRoutes: true,
       })
     );
   });
 
-  it("respects the skipPWA parameter for home, story and section pages", function() {
+  it("respects the skipPWA parameter for home, story and section pages", function () {
     const config = Config.build({
       sections: [
-        { id: 42, "section-url": "https://quintype-demo.quintype.io/photos" }
-      ]
+        { id: 42, "section-url": "https://quintype-demo.quintype.io/photos" },
+      ],
     });
 
     assert.deepEqual(
@@ -420,13 +420,13 @@ describe("generateCommonRoutes", function() {
           pageType: "section-page",
           exact: true,
           params: { sectionId: 42 },
-          skipPWA: true
-        }
+          skipPWA: true,
+        },
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
         sectionPageRoutes: true,
-        skipPWA: { section: true }
+        skipPWA: { section: true },
       })
     );
 
@@ -437,13 +437,13 @@ describe("generateCommonRoutes", function() {
           pageType: "home-page",
           params: { collectionSlug: "home" },
           exact: true,
-          skipPWA: true
-        }
+          skipPWA: true,
+        },
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
         homePageRoute: true,
-        skipPWA: { home: true }
+        skipPWA: { home: true },
       })
     );
 
@@ -453,26 +453,26 @@ describe("generateCommonRoutes", function() {
           path: "/photos(/.*)?/:storySlug",
           pageType: "story-page",
           exact: true,
-          skipPWA: true
-        }
+          skipPWA: true,
+        },
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
         storyPageRoutes: true,
-        skipPWA: { story: true }
+        skipPWA: { story: true },
       })
     );
   });
 
-  it("picks up the collection slug if there is one present in the section", function() {
+  it("picks up the collection slug if there is one present in the section", function () {
     const config = Config.build({
       sections: [
         {
           id: 42,
           "section-url": "https://quintype-demo.quintype.io/photos",
-          collection: { slug: "photos" }
-        }
-      ]
+          collection: { slug: "photos" },
+        },
+      ],
     });
 
     assert.deepEqual(
@@ -482,32 +482,32 @@ describe("generateCommonRoutes", function() {
           pageType: "section-page",
           exact: true,
           params: { sectionId: 42, collectionSlug: "photos" },
-          skipPWA: false
-        }
+          skipPWA: false,
+        },
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
-        sectionPageRoutes: true
+        sectionPageRoutes: true,
       })
     );
   });
 
-  it("only picks the sections from the correct domain", function() {
+  it("only picks the sections from the correct domain", function () {
     const config = Config.build({
       sections: [
         {
           id: 42,
           "section-url": "https://quintype-demo.quintype.io/photos",
-          "domain-slug": "sub"
-        }
-      ]
+          "domain-slug": "sub",
+        },
+      ],
     });
 
     assert.deepEqual(
       [],
       generateCommonRoutes(config, null, {
         allRoutes: false,
-        sectionPageRoutes: true
+        sectionPageRoutes: true,
       })
     );
 
@@ -518,25 +518,25 @@ describe("generateCommonRoutes", function() {
           pageType: "section-page",
           exact: true,
           params: { sectionId: 42 },
-          skipPWA: false
-        }
+          skipPWA: false,
+        },
       ],
       generateCommonRoutes(config, "sub", {
         allRoutes: false,
-        sectionPageRoutes: true
+        sectionPageRoutes: true,
       })
     );
   });
 
-  it("puts section urls before the story urls", function() {
+  it("puts section urls before the story urls", function () {
     const config = Config.build({
       sections: [
         { id: 42, "section-url": "https://quintype-demo.quintype.io/photos" },
         {
           id: 43,
-          "section-url": "https://quintype-demo.quintype.io/photos/gallery"
-        }
-      ]
+          "section-url": "https://quintype-demo.quintype.io/photos/gallery",
+        },
+      ],
     });
 
     assert.deepEqual(
@@ -546,44 +546,44 @@ describe("generateCommonRoutes", function() {
           pageType: "section-page",
           exact: true,
           params: { sectionId: 42 },
-          skipPWA: false
+          skipPWA: false,
         },
         {
           path: "/photos/gallery",
           pageType: "section-page",
           exact: true,
           params: { sectionId: 43 },
-          skipPWA: false
+          skipPWA: false,
         },
         {
           path: "/photos(/.*)?/:storySlug",
           pageType: "story-page",
           exact: true,
-          skipPWA: false
+          skipPWA: false,
         },
         {
           path: "/photos/gallery(/.*)?/:storySlug",
           pageType: "story-page",
           exact: true,
-          skipPWA: false
-        }
+          skipPWA: false,
+        },
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
         sectionPageRoutes: true,
-        storyPageRoutes: true
+        storyPageRoutes: true,
       })
     );
   });
 
-  it("removes /section from the story route", function() {
+  it("removes /section from the story route", function () {
     const config = Config.build({
       sections: [
         {
           id: 42,
-          "section-url": "https://quintype-demo.quintype.io/section/photos"
-        }
-      ]
+          "section-url": "https://quintype-demo.quintype.io/section/photos",
+        },
+      ],
     });
 
     assert.deepEqual(
@@ -593,12 +593,12 @@ describe("generateCommonRoutes", function() {
           pageType: "section-page",
           exact: true,
           params: { sectionId: 42 },
-          skipPWA: false
-        }
+          skipPWA: false,
+        },
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
-        sectionPageRoutes: true
+        sectionPageRoutes: true,
       })
     );
 
@@ -608,17 +608,17 @@ describe("generateCommonRoutes", function() {
           path: "/photos(/.*)?/:storySlug",
           pageType: "story-page",
           exact: true,
-          skipPWA: false
-        }
+          skipPWA: false,
+        },
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
-        storyPageRoutes: true
+        storyPageRoutes: true,
       })
     );
   });
 
-  it("generates things correctly if the section-url is missing", function() {
+  it("generates things correctly if the section-url is missing", function () {
     const config = Config.build({ sections: [{ id: 42, slug: "photos" }] });
 
     assert.deepEqual(
@@ -627,12 +627,12 @@ describe("generateCommonRoutes", function() {
           path: "/photos(/.*)?/:storySlug",
           pageType: "story-page",
           exact: true,
-          skipPWA: false
-        }
+          skipPWA: false,
+        },
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
-        storyPageRoutes: true
+        storyPageRoutes: true,
       })
     );
 
@@ -643,20 +643,20 @@ describe("generateCommonRoutes", function() {
           pageType: "section-page",
           exact: true,
           params: { sectionId: 42 },
-          skipPWA: false
-        }
+          skipPWA: false,
+        },
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
-        sectionPageRoutes: true
+        sectionPageRoutes: true,
       })
     );
   });
 
-  it("generates the home page route", function() {
+  it("generates the home page route", function () {
     const config = Config.build({
       domains: [{ slug: "sub", "home-collection-id": 1234 }],
-      sections: []
+      sections: [],
     });
 
     assert.deepEqual(
@@ -666,12 +666,12 @@ describe("generateCommonRoutes", function() {
           pageType: "home-page",
           exact: true,
           params: { collectionSlug: "home" },
-          skipPWA: false
-        }
+          skipPWA: false,
+        },
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
-        homePageRoute: true
+        homePageRoute: true,
       })
     );
 
@@ -682,12 +682,12 @@ describe("generateCommonRoutes", function() {
           pageType: "home-page",
           exact: true,
           params: { collectionSlug: "home" },
-          skipPWA: false
-        }
+          skipPWA: false,
+        },
       ],
       generateCommonRoutes(config, null, {
         allRoutes: false,
-        homePageRoute: true
+        homePageRoute: true,
       })
     );
 
@@ -698,25 +698,25 @@ describe("generateCommonRoutes", function() {
           pageType: "home-page",
           exact: true,
           params: { collectionSlug: "1234" },
-          skipPWA: false
-        }
+          skipPWA: false,
+        },
       ],
       generateCommonRoutes(config, "sub", {
         allRoutes: false,
-        homePageRoute: true
+        homePageRoute: true,
       })
     );
   });
 
-  it("removes the mount point from the section path", function() {
+  it("removes the mount point from the section path", function () {
     const config = Config.build({
       "sketches-host": "https://quintype-demo.quintype.io/foo",
       sections: [
         {
           id: 42,
-          "section-url": "https://quintype-demo.quintype.io/foo/photos"
-        }
-      ]
+          "section-url": "https://quintype-demo.quintype.io/foo/photos",
+        },
+      ],
     });
 
     assert.deepEqual(
@@ -726,12 +726,12 @@ describe("generateCommonRoutes", function() {
           pageType: "section-page",
           exact: true,
           params: { sectionId: 42 },
-          skipPWA: false
-        }
+          skipPWA: false,
+        },
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
-        sectionPageRoutes: true
+        sectionPageRoutes: true,
       })
     );
 
@@ -741,12 +741,12 @@ describe("generateCommonRoutes", function() {
           path: "/photos(/.*)?/:storySlug",
           pageType: "story-page",
           exact: true,
-          skipPWA: false
-        }
+          skipPWA: false,
+        },
       ],
       generateCommonRoutes(config, undefined, {
         allRoutes: false,
-        storyPageRoutes: true
+        storyPageRoutes: true,
       })
     );
   });

@@ -98,19 +98,19 @@ class AssetHelper {
    * @return {module:asset-helper~Chunk} The loaded chunk
    */
   getChunk(chunk) {
-    const getDependentFiles = ext => {
+    const getDependentFiles = (ext) => {
       const regex = RegExp(`(${chunk}~|~${chunk}).*\.${ext}$`);
       const assets = this.assets[`${chunk}.${ext}`] ? [`${chunk}.${ext}`] : [];
       return assets.concat(
-        Object.keys(this.assets).filter(asset => regex.test(asset))
+        Object.keys(this.assets).filter((asset) => regex.test(asset))
       );
     };
     return {
-      cssFiles: getDependentFiles("css").map(file => ({
+      cssFiles: getDependentFiles("css").map((file) => ({
         path: this.assetPath(file),
-        content: this.readAsset(file)
+        content: this.readAsset(file),
       })),
-      jsPaths: getDependentFiles("js").map(file => this.assetPath(file))
+      jsPaths: getDependentFiles("js").map((file) => this.assetPath(file)),
     };
   }
 
@@ -135,7 +135,7 @@ class AssetHelper {
     const chunks = this.getAllChunks.apply(this, arguments);
     return uniq(
       flatMap(Object.values(chunks), ({ cssFiles, jsPaths }) =>
-        jsPaths.concat(cssFiles.map(x => x.path))
+        jsPaths.concat(cssFiles.map((x) => x.path))
       )
     );
   }

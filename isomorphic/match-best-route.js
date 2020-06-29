@@ -41,13 +41,13 @@ function matchAllRoutes(path, routes) {
 
   // Using foreach instead of filter / map because I don't want to match the same route over and over
   const matchedRoutes = [];
-  routes.forEach(route => {
+  routes.forEach((route) => {
     const match = matchPath(path, route);
     if (match) {
       return matchedRoutes.push({
         pageType: route.pageType,
         params: Object.assign({}, route.params, match.params),
-        match
+        match,
       });
     }
   });
