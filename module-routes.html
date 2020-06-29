@@ -196,6 +196,301 @@
 
 
     
+    <h4 class="name" id=".ampRoutes">
+        
+            
+                <span class='tag'>static</span>
+            
+        
+        <span class="code-name">
+            
+                ampRoutes<span class="signature">(app, opts)</span><span class="type-signature"></span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p><em>ampRoutes</em> handles all the amp page routes using the <em><a href="https://developers.quintype.com/quintype-node-amp">@quintype/amp</a></em> library
+routes matched:
+<em>&quot;/amp/story/:slug&quot;</em> returns amp story page.</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>app</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">Express</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>Express app to add the routes to</p></td>
+</tr>
+
+
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>opts</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">Object</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>Options object used to configure amp. Passing this is optional</p></td>
+</tr>
+
+  
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>templates</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">Object</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>An object that's used to pass custom templates. Each key corresponds to the template name and corresponding value is the template</p></td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>slots</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">Object</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>An object used to pass slot data.</p></td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>seo</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">SEO</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>An SEO object that will generate html tags for each page. See <a href="https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture#quintypeseo">@quintype/seo</a></p></td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>headerCardRender</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">function</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>Render prop for story headerCard. If passed, the headerCard in default stories will be replaced with this</p></td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>relatedStoriesRender</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">function</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>Render prop for relatedStories in a story page. If passed, this will replace the related stories</p></td>
+</tr>
+
+  
+
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_routes.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line553">line 553</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+            
+                <div class="member">
+
+
+    
     <h4 class="name" id=".isomorphicRoutes">
         
             
@@ -876,7 +1171,7 @@ It accepts all the pieces needed, and implements all the plumbing to make these 
         <p class="tag-source">
             <a href="server_routes.js.html" class="button">View Source</a>
             <span>
-                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line258">line 258</a>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line259">line 259</a>
             </span>
         </p>
     
@@ -1125,7 +1420,7 @@ It accepts all the pieces needed, and implements all the plumbing to make these 
         <p class="tag-source">
             <a href="server_routes.js.html" class="button">View Source</a>
             <span>
-                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line486">line 486</a>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line487">line 487</a>
             </span>
         </p>
     
@@ -1373,7 +1668,7 @@ It accepts all the pieces needed, and implements all the plumbing to make these 
         <p class="tag-source">
             <a href="server_routes.js.html" class="button">View Source</a>
             <span>
-                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line45">line 45</a>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line46">line 46</a>
             </span>
         </p>
     
@@ -1599,7 +1894,7 @@ handler, but already has a <em>client</em> initialized, and the <em>config</em> 
         <p class="tag-source">
             <a href="server_routes.js.html" class="button">View Source</a>
             <span>
-                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line216">line 216</a>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line217">line 217</a>
             </span>
         </p>
     
@@ -1695,7 +1990,7 @@ handler, but already has a <em>client</em> initialized, and the <em>config</em> 
         <p class="tag-source">
             <a href="server_routes.js.html" class="button">View Source</a>
             <span>
-                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line197">line 197</a>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line198">line 198</a>
             </span>
         </p>
     
