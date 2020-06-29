@@ -91,7 +91,7 @@ function setCorsHeaders({ req, res, publisherConfig }) {
   } else if (whiteList.includes(origin)) {
     // allow whitelisted origins
     res.set("Access-Control-Allow-Origin", origin);
-  } else res.status(401).send(`Unauthorized`);
+  } else res.status(401).json(`Unauthorized`);
 }
 
 module.exports = { InfiniteScrollAmp, setCorsHeaders };

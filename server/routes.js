@@ -576,6 +576,7 @@ exports.ampRoutes = (app, opts = {}) => {
   getWithConfig(
     app,
     "/amp/api/v1/amp-infinite-scroll",
-    handleInfiniteScrollRequest
+    handleInfiniteScrollRequest,
+    opts
   );
 };
