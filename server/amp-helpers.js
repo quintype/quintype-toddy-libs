@@ -1,5 +1,4 @@
 const get = require("lodash/get");
-const fs = require("fs");
 
 class InfiniteScrollAmp {
   constructor({ ampConfig, client, publisherConfig, queryParams }) {
@@ -47,10 +46,6 @@ class InfiniteScrollAmp {
   async getResponse({ itemsTaken }) {
     const { "story-id": storyId } = this.queryParams;
     if (!storyId) return new Error(`Query param "story-id" missing`);
-    // if (!this.collSlug)
-    //   return new Error(
-    //     `"amp-infinite-scroll" not specified in amp config`
-    //   );
     const collection = await this.client.getCollectionBySlug(this.collSlug);
     if (!collection)
       return new Error(
@@ -92,13 +87,6 @@ function setCorsHeaders({ req, res, publisherConfig }) {
     `${ampCacheHost}.cdn.ampproject.org`,
     `${ampCacheHost}.www.bing-amp.com`,
   ];
-  console.log("\n************************************\n");
-  console.log("\n************************************\n");
-  console.log("publisherConfig.domains >>>", publisherConfig.domains);
-  console.log(publisherConfig);
-  console.log("\n************************************\n");
-  console.log("\n************************************\n");
-  fs.writeFileSync("/Users/amogh/js.js", JSON.stringify(publisherConfig));
   if (!origin && ampSameOrigin) {
     // allow same origin
     res.set("Access-Control-Allow-Origin", "*");
