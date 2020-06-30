@@ -1,3 +1,6 @@
+const get = require("lodash/get");
+const fs = require("fs");
+
 class InfiniteScrollAmp {
   constructor({ ampConfig, client, publisherConfig, queryParams }) {
     this.client = client;
@@ -76,15 +79,20 @@ class InfiniteScrollAmp {
 
 function setCorsHeaders({ req, res, publisherConfig }) {
   // https://amp.dev/documentation/guides-and-tutorials/learn/amp-caches-and-cors/amp-cors-requests/
+  const domains = get(publisherConfig, ["domains"], []).map(
+    (domain) => domain["host-url"]
+  );
   const { origin, "amp-same-origin": ampSameOrigin } = req.headers;
   const ampCacheHost = publisherConfig["sketches-host"]
     .replace(/-/g, "--")
     .replace(/\./g, "-");
   const whiteList = [
-    publisherConfig["sketches-host"],
+    ...domains,
+    // publisherConfig["sketches-host"],
     `${ampCacheHost}.cdn.ampproject.org`,
     `${ampCacheHost}.www.bing-amp.com`,
   ];
+  fs.writeFileSync("/Users/amogh/js.js", JSON.stringify(whiteList));
   if (!origin && ampSameOrigin) {
     // allow same origin
     res.set("Access-Control-Allow-Origin", "*");
