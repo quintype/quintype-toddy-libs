@@ -8,29 +8,29 @@ function getSeoInstance(seo, config, pageType = "") {
   return typeof seo === "function" ? seo(config, pageType) : seo;
 }
 
-// exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest(
-//   req,
-//   res,
-//   next,
-//   { client, config }
-// ) {
-//   const ampConfig = await config.memoizeAsync(
-//     "amp-config",
-//     async () => await AmpConfig.getAmpConfig(client)
-//   );
+exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest(
+  req,
+  res,
+  next,
+  { client, config }
+) {
+  const ampConfig = await config.memoizeAsync(
+    "amp-config",
+    async () => await AmpConfig.getAmpConfig(client)
+  );
 
-//   const infiniteScrollAmp = new InfiniteScrollAmp({
-//     ampConfig,
-//     publisherConfig: config,
-//     client,
-//     queryParams: req.query,
-//   });
-//   const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 5 }); // itemsTaken has to match with itemsToTake in getInitialInlineConfig method
-//   if (jsonResponse instanceof Error) return next(jsonResponse);
-//   res.set("Content-Type", "application/json; charset=utf-8");
-//   setCorsHeaders({ req, res, next, publisherConfig: config });
-//   if (!res.headersSent) return res.send(jsonResponse);
-// };
+  const infiniteScrollAmp = new InfiniteScrollAmp({
+    ampConfig,
+    publisherConfig: config,
+    client,
+    queryParams: req.query,
+  });
+  const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 5 }); // itemsTaken has to match with itemsToTake in getInitialInlineConfig method
+  if (jsonResponse instanceof Error) return next(jsonResponse);
+  res.set("Content-Type", "application/json; charset=utf-8");
+  setCorsHeaders({ req, res, next, publisherConfig: config });
+  if (!res.headersSent) return res.send(jsonResponse);
+};
 
 exports.handleAmpRequest = async function handleAmpRequest(
   req,
@@ -99,7 +99,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
     });
     const infiniteScrollInlineConfig = await infiniteScrollAmp.getInitialInlineConfig(
       {
-        itemsToTake: 40,
+        itemsToTake: 5,
         storyId: story["story-content-id"],
       }
     );

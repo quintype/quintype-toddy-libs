@@ -195,81 +195,81 @@ describe("Amp story page handler", () => {
   });
 });
 
-// describe("Amp infinite scroll handler", () => {
-//   it("returns infinite scroll json config from story 5 onwards for same-origin requests", function (done) {
-//     const app = createApp();
-//     const expectedJson = `{"pages":[{"image":"https://gumlet.assettype.com/pqr/heroimage.jpg?format=webp&w=250","title":"headline6","url":"/amp/story/foo.com/story-f"},{"image":"https://gumlet.assettype.com/stu/heroimage.jpg?format=webp&w=250","title":"headline7","url":"/amp/story/foo.com/story-g"}]}`;
-//     supertest(app)
-//       .get("/amp/api/v1/amp-infinite-scroll?story-id=foo")
-//       .set("amp-same-origin", "true")
-//       .expect(200)
-//       .expect("Content-Type", /json/)
-//       .expect("access-control-allow-origin", "*")
-//       .end((err, res) => {
-//         if (err) return done(err);
-//         const response = res.text;
-//         assert.equal(expectedJson, response);
-//         return done();
-//       });
-//   });
-//   it("removes current story from infinite scroll json config", function (done) {
-//     const app = createApp();
-//     const expectedJson = `{"pages":[{"image":"https://gumlet.assettype.com/stu/heroimage.jpg?format=webp&w=250","title":"headline7","url":"/amp/story/foo.com/story-g"}]}`;
-//     supertest(app)
-//       .get("/amp/api/v1/amp-infinite-scroll?story-id=pqr")
-//       .set("amp-same-origin", "true")
-//       .expect(200)
-//       .expect("Content-Type", /json/)
-//       .expect("access-control-allow-origin", "*")
-//       .end((err, res) => {
-//         if (err) return done(err);
-//         const response = res.text;
-//         assert.equal(expectedJson, response);
-//         return done();
-//       });
-//   });
-//   it("returns infinite scroll json config from story 5 onwards for requests coming from google CDN", function (done) {
-//     const app = createApp();
-//     supertest(app)
-//       .get("/amp/api/v1/amp-infinite-scroll?story-id=foo")
-//       .set("origin", "https://www-vikatan-com.cdn.ampproject.org")
-//       .expect(200)
-//       .expect("Content-Type", /json/)
-//       .expect(
-//         "access-control-allow-origin",
-//         "https://www-vikatan-com.cdn.ampproject.org"
-//       )
-//       .end((err, res) => {
-//         if (err) return done(err);
-//         return done();
-//       });
-//   });
-//   it("returns infinite scroll json config from story 5 onwards for requests coming from bing CDN", function (done) {
-//     const app = createApp();
-//     supertest(app)
-//       .get("/amp/api/v1/amp-infinite-scroll?story-id=foo")
-//       .set("origin", "https://www-vikatan-com.www.bing-amp.com")
-//       .expect(200)
-//       .expect("Content-Type", /json/)
-//       .expect(
-//         "access-control-allow-origin",
-//         "https://www-vikatan-com.www.bing-amp.com"
-//       )
-//       .end((err, res) => {
-//         if (err) return done(err);
-//         return done();
-//       });
-//   });
-//   it("Does not return amp infinite scroll config for requests coming from non-whitelosted origins", function (done) {
-//     const app = createApp();
-//     supertest(app)
-//       .get("/amp/api/v1/amp-infinite-scroll?story-id=foo")
-//       .set("origin", "https://www.facebook.com")
-//       .expect(401)
-//       .end((err, res) => {
-//         if (err) return done(err);
-//         assert.equal(JSON.stringify("Unauthorized"), res.text);
-//         return done();
-//       });
-//   });
-// });
+describe("Amp infinite scroll handler", () => {
+  it("returns infinite scroll json config from story 5 onwards for same-origin requests", function (done) {
+    const app = createApp();
+    const expectedJson = `{"pages":[{"image":"https://gumlet.assettype.com/pqr/heroimage.jpg?format=webp&w=250","title":"headline6","url":"/amp/story/foo.com/story-f"},{"image":"https://gumlet.assettype.com/stu/heroimage.jpg?format=webp&w=250","title":"headline7","url":"/amp/story/foo.com/story-g"}]}`;
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=foo")
+      .set("amp-same-origin", "true")
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .expect("access-control-allow-origin", "*")
+      .end((err, res) => {
+        if (err) return done(err);
+        const response = res.text;
+        assert.equal(expectedJson, response);
+        return done();
+      });
+  });
+  it("removes current story from infinite scroll json config", function (done) {
+    const app = createApp();
+    const expectedJson = `{"pages":[{"image":"https://gumlet.assettype.com/stu/heroimage.jpg?format=webp&w=250","title":"headline7","url":"/amp/story/foo.com/story-g"}]}`;
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=pqr")
+      .set("amp-same-origin", "true")
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .expect("access-control-allow-origin", "*")
+      .end((err, res) => {
+        if (err) return done(err);
+        const response = res.text;
+        assert.equal(expectedJson, response);
+        return done();
+      });
+  });
+  it("returns infinite scroll json config from story 5 onwards for requests coming from google CDN", function (done) {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=foo")
+      .set("origin", "https://www-vikatan-com.cdn.ampproject.org")
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .expect(
+        "access-control-allow-origin",
+        "https://www-vikatan-com.cdn.ampproject.org"
+      )
+      .end((err, res) => {
+        if (err) return done(err);
+        return done();
+      });
+  });
+  it("returns infinite scroll json config from story 5 onwards for requests coming from bing CDN", function (done) {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=foo")
+      .set("origin", "https://www-vikatan-com.www.bing-amp.com")
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .expect(
+        "access-control-allow-origin",
+        "https://www-vikatan-com.www.bing-amp.com"
+      )
+      .end((err, res) => {
+        if (err) return done(err);
+        return done();
+      });
+  });
+  it("Does not return amp infinite scroll config for requests coming from non-whitelosted origins", function (done) {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=foo")
+      .set("origin", "https://www.facebook.com")
+      .expect(401)
+      .end((err, res) => {
+        if (err) return done(err);
+        assert.equal(JSON.stringify("Unauthorized"), res.text);
+        return done();
+      });
+  });
+});

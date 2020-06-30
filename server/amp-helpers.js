@@ -74,6 +74,11 @@ class InfiniteScrollAmp {
 
 function setCorsHeaders({ req, res, publisherConfig }) {
   // https://amp.dev/documentation/guides-and-tutorials/learn/amp-caches-and-cors/amp-cors-requests/
+  console.log("\n*********************************************************\n");
+  console.log("\n*********************************************************\n");
+  console.log("publisherConfig.domains >>", publisherConfig.domains);
+  console.log("\n*********************************************************\n");
+  console.log("\n*********************************************************\n");
   const domains = get(publisherConfig, ["domains"], []).map(
     (domain) => domain["host-url"]
   );
@@ -83,7 +88,6 @@ function setCorsHeaders({ req, res, publisherConfig }) {
     .replace(/\./g, "-");
   const whiteList = [
     ...domains,
-    // publisherConfig["sketches-host"],
     `${ampCacheHost}.cdn.ampproject.org`,
     `${ampCacheHost}.www.bing-amp.com`,
   ];
