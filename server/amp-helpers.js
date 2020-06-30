@@ -74,11 +74,6 @@ class InfiniteScrollAmp {
 
 function setCorsHeaders({ req, res, publisherConfig }) {
   // https://amp.dev/documentation/guides-and-tutorials/learn/amp-caches-and-cors/amp-cors-requests/
-  console.log("\n*********************************************************\n");
-  console.log("\n*********************************************************\n");
-  console.log("publisherConfig.domains >>", publisherConfig.domains);
-  console.log("\n*********************************************************\n");
-  console.log("\n*********************************************************\n");
   const domains = get(publisherConfig, ["domains"], []).map(
     (domain) => domain["host-url"]
   );
