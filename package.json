@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "3.29.1-amp-infinite-scroll-cors.2",
+  "version": "3.29.1-amp-infinite-scroll-cors.3",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
