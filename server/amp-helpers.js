@@ -92,7 +92,13 @@ function setCorsHeaders({ req, res, publisherConfig }) {
     `${ampCacheHost}.cdn.ampproject.org`,
     `${ampCacheHost}.www.bing-amp.com`,
   ];
-  fs.writeFileSync("/Users/amogh/js.js", JSON.stringify(whiteList));
+  console.log("\n************************************\n");
+  console.log("\n************************************\n");
+  console.log("publisherConfig.domains >>>", publisherConfig.domains);
+  console.log(publisherConfig);
+  console.log("\n************************************\n");
+  console.log("\n************************************\n");
+  fs.writeFileSync("/Users/amogh/js.js", JSON.stringify(publisherConfig));
   if (!origin && ampSameOrigin) {
     // allow same origin
     res.set("Access-Control-Allow-Origin", "*");
