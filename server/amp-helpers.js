@@ -1,4 +1,4 @@
-const get = require("lodash/get");
+const _ = require("lodash");
 
 class InfiniteScrollAmp {
   constructor({ ampConfig, client, publisherConfig, queryParams }) {
@@ -72,20 +72,25 @@ class InfiniteScrollAmp {
   }
 }
 
+function getCacheUrls(url) {
+  const partialUrl = url.replace(/-/g, "--").replace(/\./g, "-");
+  return [`${partialUrl}.cdn.ampproject.org`, `${partialUrl}.www.bing-amp.com`];
+}
+
 function setCorsHeaders({ req, res, publisherConfig }) {
   // https://amp.dev/documentation/guides-and-tutorials/learn/amp-caches-and-cors/amp-cors-requests/
-  const domains = get(publisherConfig, ["domains"], []).map(
+  const subdomains = _.get(publisherConfig, ["domains"], []).map(
     (domain) => domain["host-url"]
   );
+  const cachedSubdomains = subdomains.map((subdomain) =>
+    getCacheUrls(subdomain)
+  );
   const { origin, "amp-same-origin": ampSameOrigin } = req.headers;
-  const ampCacheHost = publisherConfig["sketches-host"]
-    .replace(/-/g, "--")
-    .replace(/\./g, "-");
-  const whiteList = [
-    ...domains,
-    `${ampCacheHost}.cdn.ampproject.org`,
-    `${ampCacheHost}.www.bing-amp.com`,
-  ];
+  const whiteList = _.flatten([
+    ...subdomains,
+    ...cachedSubdomains,
+    getCacheUrls(publisherConfig["sketches-host"]),
+  ]);
   if (!origin && ampSameOrigin) {
     // allow same origin
     res.set("Access-Control-Allow-Origin", "*");
