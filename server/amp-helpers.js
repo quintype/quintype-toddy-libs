@@ -1,3 +1,5 @@
+const get = require("lodash/get");
+
 class InfiniteScrollAmp {
   constructor({ ampConfig, client, publisherConfig, queryParams }) {
     this.client = client;
@@ -44,10 +46,6 @@ class InfiniteScrollAmp {
   async getResponse({ itemsTaken }) {
     const { "story-id": storyId } = this.queryParams;
     if (!storyId) return new Error(`Query param "story-id" missing`);
-    // if (!this.collSlug)
-    //   return new Error(
-    //     `"amp-infinite-scroll" not specified in amp config`
-    //   );
     const collection = await this.client.getCollectionBySlug(this.collSlug);
     if (!collection)
       return new Error(
@@ -76,12 +74,15 @@ class InfiniteScrollAmp {
 
 function setCorsHeaders({ req, res, publisherConfig }) {
   // https://amp.dev/documentation/guides-and-tutorials/learn/amp-caches-and-cors/amp-cors-requests/
+  const domains = get(publisherConfig, ["domains"], []).map(
+    (domain) => domain["host-url"]
+  );
   const { origin, "amp-same-origin": ampSameOrigin } = req.headers;
   const ampCacheHost = publisherConfig["sketches-host"]
     .replace(/-/g, "--")
     .replace(/\./g, "-");
   const whiteList = [
-    publisherConfig["sketches-host"],
+    ...domains,
     `${ampCacheHost}.cdn.ampproject.org`,
     `${ampCacheHost}.www.bing-amp.com`,
   ];

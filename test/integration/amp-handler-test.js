@@ -34,6 +34,14 @@ function getClientStub(hostname) {
         "cdn-name": "images.assettype.com",
         "cdn-image": "gumlet.assettype.com",
         "sketches-host": "https://www.vikatan.com",
+        domains: [
+          {
+            "host-url": "https://cinema.vikatan.com",
+          },
+          {
+            "host-url": "https://sports.vikatan.com",
+          },
+        ],
         memoizeAsync: (key, fn) => {
           return ampConfig;
         },
@@ -255,6 +263,19 @@ describe("Amp infinite scroll handler", () => {
         "access-control-allow-origin",
         "https://www-vikatan-com.www.bing-amp.com"
       )
+      .end((err, res) => {
+        if (err) return done(err);
+        return done();
+      });
+  });
+  it("returns infinite scroll json config from story 5 onwards for requests coming from subdomain", function (done) {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=foo")
+      .set("origin", "https://cinema.vikatan.com")
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .expect("access-control-allow-origin", "https://cinema.vikatan.com")
       .end((err, res) => {
         if (err) return done(err);
         return done();
