@@ -203,35 +203,35 @@ describe("Amp story page handler", () => {
   });
 });
 
-describe("Amp infinite scroll handler", () => {
-  it("returns infinite scroll json config from story 5 onwards", function (done) {
-    const app = createApp();
-    const expectedJson = `{"pages":[{"image":"https://gumlet.assettype.com/pqr/heroimage.jpg?format=webp&w=250","title":"headline6","url":"/amp/story/foo.com/story-f"},{"image":"https://gumlet.assettype.com/stu/heroimage.jpg?format=webp&w=250","title":"headline7","url":"/amp/story/foo.com/story-g"}]}`;
-    supertest(app)
-      .get("/amp/api/v1/amp-infinite-scroll?story-id=foo")
-      .set("amp-same-origin", "true")
-      .expect(200)
-      .expect("Content-Type", /json/)
-      .end((err, res) => {
-        if (err) return done(err);
-        const response = res.text;
-        assert.equal(expectedJson, response);
-        return done();
-      });
-  });
-  it("removes current story from infinite scroll json config", function (done) {
-    const app = createApp();
-    const expectedJson = `{"pages":[{"image":"https://gumlet.assettype.com/stu/heroimage.jpg?format=webp&w=250","title":"headline7","url":"/amp/story/foo.com/story-g"}]}`;
-    supertest(app)
-      .get("/amp/api/v1/amp-infinite-scroll?story-id=pqr")
-      .set("amp-same-origin", "true")
-      .expect(200)
-      .expect("Content-Type", /json/)
-      .end((err, res) => {
-        if (err) return done(err);
-        const response = res.text;
-        assert.equal(expectedJson, response);
-        return done();
-      });
-  });
-});
+// describe("Amp infinite scroll handler", () => {
+//   it("returns infinite scroll json config from story 5 onwards", function (done) {
+//     const app = createApp();
+//     const expectedJson = `{"pages":[{"image":"https://gumlet.assettype.com/pqr/heroimage.jpg?format=webp&w=250","title":"headline6","url":"/amp/story/foo.com/story-f"},{"image":"https://gumlet.assettype.com/stu/heroimage.jpg?format=webp&w=250","title":"headline7","url":"/amp/story/foo.com/story-g"}]}`;
+//     supertest(app)
+//       .get("/amp/api/v1/amp-infinite-scroll?story-id=foo")
+//       .set("amp-same-origin", "true")
+//       .expect(200)
+//       .expect("Content-Type", /json/)
+//       .end((err, res) => {
+//         if (err) return done(err);
+//         const response = res.text;
+//         assert.equal(expectedJson, response);
+//         return done();
+//       });
+//   });
+//   it("removes current story from infinite scroll json config", function (done) {
+//     const app = createApp();
+//     const expectedJson = `{"pages":[{"image":"https://gumlet.assettype.com/stu/heroimage.jpg?format=webp&w=250","title":"headline7","url":"/amp/story/foo.com/story-g"}]}`;
+//     supertest(app)
+//       .get("/amp/api/v1/amp-infinite-scroll?story-id=pqr")
+//       .set("amp-same-origin", "true")
+//       .expect(200)
+//       .expect("Content-Type", /json/)
+//       .end((err, res) => {
+//         if (err) return done(err);
+//         const response = res.text;
+//         assert.equal(expectedJson, response);
+//         return done();
+//       });
+//   });
+// });
