@@ -25,7 +25,7 @@ exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest
     client,
     queryParams: req.query,
   });
-  const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 40 }); // itemsTaken has to match with itemsToTake in getInitialInlineConfig method
+  const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 5 }); // itemsTaken has to match with itemsToTake in getInitialInlineConfig method
   if (jsonResponse instanceof Error) return next(jsonResponse);
   res.set("Content-Type", "application/json; charset=utf-8");
   setCorsHeaders({ req, res, next, publisherConfig: config });
@@ -99,7 +99,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
     });
     const infiniteScrollInlineConfig = await infiniteScrollAmp.getInitialInlineConfig(
       {
-        itemsToTake: 40,
+        itemsToTake: 5,
         storyId: story["story-content-id"],
       }
     );
