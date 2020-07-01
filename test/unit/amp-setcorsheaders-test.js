@@ -26,18 +26,24 @@ function createApp(app = express()) {
       ],
     };
     setCorsHeaders({ req, res, publisherConfig: dummyPublisherConfig });
-    if (!res.headersSent) return res.send("test");
+    if (!res.headersSent) return res.json("test");
   });
   return app;
 }
 
 describe("setCorsHeaders helper function", () => {
-  it("sets CORS headers for same-origin requests that have amp-same-origin header set", function (done) {
+  it("same-origin requests go through", function (done) {
     const app = createApp();
     supertest(app)
       .get("/test/cors/route")
       .set("amp-same-origin", "true")
-      .expect(200, done);
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .end((err, res) => {
+        if (err) return done(err);
+        assert.equal(JSON.stringify("test"), res.text);
+        return done();
+      });
   });
   it("sets CORS headers for requests coming from google CDN", function (done) {
     const app = createApp();
