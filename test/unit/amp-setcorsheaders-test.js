@@ -37,7 +37,6 @@ describe("setCorsHeaders helper function", () => {
     supertest(app)
       .get("/test/cors/route")
       .set("amp-same-origin", "true")
-      .expect("access-control-allow-origin", "*")
       .expect(200, done);
   });
   it("sets CORS headers for requests coming from google CDN", function (done) {

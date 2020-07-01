@@ -212,7 +212,6 @@ describe("Amp infinite scroll handler", () => {
       .set("amp-same-origin", "true")
       .expect(200)
       .expect("Content-Type", /json/)
-      .expect("access-control-allow-origin", "*")
       .end((err, res) => {
         if (err) return done(err);
         const response = res.text;
@@ -228,7 +227,6 @@ describe("Amp infinite scroll handler", () => {
       .set("amp-same-origin", "true")
       .expect(200)
       .expect("Content-Type", /json/)
-      .expect("access-control-allow-origin", "*")
       .end((err, res) => {
         if (err) return done(err);
         const response = res.text;
