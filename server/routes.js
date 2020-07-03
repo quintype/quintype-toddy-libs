@@ -284,6 +284,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     serviceWorkerPaths = ["/service-worker.js"],
     maxConfigVersion = (config) =>
       get(config, ["theme-attributes", "cache-burst"], 0),
+    extendedConfig = {},
 
     // The below are primarily for testing
     logError = require("./logger").error,
@@ -310,6 +311,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       assetHelper,
       renderServiceWorker,
       maxConfigVersion,
+      extendedConfig,
     })
   );
 
@@ -322,6 +324,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         assetHelper,
         appendFn: oneSignalImport,
         maxConfigVersion,
+        extendedConfig,
       })
     );
     app.get(
@@ -332,6 +335,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         assetHelper,
         appendFn: oneSignalImport,
         maxConfigVersion,
+        extendedConfig,
       })
     );
   }

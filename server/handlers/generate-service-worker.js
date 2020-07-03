@@ -29,6 +29,7 @@ async function generateServiceWorker(
         routes: generateRoutes(config, domainSlug).filter(
           (route) => !route.skipPWA
         ),
+        extendedConfig,
       },
       (err, content) => {
         // istanbul ignore if
