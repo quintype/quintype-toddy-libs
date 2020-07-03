@@ -15,7 +15,7 @@ class InfiniteScrollAmp {
       ({ type, story }) =>
         type === "story" &&
         story["story-content-id"] !== storyId &&
-        (!story.access || story.access === "public")
+        story.access !== "subscription"
     );
   }
 
