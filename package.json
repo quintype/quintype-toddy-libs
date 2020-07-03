@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "3.29.3",
+  "version": "3.29.4-amp-infinite-scr-exclude-paid.0",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
-    "@quintype/amp": "^1.5.0",
+    "@quintype/amp": "^1.6.0",
     "@quintype/backend": "^1.23.1",
     "@quintype/components": "^2.16.1",
     "@quintype/seo": "^1.38.1",

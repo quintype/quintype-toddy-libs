@@ -11,10 +11,11 @@ class InfiniteScrollAmp {
 
   // eslint-disable-next-line class-methods-use-this
   getFilteredCollItems(coll, storyId) {
-    // removes current story from infinite scroll collection items
     return coll.items.filter(
-      (item) =>
-        item.type === "story" && item.story["story-content-id"] !== storyId
+      ({ type, story }) =>
+        type === "story" &&
+        story["story-content-id"] !== storyId &&
+        story.access !== "subscription"
     );
   }
 
