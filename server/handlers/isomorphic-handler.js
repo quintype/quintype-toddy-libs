@@ -471,7 +471,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
         "Link",
         `</route-data.json?path=${encodeURIComponent(url.pathname)}${
           url.search ? `&${url.search.substr(1)}` : ""
-        }>; rel=preload; as=fetch;`
+        }>; rel=preload; as=fetch; crossorigin;`
       );
     }
 
