@@ -146,7 +146,7 @@ describe("Isomorphic Handler", function () {
         .expect("Content-Type", /html/)
         .expect(
           "Link",
-          "</route-data.json?path=%2F&foo=bar>; rel=preload; as=fetch;"
+          "</route-data.json?path=%2F&foo=bar>; rel=preload; as=fetch; crossorigin;"
         )
         .expect(200, done);
     });
