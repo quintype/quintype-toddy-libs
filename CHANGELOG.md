@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.29.6](https://github.com/quintype/quintype-node-framework/compare/v3.29.5...v3.29.6) (2020-07-08)
+
+
+### Bug Fixes
+
+* bump amp library that fixes publisher logo ([0975545](https://github.com/quintype/quintype-node-framework/commit/0975545))
+
+
+
 ## [3.29.5](https://github.com/quintype/quintype-node-framework/compare/v3.29.4...v3.29.5) (2020-07-08)
 
 
