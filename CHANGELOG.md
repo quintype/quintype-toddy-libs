@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.29.5](https://github.com/quintype/quintype-node-framework/compare/v3.29.4...v3.29.5) (2020-07-08)
+
+
+### Bug Fixes
+
+* update amp containing fix for header logo ([#131](https://github.com/quintype/quintype-node-framework/issues/131)) ([689f666](https://github.com/quintype/quintype-node-framework/commit/689f666))
+
+
+
 ## [3.29.4](https://github.com/quintype/quintype-node-framework/compare/v3.29.3...v3.29.4) (2020-07-03)
 
 
