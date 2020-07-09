@@ -19,7 +19,7 @@ async function generateServiceWorker(
       res,
       "js/service-worker",
       {
-        config,
+        config: Object.assign(config, { opts: req.opts }),
         serviceWorkerHelper: assetHelper.serviceWorkerContents(),
         assetPath: assetHelper.assetPath,
         hostname: req.hostname,

@@ -116,7 +116,11 @@ async function handleVisualStory(
     addCacheHeadersToResult(res, [
       storyToCacheKey(config["publisher-id"], story),
     ]);
-    await renderVisualStory(res, story, { config, client, seoTags });
+    await renderVisualStory(res, story, {
+      config: Object.assign(config, { opts: req.opts }),
+      client,
+      seoTags,
+    });
   }
 }
 
