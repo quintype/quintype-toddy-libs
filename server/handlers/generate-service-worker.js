@@ -1,8 +1,7 @@
 async function generateServiceWorker(
   req,
   res,
-  next,
-  {
+  next, {
     config,
     generateRoutes,
     appendFn,
@@ -10,15 +9,15 @@ async function generateServiceWorker(
     renderServiceWorker,
     domainSlug,
     maxConfigVersion,
+    getExtendedConfig
   }
 ) {
   const configVersion = await maxConfigVersion(config);
-
+  const extendedConfig = await getExtendedConfig(config);
   return new Promise((resolve) => {
     renderServiceWorker(
       res,
-      "js/service-worker",
-      {
+      "js/service-worker", {
         config,
         serviceWorkerHelper: assetHelper.serviceWorkerContents(),
         assetPath: assetHelper.assetPath,

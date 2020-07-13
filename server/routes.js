@@ -256,6 +256,7 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {string} opts.cdnProvider The name of the cdn provider. Supported cdn providers are akamai, cloudflare. Default value is cloudflare.
  * @param {function} opts.maxConfigVersion An async function which resolves to a integer version of the config. This defaults to config.theme-attributes.cache-burst
  */
+
 exports.isomorphicRoutes = function isomorphicRoutes(
   app,
   {
@@ -284,7 +285,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     serviceWorkerPaths = ["/service-worker.js"],
     maxConfigVersion = (config) =>
       get(config, ["theme-attributes", "cache-burst"], 0),
-    extendedConfig = {},
+    getExtendedConfig = () => {},
 
     // The below are primarily for testing
     logError = require("./logger").error,
@@ -311,7 +312,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       assetHelper,
       renderServiceWorker,
       maxConfigVersion,
-      extendedConfig,
+      getExtendedConfig,
     })
   );
 
@@ -324,7 +325,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         assetHelper,
         appendFn: oneSignalImport,
         maxConfigVersion,
-        extendedConfig,
+        getExtendedConfig,
       })
     );
     app.get(
@@ -335,7 +336,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         assetHelper,
         appendFn: oneSignalImport,
         maxConfigVersion,
-        extendedConfig,
+        getExtendedConfig,
       })
     );
   }
