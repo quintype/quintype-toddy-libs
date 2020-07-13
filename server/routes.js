@@ -285,7 +285,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     serviceWorkerPaths = ["/service-worker.js"],
     maxConfigVersion = (config) =>
       get(config, ["theme-attributes", "cache-burst"], 0),
-    getExtendedConfig = () => {},
+    getExtendedConfig = () => ({}),
 
     // The below are primarily for testing
     logError = require("./logger").error,
