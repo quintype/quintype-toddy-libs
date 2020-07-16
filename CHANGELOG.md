@@ -2,6 +2,58 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.29.7](https://github.com/quintype/quintype-node-framework/compare/v3.29.6...v3.29.7) (2020-07-09)
+
+
+
+## [3.29.6](https://github.com/quintype/quintype-node-framework/compare/v3.29.5...v3.29.6) (2020-07-08)
+
+
+### Bug Fixes
+
+* bump amp library that fixes publisher logo ([0975545](https://github.com/quintype/quintype-node-framework/commit/0975545))
+
+
+
+## [3.29.5](https://github.com/quintype/quintype-node-framework/compare/v3.29.4...v3.29.5) (2020-07-08)
+
+
+### Bug Fixes
+
+* update amp containing fix for header logo ([#131](https://github.com/quintype/quintype-node-framework/issues/131)) ([689f666](https://github.com/quintype/quintype-node-framework/commit/689f666))
+
+
+
+## [3.29.4](https://github.com/quintype/quintype-node-framework/compare/v3.29.3...v3.29.4) (2020-07-03)
+
+
+
+## [3.29.3](https://github.com/quintype/quintype-node-framework/compare/v3.29.2...v3.29.3) (2020-07-01)
+
+
+
+## [3.29.2](https://github.com/quintype/quintype-node-framework/compare/v3.29.1...v3.29.2) (2020-06-30)
+
+
+
+## [3.29.1](https://github.com/quintype/quintype-node-framework/compare/v3.29.0...v3.29.1) (2020-06-30)
+
+
+### Bug Fixes
+
+* **ampLib:** carousel validation error ([17d5d0a](https://github.com/quintype/quintype-node-framework/commit/17d5d0a))
+
+
+
+## [3.28.1](https://github.com/quintype/quintype-node-framework/compare/v3.28.0...v3.28.1) (2020-06-29)
+
+
+### Bug Fixes
+
+* update package lock ([c4cf7ff](https://github.com/quintype/quintype-node-framework/commit/c4cf7ff))
+
+
+
 # [3.28.0](https://github.com/quintype/quintype-node-framework/compare/v3.26.2...v3.28.0) (2020-06-23)
 
 

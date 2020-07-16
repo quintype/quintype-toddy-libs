@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "3.28.0",
+  "version": "3.29.7",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -26,8 +26,10 @@
   },
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
-    "@quintype/backend": "^1.22.0",
+    "@quintype/amp": "^1.6.3",
+    "@quintype/backend": "^1.23.1",
     "@quintype/components": "^2.16.1",
+    "@quintype/seo": "^1.38.1",
     "atob": "^2.1.2",
     "cluster": "^0.7.7",
     "compression": "^1.7.4",
@@ -53,6 +55,7 @@
     "babel-plugin-quintype-assets": "^1.1.1",
     "babel-plugin-react-css-modules": "^5.2.4",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-es2015-tree-shaking": "^1.0.1",
     "babel-preset-react": "^6.24.1",

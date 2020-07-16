@@ -23,6 +23,7 @@ const {
   Entity,
   MenuGroups,
   Config,
+  AmpConfig,
 } = require("./impl/api-client-impl");
 
 const defaultClient = new Client(config.sketches_host);
@@ -55,6 +56,7 @@ module.exports = {
   Entity,
   MenuGroups,
   Config,
+  AmpConfig,
 
   client: defaultClient,
   getClient,

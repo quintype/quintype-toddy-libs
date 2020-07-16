@@ -8,6 +8,7 @@ const {
   Entity,
   MenuGroups,
   Config,
+  AmpConfig,
 } = require("@quintype/backend");
 const {
   storyToCacheKey,
@@ -133,4 +134,5 @@ module.exports = {
   Entity,
   MenuGroups,
   Config,
+  AmpConfig,
 };
