@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [3.30.0](https://github.com/quintype/quintype-node-framework/compare/v3.29.7...v3.30.0) (2020-07-16)
+
+
+### Bug Fixes
+
+* static page json content ([#124](https://github.com/quintype/quintype-node-framework/issues/124)) ([fcf595c](https://github.com/quintype/quintype-node-framework/commit/fcf595c))
+
+
+### Features
+
+* **crossOrigin:** Add a cross origin parameter to preload ([#137](https://github.com/quintype/quintype-node-framework/issues/137)) ([a4856a7](https://github.com/quintype/quintype-node-framework/commit/a4856a7))
+
+
+
 ## [3.29.7](https://github.com/quintype/quintype-node-framework/compare/v3.29.6...v3.29.7) (2020-07-09)
 
 
