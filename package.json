@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "3.29.8-fix-static-page.0",
+  "version": "3.29.7",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
