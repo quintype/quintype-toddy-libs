@@ -160,9 +160,10 @@ describe("Custom Route Handler", function () {
       .expect(200)
       .then((res) => {
         const response = JSON.parse(res.text);
+        // In this case, content is empty to avoid breaking the script tags present outside it.
         assert.equal(
-          "<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>",
-          response.store.qt.data.content
+          "",
+           response.store.qt.data.content
         );
         assert.equal("static-page", response.store.qt.pageType);
       })
