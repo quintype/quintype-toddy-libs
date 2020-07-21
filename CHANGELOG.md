@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.30.1](https://github.com/quintype/quintype-node-framework/compare/v3.30.0...v3.30.1) (2020-07-21)
+
+
+### Bug Fixes
+
+* re-structure amp opts object ([#138](https://github.com/quintype/quintype-node-framework/issues/138)) ([dcf67f8](https://github.com/quintype/quintype-node-framework/commit/dcf67f8))
+
+
+
 # [3.30.0](https://github.com/quintype/quintype-node-framework/compare/v3.29.7...v3.30.0) (2020-07-16)
 
 
