@@ -14,7 +14,9 @@ function addLightPageHeaders(result, lightPages, { config, res, client, req }) {
   isAmpSupported &&
     res.set(
       "X-QT-Light-Pages-Url",
-      `${client.baseUrl}/amp/story/${encodeURIComponent(req.path)}`
+      `${req.protocol}://${req.hostname}/amp/story/${encodeURIComponent(
+        req.path
+      )}`
     );
 }
 
