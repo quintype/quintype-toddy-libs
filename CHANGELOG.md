@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.2](https://github.com/quintype/quintype-node-framework/compare/v4.0.1...v4.0.2) (2020-07-21)
+
+
+### Bug Fixes
+
+* **lightPages:** Fix the hostname for light pages ([#140](https://github.com/quintype/quintype-node-framework/issues/140)) ([2617d48](https://github.com/quintype/quintype-node-framework/commit/2617d48))
+
+
+
 ## [4.0.1](https://github.com/quintype/quintype-node-framework/compare/v4.0.0...v4.0.1) (2020-07-21)
 
 
