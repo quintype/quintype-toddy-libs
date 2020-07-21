@@ -1,5 +1,4 @@
 const urlLib = require("url");
-const set = require("lodash/set");
 const { Story, AmpConfig } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 const { storyToCacheKey } = require("../caching");
@@ -40,6 +39,8 @@ exports.handleAmpRequest = async function handleAmpRequest(
   {
     client,
     config,
+    slots = {},
+    templates = {},
     seo,
     cdnProvider = null,
     ampLibrary = require("@quintype/amp"),
@@ -73,9 +74,6 @@ exports.handleAmpRequest = async function handleAmpRequest(
         .slice(0, 5)
         .map((item) => item.story);
     }
-    if (relatedStories.length) {
-      set(opts, ["featureConfig", "relatedStories", "stories"], relatedStories);
-    }
 
     if (
       !story["is-amp-supported"] &&
@@ -107,20 +105,16 @@ exports.handleAmpRequest = async function handleAmpRequest(
     );
     if (infiniteScrollInlineConfig instanceof Error)
       return next(infiniteScrollInlineConfig);
-    if (infiniteScrollInlineConfig) {
-      set(
-        opts,
-        ["featureConfig", "infiniteScroll", "infiniteScrollInlineConfig"],
-        infiniteScrollInlineConfig
-      );
-    }
+
     const ampHtml = ampifyStory({
       story,
       publisherConfig: config.config,
       ampConfig: ampConfig.ampConfig,
+      relatedStories,
       client,
-      opts,
+      opts: { slots, templates, ...opts },
       seo: seoTags ? seoTags.toString() : "",
+      infiniteScrollInlineConfig,
     });
     if (ampHtml instanceof Error) return next(ampHtml);
     res.set("Content-Type", "text/html");
