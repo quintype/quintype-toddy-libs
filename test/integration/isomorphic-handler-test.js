@@ -404,7 +404,7 @@ describe("Isomorphic Handler", function () {
         .expect(200)
         .then((res) => {
           assert.equal(
-            "https://www.foo.com/amp/story/%2Ffoo%2Fbar",
+            `http://127.0.0.1/amp/story/%2Ffoo%2Fbar`,
             res.get("X-QT-Light-Pages-Url")
           );
         })
@@ -430,7 +430,7 @@ describe("Isomorphic Handler", function () {
         .expect(200)
         .then((res) => {
           assert.equal(
-            "https://www.foo.com/amp/story/%2Ffoo%2Fbar",
+            `http://127.0.0.1/amp/story/%2Ffoo%2Fbar`,
             res.get("X-QT-Light-Pages-Url")
           );
         })
