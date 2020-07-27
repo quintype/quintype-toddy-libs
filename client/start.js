@@ -348,11 +348,9 @@ export function startApp(renderApplication, reducers, opts) {
     registerPageView(store.getState().qt);
 
     if (page.title) {
-      global.document.title = get(
-        page,
-        ["data", "story", "seo", "meta-title"],
-        page.title
-      );
+      global.document.title =
+        get(page, ["data", "customSeo", "title"], undefined) ||
+        get(page, ["data", "story", "seo", "meta-title"], page.title);
     }
     return store;
   }
