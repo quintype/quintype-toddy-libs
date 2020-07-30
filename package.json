@@ -26,7 +26,8 @@
   },
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
-    "@quintype/amp": "^2.0.1",
+    "@ampproject/toolbox-optimizer-express": "^2.5.14",
+    "@quintype/amp": "^3.0.0-perf-improvements.0",
     "@quintype/backend": "^1.23.1",
     "@quintype/components": "^2.16.1",
     "@quintype/seo": "^1.38.1",
