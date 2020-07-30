@@ -303,7 +303,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     1
   );
 
-  if(serviceWorkerPaths.length) {
+  if(serviceWorkerPaths.length > 0) {
     app.get(
       serviceWorkerPaths,
       withConfig(generateServiceWorker, {
