@@ -291,10 +291,10 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
           appVersion,
           data: mobileApiEnabled
             ? chunkDataForMobile(
-                result.data,
-                mobileConfigFields,
-                result.pageType
-              )
+              result.data,
+              mobileConfigFields,
+              result.pageType
+            )
             : _.omit(result.data, ["cacheKeys"]),
           config: mobileApiEnabled
             ? chunkDataForMobile(result.config, mobileConfigFields, "config")
@@ -449,7 +449,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     });
 
     if (lightPages) {
-      addLightPageHeaders(result, lightPages, { config, res, client, req });
+      await addLightPageHeaders(result, lightPages, { config, res, client, req });
     }
 
     res.status(statusCode);
@@ -470,7 +470,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
       res.append(
         "Link",
         `</route-data.json?path=${encodeURIComponent(url.pathname)}${
-          url.search ? `&${url.search.substr(1)}` : ""
+        url.search ? `&${url.search.substr(1)}` : ""
         }>; rel=preload; as=fetch; crossorigin;`
       );
     }
@@ -587,11 +587,11 @@ exports.handleStaticRoute = function handleStaticRoute(
             config,
             title: seoInstance
               ? seoInstance.getTitle(
-                  config,
-                  result.pageType || match.pageType,
-                  result,
-                  { url }
-                )
+                config,
+                result.pageType || match.pageType,
+                result,
+                { url }
+              )
               : result.title,
             store,
             disableAjaxNavigation: true,
