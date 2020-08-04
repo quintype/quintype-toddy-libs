@@ -427,10 +427,14 @@ exports.isomorphicRoutes = function isomorphicRoutes(
   // Redirects static urls
   if (redirectUrls.length > 0) {
     redirectUrls.forEach(({ sourceUrl, destinationUrl, statusCode }) => {
-      app.get(sourceUrl, (req, res) => {
-        const query = url.parse(req.url, true) || {};
-        const search = query.search || "";
-        return res.redirect(statusCode, `${destinationUrl}${search}`);
+      app.get(sourceUrl, (req, res, next) => {
+        try {
+          const query = url.parse(req.url, true) || {};
+          const search = query.search || "";
+          return res.redirect(statusCode, `${destinationUrl}${search}`);
+        } catch (e) {
+          return next();
+        }
       });
     });
   }
