@@ -1,16 +1,17 @@
 const _ = require("lodash");
 
-function addLightPageHeaders(result, lightPages, { config, res, client, req }) {
+async function addLightPageHeaders(result, lightPages, { config, res, client, req }) {
   const isAmpSupported = _.get(
     result,
     ["data", "story", "is-amp-supported"],
     false
   );
-
-  if (typeof lightPages === "function" && !lightPages(config)) {
+  const enableLightPages = await lightPages(config);
+  if (typeof lightPages === "function" && !enableLightPages) {
+    console.log('---amp')
     return;
   }
-
+  console.log('---amp true')
   isAmpSupported &&
     res.set(
       "X-QT-Light-Pages-Url",
