@@ -424,7 +424,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
 ) {
   const url = urlLib.parse(req.url, true);
 
-  function writeResponse(result) {
+  async function writeResponse(result) {
     const statusCode = result.httpStatusCode || 200;
 
     if (statusCode == 301 && result.data && result.data.location) {
