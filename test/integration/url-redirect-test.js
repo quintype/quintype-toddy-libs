@@ -22,13 +22,13 @@ function getClientStub(hostname) {
               "destination-path": "/permanent-location-1",
             },
           });
-        case "/moved-temporarily":
+        case "/moved-temporarily-1":
           return Promise.resolve({
             page: {
               id: 102,
               type: "redirect",
               "status-code": 302,
-              "destination-path": "/temporary-location",
+              "destination-path": "/temporarily-location-1",
             },
           });
 
@@ -609,8 +609,8 @@ describe("Redirect Routes Handler", function () {
       [{ pageType: "story-page", path: "/*" }]
     );
     supertest(app)
-      .get("/moved-temporarily")
-      .expect("Location", "/temporary-location")
+      .get("/moved-temporarily-1")
+      .expect("Location", "/temporarily-location-1")
       .expect(
         "Cache-Control",
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
