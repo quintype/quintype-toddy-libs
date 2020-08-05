@@ -424,23 +424,37 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     );
   });
 
+  function getUrlRedirect(sourceUrlArray, chunkUrls) {
+    app.get(sourceUrlArray, (req, res, next) => {
+      try {
+        const query = url.parse(req.url, true) || {};
+        const search = query.search || "";
+        const pos = chunkUrls
+          .map((e) => {
+            return e.sourceUrl;
+          })
+          .indexOf(url.parse(req.url).pathname);
+        if (pos >= 0) {
+          return res.redirect(
+            chunkUrls[pos].statusCode,
+            `${chunkUrls[pos].destinationUrl}${search}`
+          );
+        }
+        return next();
+      } catch (e) {
+        return next();
+      }
+    });
+  }
+
   // Redirects static urls
   if (redirectUrls.length > 0) {
     let i = 0;
     const chunk = 10;
     while (i < redirectUrls.length) {
       const chunkUrls = redirectUrls.slice(i, i + chunk);
-      chunkUrls.forEach(({ sourceUrl, destinationUrl, statusCode }) => {
-        app.get(sourceUrl, (req, res, next) => {
-          try {
-            const query = url.parse(req.url, true) || {};
-            const search = query.search || "";
-            return res.redirect(statusCode, `${destinationUrl}${search}`);
-          } catch (e) {
-            return next();
-          }
-        });
-      });
+      const sourceUrlArray = chunkUrls.map((redUrl) => redUrl.sourceUrl);
+      getUrlRedirect(sourceUrlArray, chunkUrls);
       i += chunk;
     }
   }
