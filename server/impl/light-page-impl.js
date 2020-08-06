@@ -6,12 +6,14 @@ async function addLightPageHeaders(result, lightPages, { config, res, client, re
     ["data", "story", "is-amp-supported"],
     false
   );
-  const enableLightPages = await lightPages(config);
-  if (typeof lightPages === "function" && !enableLightPages) {
-    console.log('---amp')
+
+  const enableLightPages = typeof lightPages === "function" && await lightPages(config);
+  console.log(enableLightPages, 'enableLightPages')
+  if (!enableLightPages) {
+    console.log('---amp false')
     return;
   }
-  console.log('---amp true')
+  console.log('---amp pages true')
   isAmpSupported &&
     res.set(
       "X-QT-Light-Pages-Url",

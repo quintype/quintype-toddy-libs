@@ -424,7 +424,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
 ) {
   const url = urlLib.parse(req.url, true);
 
-  async function writeResponse(result) {
+  function writeResponse(result) {
     const statusCode = result.httpStatusCode || 200;
 
     if (statusCode == 301 && result.data && result.data.location) {
@@ -449,7 +449,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     });
 
     if (lightPages) {
-      await addLightPageHeaders(result, lightPages, { config, res, client, req });
+      addLightPageHeaders(result, lightPages, { config, res, client, req });
     }
 
     res.status(statusCode);
