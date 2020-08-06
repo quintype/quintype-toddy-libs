@@ -384,85 +384,85 @@ describe("Isomorphic Handler", function () {
       .then(done);
   });
 
-  // describe("lightPages", () => {
-  //   it("renders amp story pages", (done) => {
-  //     const app = createApp(
-  //       (pageType, params, config, client, { host }) =>
-  //         Promise.resolve({
-  //           pageType,
-  //           data: { text: "foobar", host, story: { "is-amp-supported": true } },
-  //         }),
-  //       [{ pageType: "story-page", path: "/*/:storySlug" }],
-  //       {
-  //         lightPages: true,
-  //       }
-  //     );
+  describe("lightPages", () => {
+    it("renders amp story pages", (done) => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host, story: { "is-amp-supported": true } },
+          }),
+        [{ pageType: "story-page", path: "/*/:storySlug" }],
+        {
+          lightPages: true,
+        }
+      );
 
-  //     supertest(app)
-  //       .get("/foo/bar")
-  //       .expect("Content-Type", /html/)
-  //       .expect(200)
-  //       .then((res) => {
-  //         assert.equal(
-  //           `http://127.0.0.1/amp/story/%2Ffoo%2Fbar`,
-  //           res.get("X-QT-Light-Pages-Url")
-  //         );
-  //       })
-  //       .then(done);
-  //   });
+      supertest(app)
+        .get("/foo/bar")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then((res) => {
+          assert.equal(
+            `http://127.0.0.1/amp/story/%2Ffoo%2Fbar`,
+            res.get("X-QT-Light-Pages-Url")
+          );
+        })
+        .then(done);
+    });
 
-  //   it("renders amp story pages when lightPages is passed as a function which return true", (done) => {
-  //     const app = createApp(
-  //       (pageType, params, config, client, { host }) =>
-  //         Promise.resolve({
-  //           pageType,
-  //           data: { text: "foobar", host, story: { "is-amp-supported": true } },
-  //         }),
-  //       [{ pageType: "story-page", path: "/*/:storySlug" }],
-  //       {
-  //         lightPages: (config) => true,
-  //       }
-  //     );
+    it("renders amp story pages when lightPages is passed as a function which return true", (done) => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host, story: { "is-amp-supported": true } },
+          }),
+        [{ pageType: "story-page", path: "/*/:storySlug" }],
+        {
+          lightPages: (config) => true,
+        }
+      );
 
-  //     supertest(app)
-  //       .get("/foo/bar")
-  //       .expect("Content-Type", /html/)
-  //       .expect(200)
-  //       .then((res) => {
-  //         assert.equal(
-  //           `http://127.0.0.1/amp/story/%2Ffoo%2Fbar`,
-  //           res.get("X-QT-Light-Pages-Url")
-  //         );
-  //       })
-  //       .then(done);
-  //   });
+      supertest(app)
+        .get("/foo/bar")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then((res) => {
+          assert.equal(
+            `http://127.0.0.1/amp/story/%2Ffoo%2Fbar`,
+            res.get("X-QT-Light-Pages-Url")
+          );
+        })
+        .then(done);
+    });
 
-  //   it("renders a  normal story page when lightPages is passed as a function which return false", (done) => {
-  //     const app = createApp(
-  //       (pageType, params, config, client, { host }) =>
-  //         Promise.resolve({
-  //           pageType,
-  //           data: { text: "foobar", host, story: { "is-amp-supported": true } },
-  //         }),
-  //       [{ pageType: "story-page", path: "/*/:storySlug" }],
-  //       {
-  //         lightPages: () => false,
-  //         renderLightPage: (req, res, result) =>
-  //           res.send("<h1> Amp Page </h1>"),
-  //       }
-  //     );
+    it("renders a  normal story page when lightPages is passed as a function which return false", (done) => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host, story: { "is-amp-supported": true } },
+          }),
+        [{ pageType: "story-page", path: "/*/:storySlug" }],
+        {
+          lightPages: () => false,
+          renderLightPage: (req, res, result) =>
+            res.send("<h1> Amp Page </h1>"),
+        }
+      );
 
-  //     supertest(app)
-  //       .get("/foo/bar")
-  //       .expect("Content-Type", /html/)
-  //       .expect(200)
-  //       .then((res) => {
-  //         const response = JSON.parse(res.text);
-  //         assert.equal("foobar", response.store.qt.data.text);
-  //       })
-  //       .then(done);
-  //   });
-  // });
+      supertest(app)
+        .get("/foo/bar")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then((res) => {
+          const response = JSON.parse(res.text);
+          assert.equal("foobar", response.store.qt.data.text);
+        })
+        .then(done);
+    });
+  });
 
   describe("cdnProvider", () => {
     it("Returns the right cloudflare headers for cache keys passed and no cdn provider passed", (done) => {
