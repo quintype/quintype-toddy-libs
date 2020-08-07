@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.3](https://github.com/quintype/quintype-node-framework/compare/v4.0.2...v4.0.3) (2020-08-07)
+
+
+### Bug Fixes
+
+* **amp:** bump amp containing nofollow for external links ([#148](https://github.com/quintype/quintype-node-framework/issues/148)) ([c2ae3d9](https://github.com/quintype/quintype-node-framework/commit/c2ae3d9))
+
+
+
 ## [4.0.2](https://github.com/quintype/quintype-node-framework/compare/v4.0.1...v4.0.2) (2020-07-21)
 
 
