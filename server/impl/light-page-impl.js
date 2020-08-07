@@ -6,8 +6,9 @@ function addLightPageHeaders(result, lightPages, { config, res, client, req }) {
     ["data", "story", "is-amp-supported"],
     false
   );
+  console.log('result->>', result)
 
-  if (typeof lightPages === "function" && !lightPages(config)) {
+  if (typeof lightPages === "function" && !lightPages(result.config || config)) {
     return;
   }
 
