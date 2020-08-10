@@ -292,7 +292,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     getClient = require("./api-client").getClient,
     renderServiceWorker = renderServiceWorkerFn,
     publisherConfig = require("./publisher-config"),
-    redirectUrls = [],
+    redirectUrls = {},
   }
 ) {
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
@@ -429,11 +429,27 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       try {
         const query = url.parse(req.url, true) || {};
         const search = query.search || "";
-        const pos = chunkUrls
-          .map((e) => {
-            return e.sourceUrl;
-          })
-          .indexOf(url.parse(req.url).pathname);
+        if (req.params) {
+          chunkUrls.forEach((chunkUrl) => {
+            const destS = chunkUrl.destinationUrl.split("/:");
+            let destsClone = destS;
+            destS.forEach((item) => {
+              if (req.params[item]) {
+                destsClone = destsClone.splice(
+                  destsClone.indexOf(item),
+                  1,
+                  `${req.params[item]}`
+                );
+              }
+              console.log("destsClone", destsClone);
+              return res.redirect(
+                chunkUrl.statusCode,
+                `${destsClone.join("/")}${search}`
+              );
+            });
+          });
+        }
+        const pos = sourceUrlArray.indexOf(url.parse(req.url).pathname);
         if (pos >= 0) {
           return res.redirect(
             chunkUrls[pos].statusCode,
@@ -446,16 +462,24 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       }
     });
   }
-
-  // Redirects static urls
-  if (redirectUrls.length > 0) {
+  function getChunkUrl(urls) {
     let i = 0;
     const chunk = 10;
-    while (i < redirectUrls.length) {
-      const chunkUrls = redirectUrls.slice(i, i + chunk);
+    while (i < urls.length) {
+      const chunkUrls = urls.slice(i, i + chunk);
       const sourceUrlArray = chunkUrls.map((redUrl) => redUrl.sourceUrl);
       getUrlRedirect(sourceUrlArray, chunkUrls);
       i += chunk;
+    }
+  }
+  // Redirects static urls
+  if (Object.keys(redirectUrls).length > 0) {
+    const { staticRedirectUrls, regexRedirectUrl } = redirectUrls;
+    if (staticRedirectUrls) {
+      getChunkUrl(staticRedirectUrls);
+    }
+    if (regexRedirectUrl) {
+      getChunkUrl(regexRedirectUrl);
     }
   }
 
