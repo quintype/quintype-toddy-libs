@@ -42,7 +42,7 @@ function createApp({
         if (assetFiles.has(res.req.url)) {
           res.set("Cache-Control", "public,max-age=31104000,s-maxage=31104000");
         }
-        res.set("Content-Security-Policy", "script-src *");
+        res.set("Content-Security-Policy", "script-src https://cdn.ampproject.org https://assets.prothomalo.com/ https://fea.assettype.com/");
         res.set("Vary", "Accept-Encoding");
       },
       maxAge: "1h",
