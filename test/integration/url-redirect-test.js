@@ -70,6 +70,16 @@ describe("Redirect Routes Handler", function () {
   it("Redirects all the urls with status code to 301 if redirectUrls is present", function (done) {
     const redirectUrls = [
       {
+        sourceUrl: "/tag/:slug",
+        destinationUrl: "/topic/:slug",
+        statusCode: 301,
+      },
+      {
+        sourceUrl: "/india/:someslug",
+        destinationUrl: "/news/:someslug",
+        statusCode: 301,
+      },
+      {
         sourceUrl: "/moved-permanently-1",
         destinationUrl: "/permanent-location-1",
         statusCode: 301,
