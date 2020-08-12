@@ -12,6 +12,7 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult(
         res.setHeader("Edge-Control", "private,no-cache,no-store,max-age=0");
       res.setHeader("Vary", "Accept-Encoding");
       res.setHeader("Surrogate-Control", "private,no-cache,no-store,max-age=0");
+      res.setHeader("Content-Security-Policy", "http://* https://cdn.ampproject.org/ 'unsafe-inline' 'unsafe-eval'")
     } else {
       res.setHeader(
         "Cache-Control",
@@ -37,6 +38,7 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult(
         "public,max-age=240,stale-while-revalidate=300,stale-if-error=14400"
       );
       res.setHeader("Surrogate-Key", _(cacheKeys).uniq().join(" "));
+      res.setHeader("Content-Security-Policy", "http://* https://cdn.ampproject.org/ 'unsafe-inline' 'unsafe-eval'")
     }
   } else {
     res.setHeader(
@@ -53,6 +55,7 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult(
       "Surrogate-Control",
       "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600"
     );
+    res.setHeader("Content-Security-Policy", "http://* https://cdn.ampproject.org/ 'unsafe-inline' 'unsafe-eval'")
   }
   return res;
 };

@@ -42,6 +42,7 @@ function registerFCMTopic(token) {
     method: "post",
     headers: {
       "Content-Type": "application/json",
+      "Content-Security-Policy": "http://* https://cdn.ampproject.org/ 'unsafe-inline' 'unsafe-eval'"
     },
     body: JSON.stringify({ token: token }),
   });

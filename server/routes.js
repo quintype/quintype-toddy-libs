@@ -508,6 +508,7 @@ exports.proxyGetRequest = function (app, route, handler, opts = {}) {
       if (result) {
         res.setHeader("Cache-Control", cacheControl);
         res.setHeader("Vary", "Accept-Encoding");
+        res.setHeader("Content-Security-Policy", "http://* https://cdn.ampproject.org/ 'unsafe-inline' 'unsafe-eval'")
         res.json(result);
       } else {
         res.status(503);
