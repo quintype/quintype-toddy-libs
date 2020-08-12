@@ -28,7 +28,7 @@ getClientStub.withStory = (story) => (hostname) =>
 describe("Visual Stories Bookend", () => {
   it("returns the bookend if there are related stories", (done) => {
     const app = express();
-    enableVisualStories(app, () => {}, {
+    enableVisualStories(app, () => { }, {
       getClient: getClientStub.withRelatedStories([{ headline: "foo" }]),
       publisherConfig: {},
     });
@@ -36,6 +36,7 @@ describe("Visual Stories Bookend", () => {
       .get("/ampstories/unknown/bookend.json")
       .expect("Content-Type", /json/)
       .expect("Cache-Control", /public/)
+      .expect("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect(200)
       .then((res) => {
         const response = JSON.parse(res.text);
@@ -48,7 +49,7 @@ describe("Visual Stories Bookend", () => {
 
   it("returns a 404 if there are no related stories", (done) => {
     const app = express();
-    enableVisualStories(app, () => {}, {
+    enableVisualStories(app, () => { }, {
       getClient: getClientStub.withRelatedStories([]),
       publisherConfig: {},
     });
@@ -79,6 +80,7 @@ describe("Visual Stories AmpPage", () => {
       .get("/ampstories/section/slug")
       .expect("Cache-Control", /public/)
       .expect("Cache-Tag", "s/42/abcdefgh")
+      .expect("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect(200)
       .then((res) => {
         const { headline } = JSON.parse(res.text);
@@ -89,7 +91,7 @@ describe("Visual Stories AmpPage", () => {
 
   it("returns 404 if the story is not found", (done) => {
     const app = express();
-    enableVisualStories(app, () => {}, {
+    enableVisualStories(app, () => { }, {
       getClient: getClientStub.withStory(null),
       publisherConfig: {},
     });
@@ -101,7 +103,7 @@ describe("Visual Stories AmpPage", () => {
 
   it("returns 404 if the story is not a visual story", (done) => {
     const app = express();
-    enableVisualStories(app, () => {}, {
+    enableVisualStories(app, () => { }, {
       getClient: getClientStub.withStory({ "story-template": "blank" }),
       publisherConfig: {},
     });

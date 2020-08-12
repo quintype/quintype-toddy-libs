@@ -114,6 +114,7 @@ describe("Custom Route Handler", function () {
         "Cache-Control",
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
+      .expect("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect("Vary", /Accept\-Encoding/)
       .expect("Surrogate-Control", /public/)
       .expect("Surrogate-Key", "u/42/101")
@@ -133,6 +134,7 @@ describe("Custom Route Handler", function () {
         "Cache-Control",
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
+      .expect("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect("Vary", /Accept\-Encoding/)
       .expect("Surrogate-Control", /public/)
       .expect("Surrogate-Key", "u/42/102")
@@ -153,6 +155,7 @@ describe("Custom Route Handler", function () {
         "Cache-Control",
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
+      .expect("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect("Vary", "Accept-Encoding")
       .expect("Surrogate-Control", /public/)
       .expect("Surrogate-Key", "u/42/103")
@@ -163,7 +166,7 @@ describe("Custom Route Handler", function () {
         // In this case, content is empty to avoid breaking the script tags present outside it.
         assert.equal(
           "",
-           response.store.qt.data.content
+          response.store.qt.data.content
         );
         assert.equal("static-page", response.store.qt.pageType);
       })
@@ -182,6 +185,7 @@ describe("Custom Route Handler", function () {
         "Cache-Control",
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
+      .expect("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect("Vary", "Accept-Encoding")
       .expect("Surrogate-Control", /public/)
       .expect("Surrogate-Key", "u/42/104")
@@ -253,6 +257,7 @@ describe("Custom Route Handler", function () {
         "Cache-Control",
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
+      .expect("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect("Vary", /Accept\-Encoding/)
       .expect("Surrogate-Control", /public/)
       .expect("Surrogate-Key", "u/42/105")

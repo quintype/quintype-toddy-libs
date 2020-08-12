@@ -54,6 +54,7 @@ describe("Redirect Handler", function () {
     supertest(app)
       .get("/story-slug")
       .expect("Cache-Control", /public/)
+      .expect("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect("Cache-Tag", "s/42/abcdefgh")
       .expect("Location", "/section/story-slug")
       .expect(301, done);
@@ -73,6 +74,7 @@ describe("Redirect Handler", function () {
     supertest(app)
       .get("/story-slug/")
       .expect("Cache-Control", /public/)
+      .expect("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect("Cache-Tag", "s/42/abcdefgh")
       .expect("Location", "/section/story-slug")
       .expect(301, done);

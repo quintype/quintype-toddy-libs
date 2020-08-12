@@ -29,6 +29,7 @@ describe("createApp", function () {
       .set("Accept-Encoding", "deflate, gzip")
       .expect("Cache-Control", "public, max-age=3600")
       .expect("Vary", "Accept-Encoding")
+      .expect("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect(200, done);
   });
 
@@ -38,6 +39,7 @@ describe("createApp", function () {
       .set("Accept-Encoding", "deflate, gzip")
       .expect("Cache-Control", "public,max-age=31104000,s-maxage=31104000")
       .expect("Vary", "Accept-Encoding")
+      .expect("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect(200, done);
   });
 });
