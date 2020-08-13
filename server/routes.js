@@ -558,12 +558,7 @@ exports.ampRoutes = (app, opts = {}) => {
   } = require("./handlers/amp-handler");
 
   // This is a middleware. The same route should be matched after this by amp handler
-  app.get(
-    "/amp/story/*",
-    AmpOptimizerMiddleware.create({
-      verbose: true,
-    })
-  );
+  app.get("/amp/story/*", AmpOptimizerMiddleware.create());
 
   getWithConfig(app, "/amp/story/*", handleAmpRequest, opts);
   getWithConfig(
