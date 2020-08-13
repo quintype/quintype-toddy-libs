@@ -7,6 +7,7 @@
  * @module routes
  */
 
+const AmpOptimizerMiddleware = require("@ampproject/toolbox-optimizer-express");
 const { generateServiceWorker } = require("./handlers/generate-service-worker");
 const {
   handleIsomorphicShell,
@@ -555,6 +556,14 @@ exports.ampRoutes = (app, opts = {}) => {
     handleAmpRequest,
     handleInfiniteScrollRequest,
   } = require("./handlers/amp-handler");
+
+  // This is a middleware. The same route should be matched after this by amp handler
+  app.get(
+    "/amp/story/*",
+    AmpOptimizerMiddleware.create({
+      verbose: true,
+    })
+  );
 
   getWithConfig(app, "/amp/story/*", handleAmpRequest, opts);
   getWithConfig(
