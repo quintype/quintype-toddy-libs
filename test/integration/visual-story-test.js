@@ -36,7 +36,6 @@ describe("Visual Stories Bookend", () => {
       .get("/ampstories/unknown/bookend.json")
       .expect("Content-Type", /json/)
       .expect("Cache-Control", /public/)
-      .expect("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com assets.prothomalo.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect(200)
       .then((res) => {
         const response = JSON.parse(res.text);
@@ -80,7 +79,6 @@ describe("Visual Stories AmpPage", () => {
       .get("/ampstories/section/slug")
       .expect("Cache-Control", /public/)
       .expect("Cache-Tag", "s/42/abcdefgh")
-      .expect("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com assets.prothomalo.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect(200)
       .then((res) => {
         const { headline } = JSON.parse(res.text);

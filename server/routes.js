@@ -255,6 +255,7 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {boolean|function} opts.lightPages If set to true, then all story pages will render amp pages.
  * @param {string} opts.cdnProvider The name of the cdn provider. Supported cdn providers are akamai, cloudflare. Default value is cloudflare.
  * @param {function} opts.maxConfigVersion An async function which resolves to a integer version of the config. This defaults to config.theme-attributes.cache-burst
+ * @param {function} opts.cspUrlsList An array of the urls that needs to added to the Content-Security-Policy header to prevent blocking of the urls
  */
 exports.isomorphicRoutes = function isomorphicRoutes(
   app,
@@ -291,9 +292,11 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     getClient = require("./api-client").getClient,
     renderServiceWorker = renderServiceWorkerFn,
     publisherConfig = require("./publisher-config"),
+    cspUrlsList = "*"
   }
 ) {
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
+  const cspWhitelistedScripts = cspUrlsList.toString().replace(/,/g, " ");
 
   pickComponent = makePickComponentSync(pickComponent);
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
@@ -346,6 +349,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       logError,
       preloadJs,
       maxConfigVersion,
+      cspWhitelistedScripts
     })
   );
   app.get(
@@ -359,6 +363,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       seo,
       appVersion,
       cdnProvider,
+      assetHelper,
+      cspWhitelistedScripts,
     })
   );
 
@@ -437,6 +443,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       assetHelper,
       cdnProvider,
       lightPages,
+      cspWhitelistedScripts,
     })
   );
 
@@ -460,6 +467,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         loadErrorData,
         logError,
         assetHelper,
+        cspWhitelistedScripts,
       })
     );
   }
@@ -508,7 +516,6 @@ exports.proxyGetRequest = function (app, route, handler, opts = {}) {
       if (result) {
         res.setHeader("Cache-Control", cacheControl);
         res.setHeader("Vary", "Accept-Encoding");
-        res.setHeader("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com assets.prothomalo.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
         res.json(result);
       } else {
         res.status(503);

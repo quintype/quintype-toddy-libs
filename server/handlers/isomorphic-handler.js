@@ -99,11 +99,13 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
     preloadJs,
     domainSlug,
     maxConfigVersion,
+    cspWhitelistedScripts
   }
 ) {
   const freshRevision = `${assetHelper.assetHash(
     "app.js"
   )}-${await maxConfigVersion(config)}`;
+  const assetHost = _.get(assetHelper, ["config", "asset_host"]);
 
   if (req.query.revision && req.query.revision !== freshRevision)
     return res.status(503).send("Requested Shell Is Not Current");
@@ -115,10 +117,12 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
     {},
     { config, client, logError, host: req.hostname, domainSlug }
   ).then((result) => {
+
     res.status(200);
     res.setHeader("Content-Type", "text/html");
     res.setHeader("Cache-Control", "public,max-age=900");
     res.setHeader("Vary", "Accept-Encoding");
+    res.setHeader("Content-Security-Policy", `default-src * data: blob: 'self'; script-src ${assetHost} ${cspWhitelistedScripts} 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;`)
 
     if (preloadJs) {
       res.append(
@@ -210,8 +214,11 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
     mobileApiEnabled,
     mobileConfigFields,
     cdnProvider,
+    assetHelper,
+    cspWhitelistedScripts,
   }
 ) {
+  const assetHost = _.get(assetHelper, ["config", "asset_host"]);
   const url = urlLib.parse(req.query.path || "/", true);
   const dataLoader = staticDataLoader() || isomorphicDataLoader();
 
@@ -285,16 +292,17 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         _.get(result, ["data", "cacheKeys"]),
         cdnProvider
       );
+      res.setHeader("Content-Security-Policy", `default-src * data: blob: 'self'; script-src ${assetHost} ${cspWhitelistedScripts} 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;`)
       const seoInstance = getSeoInstance(seo, config, result.pageType);
       res.json(
         Object.assign({}, result, {
           appVersion,
           data: mobileApiEnabled
             ? chunkDataForMobile(
-                result.data,
-                mobileConfigFields,
-                result.pageType
-              )
+              result.data,
+              mobileConfigFields,
+              result.pageType
+            )
             : _.omit(result.data, ["cacheKeys"]),
           config: mobileApiEnabled
             ? chunkDataForMobile(result.config, mobileConfigFields, "config")
@@ -324,6 +332,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         res.setHeader("Content-Type", "application/json");
         res.setHeader("Cache-Control", "public,max-age=15,s-maxage=120");
         res.setHeader("Vary", "Accept-Encoding");
+        res.setHeader("Content-Security-Policy", `default-src * data: blob: 'self'; script-src ${assetHost} ${cspWhitelistedScripts} 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;`);
         res.json(result);
       })
       .catch(handleException)
@@ -343,9 +352,12 @@ exports.notFoundHandler = function notFoundHandler(
     pickComponent,
     logError,
     domainSlug,
+    assetHelper,
+    cspWhitelistedScripts,
   }
 ) {
   const url = urlLib.parse(req.url, true);
+  const assetHost = _.get(assetHelper, ["config", "asset_host"]);
 
   return new Promise((resolve) =>
     resolve(
@@ -372,6 +384,7 @@ exports.notFoundHandler = function notFoundHandler(
         "Cache-Control",
         "public,max-age=15,s-maxage=60, stale-while-revalidate=150,stale-if-error=3600"
       );
+      res.setHeader("Content-Security-Policy", `default-src * data: blob: 'self'; script-src ${assetHost} ${cspWhitelistedScripts} 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;`);
       res.setHeader("Vary", "Accept-Encoding");
       res.setHeader("Content-Type", "text/html; charset=utf-8");
       return pickComponent
@@ -420,6 +433,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     domainSlug,
     cdnProvider,
     lightPages,
+    cspWhitelistedScripts,
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -470,7 +484,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
       res.append(
         "Link",
         `</route-data.json?path=${encodeURIComponent(url.pathname)}${
-          url.search ? `&${url.search.substr(1)}` : ""
+        url.search ? `&${url.search.substr(1)}` : ""
         }>; rel=preload; as=fetch; crossorigin;`
       );
     }
@@ -587,11 +601,11 @@ exports.handleStaticRoute = function handleStaticRoute(
             config,
             title: seoInstance
               ? seoInstance.getTitle(
-                  config,
-                  result.pageType || match.pageType,
-                  result,
-                  { url }
-                )
+                config,
+                result.pageType || match.pageType,
+                result,
+                { url }
+              )
               : result.title,
             store,
             disableAjaxNavigation: true,

@@ -30,6 +30,9 @@ describe("ShellHandler", function () {
     assetHelper: {
       assetHash: (file) => (file == "app.js" ? "abcdef" : null),
       assetPath: (file) => `/assets/${file}`,
+      config: {
+        asset_host: "localhost"
+      }
     },
     getClient: getClientStub,
     renderLayout: renderLayoutStub,
@@ -44,6 +47,7 @@ describe("ShellHandler", function () {
     supertest(app)
       .get("/shell.html?revision=abcdef-1577955704455")
       .expect("Content-Type", /html/)
+      .expect("Content-Security-Policy", `default-src * data: blob: 'self'; script-src localhost * 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;`)
       .expect(200)
       .then((res) => {
         const { content, store, shell } = JSON.parse(res.text);
@@ -68,6 +72,7 @@ describe("ShellHandler", function () {
     supertest(app)
       .get("/shell.html")
       .expect("Content-Type", /html/)
+      .expect("Content-Security-Policy", `default-src * data: blob: 'self'; script-src localhost * 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;`)
       .expect(200, done);
   });
 
@@ -75,6 +80,7 @@ describe("ShellHandler", function () {
     supertest(app)
       .get("/shell.html?revision=abcdef-1577955704455")
       .expect("Content-Type", /html/)
+      .expect("Content-Security-Policy", `default-src * data: blob: 'self'; script-src localhost * 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;`)
       .expect("Link", "</assets/app.js>; rel=preload; as=script;")
       .expect(200, done);
   });

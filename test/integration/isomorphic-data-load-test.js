@@ -23,6 +23,9 @@ function createApp(loadData, opts = {}) {
       {
         assetHelper: {
           assetHash: (file) => (file == "app.js" ? "abcdef" : null),
+          config: {
+            asset_host: "localhost"
+          }
         },
         getClient: getClientStub,
         generateRoutes: () =>
@@ -57,10 +60,35 @@ describe("Isomorphic Data Load", function () {
       .expect(200)
       .then((res) => {
         const response = JSON.parse(res.text);
+        const contentSecurityPolicy = res.header["content-security-policy"];
+        assert.equal(contentSecurityPolicy, "default-src * data: blob: 'self'; script-src localhost * 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;");
         assert.equal("home-page", response.data.pageType);
         assert.equal("bar", response.data.config.foo);
         assert.equal("demo.quintype.io", response.data.clientHost);
         assert.equal("127.0.0.1", response.data.host);
+      })
+      .then(done);
+  });
+
+  it("passes the right content security policy header", function (done) {
+    const app = createApp((pageType, params, config, client, { host }) =>
+      Promise.resolve({
+        data: {
+          pageType,
+          config,
+          clientHost: client.getHostname(),
+          host,
+        },
+      })
+    );
+
+    supertest(app)
+      .get("/route-data.json?path=%2F")
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then((res) => {
+        const contentSecurityPolicy = res.header["content-security-policy"];
+        assert.equal(contentSecurityPolicy, "default-src * data: blob: 'self'; script-src localhost * 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;");
       })
       .then(done);
   });
@@ -160,7 +188,6 @@ describe("Isomorphic Data Load", function () {
         "Cache-Control",
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
-      .expect("Content-Security-Policy", "default-src * data: blob: 'self'; script-src fea.assettype.com assets.prothomalo.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect("Vary", "Accept-Encoding")
       .expect("Surrogate-Control", /public/)
       .expect("Cache-Tag", "foo,bar")
@@ -183,6 +210,9 @@ describe("Isomorphic Data Load", function () {
         .expect(404)
         .then((res) => {
           const response = JSON.parse(res.text);
+          const contentSecurityPolicy = res.header["content-security-policy"];
+
+          assert.equal(contentSecurityPolicy, "default-src * data: blob: 'self'; script-src localhost * 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;");
           assert.equal("bar", response.foo);
         })
         .then(done, done);
@@ -427,6 +457,8 @@ describe("Isomorphic Data Load", function () {
         .expect(404)
         .then((res) => {
           const response = JSON.parse(res.text);
+          const contentSecurityPolicy = res.header["content-security-policy"];
+          assert.equal(contentSecurityPolicy, "default-src * data: blob: 'self'; script-src localhost * 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;");
           assert.equal("bar", response.foo);
         })
         .then(done);
@@ -447,7 +479,7 @@ describe("Isomorphic Data Load", function () {
       supertest(app)
         .get("/route-data.json?path=%2F")
         .expect("Content-Type", /json/)
-        .expect(404, done);
+        .expect(404, done)
     });
 
     it("return 500 if loadData and loadErrorData both throw exceptions", function (done) {
