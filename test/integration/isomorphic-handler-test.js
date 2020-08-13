@@ -244,7 +244,7 @@ describe("Isomorphic Handler", function () {
         "Cache-Control",
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
-      .expect("content-security-policy", "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
+      .expect("content-security-policy", "default-src * data: blob: 'self'; script-src fea.assettype.com assets.prothomalo.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
       .expect("Vary", "Accept-Encoding")
       .expect("Surrogate-Control", /public/)
       .expect("Surrogate-Key", "foo bar")
@@ -489,7 +489,7 @@ describe("Isomorphic Handler", function () {
             "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
           );
           assert.equal(cacheTag, "c/1/abcdefgh");
-          assert.equal(contentSecurityPolicy, "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;");
+          assert.equal(contentSecurityPolicy, "default-src * data: blob: 'self'; script-src fea.assettype.com assets.prothomalo.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;");
         })
         .then(done);
     });
@@ -517,7 +517,7 @@ describe("Isomorphic Handler", function () {
             "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600"
           );
           assert.equal(cacheTag, undefined);
-          assert.equal(contentSecurityPolicy, "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;");
+          assert.equal(contentSecurityPolicy, "default-src * data: blob: 'self'; script-src fea.assettype.com assets.prothomalo.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;");
         })
         .then(done);
     });
@@ -545,7 +545,7 @@ describe("Isomorphic Handler", function () {
           const contentSecurityPolicy = res.header["content-security-policy"];
           assert.equal(cacheControl, "private,no-cache,no-store,max-age=0");
           assert.equal(edgeCacheControl, "private,no-cache,no-store,max-age=0");
-          assert.equal(contentSecurityPolicy, "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
+          assert.equal(contentSecurityPolicy, "default-src * data: blob: 'self'; script-src fea.assettype.com assets.prothomalo.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;")
           assert.equal(cacheTag, undefined);
           assert.equal(edgeCacheTag, undefined);
         })
@@ -580,7 +580,7 @@ describe("Isomorphic Handler", function () {
             edgeCacheControl,
             "public,maxage=60,stale-while-revalidate=150,stale-if-error=3600"
           );
-          assert.equal(contentSecurityPolicy, "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;");
+          assert.equal(contentSecurityPolicy, "default-src * data: blob: 'self'; script-src fea.assettype.com assets.prothomalo.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;");
           assert.equal(edgeCacheTag, undefined);
         })
         .then(done);
@@ -615,7 +615,7 @@ describe("Isomorphic Handler", function () {
             "public,maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
           );
           assert.equal(edgeCacheTag, "c/1/abcdefgh");
-          assert.equal(contentSecurityPolicy, "default-src * data: blob: 'self'; script-src fea.assettype.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;");
+          assert.equal(contentSecurityPolicy, "default-src * data: blob: 'self'; script-src fea.assettype.com assets.prothomalo.com adservice.google.com adservice.google.co.in cdn.ampproject.org tpc.googlesyndication.com localhost:8080 www.google-analytics.com www.googletagmanager.com clientcdn.pushengage.com certify-js.alexametrics.com securepubads.g.doubleclick.net 'unsafe-inline' 'unsafe-eval' blob: data: 'self';style-src data: blob: 'unsafe-inline' *;");
         })
         .then(done);
     });
