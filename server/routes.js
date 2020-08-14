@@ -461,13 +461,11 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     });
   }
   function chunkUrl(urls) {
-    let i = 0;
     const chunk = 10;
-    while (i < urls.length) {
-      const chunkUrls = urls.slice(i, i + chunk);
+    while (urls.length) {
+      const chunkUrls = urls.splice(0, chunk);
       const sourceUrlArray = chunkUrls.map((redUrl) => redUrl.sourceUrl);
       getUrlRedirect(sourceUrlArray, chunkUrls);
-      i += chunk;
     }
   }
   async function getRedirectUrls(redirectUrlsfun) {
