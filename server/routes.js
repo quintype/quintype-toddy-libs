@@ -292,7 +292,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     getClient = require("./api-client").getClient,
     renderServiceWorker = renderServiceWorkerFn,
     publisherConfig = require("./publisher-config"),
-    redirectUrls = [],
+    redirectUrls,
   }
 ) {
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
@@ -460,17 +460,28 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       return next();
     });
   }
-
-  // Redirects static urls
-  if (redirectUrls.length > 0) {
+  function chunkUrl(urls) {
     let i = 0;
     const chunk = 10;
-    while (i < redirectUrls.length) {
-      const chunkUrls = redirectUrls.slice(i, i + chunk);
+    while (i < urls.length) {
+      const chunkUrls = urls.slice(i, i + chunk);
       const sourceUrlArray = chunkUrls.map((redUrl) => redUrl.sourceUrl);
       getUrlRedirect(sourceUrlArray, chunkUrls);
       i += chunk;
     }
+  }
+  async function getRedirectUrls(redirectUrlsfun) {
+    const returnUrlsData = await redirectUrlsfun;
+    return returnUrlsData;
+  }
+  // Redirects static urls
+  if (typeof redirectUrls === "function") {
+    const redirectUrlsdata = getRedirectUrls(redirectUrls);
+    if (redirectUrlsdata.length > 0) {
+      chunkUrl(redirectUrlsdata);
+    }
+  } else if (redirectUrls && redirectUrls.length > 0) {
+    chunkUrl(redirectUrls);
   }
 
   app.get(
