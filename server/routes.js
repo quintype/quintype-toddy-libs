@@ -257,7 +257,6 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {boolean|function} opts.lightPages If set to true, then all story pages will render amp pages.
  * @param {string} opts.cdnProvider The name of the cdn provider. Supported cdn providers are akamai, cloudflare. Default value is cloudflare.
  * @param {function} opts.maxConfigVersion An async function which resolves to a integer version of the config. This defaults to config.theme-attributes.cache-burst
- * @param {Array<object> | function} opts.redirectUrls An array or async function which render to the redirect url provided in the array of object
  */
 exports.isomorphicRoutes = function isomorphicRoutes(
   app,
