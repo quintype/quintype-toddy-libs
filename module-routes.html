@@ -1145,7 +1145,14 @@ It accepts all the pieces needed, and implements all the plumbing to make these 
 
 
 
-<td class="description last"><p>An array or async function which is used to redirect the urls provided in the array of objects or a function</p></td>
+<td class="description last"><p>An array or async function which is used to redirect the urls provided in the array of objects or a function</p>
+<p>ex- REDIRECT_URLS = [
+  {
+  sourceUrl: "/tag/:tagSlug",
+  destinationUrl: "/topic/:tagSlug",
+  statusCode: 301,
+}]</p>
+</td>
 </tr>
 
 
