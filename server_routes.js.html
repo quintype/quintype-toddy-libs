@@ -85,6 +85,7 @@
  * @module routes
  */
 
+const AmpOptimizerMiddleware = require("@ampproject/toolbox-optimizer-express");
 const { generateServiceWorker } = require("./handlers/generate-service-worker");
 const {
   handleIsomorphicShell,
@@ -333,7 +334,6 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {boolean|function} opts.lightPages If set to true, then all story pages will render amp pages.
  * @param {string} opts.cdnProvider The name of the cdn provider. Supported cdn providers are akamai, cloudflare. Default value is cloudflare.
  * @param {function} opts.maxConfigVersion An async function which resolves to a integer version of the config. This defaults to config.theme-attributes.cache-burst
- * @param {Array&lt;object | function} opts.redirectUrls An array or async function which used to redirect the urls provided in the array of object.
  */
 exports.isomorphicRoutes = function isomorphicRoutes(
   app,
@@ -382,15 +382,17 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     1
   );
 
-  app.get(
-    serviceWorkerPaths,
-    withConfig(generateServiceWorker, {
-      generateRoutes,
-      assetHelper,
-      renderServiceWorker,
-      maxConfigVersion,
-    })
-  );
+  if(serviceWorkerPaths.length > 0) {
+    app.get(
+      serviceWorkerPaths,
+      withConfig(generateServiceWorker, {
+        generateRoutes,
+        assetHelper,
+        renderServiceWorker,
+        maxConfigVersion,
+      })
+    );
+  }
 
   if (oneSignalServiceWorkers) {
     app.get(
@@ -634,6 +636,9 @@ exports.ampRoutes = (app, opts = {}) => {
     handleAmpRequest,
     handleInfiniteScrollRequest,
   } = require("./handlers/amp-handler");
+
+  // This is a middleware. The same route should be matched after this by amp handler
+  app.get("/amp/story/*", AmpOptimizerMiddleware.create());
 
   getWithConfig(app, "/amp/story/*", handleAmpRequest, opts);
   getWithConfig(
