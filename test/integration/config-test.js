@@ -18,12 +18,13 @@ const getClientStub = (hostname) => {
   };
 };
 
-const configWrapperStub = config => {
+const configWrapperStub = async config => {
+  const extendedConfig = await Promise.resolve({
+    "foo": "bar"
+  });
   return {
     ...config,
-    extendedConfig: {
-      "foo": "bar"
-    }
+    extendedConfig
   };
 };
 
