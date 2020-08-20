@@ -308,15 +308,17 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     1
   );
 
-  app.get(
-    serviceWorkerPaths,
-    withConfig(generateServiceWorker, {
-      generateRoutes,
-      assetHelper,
-      renderServiceWorker,
-      maxConfigVersion,
-    })
-  );
+  if(serviceWorkerPaths.length > 0) {
+    app.get(
+      serviceWorkerPaths,
+      withConfig(generateServiceWorker, {
+        generateRoutes,
+        assetHelper,
+        renderServiceWorker,
+        maxConfigVersion,
+      })
+    );
+  }
 
   if (oneSignalServiceWorkers) {
     app.get(
