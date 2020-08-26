@@ -86,6 +86,8 @@ const logger = createLogger();
 const errorFn = logger.error.bind(logger);
 
 logger.error = function (e) {
+  process.env.LOG_TO_STDOUT && process.stdout.write(e);
+
   if (e && e.stack) {
     errorFn({ message: e.message, stack: truncateStack(e.stack) });
   } else {

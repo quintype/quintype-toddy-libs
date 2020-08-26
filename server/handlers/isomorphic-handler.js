@@ -259,7 +259,6 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         client,
         logError,
         host: req.hostname,
-        logError,
         otherParams: req.query,
         domainSlug,
       }
