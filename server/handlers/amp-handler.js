@@ -1,5 +1,6 @@
 const urlLib = require("url");
 const set = require("lodash/set");
+const get = require("lodash/get");
 const { Story, AmpConfig } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 const { storyToCacheKey } = require("../caching");
@@ -65,12 +66,17 @@ exports.handleAmpRequest = async function handleAmpRequest(
         ampConfig["related-collection-id"]
       );
     if (relatedStoriesCollection) {
+      const storiesToTake = get(
+        opts,
+        ["featureConfig", "relatedStories", "storiesToTake"],
+        5
+      );
       relatedStories = relatedStoriesCollection.items
         .filter(
           (item) =>
             item.type === "story" && item.id !== story["story-content-id"]
         )
-        .slice(0, 5)
+        .slice(0, storiesToTake)
         .map((item) => item.story);
     }
     if (relatedStories.length) {
