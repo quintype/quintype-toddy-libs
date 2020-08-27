@@ -1,24 +1,24 @@
 // FIMXE: Convert this entire thing to async await / or even Typescript
 
-const _ = require("lodash");
+const _ = require('lodash');
 
-const urlLib = require("url");
+const urlLib = require('url');
 const {
   matchBestRoute,
   matchAllRoutes,
-} = require("../../isomorphic/match-best-route");
-const { IsomorphicComponent } = require("../../isomorphic/component");
-const { addCacheHeadersToResult } = require("./cdn-caching");
-const { NotFoundException } = require("../impl/exceptions");
-const { renderReduxComponent } = require("../render");
-const { createStore } = require("redux");
-const Promise = require("bluebird");
-const { getDefaultState, createBasicStore } = require("./create-store");
-const { customUrlToCacheKey } = require("../caching");
-const { addLightPageHeaders } = require("../impl/light-page-impl");
-const ABORT_HANDLER = "__ABORT__";
+} = require('../../isomorphic/match-best-route');
+const {IsomorphicComponent} = require('../../isomorphic/component');
+const {addCacheHeadersToResult} = require('./cdn-caching');
+const {NotFoundException} = require('../impl/exceptions');
+const {renderReduxComponent} = require('../render');
+const {createStore} = require('redux');
+const Promise = require('bluebird');
+const {getDefaultState, createBasicStore} = require('./create-store');
+const {customUrlToCacheKey} = require('../caching');
+const {addLightPageHeaders} = require('../impl/light-page-impl');
+const ABORT_HANDLER = '__ABORT__';
 function abortHandler() {
-  return Promise.resolve({ pageType: ABORT_HANDLER, [ABORT_HANDLER]: true });
+  return Promise.resolve({pageType: ABORT_HANDLER, [ABORT_HANDLER]: true});
 }
 
 function loadDataForIsomorphicRoute(
@@ -26,11 +26,11 @@ function loadDataForIsomorphicRoute(
   loadErrorData,
   url,
   routes,
-  { otherParams, config, client, host, logError, domainSlug }
+  {otherParams, config, client, host, logError, domainSlug}
 ) {
-  return loadDataForEachRoute().catch((error) => {
+  return loadDataForEachRoute().catch(error => {
     logError(error);
-    return loadErrorData(error, config, client, { host, domainSlug });
+    return loadErrorData(error, config, client, {host, domainSlug});
   });
 
   // Using async because this for loop reads really really well
@@ -54,12 +54,12 @@ function loadDataForIsomorphicRoute(
 
 function loadDataForPageType(
   loadData,
-  loadErrorData = () => Promise.resolve({ httpStatusCode: 500 }),
+  loadErrorData = () => Promise.resolve({httpStatusCode: 500}),
   pageType,
   params,
-  { config, client, logError, host, domainSlug }
+  {config, client, logError, host, domainSlug}
 ) {
-  return new Promise((resolve) =>
+  return new Promise(resolve =>
     resolve(
       loadData(pageType, params, config, client, {
         host,
@@ -68,20 +68,20 @@ function loadDataForPageType(
       })
     )
   )
-    .then((result) => {
+    .then(result => {
       if (result && result.data && result.data[ABORT_HANDLER]) {
         return null;
       }
       return result;
     })
-    .catch((error) => {
+    .catch(error => {
       logError(error);
-      return loadErrorData(error, config, client, { host, domainSlug });
+      return loadErrorData(error, config, client, {host, domainSlug});
     });
 }
 
-function getSeoInstance(seo, config, pageType = "") {
-  return typeof seo === "function" ? seo(config, pageType) : seo;
+function getSeoInstance(seo, config, pageType = '') {
+  return typeof seo === 'function' ? seo(config, pageType) : seo;
 }
 
 exports.handleIsomorphicShell = async function handleIsomorphicShell(
@@ -102,28 +102,43 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
   }
 ) {
   const freshRevision = `${assetHelper.assetHash(
-    "app.js"
+    'app.js'
   )}-${await maxConfigVersion(config)}`;
 
   if (req.query.revision && req.query.revision !== freshRevision)
-    return res.status(503).send("Requested Shell Is Not Current");
+    return res.status(503).send('Requested Shell Is Not Current');
+
+  res.setHeader(
+    'Content-Security-Policy',
+    `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
+      `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+      `style-src data: 'unsafe-inline' https: http: blob:;` +
+      `img-src data: https: http: blob:;` +
+      `font-src data: https: http:;` +
+      `connect-src https: wss: ws: http: blob:;` +
+      `media-src https: blob: http:;` +
+      `object-src https: http:;` +
+      `child-src https: data: blob: http:;` +
+      `form-action https: http:;` +
+      `block-all-mixed-content;`
+  );
 
   loadDataForPageType(
     loadData,
     loadErrorData,
-    "shell",
+    'shell',
     {},
-    { config, client, logError, host: req.hostname, domainSlug }
-  ).then((result) => {
+    {config, client, logError, host: req.hostname, domainSlug}
+  ).then(result => {
     res.status(200);
-    res.setHeader("Content-Type", "text/html");
-    res.setHeader("Cache-Control", "public,max-age=900");
-    res.setHeader("Vary", "Accept-Encoding");
+    res.setHeader('Content-Type', 'text/html');
+    res.setHeader('Cache-Control', 'public,max-age=900');
+    res.setHeader('Vary', 'Accept-Encoding');
 
     if (preloadJs) {
       res.append(
-        "Link",
-        `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`
+        'Link',
+        `<${assetHelper.assetPath('app.js')}>; rel=preload; as=script;`
       );
     }
 
@@ -131,7 +146,7 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
       config,
       content:
         '<div class="app-loading"><script type="text/javascript">window.qtLoadedFromShell = true</script></div>',
-      store: createStore((state) => state, getDefaultState(result)),
+      store: createStore(state => state, getDefaultState(result)),
       shell: true,
     });
   });
@@ -142,7 +157,7 @@ function createStoreFromResult(url, result, opts = {}) {
     pageType: result.pageType || opts.defaultPageType,
     subPageType: result.subPageType,
     data: result.data,
-    currentPath: `${url.pathname}${url.search || ""}`,
+    currentPath: `${url.pathname}${url.search || ''}`,
     currentHostUrl: result.currentHostUrl,
     primaryHostUrl: result.primaryHostUrl,
   };
@@ -151,7 +166,7 @@ function createStoreFromResult(url, result, opts = {}) {
 
 function chunkDataForMobile(data, fieldsCallback, pageType) {
   const fields =
-    typeof fieldsCallback === "function"
+    typeof fieldsCallback === 'function'
       ? fieldsCallback(pageType)
       : fieldsCallback;
 
@@ -212,10 +227,10 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
     cdnProvider,
   }
 ) {
-  const url = urlLib.parse(req.query.path || "/", true);
+  const url = urlLib.parse(req.query.path || '/', true);
   const dataLoader = staticDataLoader() || isomorphicDataLoader();
 
-  return dataLoader.then((result) => {
+  return dataLoader.then(result => {
     if (!result) {
       return returnNotFound();
     }
@@ -227,15 +242,15 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
 
     if (match) {
       const params = Object.assign({}, url.query, req.query, match.params);
-      const pageType = match.pageType || "static-page";
+      const pageType = match.pageType || 'static-page';
       return loadDataForPageType(loadData, loadErrorData, pageType, params, {
         config,
         client,
         logError,
         host: req.hostname,
         domainSlug,
-      }).then((result) =>
-        Object.assign({ pageType, disableIsomorphicComponent: true }, result)
+      }).then(result =>
+        Object.assign({pageType, disableIsomorphicComponent: true}, result)
       );
     }
   }
@@ -263,26 +278,26 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         otherParams: req.query,
         domainSlug,
       }
-    ).catch((e) => {
+    ).catch(e => {
       logError(e);
-      return { httpStatusCode: 500, pageType: "error" };
+      return {httpStatusCode: 500, pageType: 'error'};
     });
   }
 
   function handleException(e) {
     logError(e);
     res.status(500);
-    return res.json({ error: { message: e.message } });
+    return res.json({error: {message: e.message}});
   }
 
   function returnJson(result) {
     return new Promise(() => {
       const statusCode = result.httpStatusCode || 200;
       res.status(statusCode < 500 ? 200 : 500);
-      res.setHeader("Content-Type", "application/json");
+      res.setHeader('Content-Type', 'application/json');
       addCacheHeadersToResult(
         res,
-        _.get(result, ["data", "cacheKeys"]),
+        _.get(result, ['data', 'cacheKeys']),
         cdnProvider
       );
       const seoInstance = getSeoInstance(seo, config, result.pageType);
@@ -295,9 +310,9 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
                 mobileConfigFields,
                 result.pageType
               )
-            : _.omit(result.data, ["cacheKeys"]),
+            : _.omit(result.data, ['cacheKeys']),
           config: mobileApiEnabled
-            ? chunkDataForMobile(result.config, mobileConfigFields, "config")
+            ? chunkDataForMobile(result.config, mobileConfigFields, 'config')
             : result.config,
           title: seoInstance
             ? seoInstance.getTitle(config, result.pageType, result)
@@ -310,7 +325,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
   }
 
   function returnNotFound() {
-    return new Promise((resolve) =>
+    return new Promise(resolve =>
       resolve(
         loadErrorData(new NotFoundException(), config, client, {
           host: req.hostname,
@@ -318,12 +333,12 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         })
       )
     )
-      .catch((e) => console.log("Exception", e))
-      .then((result) => {
+      .catch(e => console.log('Exception', e))
+      .then(result => {
         res.status(result.httpStatusCode || 404);
-        res.setHeader("Content-Type", "application/json");
-        res.setHeader("Cache-Control", "public,max-age=15,s-maxage=120");
-        res.setHeader("Vary", "Accept-Encoding");
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Cache-Control', 'public,max-age=15,s-maxage=120');
+        res.setHeader('Vary', 'Accept-Encoding');
         res.json(result);
       })
       .catch(handleException)
@@ -347,7 +362,7 @@ exports.notFoundHandler = function notFoundHandler(
 ) {
   const url = urlLib.parse(req.url, true);
 
-  return new Promise((resolve) =>
+  return new Promise(resolve =>
     resolve(
       loadErrorData(new NotFoundException(), config, client, {
         host: req.hostname,
@@ -355,25 +370,25 @@ exports.notFoundHandler = function notFoundHandler(
       })
     )
   )
-    .catch((e) => {
+    .catch(e => {
       logError(e);
-      return { pageType: "error" };
+      return {pageType: 'error'};
     })
-    .then((result) => {
+    .then(result => {
       const statusCode = result.httpStatusCode || 404;
 
       const store = createStoreFromResult(url, result, {
         disableIsomorphicComponent: false,
-        defaultPageType: "not-found",
+        defaultPageType: 'not-found',
       });
 
       res.status(statusCode);
       res.setHeader(
-        "Cache-Control",
-        "public,max-age=15,s-maxage=60, stale-while-revalidate=150,stale-if-error=3600"
+        'Cache-Control',
+        'public,max-age=15,s-maxage=60, stale-while-revalidate=150,stale-if-error=3600'
       );
-      res.setHeader("Vary", "Accept-Encoding");
-      res.setHeader("Content-Type", "text/html; charset=utf-8");
+      res.setHeader('Vary', 'Accept-Encoding');
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
       return pickComponent
         .preloadComponent(
           store.getState().qt.pageType,
@@ -392,7 +407,7 @@ exports.notFoundHandler = function notFoundHandler(
           })
         );
     })
-    .catch((e) => {
+    .catch(e => {
       logError(e);
       res.status(500);
       res.send(e.message);
@@ -430,7 +445,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     if (statusCode == 301 && result.data && result.data.location) {
       addCacheHeadersToResult(
         res,
-        [customUrlToCacheKey(config["publisher-id"], "redirect")],
+        [customUrlToCacheKey(config['publisher-id'], 'redirect')],
         cdnProvider
       );
       return res.redirect(301, result.data.location);
@@ -442,35 +457,35 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
         config,
         result.pageType || match.pageType,
         result,
-        { url }
+        {url}
       );
     const store = createStoreFromResult(url, result, {
       disableIsomorphicComponent: statusCode != 200,
     });
 
     if (lightPages) {
-      addLightPageHeaders(result, lightPages, { config, res, client, req });
+      addLightPageHeaders(result, lightPages, {config, res, client, req});
     }
 
     res.status(statusCode);
     addCacheHeadersToResult(
       res,
-      _.get(result, ["data", "cacheKeys"]),
+      _.get(result, ['data', 'cacheKeys']),
       cdnProvider
     );
 
     if (preloadJs) {
       res.append(
-        "Link",
-        `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`
+        'Link',
+        `<${assetHelper.assetPath('app.js')}>; rel=preload; as=script;`
       );
     }
 
     if (preloadRouteData) {
       res.append(
-        "Link",
+        'Link',
         `</route-data.json?path=${encodeURIComponent(url.pathname)}${
-          url.search ? `&${url.search.substr(1)}` : ""
+          url.search ? `&${url.search.substr(1)}` : ''
         }>; rel=preload; as=fetch; crossorigin;`
       );
     }
@@ -500,18 +515,18 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     loadErrorData,
     url,
     generateRoutes(config, domainSlug),
-    { config, client, logError, host: req.hostname, domainSlug }
+    {config, client, logError, host: req.hostname, domainSlug}
   )
-    .catch((e) => {
+    .catch(e => {
       logError(e);
-      return { httpStatusCode: 500, pageType: "error" };
+      return {httpStatusCode: 500, pageType: 'error'};
     })
-    .then((result) => {
+    .then(result => {
       if (!result) {
         return next();
       }
-      return new Promise((resolve) => resolve(writeResponse(result)))
-        .catch((e) => {
+      return new Promise(resolve => resolve(writeResponse(result)))
+        .catch(e => {
           logError(e);
           res.status(500);
           res.send(e.message);
@@ -541,7 +556,7 @@ exports.handleStaticRoute = function handleStaticRoute(
   }
 ) {
   const url = urlLib.parse(path);
-  pageType = pageType || "static-page";
+  pageType = pageType || 'static-page';
   return loadDataForPageType(loadData, loadErrorData, pageType, renderParams, {
     config,
     client,
@@ -549,7 +564,7 @@ exports.handleStaticRoute = function handleStaticRoute(
     host: req.hostname,
     domainSlug,
   })
-    .then((result) => {
+    .then(result => {
       if (!result) {
         return next();
       }
@@ -576,7 +591,7 @@ exports.handleStaticRoute = function handleStaticRoute(
       res.status(statusCode);
       addCacheHeadersToResult(
         res,
-        _.get(result, ["data", "cacheKeys"], ["static"]),
+        _.get(result, ['data', 'cacheKeys'], ['static']),
         cdnProvider
       );
 
@@ -590,7 +605,7 @@ exports.handleStaticRoute = function handleStaticRoute(
                   config,
                   result.pageType || match.pageType,
                   result,
-                  { url }
+                  {url}
                 )
               : result.title,
             store,
@@ -601,7 +616,7 @@ exports.handleStaticRoute = function handleStaticRoute(
         )
       );
     })
-    .catch((e) => {
+    .catch(e => {
       logError(e);
       res.status(500);
       res.send(e.message);
