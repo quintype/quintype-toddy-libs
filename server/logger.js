@@ -86,13 +86,10 @@ const logger = createLogger();
 const errorFn = logger.error.bind(logger);
 
 logger.error = function (e) {
-  process.env.LOG_TO_STDOUT && process.stdout.write(e);
-
-  if (e && e.stack) {
-    errorFn({ message: e.message, stack: truncateStack(e.stack) });
-  } else {
-    errorFn(e);
-  }
+  const err =
+    e && e.stack ? { message: e.message, stack: truncateStack(e.stack) } : e;
+  errorFn(err);
+  process.env.LOG_TO_STDOUT && process.stdout.write(err);
 };
 
 module.exports = logger;
