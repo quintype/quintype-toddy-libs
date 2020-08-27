@@ -119,20 +119,6 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
     res.setHeader('Content-Type', 'text/html');
     res.setHeader('Cache-Control', 'public,max-age=900');
     res.setHeader('Vary', 'Accept-Encoding');
-    res.setHeader(
-      'Content-Security-Policy',
-      `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
-        `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
-        `style-src data: 'unsafe-inline' https: http: blob:;` +
-        `img-src data: https: http: blob:;` +
-        `font-src data: https: http:;` +
-        `connect-src https: wss: ws: http: blob:;` +
-        `media-src https: blob: http:;` +
-        `object-src https: http:;` +
-        `child-src https: data: blob: http:;` +
-        `form-action https: http:;` +
-        `block-all-mixed-content;`
-    );
 
     if (preloadJs) {
       res.append(

@@ -7,32 +7,32 @@
  * @module routes
  */
 
-const AmpOptimizerMiddleware = require("@ampproject/toolbox-optimizer-express");
-const { generateServiceWorker } = require("./handlers/generate-service-worker");
+const AmpOptimizerMiddleware = require('@ampproject/toolbox-optimizer-express');
+const {generateServiceWorker} = require('./handlers/generate-service-worker');
 const {
   handleIsomorphicShell,
   handleIsomorphicDataLoad,
   handleIsomorphicRoute,
   handleStaticRoute,
   notFoundHandler,
-} = require("./handlers/isomorphic-handler");
+} = require('./handlers/isomorphic-handler');
 
-const { oneSignalImport } = require("./handlers/one-signal");
-const { customRouteHandler } = require("./handlers/custom-route-handler");
+const {oneSignalImport} = require('./handlers/one-signal');
+const {customRouteHandler} = require('./handlers/custom-route-handler');
 const {
   handleManifest,
   handleAssetLink,
-} = require("./handlers/json-manifest-handlers");
-const { redirectStory } = require("./handlers/story-redirect");
-const { simpleJsonHandler } = require("./handlers/simple-json-handler");
+} = require('./handlers/json-manifest-handlers');
+const {redirectStory} = require('./handlers/story-redirect');
+const {simpleJsonHandler} = require('./handlers/simple-json-handler');
 const {
   makePickComponentSync,
-} = require("../isomorphic/impl/make-pick-component-sync");
-const { registerFCMTopic } = require("./handlers/fcm-registration-handler");
-const rp = require("request-promise");
-const bodyParser = require("body-parser");
-const get = require("lodash/get");
-const { URL } = require("url");
+} = require('../isomorphic/impl/make-pick-component-sync');
+const {registerFCMTopic} = require('./handlers/fcm-registration-handler');
+const rp = require('request-promise');
+const bodyParser = require('body-parser');
+const get = require('lodash/get');
+const {URL} = require('url');
 
 /**
  * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
@@ -51,57 +51,57 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
     forwardFavicon = false,
     extraRoutes = [],
 
-    config = require("./publisher-config"),
-    getClient = require("./api-client").getClient,
+    config = require('./publisher-config'),
+    getClient = require('./api-client').getClient,
   } = {}
 ) {
   const host = config.sketches_host;
-  const apiProxy = require("http-proxy").createProxyServer({
+  const apiProxy = require('http-proxy').createProxyServer({
     target: host,
-    ssl: host.startsWith("https")
-      ? { servername: host.replace(/^https:\/\//, "") }
+    ssl: host.startsWith('https')
+      ? {servername: host.replace(/^https:\/\//, '')}
       : undefined,
   });
 
-  apiProxy.on("proxyReq", (proxyReq, req, res, options) => {
-    proxyReq.setHeader("Host", getClient(req.hostname).getHostname());
+  apiProxy.on('proxyReq', (proxyReq, req, res, options) => {
+    proxyReq.setHeader('Host', getClient(req.hostname).getHostname());
   });
 
   const sketchesProxy = (req, res) => apiProxy.web(req, res);
 
-  app.get("/ping", (req, res) => {
+  app.get('/ping', (req, res) => {
     getClient(req.hostname)
       .getConfig()
-      .then(() => res.send("pong"))
+      .then(() => res.send('pong'))
       .catch(() =>
-        res.status(503).send({ error: { message: "Config not loaded" } })
+        res.status(503).send({error: {message: 'Config not loaded'}})
       );
   });
 
-  app.all("/api/*", sketchesProxy);
-  app.all("/login", sketchesProxy);
-  app.all("/qlitics.js", sketchesProxy);
-  app.all("/auth.form", sketchesProxy);
-  app.all("/auth.callback", sketchesProxy);
-  app.all("/auth", sketchesProxy);
-  app.all("/admin/*", sketchesProxy);
-  app.all("/sitemap.xml", sketchesProxy);
-  app.all("/sitemap/*", sketchesProxy);
-  app.all("/feed", sketchesProxy);
-  app.all("/rss-feed", sketchesProxy);
-  app.all("/stories.rss", sketchesProxy);
-  app.all("/news_sitemap.xml", sketchesProxy);
-  app.all("/sso-login", sketchesProxy);
-  app.all("/sso-signup", sketchesProxy);
+  app.all('/api/*', sketchesProxy);
+  app.all('/login', sketchesProxy);
+  app.all('/qlitics.js', sketchesProxy);
+  app.all('/auth.form', sketchesProxy);
+  app.all('/auth.callback', sketchesProxy);
+  app.all('/auth', sketchesProxy);
+  app.all('/admin/*', sketchesProxy);
+  app.all('/sitemap.xml', sketchesProxy);
+  app.all('/sitemap/*', sketchesProxy);
+  app.all('/feed', sketchesProxy);
+  app.all('/rss-feed', sketchesProxy);
+  app.all('/stories.rss', sketchesProxy);
+  app.all('/news_sitemap.xml', sketchesProxy);
+  app.all('/sso-login', sketchesProxy);
+  app.all('/sso-signup', sketchesProxy);
 
   if (forwardAmp) {
-    app.get("/amp/*", sketchesProxy);
+    app.get('/amp/*', sketchesProxy);
   }
   if (forwardFavicon) {
-    app.get("/favicon.ico", sketchesProxy);
+    app.get('/favicon.ico', sketchesProxy);
   }
 
-  extraRoutes.forEach((route) => app.all(route, sketchesProxy));
+  extraRoutes.forEach(route => app.all(route, sketchesProxy));
 };
 
 // istanbul ignore next
@@ -115,7 +115,7 @@ function toFunction(value, toRequire) {
     value = require(toRequire);
   }
 
-  if (typeof value === "function") {
+  if (typeof value === 'function') {
     return value;
   }
   return () => value;
@@ -131,14 +131,14 @@ function getDomainSlug(publisherConfig, hostName) {
 function withConfigPartial(
   getClient,
   logError,
-  publisherConfig = require("./publisher-config")
+  publisherConfig = require('./publisher-config')
 ) {
   return function withConfig(f, staticParams) {
-    return function (req, res, next) {
+    return function(req, res, next) {
       const client = getClient(req.hostname);
       return client
         .getConfig()
-        .then((config) =>
+        .then(config =>
           f(
             req,
             res,
@@ -176,19 +176,17 @@ function convertToDomain(path) {
 
 function wrapLoadDataWithMultiDomain(publisherConfig, f, configPos) {
   return async function loadDataWrapped() {
-    const { domainSlug } = arguments[arguments.length - 1];
+    const {domainSlug} = arguments[arguments.length - 1];
     const config = arguments[configPos];
-    const primaryHostUrl = convertToDomain(config["sketches-host"]);
-    const domain = (config.domains || []).find(
-      (d) => d.slug === domainSlug
-    ) || {
-      "host-url": primaryHostUrl,
+    const primaryHostUrl = convertToDomain(config['sketches-host']);
+    const domain = (config.domains || []).find(d => d.slug === domainSlug) || {
+      'host-url': primaryHostUrl,
     };
     const result = await f.apply(this, arguments);
     return Object.assign(
       {
         domainSlug,
-        currentHostUrl: convertToDomain(domain["host-url"]),
+        currentHostUrl: convertToDomain(domain['host-url']),
         primaryHostUrl,
       },
       result
@@ -217,9 +215,9 @@ function wrapLoadDataWithMultiDomain(publisherConfig, f, configPos) {
  */
 function getWithConfig(app, route, handler, opts = {}) {
   const {
-    getClient = require("./api-client").getClient,
-    publisherConfig = require("./publisher-config"),
-    logError = require("./logger").error,
+    getClient = require('./api-client').getClient,
+    publisherConfig = require('./publisher-config'),
+    logError = require('./logger').error,
   } = opts;
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
   app.get(route, withConfig(handler, opts));
@@ -281,17 +279,17 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     mobileConfigFields = {},
     templateOptions = false,
     lightPages = false,
-    cdnProvider = "cloudflare",
-    serviceWorkerPaths = ["/service-worker.js"],
-    maxConfigVersion = (config) =>
-      get(config, ["theme-attributes", "cache-burst"], 0),
+    cdnProvider = 'cloudflare',
+    serviceWorkerPaths = ['/service-worker.js'],
+    maxConfigVersion = config =>
+      get(config, ['theme-attributes', 'cache-burst'], 0),
 
     // The below are primarily for testing
-    logError = require("./logger").error,
-    assetHelper = require("./asset-helper"),
-    getClient = require("./api-client").getClient,
+    logError = require('./logger').error,
+    assetHelper = require('./asset-helper'),
+    getClient = require('./api-client').getClient,
     renderServiceWorker = renderServiceWorkerFn,
-    publisherConfig = require("./publisher-config"),
+    publisherConfig = require('./publisher-config'),
   }
 ) {
   const withConfig = withConfigPartial(getClient, logError, publisherConfig);
@@ -304,7 +302,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     1
   );
 
-  if(serviceWorkerPaths.length > 0) {
+  if (serviceWorkerPaths.length > 0) {
     app.get(
       serviceWorkerPaths,
       withConfig(generateServiceWorker, {
@@ -318,7 +316,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
 
   if (oneSignalServiceWorkers) {
     app.get(
-      "/OneSignalSDKWorker.js",
+      '/OneSignalSDKWorker.js',
       withConfig(generateServiceWorker, {
         generateRoutes,
         renderServiceWorker,
@@ -328,7 +326,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       })
     );
     app.get(
-      "/OneSignalSDKUpdaterWorker.js",
+      '/OneSignalSDKUpdaterWorker.js',
       withConfig(generateServiceWorker, {
         generateRoutes,
         renderServiceWorker,
@@ -340,7 +338,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
   }
 
   app.get(
-    "/shell.html",
+    '/shell.html',
     withConfig(handleIsomorphicShell, {
       renderLayout,
       assetHelper,
@@ -352,7 +350,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     })
   );
   app.get(
-    "/route-data.json",
+    '/route-data.json',
     withConfig(handleIsomorphicDataLoad, {
       generateRoutes,
       loadData,
@@ -366,21 +364,21 @@ exports.isomorphicRoutes = function isomorphicRoutes(
   );
 
   app.post(
-    "/register-fcm-topic",
+    '/register-fcm-topic',
     bodyParser.json(),
-    withConfig(registerFCMTopic, { publisherConfig })
+    withConfig(registerFCMTopic, {publisherConfig})
   );
 
   if (manifestFn) {
     app.get(
-      "/manifest.json",
-      withConfig(handleManifest, { manifestFn, logError })
+      '/manifest.json',
+      withConfig(handleManifest, {manifestFn, logError})
     );
   }
 
   if (mobileApiEnabled) {
     app.get(
-      "/mobile-data.json",
+      '/mobile-data.json',
       withConfig(handleIsomorphicDataLoad, {
         generateRoutes,
         loadData,
@@ -398,27 +396,27 @@ exports.isomorphicRoutes = function isomorphicRoutes(
 
   if (assetLinkFn) {
     app.get(
-      "/.well-known/assetlinks.json",
-      withConfig(handleAssetLink, { assetLinkFn, logError })
+      '/.well-known/assetlinks.json',
+      withConfig(handleAssetLink, {assetLinkFn, logError})
     );
   }
 
   if (templateOptions) {
     app.get(
-      "/template-options.json",
+      '/template-options.json',
       withConfig(simpleJsonHandler, {
-        jsonData: toFunction(templateOptions, "./impl/template-options"),
+        jsonData: toFunction(templateOptions, './impl/template-options'),
       })
     );
   }
 
-  staticRoutes.forEach((route) => {
+  staticRoutes.forEach(route => {
     app.get(
       route.path,
       withConfig(
         handleStaticRoute,
         Object.assign(
-          { logError, loadData, loadErrorData, renderLayout, seo, cdnProvider },
+          {logError, loadData, loadErrorData, renderLayout, seo, cdnProvider},
           route
         )
       )
@@ -426,7 +424,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
   });
 
   app.get(
-    "/*",
+    '/*',
     withConfig(handleIsomorphicRoute, {
       generateRoutes,
       loadData,
@@ -444,19 +442,19 @@ exports.isomorphicRoutes = function isomorphicRoutes(
   );
 
   if (redirectRootLevelStories) {
-    app.get("/:storySlug", withConfig(redirectStory, { logError }));
+    app.get('/:storySlug', withConfig(redirectStory, {logError}));
   }
 
   if (handleCustomRoute) {
     app.get(
-      "/*",
-      withConfig(customRouteHandler, { loadData, renderLayout, logError, seo })
+      '/*',
+      withConfig(customRouteHandler, {loadData, renderLayout, logError, seo})
     );
   }
 
   if (handleNotFound) {
     app.get(
-      "/*",
+      '/*',
       withConfig(notFoundHandler, {
         renderLayout,
         pickComponent,
@@ -487,18 +485,18 @@ exports.getWithConfig = getWithConfig;
  * @param opts
  * @param opts.cacheControl The cache control header to set on proxied requests (default: *"public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600"*)
  */
-exports.proxyGetRequest = function (app, route, handler, opts = {}) {
+exports.proxyGetRequest = function(app, route, handler, opts = {}) {
   const {
-    cacheControl = "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600",
+    cacheControl = 'public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600',
   } = opts;
 
   getWithConfig(app, route, proxyHandler, opts);
 
-  async function proxyHandler(req, res, next, { config, client }) {
+  async function proxyHandler(req, res, next, {config, client}) {
     try {
-      const result = await handler(req.params, { config, client });
-      if (typeof result === "string" && result.startsWith("http")) {
-        sendResult(await rp(result, { json: true }));
+      const result = await handler(req.params, {config, client});
+      if (typeof result === 'string' && result.startsWith('http')) {
+        sendResult(await rp(result, {json: true}));
       } else {
         sendResult(result);
       }
@@ -509,8 +507,22 @@ exports.proxyGetRequest = function (app, route, handler, opts = {}) {
 
     function sendResult(result) {
       if (result) {
-        res.setHeader("Cache-Control", cacheControl);
-        res.setHeader("Vary", "Accept-Encoding");
+        res.setHeader('Cache-Control', cacheControl);
+        res.setHeader('Vary', 'Accept-Encoding');
+        res.setHeader(
+          'Content-Security-Policy',
+          `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
+            `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+            `style-src data: 'unsafe-inline' https: http: blob:;` +
+            `img-src data: https: http: blob:;` +
+            `font-src data: https: http:;` +
+            `connect-src https: wss: ws: http: blob:;` +
+            `media-src https: blob: http:;` +
+            `object-src https: http:;` +
+            `child-src https: data: blob: http:;` +
+            `form-action https: http:;` +
+            `block-all-mixed-content;`
+        );
         res.json(result);
       } else {
         res.status(503);
@@ -521,15 +533,15 @@ exports.proxyGetRequest = function (app, route, handler, opts = {}) {
 };
 
 // This could also be done using express's mount point, but /ping stops working
-exports.mountQuintypeAt = function (app, mountAt) {
-  app.use(function (req, res, next) {
+exports.mountQuintypeAt = function(app, mountAt) {
+  app.use(function(req, res, next) {
     const mountPoint =
-      typeof mountAt === "function" ? mountAt(req.hostname) : mountAt;
+      typeof mountAt === 'function' ? mountAt(req.hostname) : mountAt;
 
     if (mountPoint && req.url.startsWith(mountPoint)) {
-      req.url = req.url.slice(mountPoint.length) || "/";
+      req.url = req.url.slice(mountPoint.length) || '/';
       next();
-    } else if (mountPoint && req.url !== "/ping") {
+    } else if (mountPoint && req.url !== '/ping') {
       res
         .status(404)
         .send(`Not Found: Quintype has been mounted at ${mountPoint}`);
@@ -557,15 +569,15 @@ exports.ampRoutes = (app, opts = {}) => {
   const {
     handleAmpRequest,
     handleInfiniteScrollRequest,
-  } = require("./handlers/amp-handler");
+  } = require('./handlers/amp-handler');
 
   // This is a middleware. The same route should be matched after this by amp handler
-  app.get("/amp/story/*", AmpOptimizerMiddleware.create());
+  app.get('/amp/story/*', AmpOptimizerMiddleware.create());
 
-  getWithConfig(app, "/amp/story/*", handleAmpRequest, opts);
+  getWithConfig(app, '/amp/story/*', handleAmpRequest, opts);
   getWithConfig(
     app,
-    "/amp/api/v1/amp-infinite-scroll",
+    '/amp/api/v1/amp-infinite-scroll',
     handleInfiniteScrollRequest,
     opts
   );
