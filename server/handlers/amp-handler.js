@@ -6,7 +6,11 @@ const { addCacheHeadersToResult } = require("./cdn-caching");
 const { storyToCacheKey } = require("../caching");
 const { InfiniteScrollAmp, setCorsHeaders } = require("../amp-helpers");
 
-const ampOptimizer = AmpOptimizer.create();
+const ampOptimizer = AmpOptimizer.create({
+  autoAddMandatoryTags: false,
+  autoExtensionImport: false,
+  preloadHeroImage: false,
+});
 
 function getSeoInstance(seo, config, pageType = "") {
   return typeof seo === "function" ? seo(config, pageType) : seo;
