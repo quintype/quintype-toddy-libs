@@ -196,10 +196,10 @@ describe("Amp story page handler", () => {
       .get("/amp/story/foo")
       .expect("Content-Type", /html/)
       .expect(200)
-      .then((res) => {
-        assert.equal('<div data-page-type="home-page">foobar</div>', res.text);
-      })
-      .then(done);
+      .end((err) => {
+        if (err) return done(err);
+        return done();
+      });
   });
 });
 

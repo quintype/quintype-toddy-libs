@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.14](https://github.com/quintype/quintype-node-framework/compare/v4.0.11...v4.0.14) (2020-08-28)
+
+
+### Bug Fixes
+
+* **amp:** FE can now customize number of related stories using amp fe… ([#158](https://github.com/quintype/quintype-node-framework/issues/158)) ([e7a936f](https://github.com/quintype/quintype-node-framework/commit/e7a936f))
+
+
+
+## [4.0.12](https://github.com/quintype/quintype-node-framework/compare/v4.0.11...v4.0.12) (2020-08-27)
+
+
+### Bug Fixes
+
+* **amp:** FE can now customize number of related stories using amp fe… ([#158](https://github.com/quintype/quintype-node-framework/issues/158)) ([e7a936f](https://github.com/quintype/quintype-node-framework/commit/e7a936f))
+
+
+
+## [4.0.11](https://github.com/quintype/quintype-node-framework/compare/v4.0.10...v4.0.11) (2020-08-26)
+
+
+### Bug Fixes
+
+* **amp:** do not show pending amp elements - bad UX ([#156](https://github.com/quintype/quintype-node-framework/issues/156)) ([11940fb](https://github.com/quintype/quintype-node-framework/commit/11940fb))
+
+
+
 ## [4.0.10](https://github.com/quintype/quintype-node-framework/compare/v4.0.9...v4.0.10) (2020-08-20)
 
 
