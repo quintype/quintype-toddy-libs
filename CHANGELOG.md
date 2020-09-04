@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.15](https://github.com/quintype/quintype-node-framework/compare/v4.0.14...v4.0.15) (2020-09-04)
+
+
+### Bug Fixes
+
+* **amp:** accept html lang tag from featureconfig ([#161](https://github.com/quintype/quintype-node-framework/issues/161)) ([cdd19a5](https://github.com/quintype/quintype-node-framework/commit/cdd19a5))
+
+
+
 ## [4.0.14](https://github.com/quintype/quintype-node-framework/compare/v4.0.11...v4.0.14) (2020-08-28)
 
 
