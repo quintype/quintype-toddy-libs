@@ -11,9 +11,8 @@ function addLightPageHeaders(result, lightPages, {
     ["data", "story", "is-amp-supported"],
     false
   );
-  console.log("lightPages --------->", lightPages, typeof lightPages === "function" && lightPages(config), "isAmpSupported --------->", isAmpSupported);
+
   if (typeof lightPages === "function" && !lightPages(config)) {
-    console.log("should't come here ----------------->");
     return;
   }
 
