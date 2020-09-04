@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [4.2.0](https://github.com/quintype/quintype-node-framework/compare/v4.0.14...v4.2.0) (2020-09-04)
+
+
+### Bug Fixes
+
+* **amp:** accept html lang tag from featureconfig ([#161](https://github.com/quintype/quintype-node-framework/issues/161)) ([cdd19a5](https://github.com/quintype/quintype-node-framework/commit/cdd19a5))
+
+
+### Features
+
+* **Extend config passing configWrapper:** Wrap config with passed configWrapper ([#153](https://github.com/quintype/quintype-node-framework/issues/153)) ([9b98611](https://github.com/quintype/quintype-node-framework/commit/9b98611))
+
+
+
 ## [4.0.15](https://github.com/quintype/quintype-node-framework/compare/v4.0.14...v4.0.15) (2020-09-04)
 
 
