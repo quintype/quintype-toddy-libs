@@ -1,12 +1,17 @@
 const logger = require("../../server/logger");
+var assert = require("assert");
 
 describe("Logger", function () {
   it("It should log error while sending logger.error", function (done) {
-    logger.error("Error");
+    const msg = "Error";
+    const errMsg = logger.error(msg);
+    errMsg && assert.equal(msg, errMsg.message);
     return done();
   });
   it("It should not log error while sending logger.info", function (done) {
-    logger.info("Some info logs");
+    const msg = "Some info logs";
+    const infoMsg = logger.info(message);
+    infoMsg && assert.equal(msg, infoMsg.message);
     return done();
   });
 });

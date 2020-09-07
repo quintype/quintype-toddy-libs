@@ -88,12 +88,20 @@ function truncateStack(message) {
 
 const logger = createLogger();
 const errorFn = logger.error.bind(logger);
-
+const infoFn = logger.error.bind(logger);
 logger.error = function (e) {
   if (e && e.stack) {
     errorFn({ message: e.message, stack: truncateStack(e.stack) });
   } else {
     errorFn(e);
+  }
+};
+
+logger.info = function (e) {
+  if (e && e.stack) {
+    infoFn({ message: e.message, stack: truncateStack(e.stack) });
+  } else {
+    infoFn(e);
   }
 };
 
