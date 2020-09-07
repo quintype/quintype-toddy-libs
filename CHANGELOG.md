@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.2.1](https://github.com/quintype/quintype-node-framework/compare/v4.2.0...v4.2.1) (2020-09-07)
+
+
+### Bug Fixes
+
+* **amp:** fix for barandbench prod issue ([#165](https://github.com/quintype/quintype-node-framework/issues/165)) ([3d42069](https://github.com/quintype/quintype-node-framework/commit/3d42069))
+
+
+
 # [4.2.0](https://github.com/quintype/quintype-node-framework/compare/v4.0.14...v4.2.0) (2020-09-04)
 
 
