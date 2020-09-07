@@ -2,6 +2,74 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [4.2.0](https://github.com/quintype/quintype-node-framework/compare/v4.0.14...v4.2.0) (2020-09-04)
+
+
+### Bug Fixes
+
+* **amp:** accept html lang tag from featureconfig ([#161](https://github.com/quintype/quintype-node-framework/issues/161)) ([cdd19a5](https://github.com/quintype/quintype-node-framework/commit/cdd19a5))
+
+
+### Features
+
+* **Extend config passing configWrapper:** Wrap config with passed configWrapper ([#153](https://github.com/quintype/quintype-node-framework/issues/153)) ([9b98611](https://github.com/quintype/quintype-node-framework/commit/9b98611))
+
+
+
+## [4.0.15](https://github.com/quintype/quintype-node-framework/compare/v4.0.14...v4.0.15) (2020-09-04)
+
+
+### Bug Fixes
+
+* **amp:** accept html lang tag from featureconfig ([#161](https://github.com/quintype/quintype-node-framework/issues/161)) ([cdd19a5](https://github.com/quintype/quintype-node-framework/commit/cdd19a5))
+
+
+
+## [4.0.14](https://github.com/quintype/quintype-node-framework/compare/v4.0.11...v4.0.14) (2020-08-28)
+
+
+### Bug Fixes
+
+* **amp:** FE can now customize number of related stories using amp fe… ([#158](https://github.com/quintype/quintype-node-framework/issues/158)) ([e7a936f](https://github.com/quintype/quintype-node-framework/commit/e7a936f))
+
+
+
+## [4.0.12](https://github.com/quintype/quintype-node-framework/compare/v4.0.11...v4.0.12) (2020-08-27)
+
+
+### Bug Fixes
+
+* **amp:** FE can now customize number of related stories using amp fe… ([#158](https://github.com/quintype/quintype-node-framework/issues/158)) ([e7a936f](https://github.com/quintype/quintype-node-framework/commit/e7a936f))
+
+
+
+## [4.0.11](https://github.com/quintype/quintype-node-framework/compare/v4.0.10...v4.0.11) (2020-08-26)
+
+
+### Bug Fixes
+
+* **amp:** do not show pending amp elements - bad UX ([#156](https://github.com/quintype/quintype-node-framework/issues/156)) ([11940fb](https://github.com/quintype/quintype-node-framework/commit/11940fb))
+
+
+
+## [4.0.10](https://github.com/quintype/quintype-node-framework/compare/v4.0.9...v4.0.10) (2020-08-20)
+
+
+### Bug Fixes
+
+* **amp:** add slot after every card in generic story ([#155](https://github.com/quintype/quintype-node-framework/issues/155)) ([26112af](https://github.com/quintype/quintype-node-framework/commit/26112af))
+
+
+
+## [4.0.9](https://github.com/quintype/quintype-node-framework/compare/v4.0.8...v4.0.9) (2020-08-18)
+
+
+### Bug Fixes
+
+* prepublish script ([bc05262](https://github.com/quintype/quintype-node-framework/commit/bc05262))
+
+
+
 ## [4.0.4](https://github.com/quintype/quintype-node-framework/compare/v4.0.3...v4.0.4) (2020-08-10)
 
 

@@ -15,6 +15,11 @@ const redirectUrls = [
     statusCode: 301,
   },
   {
+    sourceUrl: "/india/news/:someslug",
+    destinationUrl: "/india/:someslug",
+    statusCode: 301,
+  },
+  {
     sourceUrl: "/moved-permanently-1",
     destinationUrl: "/permanent-location-1",
     statusCode: 301,

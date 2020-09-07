@@ -7,7 +7,6 @@
  * @module routes
  */
 
-const AmpOptimizerMiddleware = require("@ampproject/toolbox-optimizer-express");
 const { generateServiceWorker } = require("./handlers/generate-service-worker");
 const {
   handleIsomorphicShell,
@@ -132,13 +131,15 @@ function getDomainSlug(publisherConfig, hostName) {
 function withConfigPartial(
   getClient,
   logError,
-  publisherConfig = require("./publisher-config")
+  publisherConfig = require("./publisher-config"),
+  configWrapper = (config) => config
 ) {
   return function withConfig(f, staticParams) {
     return function (req, res, next) {
       const client = getClient(req.hostname);
       return client
         .getConfig()
+        .then((config) => configWrapper(config))
         .then((config) =>
           f(
             req,
@@ -287,6 +288,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     serviceWorkerPaths = ["/service-worker.js"],
     maxConfigVersion = (config) =>
       get(config, ["theme-attributes", "cache-burst"], 0),
+    configWrapper = (config) => config,
 
     // The below are primarily for testing
     logError = require("./logger").error,
@@ -294,10 +296,15 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     getClient = require("./api-client").getClient,
     renderServiceWorker = renderServiceWorkerFn,
     publisherConfig = require("./publisher-config"),
-    redirectUrls,
+    redirectUrls = [],
   }
 ) {
-  const withConfig = withConfigPartial(getClient, logError, publisherConfig);
+  const withConfig = withConfigPartial(
+    getClient,
+    logError,
+    publisherConfig,
+    configWrapper
+  );
 
   pickComponent = makePickComponentSync(pickComponent);
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
@@ -307,15 +314,17 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     1
   );
 
-  app.get(
-    serviceWorkerPaths,
-    withConfig(generateServiceWorker, {
-      generateRoutes,
-      assetHelper,
-      renderServiceWorker,
-      maxConfigVersion,
-    })
-  );
+  if (serviceWorkerPaths.length > 0) {
+    app.get(
+      serviceWorkerPaths,
+      withConfig(generateServiceWorker, {
+        generateRoutes,
+        assetHelper,
+        renderServiceWorker,
+        maxConfigVersion,
+      })
+    );
+  }
 
   if (oneSignalServiceWorkers) {
     app.get(
@@ -440,11 +449,17 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       const search = query.search || "";
       if (req.params) {
         chunkUrls.forEach((chunkUrl) => {
-          const destS = chunkUrl.destinationUrl.split("/:");
-          const destinationPrepareUrl = prepareSlug(destS, req);
-          const sUrl = chunkUrl.sourceUrl.split("/:");
-          const sourcePrepareUrl = prepareSlug(sUrl, req);
-          if (`${sourcePrepareUrl}` === req.url) {
+          const extractedDestinationUrl =
+            (chunkUrl.destinationUrl && chunkUrl.destinationUrl.split("/:")) ||
+            "";
+          const destinationPrepareUrl = prepareSlug(
+            extractedDestinationUrl,
+            req
+          );
+          const extractedSourceUrl =
+            (chunkUrl.sourceUrl && chunkUrl.sourceUrl.split("/:")) || "";
+          const prepareSourceUrl = prepareSlug(extractedSourceUrl, req);
+          if (prepareSourceUrl === req.url) {
             res.redirect(
               chunkUrl.statusCode,
               `${destinationPrepareUrl}${search}`
@@ -617,9 +632,6 @@ exports.ampRoutes = (app, opts = {}) => {
     handleAmpRequest,
     handleInfiniteScrollRequest,
   } = require("./handlers/amp-handler");
-
-  // This is a middleware. The same route should be matched after this by amp handler
-  app.get("/amp/story/*", AmpOptimizerMiddleware.create());
 
   getWithConfig(app, "/amp/story/*", handleAmpRequest, opts);
   getWithConfig(
