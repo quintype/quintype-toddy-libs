@@ -10,7 +10,7 @@ describe("Logger", function () {
   });
   it("It should not log error while sending logger.info", function (done) {
     const msg = "Some info logs";
-    const infoMsg = logger.info(message);
+    const infoMsg = logger.info(msg);
     infoMsg && assert.equal(msg, infoMsg.message);
     return done();
   });
