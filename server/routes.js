@@ -32,7 +32,7 @@ const rp = require("request-promise");
 const bodyParser = require("body-parser");
 const get = require("lodash/get");
 const { URL } = require("url");
-const url = require("url");
+const { getRedirectUrl } = require("./redirect-url-helper");
 
 /**
  * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
@@ -434,69 +434,12 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       )
     );
   });
-  function prepareSlug(urls, req) {
-    const destsClone = urls;
-    urls.forEach((item) => {
-      if (req.params[item]) {
-        destsClone.splice(destsClone.indexOf(item), 1, `${req.params[item]}`);
-      }
-    });
-    return `${destsClone.join("/")}`;
-  }
-  function getUrlRedirect(sourceUrlArray, chunkUrls) {
-    app.get(sourceUrlArray, (req, res, next) => {
-      const query = url.parse(req.url, true) || {};
-      const search = query.search || "";
-      if (req.params) {
-        chunkUrls.forEach((chunkUrl) => {
-          const extractedDestinationUrl =
-            (chunkUrl.destinationUrl && chunkUrl.destinationUrl.split("/:")) ||
-            "";
-          const destinationPrepareUrl = prepareSlug(
-            extractedDestinationUrl,
-            req
-          );
-          const extractedSourceUrl =
-            (chunkUrl.sourceUrl && chunkUrl.sourceUrl.split("/:")) || "";
-          const prepareSourceUrl = prepareSlug(extractedSourceUrl, req);
-          if (prepareSourceUrl === req.url) {
-            res.redirect(
-              chunkUrl.statusCode,
-              `${destinationPrepareUrl}${search}`
-            );
-          }
-        });
-      }
-      const pos = sourceUrlArray.indexOf(url.parse(req.url).pathname);
-      if (pos >= 0) {
-        return res.redirect(
-          chunkUrls[pos].statusCode,
-          `${chunkUrls[pos].destinationUrl}${search}`
-        );
-      }
-      return next();
-    });
-  }
-  function chunkUrl(urls) {
-    const chunk = 10;
-    while (urls.length) {
-      const chunkUrls = urls.splice(0, chunk);
-      const sourceUrlArray = chunkUrls.map((redUrl) => redUrl.sourceUrl);
-      getUrlRedirect(sourceUrlArray, chunkUrls);
-    }
-  }
-  async function getRedirectUrls(redirectUrlsfun) {
-    const returnUrlsData = await redirectUrlsfun;
-    return returnUrlsData;
-  }
   // Redirects static urls
-  if (typeof redirectUrls === "function") {
-    const redirectUrlsdata = getRedirectUrls(redirectUrls);
-    if (redirectUrlsdata.length > 0) {
-      chunkUrl(redirectUrlsdata);
-    }
-  } else if (redirectUrls && redirectUrls.length > 0) {
-    chunkUrl(redirectUrls);
+  if (
+    typeof redirectUrls === "function" ||
+    (redirectUrls && redirectUrls.length > 0)
+  ) {
+    getRedirectUrl(app, logError, redirectUrls);
   }
 
   app.get(
