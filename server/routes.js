@@ -563,15 +563,15 @@ exports.mountQuintypeAt = function (app, mountAt) {
  */
 exports.ampRoutes = (app, opts = {}) => {
   const {
-    handleAmpRequest,
-    handleInfiniteScrollRequest,
-  } = require("./handlers/amp-handler");
+    ampStoryPageHandler,
+    storyPageInfiniteScrollHandler,
+  } = require("../amp/handlers");
 
-  getWithConfig(app, "/amp/story/*", handleAmpRequest, opts);
+  getWithConfig(app, "/amp/story/*", ampStoryPageHandler, opts);
   getWithConfig(
     app,
     "/amp/api/v1/amp-infinite-scroll",
-    handleInfiniteScrollRequest,
+    storyPageInfiniteScrollHandler,
     opts
   );
 };

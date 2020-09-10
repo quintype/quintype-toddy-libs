@@ -1,45 +1,14 @@
 const urlLib = require("url");
 const set = require("lodash/set");
 const get = require("lodash/get");
-const { Story, AmpConfig } = require("../impl/api-client-impl");
-const { addCacheHeadersToResult } = require("./cdn-caching");
-const { storyToCacheKey } = require("../caching");
+const { Story, AmpConfig } = require("../../server/impl/api-client-impl");
+const { getSeoInstance, InfiniteScrollAmp, optimize } = require("../helpers");
+const { storyToCacheKey } = require("../../server/caching");
 const {
-  setCorsHeaders,
-  InfiniteScrollAmp,
-  optimize,
-} = require("../../amp/helpers");
+  addCacheHeadersToResult,
+} = require("../../server/handlers/cdn-caching");
 
-function getSeoInstance(seo, config, pageType = "") {
-  return typeof seo === "function" ? seo(config, pageType) : seo;
-}
-
-// eslint-disable-next-line consistent-return
-exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest(
-  req,
-  res,
-  next,
-  { client, config }
-) {
-  const ampConfig = await config.memoizeAsync(
-    "amp-config",
-    async () => await AmpConfig.getAmpConfig(client)
-  );
-
-  const infiniteScrollAmp = new InfiniteScrollAmp({
-    ampConfig,
-    publisherConfig: config,
-    client,
-    queryParams: req.query,
-  });
-  const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 5 }); // itemsTaken has to match with itemsToTake in getInitialInlineConfig method
-  if (jsonResponse instanceof Error) return next(jsonResponse);
-  res.set("Content-Type", "application/json; charset=utf-8");
-  setCorsHeaders({ req, res, next, publisherConfig: config });
-  if (!res.headersSent) return res.send(jsonResponse);
-};
-
-exports.handleAmpRequest = async function handleAmpRequest(
+async function ampStoryPageHandler(
   req,
   res,
   next,
@@ -150,4 +119,6 @@ exports.handleAmpRequest = async function handleAmpRequest(
   } catch (e) {
     return next(e);
   }
-};
+}
+
+module.exports = { ampStoryPageHandler };
