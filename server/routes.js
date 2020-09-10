@@ -42,6 +42,7 @@ const { URL } = require("url");
  * @param {Array<string>} opts.extraRoutes Additionally forward some routes upstream. This takes an array of express compatible routes, such as ["/foo/*"]
  * @param {boolean} opts.forwardAmp Forward amp story routes upstream (default false)
  * @param {boolean} opts.forwardFavicon Forward favicon requests to the CMS (default false)
+ * @param {boolean} opts.isNewNewsSitemapEnabled To enable /news_sitemap/today and /news_sitemap/yesterday sitemap news url (default /news_sitemap.xml)
  */
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
   app,
