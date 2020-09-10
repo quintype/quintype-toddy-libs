@@ -1,22 +1,20 @@
 const urlLib = require("url");
 const set = require("lodash/set");
-const AmpOptimizer = require("@ampproject/toolbox-optimizer");
 const get = require("lodash/get");
 const { Story, AmpConfig } = require("../impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./cdn-caching");
 const { storyToCacheKey } = require("../caching");
-const { InfiniteScrollAmp, setCorsHeaders } = require("../amp-helpers");
-
-const ampOptimizer = AmpOptimizer.create({
-  autoAddMandatoryTags: false,
-  autoExtensionImport: false,
-  preloadHeroImage: false,
-});
+const {
+  setCorsHeaders,
+  InfiniteScrollAmp,
+  optimize,
+} = require("../../amp/helpers");
 
 function getSeoInstance(seo, config, pageType = "") {
   return typeof seo === "function" ? seo(config, pageType) : seo;
 }
 
+// eslint-disable-next-line consistent-return
 exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest(
   req,
   res,
@@ -139,7 +137,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
       infiniteScrollInlineConfig,
     });
     if (ampHtml instanceof Error) return next(ampHtml);
-    const optimizedAmpHtml = await ampOptimizer.transformHtml(ampHtml);
+    const optimizedAmpHtml = await optimize(ampHtml);
 
     res.set("Content-Type", "text/html");
     addCacheHeadersToResult(
