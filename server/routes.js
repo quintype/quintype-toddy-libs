@@ -52,7 +52,7 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
 
     config = require("./publisher-config"),
     getClient = require("./api-client").getClient,
-    newNewsSitemapEnabled = false,
+    isNewNewsSitemapEnabled = false,
   } = {}
 ) {
   const host = config.sketches_host;
@@ -92,7 +92,7 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
   app.all("/stories.rss", sketchesProxy);
   app.all("/sso-login", sketchesProxy);
   app.all("/sso-signup", sketchesProxy);
-  if (newNewsSitemapEnabled) {
+  if (isNewNewsSitemapEnabled) {
     app.all("/news_sitemap/today.xml", sketchesProxy);
     app.all("/news_sitemap/yesterday.xml", sketchesProxy);
   } else {
