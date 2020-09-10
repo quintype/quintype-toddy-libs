@@ -119,6 +119,46 @@ describe("Sketches Proxy", function () {
     });
   });
 
+  describe("sitemap requests", function () {
+    function buildApp({ isNewNewsSitemapEnabled }) {
+      const app = express();
+      upstreamQuintypeRoutes(app, {
+        config: {
+          sketches_host: `http://127.0.0.1:${upstreamServer.address().port}`,
+        },
+        getClient: (host) => ({ getHostname: () => host.toUpperCase() }),
+        extraRoutes: ["/custom-route"],
+        publisherConfig: {},
+        isNewNewsSitemapEnabled,
+      });
+      return app;
+    }
+
+    it("forwards requests to test new_sitemap/today.xml should not throw error if isNewNewsSitemapEnabled is enabled", function (done) {
+      supertest(buildApp({ isNewNewsSitemapEnabled: true }))
+        .get("/news_sitemap/today.xml")
+        .set("Host", "foobar.com")
+        .expect(200)
+        .then((res) => {
+          const { host } = JSON.parse(res.text);
+          assert.equal("FOOBAR.COM", host);
+        })
+        .then(done);
+    });
+
+    it("forwards requests to test news_sitemap.xml should not throw error if isNewNewsSitemapEnabled is disabled", function (done) {
+      supertest(buildApp({ isNewNewsSitemapEnabled: false }))
+        .get("/news_sitemap.xml")
+        .set("Host", "foobar.com")
+        .expect(200)
+        .then((res) => {
+          const { host } = JSON.parse(res.text);
+          assert.equal("FOOBAR.COM", host);
+        })
+        .then(done);
+    });
+  });
+
   describe("ping check", function () {
     function buildApp(getConfig) {
       const app = express();
