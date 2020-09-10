@@ -52,6 +52,7 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
 
     config = require("./publisher-config"),
     getClient = require("./api-client").getClient,
+    newNewsSitemapEnabled = false,
   } = {}
 ) {
   const host = config.sketches_host;
@@ -89,10 +90,14 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
   app.all("/feed", sketchesProxy);
   app.all("/rss-feed", sketchesProxy);
   app.all("/stories.rss", sketchesProxy);
-  app.all("/news_sitemap.xml", sketchesProxy);
   app.all("/sso-login", sketchesProxy);
   app.all("/sso-signup", sketchesProxy);
-
+  if (newNewsSitemapEnabled) {
+    app.all("/news_sitemap/today.xml", sketchesProxy);
+    app.all("/news_sitemap/yesterday.xml", sketchesProxy);
+  } else {
+    app.all("/news_sitemap.xml", sketchesProxy);
+  }
   if (forwardAmp) {
     app.get("/amp/*", sketchesProxy);
   }
