@@ -19,7 +19,7 @@ function getUrlRedirect(app, logError, sourceUrlArray, chunkUrls) {
         const extractedDestinationUrl =
           (chunkUrl.destinationUrl && chunkUrl.destinationUrl.split("/:")) ||
           "";
-        const destinationPrepareUrl = prepareSlug(extractedDestinationUrl, req);
+        const prepareDestinationUrl = prepareSlug(extractedDestinationUrl, req);
         const extractedSourceUrl =
           (chunkUrl.sourceUrl && chunkUrl.sourceUrl.split("/:")) || "";
         const prepareSourceUrl = prepareSlug(extractedSourceUrl, req);
@@ -27,22 +27,25 @@ function getUrlRedirect(app, logError, sourceUrlArray, chunkUrls) {
           "Source url ",
           prepareSourceUrl,
           "Destination url",
-          destinationPrepareUrl
+          prepareDestinationUrl
         );
         if (prepareSourceUrl === req.url) {
           res.redirect(
             chunkUrl.statusCode,
-            `${destinationPrepareUrl}${search}`
+            `${prepareDestinationUrl}${search}`
           );
         }
       });
     }
-    const pos = sourceUrlArray.indexOf(url.parse(req.url).pathname);
-    if (pos >= 0) {
-      logError("Destination url", `${chunkUrls[pos].destinationUrl}${search}`);
+    const position = sourceUrlArray.indexOf(url.parse(req.url).pathname);
+    if (position >= 0) {
+      logError(
+        "Destination url",
+        `${chunkUrls[position].destinationUrl}${search}`
+      );
       return res.redirect(
-        chunkUrls[pos].statusCode,
-        `${chunkUrls[pos].destinationUrl}${search}`
+        chunkUrls[position].statusCode,
+        `${chunkUrls[position].destinationUrl}${search}`
       );
     }
     return next();
@@ -64,9 +67,9 @@ async function getRedirectUrls(redirectUrlsfun) {
 
 exports.getRedirectUrl = function getRedirectUrl(app, logError, redirectUrls) {
   if (typeof redirectUrls === "function") {
-    const redirectUrlsdata = getRedirectUrls(redirectUrls);
-    if (redirectUrlsdata.length > 0) {
-      chunkUrl(app, logError, redirectUrlsdata);
+    const redirectUrlsList = getRedirectUrls(redirectUrls);
+    if (redirectUrlsList.length > 0) {
+      chunkUrl(app, logError, redirectUrlsList);
     }
   } else if (redirectUrls && redirectUrls.length > 0) {
     chunkUrl(app, logError, redirectUrls);
