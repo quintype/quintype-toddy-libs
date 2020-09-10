@@ -48,17 +48,21 @@ function createDevLogger() {
 }
 
 function createProdLogger() {
-  return winston.createLogger({
-    format: combine(timestamp(), trimNewline(), winston.format.json()),
-    transports: [
-      new winston.transports.Console({
-        colorize: false,
-        level: "error",
-      }),
+  const transports = [
+    new winston.transports.Console({
+      colorize: false,
+      level: "error",
+    }),
+  ];
+  !process.env.LOG_TO_STDOUT &&
+    transports.push(
       new winston.transports.File({
         filename: "log/production.log",
-      }),
-    ],
+      })
+    );
+  return winston.createLogger({
+    format: combine(timestamp(), trimNewline(), winston.format.json()),
+    transports,
     exceptionHandlers: [new winston.transports.Console()],
     exitOnError: false,
   });
@@ -84,12 +88,20 @@ function truncateStack(message) {
 
 const logger = createLogger();
 const errorFn = logger.error.bind(logger);
-
+const infoFn = logger.error.bind(logger);
 logger.error = function (e) {
   if (e && e.stack) {
     errorFn({ message: e.message, stack: truncateStack(e.stack) });
   } else {
     errorFn(e);
+  }
+};
+
+logger.info = function (e) {
+  if (e && e.stack) {
+    infoFn({ message: e.message, stack: truncateStack(e.stack) });
+  } else {
+    infoFn(e);
   }
 };
 
