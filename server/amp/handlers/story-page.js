@@ -1,12 +1,10 @@
 const urlLib = require("url");
 const set = require("lodash/set");
 const get = require("lodash/get");
-const { Story, AmpConfig } = require("../../server/impl/api-client-impl");
+const { Story, AmpConfig } = require("../../impl/api-client-impl");
 const { getSeoInstance, InfiniteScrollAmp, optimize } = require("../helpers");
-const { storyToCacheKey } = require("../../server/caching");
-const {
-  addCacheHeadersToResult,
-} = require("../../server/handlers/cdn-caching");
+const { storyToCacheKey } = require("../../caching");
+const { addCacheHeadersToResult } = require("../../handlers/cdn-caching");
 
 async function ampStoryPageHandler(
   req,

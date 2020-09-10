@@ -1,4 +1,4 @@
-const { AmpConfig } = require("../../server/impl/api-client-impl");
+const { AmpConfig } = require("../../impl/api-client-impl");
 const { InfiniteScrollAmp, setCorsHeaders } = require("../helpers");
 
 // eslint-disable-next-line consistent-return
