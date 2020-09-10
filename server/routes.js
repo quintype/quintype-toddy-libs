@@ -130,13 +130,15 @@ function getDomainSlug(publisherConfig, hostName) {
 function withConfigPartial(
   getClient,
   logError,
-  publisherConfig = require("./publisher-config")
+  publisherConfig = require("./publisher-config"),
+  configWrapper = config => config
 ) {
   return function withConfig(f, staticParams) {
     return function (req, res, next) {
       const client = getClient(req.hostname);
       return client
         .getConfig()
+        .then(config => configWrapper(config))
         .then((config) =>
           f(
             req,
@@ -283,7 +285,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     cdnProvider = "cloudflare",
     serviceWorkerPaths = ["/service-worker.js"],
     maxConfigVersion = (config) =>
-      get(config, ["theme-attributes", "cache-burst"], 0),
+    get(config, ["theme-attributes", "cache-burst"], 0),
+    configWrapper = config => config,
 
     // The below are primarily for testing
     logError = require("./logger").error,
@@ -293,7 +296,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     publisherConfig = require("./publisher-config"),
   }
 ) {
-  const withConfig = withConfigPartial(getClient, logError, publisherConfig);
+
+  const withConfig = withConfigPartial(getClient, logError, publisherConfig, configWrapper);
 
   pickComponent = makePickComponentSync(pickComponent);
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
@@ -303,15 +307,17 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     1
   );
 
-  app.get(
-    serviceWorkerPaths,
-    withConfig(generateServiceWorker, {
-      generateRoutes,
-      assetHelper,
-      renderServiceWorker,
-      maxConfigVersion,
-    })
-  );
+  if (serviceWorkerPaths.length > 0) {
+    app.get(
+      serviceWorkerPaths,
+      withConfig(generateServiceWorker, {
+        generateRoutes,
+        assetHelper,
+        renderServiceWorker,
+        maxConfigVersion,
+      })
+    );
+  }
 
   if (oneSignalServiceWorkers) {
     app.get(
