@@ -120,7 +120,7 @@ describe("Sketches Proxy", function () {
   });
 
   describe("sitemap requests", function () {
-    function buildApp({ isNewNewsSitemapEnabled }) {
+    function buildApp({ isSitemapUrlEnabled }) {
       const app = express();
       upstreamQuintypeRoutes(app, {
         config: {
@@ -129,13 +129,13 @@ describe("Sketches Proxy", function () {
         getClient: (host) => ({ getHostname: () => host.toUpperCase() }),
         extraRoutes: ["/custom-route"],
         publisherConfig: {},
-        isNewNewsSitemapEnabled,
+        isSitemapUrlEnabled,
       });
       return app;
     }
 
-    it("forwards requests to test new_sitemap/today.xml should not throw error if isNewNewsSitemapEnabled is enabled", function (done) {
-      supertest(buildApp({ isNewNewsSitemapEnabled: true }))
+    it("forwards requests to test new_sitemap/today.xml should not throw error if isSitemapUrlEnabled is enabled", function (done) {
+      supertest(buildApp({ isSitemapUrlEnabled: true }))
         .get("/news_sitemap/today.xml")
         .set("Host", "foobar.com")
         .expect(200)
@@ -146,8 +146,8 @@ describe("Sketches Proxy", function () {
         .then(done);
     });
 
-    it("forwards requests to test news_sitemap.xml should not throw error if isNewNewsSitemapEnabled is disabled", function (done) {
-      supertest(buildApp({ isNewNewsSitemapEnabled: false }))
+    it("forwards requests to test news_sitemap.xml should not throw error if isSitemapUrlEnabled is disabled", function (done) {
+      supertest(buildApp({ isSitemapUrlEnabled: false }))
         .get("/news_sitemap.xml")
         .set("Host", "foobar.com")
         .expect(200)

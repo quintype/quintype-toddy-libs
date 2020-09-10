@@ -42,7 +42,7 @@ const { URL } = require("url");
  * @param {Array<string>} opts.extraRoutes Additionally forward some routes upstream. This takes an array of express compatible routes, such as ["/foo/*"]
  * @param {boolean} opts.forwardAmp Forward amp story routes upstream (default false)
  * @param {boolean} opts.forwardFavicon Forward favicon requests to the CMS (default false)
- * @param {boolean} opts.isNewNewsSitemapEnabled To enable /news_sitemap/today and /news_sitemap/yesterday sitemap news url (default /news_sitemap.xml)
+ * @param {boolean} opts.isSitemapUrlEnabled To enable /news_sitemap/today and /news_sitemap/yesterday sitemap news url (default /news_sitemap.xml)
  */
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
   app,
@@ -53,7 +53,7 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
 
     config = require("./publisher-config"),
     getClient = require("./api-client").getClient,
-    isNewNewsSitemapEnabled = false,
+    isSitemapUrlEnabled = false,
   } = {}
 ) {
   const host = config.sketches_host;
@@ -93,7 +93,7 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
   app.all("/stories.rss", sketchesProxy);
   app.all("/sso-login", sketchesProxy);
   app.all("/sso-signup", sketchesProxy);
-  if (isNewNewsSitemapEnabled) {
+  if (isSitemapUrlEnabled) {
     app.all("/news_sitemap/today.xml", sketchesProxy);
     app.all("/news_sitemap/yesterday.xml", sketchesProxy);
   } else {
@@ -137,14 +137,14 @@ function withConfigPartial(
   getClient,
   logError,
   publisherConfig = require("./publisher-config"),
-  configWrapper = config => config
+  configWrapper = (config) => config
 ) {
   return function withConfig(f, staticParams) {
     return function (req, res, next) {
       const client = getClient(req.hostname);
       return client
         .getConfig()
-        .then(config => configWrapper(config))
+        .then((config) => configWrapper(config))
         .then((config) =>
           f(
             req,
@@ -291,8 +291,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     cdnProvider = "cloudflare",
     serviceWorkerPaths = ["/service-worker.js"],
     maxConfigVersion = (config) =>
-    get(config, ["theme-attributes", "cache-burst"], 0),
-    configWrapper = config => config,
+      get(config, ["theme-attributes", "cache-burst"], 0),
+    configWrapper = (config) => config,
 
     // The below are primarily for testing
     logError = require("./logger").error,
@@ -302,8 +302,12 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     publisherConfig = require("./publisher-config"),
   }
 ) {
-
-  const withConfig = withConfigPartial(getClient, logError, publisherConfig, configWrapper);
+  const withConfig = withConfigPartial(
+    getClient,
+    logError,
+    publisherConfig,
+    configWrapper
+  );
 
   pickComponent = makePickComponentSync(pickComponent);
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
