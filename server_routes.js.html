@@ -208,13 +208,15 @@ function getDomainSlug(publisherConfig, hostName) {
 function withConfigPartial(
   getClient,
   logError,
-  publisherConfig = require("./publisher-config")
+  publisherConfig = require("./publisher-config"),
+  configWrapper = config => config
 ) {
   return function withConfig(f, staticParams) {
     return function (req, res, next) {
       const client = getClient(req.hostname);
       return client
         .getConfig()
+        .then(config => configWrapper(config))
         .then((config) =>
           f(
             req,
@@ -333,7 +335,6 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {boolean|function} opts.lightPages If set to true, then all story pages will render amp pages.
  * @param {string} opts.cdnProvider The name of the cdn provider. Supported cdn providers are akamai, cloudflare. Default value is cloudflare.
  * @param {function} opts.maxConfigVersion An async function which resolves to a integer version of the config. This defaults to config.theme-attributes.cache-burst
- * @param {Array&lt;object | function} opts.redirectUrls An array or async function which used to redirect the urls provided in the array of object.
  */
 exports.isomorphicRoutes = function isomorphicRoutes(
   app,
@@ -362,7 +363,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     cdnProvider = "cloudflare",
     serviceWorkerPaths = ["/service-worker.js"],
     maxConfigVersion = (config) =>
-      get(config, ["theme-attributes", "cache-burst"], 0),
+    get(config, ["theme-attributes", "cache-burst"], 0),
+    configWrapper = config => config,
 
     // The below are primarily for testing
     logError = require("./logger").error,
@@ -372,7 +374,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     publisherConfig = require("./publisher-config"),
   }
 ) {
-  const withConfig = withConfigPartial(getClient, logError, publisherConfig);
+
+  const withConfig = withConfigPartial(getClient, logError, publisherConfig, configWrapper);
 
   pickComponent = makePickComponentSync(pickComponent);
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
@@ -382,15 +385,17 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     1
   );
 
-  app.get(
-    serviceWorkerPaths,
-    withConfig(generateServiceWorker, {
-      generateRoutes,
-      assetHelper,
-      renderServiceWorker,
-      maxConfigVersion,
-    })
-  );
+  if (serviceWorkerPaths.length > 0) {
+    app.get(
+      serviceWorkerPaths,
+      withConfig(generateServiceWorker, {
+        generateRoutes,
+        assetHelper,
+        renderServiceWorker,
+        maxConfigVersion,
+      })
+    );
+  }
 
   if (oneSignalServiceWorkers) {
     app.get(
