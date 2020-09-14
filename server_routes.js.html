@@ -120,6 +120,7 @@ const { URL } = require("url");
  * @param {Array&lt;string>} opts.extraRoutes Additionally forward some routes upstream. This takes an array of express compatible routes, such as ["/foo/*"]
  * @param {boolean} opts.forwardAmp Forward amp story routes upstream (default false)
  * @param {boolean} opts.forwardFavicon Forward favicon requests to the CMS (default false)
+ * @param {boolean} opts.isSitemapUrlEnabled To enable /news_sitemap/today and /news_sitemap/yesterday sitemap news url (default /news_sitemap.xml)
  */
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
   app,
@@ -130,6 +131,7 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
 
     config = require("./publisher-config"),
     getClient = require("./api-client").getClient,
+    isSitemapUrlEnabled = false,
   } = {}
 ) {
   const host = config.sketches_host;
@@ -167,9 +169,15 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
   app.all("/feed", sketchesProxy);
   app.all("/rss-feed", sketchesProxy);
   app.all("/stories.rss", sketchesProxy);
-  app.all("/news_sitemap.xml", sketchesProxy);
   app.all("/sso-login", sketchesProxy);
   app.all("/sso-signup", sketchesProxy);
+
+  if (isSitemapUrlEnabled) {
+    app.all("/news_sitemap/today.xml", sketchesProxy);
+    app.all("/news_sitemap/yesterday.xml", sketchesProxy);
+  } else {
+    app.all("/news_sitemap.xml", sketchesProxy);
+  }
 
   if (forwardAmp) {
     app.get("/amp/*", sketchesProxy);
