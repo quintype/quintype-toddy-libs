@@ -565,7 +565,8 @@ exports.mountQuintypeAt = function (app, mountAt) {
 /**
  * *ampRoutes* handles all the amp page routes using the *[@quintype/amp](https://developers.quintype.com/quintype-node-amp)* library
  * routes matched:
- * *"/amp/story/:slug"* returns amp story page.
+ * GET - "/amp/story/:slug"* returns amp story page
+ * GET - "/amp/api/v1/amp-infinite-scroll" returns the infinite scroll config JSON. Passed to <amp-next-page> component's `src` attribute
  *
  * @param {Express} app Express app to add the routes to
  * @param {Object} opts Options object used to configure amp. Passing this is optional
@@ -578,15 +579,15 @@ exports.mountQuintypeAt = function (app, mountAt) {
  */
 exports.ampRoutes = (app, opts = {}) => {
   const {
-    handleAmpRequest,
-    handleInfiniteScrollRequest,
-  } = require("./handlers/amp-handler");
+    ampStoryPageHandler,
+    storyPageInfiniteScrollHandler,
+  } = require("./amp/handlers");
 
-  getWithConfig(app, "/amp/story/*", handleAmpRequest, opts);
+  getWithConfig(app, "/amp/story/*", ampStoryPageHandler, opts);
   getWithConfig(
     app,
     "/amp/api/v1/amp-infinite-scroll",
-    handleInfiniteScrollRequest,
+    storyPageInfiniteScrollHandler,
     opts
   );
 };

@@ -1,47 +1,12 @@
 const urlLib = require("url");
 const set = require("lodash/set");
-const AmpOptimizer = require("@ampproject/toolbox-optimizer");
 const get = require("lodash/get");
-const { Story, AmpConfig } = require("../impl/api-client-impl");
-const { addCacheHeadersToResult } = require("./cdn-caching");
-const { storyToCacheKey } = require("../caching");
-const { InfiniteScrollAmp, setCorsHeaders } = require("../amp-helpers");
+const { Story, AmpConfig } = require("../../impl/api-client-impl");
+const { getSeoInstance, InfiniteScrollAmp, optimize } = require("../helpers");
+const { storyToCacheKey } = require("../../caching");
+const { addCacheHeadersToResult } = require("../../handlers/cdn-caching");
 
-const ampOptimizer = AmpOptimizer.create({
-  autoAddMandatoryTags: false,
-  autoExtensionImport: false,
-  preloadHeroImage: false,
-});
-
-function getSeoInstance(seo, config, pageType = "") {
-  return typeof seo === "function" ? seo(config, pageType) : seo;
-}
-
-exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest(
-  req,
-  res,
-  next,
-  { client, config }
-) {
-  const ampConfig = await config.memoizeAsync(
-    "amp-config",
-    async () => await AmpConfig.getAmpConfig(client)
-  );
-
-  const infiniteScrollAmp = new InfiniteScrollAmp({
-    ampConfig,
-    publisherConfig: config,
-    client,
-    queryParams: req.query,
-  });
-  const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 5 }); // itemsTaken has to match with itemsToTake in getInitialInlineConfig method
-  if (jsonResponse instanceof Error) return next(jsonResponse);
-  res.set("Content-Type", "application/json; charset=utf-8");
-  setCorsHeaders({ req, res, next, publisherConfig: config });
-  if (!res.headersSent) return res.send(jsonResponse);
-};
-
-exports.handleAmpRequest = async function handleAmpRequest(
+async function ampStoryPageHandler(
   req,
   res,
   next,
@@ -139,7 +104,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
       infiniteScrollInlineConfig,
     });
     if (ampHtml instanceof Error) return next(ampHtml);
-    const optimizedAmpHtml = await ampOptimizer.transformHtml(ampHtml);
+    const optimizedAmpHtml = await optimize(ampHtml);
 
     res.set("Content-Type", "text/html");
     addCacheHeadersToResult(
@@ -152,4 +117,6 @@ exports.handleAmpRequest = async function handleAmpRequest(
   } catch (e) {
     return next(e);
   }
-};
+}
+
+module.exports = { ampStoryPageHandler };
