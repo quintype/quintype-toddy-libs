@@ -14,8 +14,7 @@ class InfiniteScrollAmp {
     return coll.items.filter(
       ({ type, story }) =>
         type === "story" &&
-        story["story-content-id"] !== storyId &&
-        story.access !== "subscription"
+        story["story-content-id"] !== storyId
     );
   }
 
