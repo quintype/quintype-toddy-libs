@@ -215,7 +215,8 @@
     <div class="description">
         <p><em>ampRoutes</em> handles all the amp page routes using the <em><a href="https://developers.quintype.com/quintype-node-amp">@quintype/amp</a></em> library
 routes matched:
-<em>&quot;/amp/story/:slug&quot;</em> returns amp story page.</p>
+GET - &quot;/amp/story/:slug&quot;* returns amp story page
+GET - &quot;/amp/api/v1/amp-infinite-scroll&quot; returns the infinite scroll config JSON. Passed to <amp-next-page> component's <code>src</code> attribute</p>
     </div>
     
 
@@ -459,7 +460,7 @@ routes matched:
         <p class="tag-source">
             <a href="server_routes.js.html" class="button">View Source</a>
             <span>
-                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line559">line 559</a>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line580">line 580</a>
             </span>
         </p>
     
@@ -1125,26 +1126,30 @@ It accepts all the pieces needed, and implements all the plumbing to make these 
   <td class="description last"><p>An async function which resolves to a integer version of the config. This defaults to config.theme-attributes.cache-burst</p></td>
 </tr>
 
-
+  
+    
 <tr class="deep-level-1">
   
-  <td class="name"><code>redirectUrls</code></td>
+      <td class="name"><code>redirectUrls</code></td>
+  
 
+  <td class="type">
+  
+      
+<span class="param-type">Array.&lt;object></span>
+|
 
-<td class="type">
+<span class="param-type">function</span>
+
 
   
-<span class="param-type">boolean | function</span>
+  </td>
 
+  
 
+  
 
-</td>
-
-
-
-
-
-<td class="description last"><p>An array or async function which used to render the redirect url provided in the array of object. ex- isomorphicRoutes(app, { ... , redirectUrls: REDIRECT_URLS}). where REDIRECT_URLS = [{sourceUrl: "/tag/:tagSlug",destinationUrl: "/topic/:tagSlug",statusCode: 301,}]</p></td>
+  <td class="description last"><p>An array or async function which used to render the redirect url provided in the array of object - &gt;ex- REDIRECT_URLS = [{sourceUrl: &quot;/tag/:tagSlug&quot;,destinationUrl: &quot;/topic/:tagSlug&quot;,statusCode: 301,}]</p></td>
 </tr>
 
   
@@ -1193,7 +1198,7 @@ It accepts all the pieces needed, and implements all the plumbing to make these 
         <p class="tag-source">
             <a href="server_routes.js.html" class="button">View Source</a>
             <span>
-                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line261">line 261</a>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line269">line 269</a>
             </span>
         </p>
     
@@ -1442,7 +1447,7 @@ It accepts all the pieces needed, and implements all the plumbing to make these 
         <p class="tag-source">
             <a href="server_routes.js.html" class="button">View Source</a>
             <span>
-                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line493">line 493</a>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line513">line 513</a>
             </span>
         </p>
     
@@ -1644,26 +1649,27 @@ It accepts all the pieces needed, and implements all the plumbing to make these 
   <td class="description last"><p>Forward favicon requests to the CMS (default false)</p></td>
 </tr>
 
-
+  
+    
 <tr class="deep-level-1">
   
-  <td class="name"><code>isSitemapUrlEnabled</code></td>
-
-
-<td class="type">
-
+      <td class="name"><code>isSitemapUrlEnabled</code></td>
   
+
+  <td class="type">
+  
+      
 <span class="param-type">boolean</span>
 
 
+  
+  </td>
 
-</td>
+  
 
+  
 
-
-
-
-<td class="description last"><p>To enable "/news_sitemap/today" and "/news_sitemap/yesterday" sitemap news url you need to pass value as true (default false - which will be render on "/news_sitemap.xml")</p></td>
+  <td class="description last"><p>To enable /news_sitemap/today and /news_sitemap/yesterday sitemap news url (default /news_sitemap.xml)</p></td>
 </tr>
 
   
@@ -1712,7 +1718,7 @@ It accepts all the pieces needed, and implements all the plumbing to make these 
         <p class="tag-source">
             <a href="server_routes.js.html" class="button">View Source</a>
             <span>
-                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line46">line 46</a>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line48">line 48</a>
             </span>
         </p>
     
@@ -1938,7 +1944,7 @@ handler, but already has a <em>client</em> initialized, and the <em>config</em> 
         <p class="tag-source">
             <a href="server_routes.js.html" class="button">View Source</a>
             <span>
-                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line219">line 219</a>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line226">line 226</a>
             </span>
         </p>
     
@@ -2034,7 +2040,7 @@ handler, but already has a <em>client</em> initialized, and the <em>config</em> 
         <p class="tag-source">
             <a href="server_routes.js.html" class="button">View Source</a>
             <span>
-                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line200">line 200</a>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line207">line 207</a>
             </span>
         </p>
     
