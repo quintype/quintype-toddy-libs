@@ -60,14 +60,14 @@ function chunkUrl(app, logError, urls) {
     getUrlRedirect(app, logError, sourceUrlArray, chunkUrls);
   }
 }
-async function getRedirectUrls(redirectUrlsfun) {
-  const returnUrlsData = await redirectUrlsfun;
+async function getRedirectUrls(redirectUrlsfun, config) {
+  const returnUrlsData = await redirectUrlsfun(config);
   return returnUrlsData;
 }
 
-exports.getRedirectUrl = function getRedirectUrl(app, logError, redirectUrls) {
+exports.getRedirectUrl = async function getRedirectUrl(req, res, next, { config, app, logError, redirectUrls }) {
   if (typeof redirectUrls === "function") {
-    const redirectUrlsList = getRedirectUrls(redirectUrls);
+    const redirectUrlsList = await getRedirectUrls(redirectUrls, config);
     if (redirectUrlsList.length > 0) {
       chunkUrl(app, logError, redirectUrlsList);
     }
