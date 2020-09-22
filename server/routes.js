@@ -581,9 +581,11 @@ exports.ampRoutes = (app, opts = {}) => {
   const {
     ampStoryPageHandler,
     storyPageInfiniteScrollHandler,
+    ampHomePageHandler,
   } = require("./amp/handlers");
 
   getWithConfig(app, "/amp/story/*", ampStoryPageHandler, opts);
+  getWithConfig(app, "/amp/home", ampHomePageHandler, opts);
   getWithConfig(
     app,
     "/amp/api/v1/amp-infinite-scroll",
