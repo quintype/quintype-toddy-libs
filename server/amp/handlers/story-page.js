@@ -13,6 +13,7 @@ async function ampStoryPageHandler(
   {
     client,
     config,
+    domainSlug,
     seo,
     cdnProvider = null,
     ampLibrary = require("@quintype/amp"),
@@ -20,6 +21,9 @@ async function ampStoryPageHandler(
   }
 ) {
   try {
+    console.log("*****************************************************");
+    console.log("domainSlug >> ", domainSlug);
+    console.log("*****************************************************");
     const url = urlLib.parse(req.url, true);
     const { ampifyStory } = ampLibrary;
     // eslint-disable-next-line no-return-await
@@ -97,11 +101,8 @@ async function ampStoryPageHandler(
       story,
       publisherConfig: config.config,
       ampConfig: ampConfig.ampConfig,
-      relatedStories,
-      client,
       opts,
       seo: seoTags ? seoTags.toString() : "",
-      infiniteScrollInlineConfig,
     });
     if (ampHtml instanceof Error) return next(ampHtml);
     const optimizedAmpHtml = await optimize(ampHtml);
