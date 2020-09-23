@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.2.4](https://github.com/quintype/quintype-node-framework/compare/v4.2.3...v4.2.4) (2020-09-23)
+
+
+### Bug Fixes
+
+* **amp:** bump amplib to take heroimage optimization ([2d6e610](https://github.com/quintype/quintype-node-framework/commit/2d6e610))
+
+
+
 ## [4.2.3](https://github.com/quintype/quintype-node-framework/compare/v4.2.2...v4.2.3) (2020-09-22)
 
 
