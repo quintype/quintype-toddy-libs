@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "4.0.15-amp-subscriptions.4",
+  "version": "4.0.15-amp-subscriptions.5",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
