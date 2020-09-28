@@ -130,26 +130,6 @@ describe("Isomorphic Handler", function () {
         .expect("Link", "</assets/app.js>; rel=preload; as=script;")
         .expect(200, done);
     });
-
-    it("preloads the route-data", function (done) {
-      const app = createApp(
-        (pageType, params, config, client) =>
-          Promise.resolve({ pageType, data: { text: "foobar" } }),
-        [{ pageType: "home-page", path: "/" }],
-        {
-          preloadRouteData: true,
-        }
-      );
-
-      supertest(app)
-        .get("/?foo=bar")
-        .expect("Content-Type", /html/)
-        .expect(
-          "Link",
-          "</route-data.json?path=%2F&foo=bar>; rel=preload; as=fetch; crossorigin;"
-        )
-        .expect(200, done);
-    });
   });
 
   it("Throws a 404 if the route is not matched", function (done) {
