@@ -25,7 +25,7 @@ function createApp({
   publicFolder = "public",
   mountAt,
   app = express(),
-  prerender = false,
+  prerenderServiceUrl = "",
 } = {}) {
   if (mountAt) {
     mountQuintypeAt(app, mountAt);
@@ -48,12 +48,17 @@ function createApp({
       maxAge: "1h",
     })
   );
-  prerender &&
-    app.use(function (req, res) {
+  if (prerenderServiceUrl) {
+    app.use((req) => {
       if (req.query.preload) {
-        require("prerender-node");
+        // eslint-disable-next-line global-require
+        require("prerender-node").set(
+          "prerenderServiceUrl",
+          prerenderServiceUrl
+        );
       }
     });
+  }
 
   app.use(compression());
 
