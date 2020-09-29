@@ -48,17 +48,16 @@ function createApp({
       maxAge: "1h",
     })
   );
-  if (prerenderServiceUrl) {
-    app.use((req) => {
+  prerenderServiceUrl &&
+    app.use(function (req, res, next) {
       if (req.query.preload) {
-        // eslint-disable-next-line global-require
         require("prerender-node").set(
           "prerenderServiceUrl",
           prerenderServiceUrl
         );
       }
+      next();
     });
-  }
 
   app.use(compression());
 
