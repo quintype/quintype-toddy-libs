@@ -737,14 +737,17 @@ describe("Isomorphic Handler", function () {
       await supertest(app)
         .get("/foo?preload=true")
         .expect("Content-Type", /html/)
+        .expect("Vary", "Accept-Encoding")
         .expect(200)
         .then((res) => {
           const response = JSON.parse(res.text);
           const cacheControl = res.header["cache-control"];
+          const tag = res.header["cache-tag"];
           assert.equal(
             cacheControl,
             "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600"
           );
+          assert.equal(tag, "preRenderCache");
           assert.equal(
             '<div data-page-type="home-page">foobar</div>',
             response.content

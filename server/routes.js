@@ -33,6 +33,7 @@ const bodyParser = require("body-parser");
 const get = require("lodash/get");
 const { URL } = require("url");
 const { getRedirectUrl } = require("./redirect-url-helper");
+const { addCacheHeadersToResult } = require("./handlers/cdn-caching");
 
 /**
  * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
@@ -329,11 +330,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
           "prerenderServiceUrl",
           prerenderServiceUrl
         );
-        res.setHeader(
-          "Cache-Control",
-          "public,max-age=15,s-maxage=60, stale-while-revalidate=150,stale-if-error=3600"
-        );
-        res.setHeader("Vary", "Accept-Encoding");
+        addCacheHeadersToResult(res, ["preRenderCache"], cdnProvider);
         res.setHeader("Content-Type", "text/html; charset=utf-8");
       }
       next();
