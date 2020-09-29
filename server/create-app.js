@@ -25,7 +25,6 @@ function createApp({
   publicFolder = "public",
   mountAt,
   app = express(),
-  prerenderServiceUrl = "",
 } = {}) {
   if (mountAt) {
     mountQuintypeAt(app, mountAt);
@@ -48,17 +47,6 @@ function createApp({
       maxAge: "1h",
     })
   );
-  prerenderServiceUrl &&
-    app.use(function (req, res, next) {
-      if (req.query.preload) {
-        require("prerender-node").set(
-          "prerenderServiceUrl",
-          prerenderServiceUrl
-        );
-      }
-      next();
-    });
-
   app.use(compression());
 
   return app;

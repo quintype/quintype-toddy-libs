@@ -303,6 +303,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     renderServiceWorker = renderServiceWorkerFn,
     publisherConfig = require("./publisher-config"),
     redirectUrls = [],
+    prerenderServiceUrl = "",
   }
 ) {
   const withConfig = withConfigPartial(
@@ -319,6 +320,25 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     loadErrorData,
     1
   );
+
+  if (prerenderServiceUrl) {
+    app.use((req, res, next) => {
+      if (req.query.preload) {
+        // eslint-disable-next-line global-require
+        require("prerender-node").set(
+          "prerenderServiceUrl",
+          prerenderServiceUrl
+        );
+        res.setHeader(
+          "Cache-Control",
+          "public,max-age=15,s-maxage=60, stale-while-revalidate=150,stale-if-error=3600"
+        );
+        res.setHeader("Vary", "Accept-Encoding");
+        res.setHeader("Content-Type", "text/html; charset=utf-8");
+      }
+      next();
+    });
+  }
 
   if (serviceWorkerPaths.length > 0) {
     app.get(
