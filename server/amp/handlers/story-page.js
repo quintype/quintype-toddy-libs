@@ -13,6 +13,7 @@ async function ampStoryPageHandler(
   {
     client,
     config,
+    domainSlug,
     seo,
     cdnProvider = null,
     ampLibrary = require("@quintype/amp"),
@@ -99,7 +100,7 @@ async function ampStoryPageHandler(
       ampConfig: ampConfig.ampConfig,
       relatedStories,
       client,
-      opts,
+      opts: { ...opts, domainSlug },
       seo: seoTags ? seoTags.toString() : "",
       infiniteScrollInlineConfig,
     });
