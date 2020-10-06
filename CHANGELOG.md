@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.2.6](https://github.com/quintype/quintype-node-framework/compare/v4.2.5...v4.2.6) (2020-10-06)
+
+
+### Bug Fixes
+
+* **amp:** bump amplib to take header backgroundColor fix ([#173](https://github.com/quintype/quintype-node-framework/issues/173)) ([8bebc54](https://github.com/quintype/quintype-node-framework/commit/8bebc54))
+
+
+
 ## [4.2.5](https://github.com/quintype/quintype-node-framework/compare/v4.2.4...v4.2.5) (2020-10-06)
 
 
