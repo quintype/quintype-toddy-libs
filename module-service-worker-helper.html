@@ -1,30 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script>
-      (function(i, s, o, g, r, a, m) {
-        i['GoogleAnalyticsObject'] = r;
-        (i[r] =
-          i[r] ||
-          function() {
-            (i[r].q = i[r].q || []).push(arguments);
-          }),
-          (i[r].l = 1 * new Date());
-        (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
-        a.async = 1;
-        a.src = g;
-        m.parentNode.insertBefore(a, m);
-      })(
-        window,
-        document,
-        'script',
-        'https://www.google-analytics.com/analytics.js',
-        'ga'
-      );
-      ga('create', 'UA-66074042-1', 'auto');
-      ga('send', 'pageview');
-    </script>
-    <meta charset="utf-8" />
+<head>
+    <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create', 'UA-66074042-1', 'auto');ga('send', 'pageview');</script>
+    <meta charset="utf-8">
     <title>JSDoc: service-worker-helper</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
@@ -34,392 +12,536 @@
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link
-      href="https://fonts.googleapis.com/css?family=Muli:100,400,700|Oswald:300|Inconsolata,700"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
-      crossorigin="anonymous"
-    />
-    <link
-      type="text/css"
-      rel="stylesheet"
-      href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css"
-    />
-    <link type="text/css" rel="stylesheet" href="styles/app.min.css" />
-    <link type="text/css" rel="stylesheet" href="styles/iframe.css" />
-  </head>
+    <link href="https://fonts.googleapis.com/css?family=Muli:100,400,700|Oswald:300|Inconsolata,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+</head>
 
-  <body>
+<body>
     <div id="stickyNavbarOverlay"></div>
     <div class="top-navbar">
-      <div class="container">
-        <nav class="navbar" role="navigation" aria-label="main navigation">
-          <div class="navbar-brand">
-            <img
-              src="https://images.assettype.com/quintype-website/2018-10/013e8cbe-92b4-435f-bbbb-3e101efbc99a/quintype_logo.png?w=180"
-              alt="logo"
-            />
-
-            <h1 class="navbar-item">@quintype/framework</h1>
-
-            <a
-              id="hamburger"
-              role="button"
-              class="navbar-burger"
-              aria-label="menu"
-              aria-expanded="false"
-            >
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
-            </a>
-          </div>
-
-          <div class="navbar-menu">
-            <div class="navbar-end">
-              <div class="navbar-item">
-                <a
-                  href="https://github.com/quintype/quintype-node-framework"
-                  target="_blank"
-                  >Github</a
-                >
-              </div>
-            </div>
-          </div>
-        </nav>
-      </div>
+        <div class="container">
+            <nav class="navbar" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                     
+                        <img src="https://images.assettype.com/quintype-website/2018-10/013e8cbe-92b4-435f-bbbb-3e101efbc99a/quintype_logo.png?w=180" alt="logo">
+                    
+                     
+                        <h1 class="navbar-item">@quintype/framework</h1>
+                    
+                    <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+                 
+                <div class="navbar-menu">
+                    <div class="navbar-end">
+                    
+                        <div class="navbar-item">
+                            <a href="https://github.com/quintype/quintype-node-framework" target="_blank">Github</a>
+                        </div>
+                    
+                    </div>
+                </div>
+                
+            </nav>
+        </div>
     </div>
     <div class="container">
-      <div class="columns">
-        <div class="column is-3" id="sidebarNav">
-          <div class="sidebar">
-            <nav>
-              <h2><a href="index.html">Home</a></h2>
-              <div class="category">
-                <h3>Classes</h3>
-                <ul>
-                  <li>
-                    <a href="module-asset-helper-AssetHelper.html"
-                      >AssetHelper</a
-                    >
-                  </li>
-                </ul>
-              </div>
-              <div class="category">
-                <h2>Client</h2>
-                <h3>Modules</h3>
-                <ul>
-                  <li><a href="module-analytics.html">analytics</a></li>
-                  <li><a href="module-start.html">start</a></li>
-                </ul>
-              </div>
-              <div class="category">
-                <h2>Isomorphic</h2>
-                <h3>Modules</h3>
-                <ul>
-                  <li>
-                    <a href="module-IsomorphicComponent.html"
-                      >IsomorphicComponent</a
-                    >
-                  </li>
-                  <li>
-                    <a href="module-match-best-route.html">match-best-route</a>
-                  </li>
-                  <li>
-                    <a href="module-pick-component-helper.html"
-                      >pick-component-helper</a
-                    >
-                  </li>
-                </ul>
-              </div>
-              <div class="category">
-                <h2>Server</h2>
-                <h3>Modules</h3>
-                <ul>
-                  <li><a href="module-api-client.html">api-client</a></li>
-                  <li><a href="module-asset-helper.html">asset-helper</a></li>
-                  <li><a href="module-caching.html">caching</a></li>
-                  <li><a href="module-create-app.html">create-app</a></li>
-                  <li>
-                    <a href="module-generate-routes.html">generate-routes</a>
-                  </li>
-                  <li><a href="module-logger.html">logger</a></li>
-                  <li>
-                    <a href="module-publisher-config.html">publisher-config</a>
-                  </li>
-                  <li><a href="module-render.html">render</a></li>
-                  <li><a href="module-routes.html">routes</a></li>
-                  <li><a href="module-server-start.html">server-start</a></li>
-                  <li>
-                    <a href="module-static-configuration.html"
-                      >static-configuration</a
-                    >
-                  </li>
-                  <li>
-                    <a href="module-visual-stories.html">visual-stories</a>
-                  </li>
-                  <li>
-                    <a href="module-content-security-policy.html"
-                      >content-security-policy</a
-                    >
-                  </li>
-                </ul>
-              </div>
-              <div class="category">
-                <h2>Service Worker</h2>
-                <h3>Modules</h3>
-                <ul>
-                  <li>
-                    <a href="module-service-worker-helper.html"
-                      >service-worker-helper</a
-                    >
-                  </li>
-                </ul>
-              </div>
-            </nav>
-          </div>
-        </div>
-        <div class="column is-9-desktop">
-          <div class="content" id="main-content-wrapper">
-            <header class="page-title">
-              <p>Module</p>
-              <h1>service-worker-helper</h1>
-            </header>
-
-            <section>
-              <header></header>
-
-              <article>
-                <div class="container-overview">
-                  <div class="description">
-                    <p>
-                      This namespace contains helpers for building a service
-                      worker. This namespace only exports
-                      <em>initializeQServiceWorker</em>.
-                    </p>
-                    <p>
-                      See
-                      <a
-                        href="https://developers.quintype.com/malibu/tutorial/setting-up-push-notifications"
-                        >Setting up Push Notifications</a
-                      >
-                      for an example of setting up push notifications.
-                    </p>
-                    <pre
-                      class="prettyprint source lang-javascript"
-                    ><code>import { initializeQServiceWorker } from &quot;@quintype/framework/client/service-worker-helper&quot;;
-</code></pre>
-                  </div>
-
-                  <dl class="details">
-                    <p class="tag-source">
-                      <a
-                        href="client_service-worker-helper.js.html"
-                        class="button"
-                        >View Source</a
-                      >
-                      <span>
-                        <a href="client_service-worker-helper.js.html"
-                          >client/service-worker-helper.js</a
-                        >,
-                        <a href="client_service-worker-helper.js.html#line1"
-                          >line 1</a
-                        >
-                      </span>
-                    </p>
-                  </dl>
-
-                  <div class="columns method-parameter">
-                    <div class="column is-2"><label>Returns:</label></div>
-                    <div class="column is-10">
-                      <div class="columns">
-                        <div class="column is-5 has-text-left">
-                          <label>Type: </label>
-
-                          <span class="param-type">void</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+        <div class="columns">
+            <div class="column is-3" id="sidebarNav">
+                <div class="sidebar">
+                    <nav>
+                        <h2><a href="index.html">Home</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="module-asset-helper-AssetHelper.html">AssetHelper</a></li></ul></div><div class="category"><h2>Client</h2><h3>Modules</h3><ul><li><a href="module-analytics.html">analytics</a></li><li><a href="module-start.html">start</a></li></ul></div><div class="category"><h2>Isomorphic</h2><h3>Modules</h3><ul><li><a href="module-IsomorphicComponent.html">IsomorphicComponent</a></li><li><a href="module-match-best-route.html">match-best-route</a></li><li><a href="module-pick-component-helper.html">pick-component-helper</a></li></ul></div><div class="category"><h2>Server</h2><h3>Modules</h3><ul><li><a href="module-api-client.html">api-client</a></li><li><a href="module-asset-helper.html">asset-helper</a></li><li><a href="module-caching.html">caching</a></li><li><a href="module-create-app.html">create-app</a></li><li><a href="module-generate-routes.html">generate-routes</a></li><li><a href="module-logger.html">logger</a></li><li><a href="module-publisher-config.html">publisher-config</a></li><li><a href="module-render.html">render</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-server-start.html">server-start</a></li><li><a href="module-static-configuration.html">static-configuration</a></li><li><a href="module-visual-stories.html">visual-stories</a></li></ul></div><div class="category"><h2>Service Worker</h2><h3>Modules</h3><ul><li><a href="module-service-worker-helper.html">service-worker-helper</a></li></ul></div>
+                    </nav>
                 </div>
+            </div>
+            <div class="column is-9-desktop">
+                <div class="content" id="main-content-wrapper">
+                    <header class="page-title">
+                        <p>Module</p>
+                        <h1>service-worker-helper</h1>
+                    </header>
+                    
+                    
 
-                <div class="vertical-section">
-                  <h3 class="title"><span>Methods</span></h3>
-                  <div class="members">
-                    <div class="member">
-                      <h4 class="name" id=".initializeQServiceWorker">
-                        <span class="tag">static</span>
 
-                        <span class="code-name">
-                          initializeQServiceWorker<span class="signature"
-                            >(self, params)</span
-                          ><span class="type-signature"></span>
-                        </span>
-                      </h4>
 
-                      <div class="description">
-                        <p>Start the Service Worker.</p>
-                      </div>
 
-                      <h5>Parameters:</h5>
+<section>
 
-                      <table class="params">
-                        <thead>
-                          <tr>
-                            <th>Name</th>
+<header>
+    
+        
+            
+        
+    
+</header>
 
-                            <th>Type</th>
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>This namespace contains helpers for building a service worker. This namespace only exports <em>initializeQServiceWorker</em>.</p>
+<p>See <a href="https://developers.quintype.com/malibu/tutorial/setting-up-push-notifications">Setting up Push Notifications</a> for an example of setting up push notifications.</p>
+<pre class="prettyprint source lang-javascript"><code>import { initializeQServiceWorker } from &quot;@quintype/framework/client/service-worker-helper&quot;;
+</code></pre></div>
+        
 
-                            <th class="last">Description</th>
-                          </tr>
-                        </thead>
+        
+            
 
-                        <tbody>
-                          <tr class="deep-level-0">
-                            <td class="name"><code>self</code></td>
 
-                            <td class="type">
-                              <span class="param-type">ServiceWorkerScope</span>
-                            </td>
 
-                            <td class="description last"></td>
-                          </tr>
 
-                          <tr class="deep-level-0">
-                            <td class="name"><code>params</code></td>
 
-                            <td class="type">
-                              <span class="param-type">Object</span>
-                            </td>
 
-                            <td class="description last"></td>
-                          </tr>
 
-                          <tr class="deep-level-1">
-                            <td class="name"><code>excludeNavigation</code></td>
 
-                            <td class="type">
-                              <span class="param-type">function</span>
-                            </td>
 
-                            <td class="description last">
-                              <p>
-                                A function to exclude the PWA from serving the
-                                shell on that route, even if the route matches
-                                as per <em>routes</em>.
-                              </p>
-                            </td>
-                          </tr>
 
-                          <tr class="deep-level-1">
-                            <td class="name"><code>routes</code></td>
 
-                            <td class="type">
-                              <span class="param-type">Array.&lt;Route></span>
-                            </td>
 
-                            <td class="description last">
-                              <p>An array of routes for the PWA to match</p>
-                            </td>
-                          </tr>
 
-                          <tr class="deep-level-1">
-                            <td class="name"><code>assets</code></td>
 
-                            <td class="type">
-                              <span class="param-type">Array.&lt;string></span>
-                            </td>
+<dl class="details">
 
-                            <td class="description last">
-                              <p>
-                                A list of assets to be cached before the
-                                ServiceWorker is installed
-                              </p>
-                            </td>
-                          </tr>
+    
 
-                          <tr class="deep-level-1">
-                            <td class="name"><code>mountAt</code></td>
+    
 
-                            <td class="type">
-                              <span class="param-type">string</span>
-                              |
+    
 
-                              <span class="param-type">undefined</span>
-                            </td>
+    
 
-                            <td class="description last">
-                              <p>Mount point for the routes to be mounted</p>
-                            </td>
-                          </tr>
+    
 
-                          <tr class="deep-level-1">
-                            <td class="name"><code>shell</code></td>
+    
 
-                            <td class="type">
-                              <span class="param-type">string</span>
-                            </td>
+    
 
-                            <td class="description last">
-                              <p>Path for the shell. Default '/shell.html'</p>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+    
 
-                      <dl class="details">
-                        <p class="tag-source">
-                          <a
-                            href="client_service-worker-helper.js.html"
-                            class="button"
-                            >View Source</a
-                          >
-                          <span>
-                            <a href="client_service-worker-helper.js.html"
-                              >client/service-worker-helper.js</a
-                            >,
-                            <a
-                              href="client_service-worker-helper.js.html#line36"
-                              >line 36</a
-                            >
-                          </span>
-                        </p>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </section>
-          </div>
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="client_service-worker-helper.js.html" class="button">View Source</a>
+            <span>
+                <a href="client_service-worker-helper.js.html">client/service-worker-helper.js</a>, <a href="client_service-worker-helper.js.html#line1">line 1</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<span class="param-type">void</span>
+
+
+    </div>
+    
+</div>
+
+                
         </div>
-      </div>
     </div>
 
-    <footer class="footer">
-      <div class="content has-text-centered">
-        <p>
-          Documentation generated by
-          <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
-        </p>
-        <p class="sidebar-created-by">
-          <a
-            href="https://github.com/SoftwareBrothers/better-docs"
-            target="_blank"
-            >BetterDocs theme</a
-          >
-          provided with <i class="fas fa-heart"></i> by
-          <a href="http://softwarebrothers.co" target="_blank"
-            >SoftwareBrothers - JavaScript Development Agency</a
-          >
-        </p>
-      </div>
-    </footer>
 
-    <script src="scripts/app.min.js"></script>
-    <script src="scripts/linenumber.js"></script>
-  </body>
+
+
+
+        
+    
+    </div>
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <div class='vertical-section'>
+            <h3 class="title"><span>Methods</span></h3>
+            <div class="members">
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id=".initializeQServiceWorker">
+        
+            
+                <span class='tag'>static</span>
+            
+        
+        <span class="code-name">
+            
+                initializeQServiceWorker<span class="signature">(self, params)</span><span class="type-signature"></span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>Start the Service Worker.</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>self</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">ServiceWorkerScope</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"></td>
+</tr>
+
+
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>params</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">Object</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"></td>
+</tr>
+
+  
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>excludeNavigation</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">function</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>A function to exclude the PWA from serving the shell on that route, even if the route matches as per <em>routes</em>.</p></td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>routes</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">Array.&lt;Route></span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>An array of routes for the PWA to match</p></td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>assets</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">Array.&lt;string></span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>A list of assets to be cached before the ServiceWorker is installed</p></td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>mountAt</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">string</span>
+|
+
+<span class="param-type">undefined</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>Mount point for the routes to be mounted</p></td>
+</tr>
+
+  
+    
+<tr class="deep-level-1">
+  
+      <td class="name"><code>shell</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">string</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>Path for the shell. Default '/shell.html'</p></td>
+</tr>
+
+  
+
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="client_service-worker-helper.js.html" class="button">View Source</a>
+            <span>
+                <a href="client_service-worker-helper.js.html">client/service-worker-helper.js</a>, <a href="client_service-worker-helper.js.html#line36">line 36</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+            
+            </div>
+        </div>
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+<footer class="footer">
+    <div class="content has-text-centered">
+        <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a></p>
+        <p class="sidebar-created-by">
+            <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+            <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
+        </p>
+    </div>
+</footer>
+
+<script src="scripts/app.min.js"></script>
+<script src="scripts/linenumber.js"> </script>
+</body>
 </html>

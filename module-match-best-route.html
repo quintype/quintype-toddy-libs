@@ -1,30 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <script>
-      (function(i, s, o, g, r, a, m) {
-        i['GoogleAnalyticsObject'] = r;
-        (i[r] =
-          i[r] ||
-          function() {
-            (i[r].q = i[r].q || []).push(arguments);
-          }),
-          (i[r].l = 1 * new Date());
-        (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
-        a.async = 1;
-        a.src = g;
-        m.parentNode.insertBefore(a, m);
-      })(
-        window,
-        document,
-        'script',
-        'https://www.google-analytics.com/analytics.js',
-        'ga'
-      );
-      ga('create', 'UA-66074042-1', 'auto');
-      ga('send', 'pageview');
-    </script>
-    <meta charset="utf-8" />
+<head>
+    <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create', 'UA-66074042-1', 'auto');ga('send', 'pageview');</script>
+    <meta charset="utf-8">
     <title>JSDoc: match-best-route</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
@@ -34,449 +12,597 @@
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <link
-      href="https://fonts.googleapis.com/css?family=Muli:100,400,700|Oswald:300|Inconsolata,700"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
-      integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
-      crossorigin="anonymous"
-    />
-    <link
-      type="text/css"
-      rel="stylesheet"
-      href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css"
-    />
-    <link type="text/css" rel="stylesheet" href="styles/app.min.css" />
-    <link type="text/css" rel="stylesheet" href="styles/iframe.css" />
-  </head>
+    <link href="https://fonts.googleapis.com/css?family=Muli:100,400,700|Oswald:300|Inconsolata,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link type="text/css" rel="stylesheet" href="https://jmblog.github.io/color-themes-for-google-code-prettify/themes/tomorrow-night.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/app.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/iframe.css">
+</head>
 
-  <body>
+<body>
     <div id="stickyNavbarOverlay"></div>
     <div class="top-navbar">
-      <div class="container">
-        <nav class="navbar" role="navigation" aria-label="main navigation">
-          <div class="navbar-brand">
-            <img
-              src="https://images.assettype.com/quintype-website/2018-10/013e8cbe-92b4-435f-bbbb-3e101efbc99a/quintype_logo.png?w=180"
-              alt="logo"
-            />
-
-            <h1 class="navbar-item">@quintype/framework</h1>
-
-            <a
-              id="hamburger"
-              role="button"
-              class="navbar-burger"
-              aria-label="menu"
-              aria-expanded="false"
-            >
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
-              <span aria-hidden="true"></span>
-            </a>
-          </div>
-
-          <div class="navbar-menu">
-            <div class="navbar-end">
-              <div class="navbar-item">
-                <a
-                  href="https://github.com/quintype/quintype-node-framework"
-                  target="_blank"
-                  >Github</a
-                >
-              </div>
-            </div>
-          </div>
-        </nav>
-      </div>
+        <div class="container">
+            <nav class="navbar" role="navigation" aria-label="main navigation">
+                <div class="navbar-brand">
+                     
+                        <img src="https://images.assettype.com/quintype-website/2018-10/013e8cbe-92b4-435f-bbbb-3e101efbc99a/quintype_logo.png?w=180" alt="logo">
+                    
+                     
+                        <h1 class="navbar-item">@quintype/framework</h1>
+                    
+                    <a id="hamburger" role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+                 
+                <div class="navbar-menu">
+                    <div class="navbar-end">
+                    
+                        <div class="navbar-item">
+                            <a href="https://github.com/quintype/quintype-node-framework" target="_blank">Github</a>
+                        </div>
+                    
+                    </div>
+                </div>
+                
+            </nav>
+        </div>
     </div>
     <div class="container">
-      <div class="columns">
-        <div class="column is-3" id="sidebarNav">
-          <div class="sidebar">
-            <nav>
-              <h2><a href="index.html">Home</a></h2>
-              <div class="category">
-                <h3>Classes</h3>
-                <ul>
-                  <li>
-                    <a href="module-asset-helper-AssetHelper.html"
-                      >AssetHelper</a
-                    >
-                  </li>
-                </ul>
-              </div>
-              <div class="category">
-                <h2>Client</h2>
-                <h3>Modules</h3>
-                <ul>
-                  <li><a href="module-analytics.html">analytics</a></li>
-                  <li><a href="module-start.html">start</a></li>
-                </ul>
-              </div>
-              <div class="category">
-                <h2>Isomorphic</h2>
-                <h3>Modules</h3>
-                <ul>
-                  <li>
-                    <a href="module-IsomorphicComponent.html"
-                      >IsomorphicComponent</a
-                    >
-                  </li>
-                  <li>
-                    <a href="module-match-best-route.html">match-best-route</a>
-                  </li>
-                  <li>
-                    <a href="module-pick-component-helper.html"
-                      >pick-component-helper</a
-                    >
-                  </li>
-                </ul>
-              </div>
-              <div class="category">
-                <h2>Server</h2>
-                <h3>Modules</h3>
-                <ul>
-                  <li><a href="module-api-client.html">api-client</a></li>
-                  <li><a href="module-asset-helper.html">asset-helper</a></li>
-                  <li><a href="module-caching.html">caching</a></li>
-                  <li><a href="module-create-app.html">create-app</a></li>
-                  <li>
-                    <a href="module-generate-routes.html">generate-routes</a>
-                  </li>
-                  <li><a href="module-logger.html">logger</a></li>
-                  <li>
-                    <a href="module-publisher-config.html">publisher-config</a>
-                  </li>
-                  <li><a href="module-render.html">render</a></li>
-                  <li><a href="module-routes.html">routes</a></li>
-                  <li><a href="module-server-start.html">server-start</a></li>
-                  <li>
-                    <a href="module-static-configuration.html"
-                      >static-configuration</a
-                    >
-                  </li>
-                  <li>
-                    <a href="module-visual-stories.html">visual-stories</a>
-                  </li>
-                  <li>
-                    <a href="module-content-security-policy.html"
-                      >content-security-policy</a
-                    >
-                  </li>
-                </ul>
-              </div>
-              <div class="category">
-                <h2>Service Worker</h2>
-                <h3>Modules</h3>
-                <ul>
-                  <li>
-                    <a href="module-service-worker-helper.html"
-                      >service-worker-helper</a
-                    >
-                  </li>
-                </ul>
-              </div>
-            </nav>
-          </div>
+        <div class="columns">
+            <div class="column is-3" id="sidebarNav">
+                <div class="sidebar">
+                    <nav>
+                        <h2><a href="index.html">Home</a></h2><div class="category"><h3>Classes</h3><ul><li><a href="module-asset-helper-AssetHelper.html">AssetHelper</a></li></ul></div><div class="category"><h2>Client</h2><h3>Modules</h3><ul><li><a href="module-analytics.html">analytics</a></li><li><a href="module-start.html">start</a></li></ul></div><div class="category"><h2>Isomorphic</h2><h3>Modules</h3><ul><li><a href="module-IsomorphicComponent.html">IsomorphicComponent</a></li><li><a href="module-match-best-route.html">match-best-route</a></li><li><a href="module-pick-component-helper.html">pick-component-helper</a></li></ul></div><div class="category"><h2>Server</h2><h3>Modules</h3><ul><li><a href="module-api-client.html">api-client</a></li><li><a href="module-asset-helper.html">asset-helper</a></li><li><a href="module-caching.html">caching</a></li><li><a href="module-create-app.html">create-app</a></li><li><a href="module-generate-routes.html">generate-routes</a></li><li><a href="module-logger.html">logger</a></li><li><a href="module-publisher-config.html">publisher-config</a></li><li><a href="module-render.html">render</a></li><li><a href="module-routes.html">routes</a></li><li><a href="module-server-start.html">server-start</a></li><li><a href="module-static-configuration.html">static-configuration</a></li><li><a href="module-visual-stories.html">visual-stories</a></li></ul></div><div class="category"><h2>Service Worker</h2><h3>Modules</h3><ul><li><a href="module-service-worker-helper.html">service-worker-helper</a></li></ul></div>
+                    </nav>
+                </div>
+            </div>
+            <div class="column is-9-desktop">
+                <div class="content" id="main-content-wrapper">
+                    <header class="page-title">
+                        <p>Module</p>
+                        <h1>match-best-route</h1>
+                    </header>
+                    
+                    
+
+
+
+
+<section>
+
+<header>
+    
+        
+            
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>This namespace is used to match path to routes. This is done during the <a href="https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture.html#routing">server side render</a>,
+<a href="developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture.html#routing">client side hydration</a>, and in the <a href="https://developers.quintype.com/malibu/isomorphic-rendering/client-side-architecture.html#progressive-web-app">service worker</a></p>
+<pre class="prettyprint source lang-javascript"><code>import { matchAllRoutes } from &quot;@quintype/framework/isomorphic/match-best-route&quot;;
+</code></pre></div>
+        
+
+        
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="isomorphic_match-best-route.js.html" class="button">View Source</a>
+            <span>
+                <a href="isomorphic_match-best-route.js.html">isomorphic/match-best-route.js</a>, <a href="isomorphic_match-best-route.js.html#line1">line 1</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <div class='vertical-section'>
+            <h3 class="title"><span>Methods</span></h3>
+            <div class="members">
+            
+                <div class="member">
+
+
+    
+    <h4 class="name" id="~matchAllRoutes">
+        
+            
+                <span class='tag'>inner</span>
+            
+        
+        <span class="code-name">
+            
+                matchAllRoutes<span class="signature">(path, routes)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="module-match-best-route.html#~Route">module:match-best-route~Route</a>>}</span>
+            
+        </span>
+    </h4>
+    
+
+    
+    
+    <div class="description">
+        <p>Find all routes that match a given path</p>
+    </div>
+    
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>path</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">string</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>The current path</p></td>
+</tr>
+
+
+    
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>routes</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">Array.&lt;<a href="module-match-best-route.html#~Route">module:match-best-route~Route</a>></span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>An array of routes to be matched</p></td>
+</tr>
+
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="isomorphic_match-best-route.js.html" class="button">View Source</a>
+            <span>
+                <a href="isomorphic_match-best-route.js.html">isomorphic/match-best-route.js</a>, <a href="isomorphic_match-best-route.js.html#line36">line 36</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <div class='columns method-parameter'>
+        <div class="column is-2"><label>Returns:</label></div>
+        <div class="column is-10">
+            
+                    
+
+<div class="columns">
+    
+    <div class='param-desc column is-7'><p>Matching Routes</p></div>
+    
+    
+    <div class='column is-5 has-text-left'>
+        <label>Type: </label>
+        
+<span class="param-type">Array.&lt;<a href="module-match-best-route.html#~Route">module:match-best-route~Route</a>></span>
+
+
+    </div>
+    
+</div>
+
+                
         </div>
-        <div class="column is-9-desktop">
-          <div class="content" id="main-content-wrapper">
-            <header class="page-title">
-              <p>Module</p>
-              <h1>match-best-route</h1>
-            </header>
+    </div>
 
-            <section>
-              <header></header>
 
-              <article>
-                <div class="container-overview">
-                  <div class="description">
-                    <p>
-                      This namespace is used to match path to routes. This is
-                      done during the
-                      <a
-                        href="https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture.html#routing"
-                        >server side render</a
-                      >,
-                      <a
-                        href="developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture.html#routing"
-                        >client side hydration</a
-                      >, and in the
-                      <a
-                        href="https://developers.quintype.com/malibu/isomorphic-rendering/client-side-architecture.html#progressive-web-app"
-                        >service worker</a
-                      >
-                    </p>
-                    <pre
-                      class="prettyprint source lang-javascript"
-                    ><code>import { matchAllRoutes } from &quot;@quintype/framework/isomorphic/match-best-route&quot;;
-</code></pre>
-                  </div>
 
-                  <dl class="details">
-                    <p class="tag-source">
-                      <a
-                        href="isomorphic_match-best-route.js.html"
-                        class="button"
-                        >View Source</a
-                      >
-                      <span>
-                        <a href="isomorphic_match-best-route.js.html"
-                          >isomorphic/match-best-route.js</a
-                        >,
-                        <a href="isomorphic_match-best-route.js.html#line1"
-                          >line 1</a
-                        >
-                      </span>
-                    </p>
-                  </dl>
-                </div>
 
-                <div class="vertical-section">
-                  <h3 class="title"><span>Methods</span></h3>
-                  <div class="members">
-                    <div class="member">
-                      <h4 class="name" id="~matchAllRoutes">
-                        <span class="tag">inner</span>
+</div>
+            
+            </div>
+        </div>
+    
 
-                        <span class="code-name">
-                          matchAllRoutes<span class="signature"
-                            >(path, routes)</span
-                          ><span class="type-signature">
-                            &rarr; {Array.&lt;<a
-                              href="module-match-best-route.html#~Route"
-                              >module:match-best-route~Route</a
-                            >>}</span
-                          >
-                        </span>
-                      </h4>
+    
+        <div class='vertical-section'>
+            <h3 class="title"><span>Type Definitions</span></h3>
+            <div class="members">
+            
+                <div class="member">
 
-                      <div class="description">
-                        <p>Find all routes that match a given path</p>
-                      </div>
+<h4 class="name" id="~Route">
+    
+    <span class="code-name">
+        Route
+    </span>
+</h4>
 
-                      <h5>Parameters:</h5>
 
-                      <table class="params">
-                        <thead>
-                          <tr>
-                            <th>Name</th>
 
-                            <th>Type</th>
 
-                            <th class="last">Description</th>
-                          </tr>
-                        </thead>
-
-                        <tbody>
-                          <tr class="deep-level-0">
-                            <td class="name"><code>path</code></td>
-
-                            <td class="type">
-                              <span class="param-type">string</span>
-                            </td>
-
-                            <td class="description last">
-                              <p>The current path</p>
-                            </td>
-                          </tr>
-
-                          <tr class="deep-level-0">
-                            <td class="name"><code>routes</code></td>
-
-                            <td class="type">
-                              <span class="param-type"
-                                >Array.&lt;<a
-                                  href="module-match-best-route.html#~Route"
-                                  >module:match-best-route~Route</a
-                                >></span
-                              >
-                            </td>
-
-                            <td class="description last">
-                              <p>An array of routes to be matched</p>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-
-                      <dl class="details">
-                        <p class="tag-source">
-                          <a
-                            href="isomorphic_match-best-route.js.html"
-                            class="button"
-                            >View Source</a
-                          >
-                          <span>
-                            <a href="isomorphic_match-best-route.js.html"
-                              >isomorphic/match-best-route.js</a
-                            >,
-                            <a href="isomorphic_match-best-route.js.html#line36"
-                              >line 36</a
-                            >
-                          </span>
-                        </p>
-                      </dl>
-
-                      <div class="columns method-parameter">
-                        <div class="column is-2"><label>Returns:</label></div>
-                        <div class="column is-10">
-                          <div class="columns">
-                            <div class="param-desc column is-7">
-                              <p>Matching Routes</p>
-                            </div>
-
-                            <div class="column is-5 has-text-left">
-                              <label>Type: </label>
-
-                              <span class="param-type"
-                                >Array.&lt;<a
-                                  href="module-match-best-route.html#~Route"
-                                  >module:match-best-route~Route</a
-                                >></span
-                              >
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="vertical-section">
-                  <h3 class="title"><span>Type Definitions</span></h3>
-                  <div class="members">
-                    <div class="member">
-                      <h4 class="name" id="~Route">
-                        <span class="code-name">
-                          Route
-                        </span>
-                      </h4>
-
-                      <div class="description">
-                        <p>
-                          Route represents a url pattern which is matched by the
-                          quintype framework. See
-                          <a
-                            href="https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture#routing"
-                            >Routing</a
-                          >
-                          for more information on how the route is used.
-                        </p>
-                        <pre class="prettyprint source lang-javascript"><code>{
+<div class="description">
+    <p>Route represents a url pattern which is matched by the quintype framework.
+See <a href="https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture#routing">Routing</a> for more information on how the route is used.</p>
+<pre class="prettyprint source lang-javascript"><code>{
  path: &quot;/my-route/:routeParam&quot;,
  pageType: &quot;home-page&quot;,
  exact: true,
  params: { foo: &quot;bar&quot; }
 }
 </code></pre>
-                      </div>
+</div>
 
-                      <h5 class="subsection-title">Properties:</h5>
 
-                      <table class="props">
-                        <thead>
-                          <tr>
-                            <th>Name</th>
 
-                            <th>Type</th>
 
-                            <th class="last">Description</th>
-                          </tr>
-                        </thead>
 
-                        <tbody>
-                          <tr class="deep-level-0">
-                            <td class="name"><code>path</code></td>
+    <h5 class="subsection-title">Properties:</h5>
 
-                            <td class="type">
-                              <span class="param-type">string</span>
-                            </td>
+    
 
-                            <td class="description last">
-                              <p>The path that the route matches.</p>
-                            </td>
-                          </tr>
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
 
-                          <tr class="deep-level-0">
-                            <td class="name"><code>pageType</code></td>
+        <th>Type</th>
 
-                            <td class="type">
-                              <span class="param-type">string</span>
-                            </td>
+        
 
-                            <td class="description last">
-                              <p>The page type</p>
-                            </td>
-                          </tr>
+        
 
-                          <tr class="deep-level-0">
-                            <td class="name"><code>exact</code></td>
+        <th class="last">Description</th>
+    </tr>
+    </thead>
 
-                            <td class="type">
-                              <span class="param-type">boolean</span>
-                            </td>
+    <tbody>
+    
+        
+<tr class="deep-level-0">
+    
+        <td class="name"><code>path</code></td>
+    
 
-                            <td class="description last">
-                              <p>Is this route an exact match or a prefix</p>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+    <td class="type">
+    
+        
+<span class="param-type">string</span>
 
-                      <dl class="details">
-                        <p class="tag-source">
-                          <a
-                            href="isomorphic_match-best-route.js.html"
-                            class="button"
-                            >View Source</a
-                          >
-                          <span>
-                            <a href="isomorphic_match-best-route.js.html"
-                              >isomorphic/match-best-route.js</a
-                            >,
-                            <a href="isomorphic_match-best-route.js.html#line13"
-                              >line 13</a
-                            >
-                          </span>
-                        </p>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </article>
-            </section>
-          </div>
+
+    
+    </td>
+
+    
+
+    
+
+    <td class="description last"><p>The path that the route matches.</p></td>
+</tr>
+
+    
+        
+<tr class="deep-level-0">
+    
+        <td class="name"><code>pageType</code></td>
+    
+
+    <td class="type">
+    
+        
+<span class="param-type">string</span>
+
+
+    
+    </td>
+
+    
+
+    
+
+    <td class="description last"><p>The page type</p></td>
+</tr>
+
+    
+        
+<tr class="deep-level-0">
+    
+        <td class="name"><code>exact</code></td>
+    
+
+    <td class="type">
+    
+        
+<span class="param-type">boolean</span>
+
+
+    
+    </td>
+
+    
+
+    
+
+    <td class="description last"><p>Is this route an exact match or a prefix</p></td>
+</tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="isomorphic_match-best-route.js.html" class="button">View Source</a>
+            <span>
+                <a href="isomorphic_match-best-route.js.html">isomorphic/match-best-route.js</a>, <a href="isomorphic_match-best-route.js.html#line13">line 13</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+
+
+
+</div>
+            
+            </div>
         </div>
-      </div>
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+                </div>
+            </div>
+        </div>
     </div>
 
-    <footer class="footer">
-      <div class="content has-text-centered">
-        <p>
-          Documentation generated by
-          <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a>
-        </p>
+<footer class="footer">
+    <div class="content has-text-centered">
+        <p>Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a></p>
         <p class="sidebar-created-by">
-          <a
-            href="https://github.com/SoftwareBrothers/better-docs"
-            target="_blank"
-            >BetterDocs theme</a
-          >
-          provided with <i class="fas fa-heart"></i> by
-          <a href="http://softwarebrothers.co" target="_blank"
-            >SoftwareBrothers - JavaScript Development Agency</a
-          >
+            <a href="https://github.com/SoftwareBrothers/better-docs" target="_blank">BetterDocs theme</a> provided with <i class="fas fa-heart"></i> by 
+            <a href="http://softwarebrothers.co" target="_blank">SoftwareBrothers - JavaScript Development Agency</a>
         </p>
-      </div>
-    </footer>
+    </div>
+</footer>
 
-    <script src="scripts/app.min.js"></script>
-    <script src="scripts/linenumber.js"></script>
-  </body>
+<script src="scripts/app.min.js"></script>
+<script src="scripts/linenumber.js"> </script>
+</body>
 </html>
