@@ -25,7 +25,7 @@
       ga('send', 'pageview');
     </script>
     <meta charset="utf-8" />
-    <title>JSDoc: render</title>
+    <title>JSDoc: server/start.js</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -186,121 +186,129 @@
         <div class="column is-9-desktop">
           <div class="content" id="main-content-wrapper">
             <header class="page-title">
-              <p>Module</p>
-              <h1>render</h1>
+              <p>Source</p>
+              <h1>server/handlers/cdn-caching.js</h1>
             </header>
 
             <section>
-              <header></header>
-
               <article>
-                <div class="container-overview">
-                  <div class="description">
-                    <p>This namespace a helper method for render</p>
-                    <pre
-                      class="prettyprint source lang-javascript"
-                    ><code>import {renderReduxComponent} from &quot;@quintype/framework/server/render&quot;;
+                <pre class="prettyprint source linenums"><code>
+const _ = require('lodash');
+
+exports.addCacheHeadersToResult = function addCacheHeadersToResult(
+  res,
+  cacheKeys,
+  cdnProvider = 'cloudflare'
+) {
+  if (cacheKeys) {
+    if (cacheKeys === 'DO_NOT_CACHE') {
+      res.setHeader('Cache-Control', 'private,no-cache,no-store,max-age=0');
+      cdnProvider === 'akamai' &&
+        res.setHeader('Edge-Control', 'private,no-cache,no-store,max-age=0');
+      res.setHeader('Vary', 'Accept-Encoding');
+      res.setHeader('Surrogate-Control', 'private,no-cache,no-store,max-age=0');
+      res.setHeader(
+        'Content-Security-Policy',
+        `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
+          `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+          `style-src data: 'unsafe-inline' https: http: blob:;` +
+          `img-src data: https: http: blob:;` +
+          `font-src data: https: http:;` +
+          `connect-src https: wss: ws: http: blob:;` +
+          `media-src https: blob: http:;` +
+          `object-src https: http:;` +
+          `child-src https: data: blob: http:;` +
+          `form-action https: http:;` +
+          `block-all-mixed-content;`
+      );
+    } else {
+      res.setHeader(
+        'Cache-Control',
+        'public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400'
+      );
+      cdnProvider === 'akamai' &&
+        res.setHeader(
+          'Edge-Control',
+          'public,maxage=900,stale-while-revalidate=1000,stale-if-error=14400'
+        );
+      res.setHeader('Vary', 'Accept-Encoding');
+
+      // Cloudflare Headers
+      res.setHeader(
+        'Cache-Tag',
+        _(cacheKeys)
+          .uniq()
+          .join(',')
+      );
+
+      //Akamai Headers
+      cdnProvider === 'akamai' &&
+        res.setHeader(
+          'Edge-Cache-Tag',
+          _(cacheKeys)
+            .uniq()
+            .join(',')
+        );
+
+      // Fastly Header
+      res.setHeader(
+        'Surrogate-Control',
+        'public,max-age=240,stale-while-revalidate=300,stale-if-error=14400'
+      );
+      res.setHeader(
+        'Surrogate-Key',
+        _(cacheKeys)
+          .uniq()
+          .join(' ')
+      );
+      res.setHeader(
+        'Content-Security-Policy',
+        `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
+          `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+          `style-src data: 'unsafe-inline' https: http: blob:;` +
+          `img-src data: https: http: blob:;` +
+          `font-src data: https: http:;` +
+          `connect-src https: wss: ws: http: blob:;` +
+          `media-src https: blob: http:;` +
+          `object-src https: http:;` +
+          `child-src https: data: blob: http:;` +
+          `form-action https: http:;` +
+          `block-all-mixed-content;`
+      );
+    }
+  } else {
+    res.setHeader(
+      'Cache-Control',
+      'public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600'
+    );
+    cdnProvider === 'akamai' &&
+      res.setHeader(
+        'Edge-Control',
+        'public,maxage=60,stale-while-revalidate=150,stale-if-error=3600'
+      );
+    res.setHeader('Vary', 'Accept-Encoding');
+    res.setHeader(
+      'Surrogate-Control',
+      'public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600'
+    );
+    res.setHeader(
+      'Content-Security-Policy',
+      `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
+        `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+        `style-src data: 'unsafe-inline' https: http: blob:;` +
+        `img-src data: https: http: blob:;` +
+        `font-src data: https: http:;` +
+        `connect-src https: wss: ws: http: blob:;` +
+        `media-src https: blob: http:;` +
+        `object-src https: http:;` +
+        `child-src https: data: blob: http:;` +
+        `form-action https: http:;` +
+        `block-all-mixed-content;`
+    );
+  }
+  return res;
+};
 </code></pre>
-                  </div>
-
-                  <dl class="details">
-                    <p class="tag-source">
-                      <a href="server_render.js.html" class="button"
-                        >View Source</a
-                      >
-                      <span>
-                        <a href="server_render.js.html">server/render.js</a>,
-                        <a href="server_render.js.html#line1">line 1</a>
-                      </span>
-                    </p>
-                  </dl>
-                </div>
-
-                <div class="vertical-section">
-                  <h3 class="title"><span>Methods</span></h3>
-                  <div class="members">
-                    <div class="member">
-                      <h4 class="name" id=".renderReduxComponent">
-                        <span class="tag">static</span>
-
-                        <span class="code-name">
-                          renderReduxComponent<span class="signature"
-                            >(Component, store, props)</span
-                          ><span class="type-signature"></span>
-                        </span>
-                      </h4>
-
-                      <div class="description">
-                        <p>Render the given component in the redux store</p>
-                      </div>
-
-                      <h5>Parameters:</h5>
-
-                      <table class="params">
-                        <thead>
-                          <tr>
-                            <th>Name</th>
-
-                            <th>Type</th>
-
-                            <th class="last">Description</th>
-                          </tr>
-                        </thead>
-
-                        <tbody>
-                          <tr class="deep-level-0">
-                            <td class="name"><code>Component</code></td>
-
-                            <td class="type">
-                              <span class="param-type">Component</span>
-                            </td>
-
-                            <td class="description last">
-                              <p>The Component to render</p>
-                            </td>
-                          </tr>
-
-                          <tr class="deep-level-0">
-                            <td class="name"><code>store</code></td>
-
-                            <td class="type">
-                              <span class="param-type">Redux</span>
-                            </td>
-
-                            <td class="description last">
-                              <p>The store to render</p>
-                            </td>
-                          </tr>
-
-                          <tr class="deep-level-0">
-                            <td class="name"><code>props</code></td>
-
-                            <td class="type">
-                              <span class="param-type">Object</span>
-                            </td>
-
-                            <td class="description last">
-                              <p>The props to pass to the component</p>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-
-                      <dl class="details">
-                        <p class="tag-source">
-                          <a href="server_render.js.html" class="button"
-                            >View Source</a
-                          >
-                          <span>
-                            <a href="server_render.js.html">server/render.js</a
-                            >,
-                            <a href="server_render.js.html#line21">line 21</a>
-                          </span>
-                        </p>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
               </article>
             </section>
           </div>
