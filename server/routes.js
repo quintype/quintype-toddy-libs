@@ -32,6 +32,7 @@ const rp = require("request-promise");
 const bodyParser = require("body-parser");
 const get = require("lodash/get");
 const { URL } = require("url");
+const { getRedirectUrl } = require("./redirect-url-helper");
 
 /**
  * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
@@ -42,6 +43,7 @@ const { URL } = require("url");
  * @param {Array<string>} opts.extraRoutes Additionally forward some routes upstream. This takes an array of express compatible routes, such as ["/foo/*"]
  * @param {boolean} opts.forwardAmp Forward amp story routes upstream (default false)
  * @param {boolean} opts.forwardFavicon Forward favicon requests to the CMS (default false)
+ * @param {boolean} opts.isSitemapUrlEnabled To enable /news_sitemap/today and /news_sitemap/yesterday sitemap news url (default /news_sitemap.xml)
  */
 exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
   app,
@@ -52,6 +54,7 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
 
     config = require("./publisher-config"),
     getClient = require("./api-client").getClient,
+    isSitemapUrlEnabled = false,
   } = {}
 ) {
   const host = config.sketches_host;
@@ -89,10 +92,14 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
   app.all("/feed", sketchesProxy);
   app.all("/rss-feed", sketchesProxy);
   app.all("/stories.rss", sketchesProxy);
-  app.all("/news_sitemap.xml", sketchesProxy);
   app.all("/sso-login", sketchesProxy);
   app.all("/sso-signup", sketchesProxy);
-
+  if (isSitemapUrlEnabled) {
+    app.all("/news_sitemap/today.xml", sketchesProxy);
+    app.all("/news_sitemap/yesterday.xml", sketchesProxy);
+  } else {
+    app.all("/news_sitemap.xml", sketchesProxy);
+  }
   if (forwardAmp) {
     app.get("/amp/*", sketchesProxy);
   }
@@ -131,14 +138,14 @@ function withConfigPartial(
   getClient,
   logError,
   publisherConfig = require("./publisher-config"),
-  configWrapper = config => config
+  configWrapper = (config) => config
 ) {
   return function withConfig(f, staticParams) {
     return function (req, res, next) {
       const client = getClient(req.hostname);
       return client
         .getConfig()
-        .then(config => configWrapper(config))
+        .then((config) => configWrapper(config))
         .then((config) =>
           f(
             req,
@@ -257,6 +264,7 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {boolean|function} opts.lightPages If set to true, then all story pages will render amp pages.
  * @param {string} opts.cdnProvider The name of the cdn provider. Supported cdn providers are akamai, cloudflare. Default value is cloudflare.
  * @param {function} opts.maxConfigVersion An async function which resolves to a integer version of the config. This defaults to config.theme-attributes.cache-burst
+ * @param {Array<object>|function} opts.redirectUrls An array or async function which used to render the redirect url provided in the array of object - >ex- REDIRECT_URLS = [{sourceUrl: "/tag/:tagSlug",destinationUrl: "/topic/:tagSlug",statusCode: 301,}]
  */
 exports.isomorphicRoutes = function isomorphicRoutes(
   app,
@@ -285,8 +293,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     cdnProvider = "cloudflare",
     serviceWorkerPaths = ["/service-worker.js"],
     maxConfigVersion = (config) =>
-    get(config, ["theme-attributes", "cache-burst"], 0),
-    configWrapper = config => config,
+      get(config, ["theme-attributes", "cache-burst"], 0),
+    configWrapper = (config) => config,
 
     // The below are primarily for testing
     logError = require("./logger").error,
@@ -294,10 +302,15 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     getClient = require("./api-client").getClient,
     renderServiceWorker = renderServiceWorkerFn,
     publisherConfig = require("./publisher-config"),
+    redirectUrls = [],
   }
 ) {
-
-  const withConfig = withConfigPartial(getClient, logError, publisherConfig, configWrapper);
+  const withConfig = withConfigPartial(
+    getClient,
+    logError,
+    publisherConfig,
+    configWrapper
+  );
 
   pickComponent = makePickComponentSync(pickComponent);
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
@@ -427,6 +440,13 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       )
     );
   });
+  // Redirects static urls
+  if (
+    typeof redirectUrls === "function" ||
+    (redirectUrls && redirectUrls.length > 0)
+  ) {
+    getRedirectUrl(app, logError, redirectUrls);
+  }
 
   app.get(
     "/*",
@@ -545,7 +565,8 @@ exports.mountQuintypeAt = function (app, mountAt) {
 /**
  * *ampRoutes* handles all the amp page routes using the *[@quintype/amp](https://developers.quintype.com/quintype-node-amp)* library
  * routes matched:
- * *"/amp/story/:slug"* returns amp story page.
+ * GET - "/amp/story/:slug"* returns amp story page
+ * GET - "/amp/api/v1/amp-infinite-scroll" returns the infinite scroll config JSON. Passed to <amp-next-page> component's `src` attribute
  *
  * @param {Express} app Express app to add the routes to
  * @param {Object} opts Options object used to configure amp. Passing this is optional
@@ -558,15 +579,15 @@ exports.mountQuintypeAt = function (app, mountAt) {
  */
 exports.ampRoutes = (app, opts = {}) => {
   const {
-    handleAmpRequest,
-    handleInfiniteScrollRequest,
-  } = require("./handlers/amp-handler");
+    ampStoryPageHandler,
+    storyPageInfiniteScrollHandler,
+  } = require("./amp/handlers");
 
-  getWithConfig(app, "/amp/story/*", handleAmpRequest, opts);
+  getWithConfig(app, "/amp/story/*", ampStoryPageHandler, opts);
   getWithConfig(
     app,
     "/amp/api/v1/amp-infinite-scroll",
-    handleInfiniteScrollRequest,
+    storyPageInfiniteScrollHandler,
     opts
   );
 };
