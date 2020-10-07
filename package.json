@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "4.2.6",
+  "version": "4.2.7-redirect-urls.0",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
