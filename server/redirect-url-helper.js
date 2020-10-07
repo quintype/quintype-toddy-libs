@@ -69,12 +69,12 @@ exports.getRedirectUrl = function getRedirectUrl(app, logError, redirectUrls, lo
     if(typeof loadData === "function"){
         customRedirectUrl = loadData();
     }
-  if (typeof redirectUrls === "function") {
-    const redirectUrlsList = getRedirectUrls(customRedirectUrl);
-    if (redirectUrlsList.length > 0) {
-      chunkUrl(app, logError, redirectUrlsList);
+    if (typeof customRedirectUrl === "function") {
+      const redirectUrlsList = getRedirectUrls(customRedirectUrl);
+      if (customRedirectUrl.length > 0) {
+        chunkUrl(app, logError, redirectUrlsList);
+      }
+    } else if (customRedirectUrl && customRedirectUrl.length > 0) {
+      chunkUrl(app, logError, customRedirectUrl);
     }
-  } else if (redirectUrls && redirectUrls.length > 0) {
-    chunkUrl(app, logError, redirectUrls);
-  }
 };
