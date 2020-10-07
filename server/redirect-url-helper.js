@@ -61,8 +61,7 @@ function chunkUrl(app, logError, urls) {
   }
 }
 async function getRedirectUrls(redirectUrlsfun) {
-  const returnUrlsData = await redirectUrlsfun;
-  return returnUrlsData;
+  return await redirectUrlsfun;
 }
 
 exports.getRedirectUrl = function getRedirectUrl(app, logError, redirectUrls, loadData) {
