@@ -65,9 +65,13 @@ async function getRedirectUrls(redirectUrlsfun) {
   return returnUrlsData;
 }
 
-exports.getRedirectUrl = function getRedirectUrl(app, logError, redirectUrls) {
+exports.getRedirectUrl = function getRedirectUrl(app, logError, redirectUrls, loadData) {
+    let customRedirectUrl = redirectUrls;
+    if(typeof loadData === "function"){
+        customRedirectUrl = loadData();
+    }
   if (typeof redirectUrls === "function") {
-    const redirectUrlsList = getRedirectUrls(redirectUrls);
+    const redirectUrlsList = getRedirectUrls(customRedirectUrl);
     if (redirectUrlsList.length > 0) {
       chunkUrl(app, logError, redirectUrlsList);
     }

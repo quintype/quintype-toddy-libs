@@ -445,7 +445,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     typeof redirectUrls === "function" ||
     (redirectUrls && redirectUrls.length > 0)
   ) {
-    getRedirectUrl(app, logError, redirectUrls);
+    getRedirectUrl(app, logError, redirectUrls, loadData);
   }
 
   app.get(
