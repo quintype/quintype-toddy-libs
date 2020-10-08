@@ -71,10 +71,10 @@ exports.getRedirectUrl = function getRedirectUrl(
   redirectUrls,
   loadData
 ) {
-  if ((redirectUrls === "pb"))
-    loadData("REDIRECT_URLS").then((urlList) =>
-      chunkUrl(app, logError, urlList)
-    );
+  if (redirectUrls === "pb")
+    loadData("REDIRECT_URLS")
+      .then((urlList) => chunkUrl(app, logError, urlList))
+      .catch((e) => console.log(e));
   if (typeof redirectUrls === "function") {
     const redirectUrlsList = getRedirectUrls(redirectUrls);
     if (redirectUrlsList.length > 0) {
