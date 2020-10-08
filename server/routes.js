@@ -442,10 +442,11 @@ exports.isomorphicRoutes = function isomorphicRoutes(
   });
   // Redirects static urls
   if (
+    redirectUrls === "pb" ||
     typeof redirectUrls === "function" ||
     (redirectUrls && redirectUrls.length > 0)
   ) {
-    getRedirectUrl(app, logError, redirectUrls);
+    getRedirectUrl(app, logError, redirectUrls, loadData);
   }
 
   app.get(

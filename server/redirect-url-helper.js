@@ -65,7 +65,16 @@ async function getRedirectUrls(redirectUrlsfun) {
   return returnUrlsData;
 }
 
-exports.getRedirectUrl = function getRedirectUrl(app, logError, redirectUrls) {
+exports.getRedirectUrl = function getRedirectUrl(
+  app,
+  logError,
+  redirectUrls,
+  loadData
+) {
+  if ((redirectUrls === "pb"))
+    loadData("REDIRECT_URLS").then((urlList) =>
+      chunkUrl(app, logError, urlList)
+    );
   if (typeof redirectUrls === "function") {
     const redirectUrlsList = getRedirectUrls(redirectUrls);
     if (redirectUrlsList.length > 0) {
