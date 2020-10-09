@@ -16,16 +16,18 @@ describe("getDomainSpecificOpts helper function", function () {
         },
       },
     },
-    // entertainment subdomain
-    entertainment: {
-      featureConfig: {
-        enableAds: {
-          default: {
-            top: false,
-          },
-          liveBlog: {
-            bottom: false,
-            top: true,
+    domains: {
+      // contains opts for various subdomains
+      entertainment: {
+        featureConfig: {
+          enableAds: {
+            default: {
+              top: false,
+            },
+            liveBlog: {
+              bottom: false,
+              top: true,
+            },
           },
         },
       },

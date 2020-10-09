@@ -12,11 +12,11 @@ const cloneDeep = require("lodash/cloneDeep");
  */
 
 function getDomainSpecificOpts(opts = {}, domainSlug = null) {
-  if (!domainSlug || !opts[domainSlug]) return opts;
+  if (!domainSlug || !opts.domains || !opts.domains[domainSlug]) return opts;
 
   const clone = cloneDeep(opts);
-  delete clone[domainSlug];
-  const domainSpecificOpts = opts[domainSlug];
+  delete clone.domains;
+  const domainSpecificOpts = opts.domains[domainSlug];
   return merge(clone, domainSpecificOpts);
 }
 
