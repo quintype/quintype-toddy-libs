@@ -626,7 +626,7 @@ describe("Redirect Routes Handler", function () {
     const app = createApp(
       (pageType, params, config, client, { host, next }) => next(),
       [{ pageType: "story-page", path: "/*" }],
-      { getRedirectUrl }
+      { redirectUrls: getRedirectUrl }
     );
     supertest(app)
       .get("/moved-permanently-1")

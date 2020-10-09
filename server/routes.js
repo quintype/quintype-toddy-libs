@@ -440,12 +440,13 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       )
     );
   });
+
   // Redirects static urls
   if (
     typeof redirectUrls === "function" ||
     (redirectUrls && redirectUrls.length > 0)
   ) {
-    getRedirectUrl(app, logError, redirectUrls);
+    app.get("/*", withConfig(getRedirectUrl, { redirectUrls }));
   }
 
   app.get(
