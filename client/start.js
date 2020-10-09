@@ -11,7 +11,7 @@ import {
   BreakingNews,
   CLIENT_SIDE_RENDERED,
   NAVIGATE_TO_PAGE,
-  PAGE_LOADING,
+  PAGE_LOADING
 } from "@quintype/components";
 import { createBrowserHistory } from "history";
 import get from "lodash/get";
@@ -25,13 +25,13 @@ import {
   registerPageView,
   registerStoryShare,
   setMemberId,
-  startAnalytics,
+  startAnalytics
 } from "./analytics";
 import { initializeFCM } from "./impl/fcm";
 import {
   checkForServiceWorkerUpdates,
   registerServiceWorker,
-  setupServiceWorkerUpdates,
+  setupServiceWorkerUpdates
 } from "./impl/load-service-worker";
 
 require("../assetify/client")();
@@ -73,7 +73,7 @@ function getRouteData(
     existingFetch ||
     fetch(
       `${routeDataPath}?path=${encodeURIComponent(url.pathname)}${
-        url.search ? `&${url.search.slice(1)}` : ""
+      url.search ? `&${url.search.slice(1)}` : ""
       }`,
       { credentials: "same-origin" }
     )
@@ -102,7 +102,7 @@ function getRouteData(
     if (
       global.qtLoadedFromShell ||
       `${location.pathname}${location.search}${location.hash}` !=
-        `${path}#bypass-sw`
+      `${path}#bypass-sw`
     ) {
       location.href = `${path}#bypass-sw`;
       location.reload();
@@ -145,7 +145,7 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
 
     Promise.resolve(
       pickComponentWrapper &&
-        pickComponentWrapper.preloadComponent(page.pageType, page.subPageType)
+      pickComponentWrapper.preloadComponent(page.pageType, page.subPageType)
     ).then(() => {
       dispatch({
         type: NAVIGATE_TO_PAGE,
@@ -184,7 +184,8 @@ export function maybeNavigateTo(path, store) {
  * @returns {void}
  */
 export function maybeSetUrl(path, title) {
-  if (global.location.pathname === path) return;
+  console.log("=================================inside", global.location.pathname === path)
+  // if (global.location.pathname === path) return;
   global.history.pushState && global.history.pushState(null, title, path);
   global.document.title = title;
 }
@@ -274,7 +275,7 @@ function getJsonContent(id) {
   if (element) return JSON.parse(element.textContent);
 }
 
-const performance = window.performance || { mark: () => {}, measure: () => {} };
+const performance = window.performance || { mark: () => { }, measure: () => { } };
 function runWithTiming(name, f) {
   performance.mark(`${name}Start`);
   f();
@@ -313,9 +314,9 @@ export function startApp(renderApplication, reducers, opts) {
   const store = createQtStore(
     reducers,
     (staticData && staticData.qt) ||
-      global.initialPage ||
-      getJsonContent("initial-page") ||
-      {},
+    global.initialPage ||
+    getJsonContent("initial-page") ||
+    {},
     {}
   );
 
