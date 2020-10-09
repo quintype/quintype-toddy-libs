@@ -1,5 +1,6 @@
 const express = require("express");
-
+const React = require("react");
+const assert = require("assert");
 const { isomorphicRoutes } = require("../../server/routes");
 const supertest = require("supertest");
 
@@ -524,6 +525,11 @@ const redirectUrls = [
 function getRedirectUrl() {
   return redirectUrls;
 }
+
+function pickComponent(pageType) {
+  return ({ data }) => <div data-page-type={pageType}>{data.text}</div>;
+}
+
 function getClientStub(hostname) {
   return {
     getHostname: () => "demo.quintype.io",
@@ -573,10 +579,9 @@ function createApp(loadData, routes, opts = {}) {
         getClient: getClientStub,
         generateRoutes: () => routes,
         loadData,
-        renderLayout: (res, { contentTemplate, store }) =>
-          res.send(
-            JSON.stringify({ contentTemplate, store: store.getState() })
-          ),
+        pickComponent: pickComponent,
+        renderLayout: (res, { store, title, content }) =>
+          res.send(JSON.stringify({ store: store.getState(), title, content })),
         handleNotFound: false,
         publisherConfig: {},
       },
@@ -620,6 +625,38 @@ describe("Redirect Routes Handler", function () {
       .get("/moved-temporarily-1")
       .expect("Location", "/temporarily-location-1")
       .expect(302, done);
+  });
+
+  it("Renders homepage when redirect urls are present", function (done) {
+    const app = createApp(
+      (pageType, params, config, client, { host, next }) =>
+        Promise.resolve({ pageType, data: { text: "foobar", host } }),
+      [{ pageType: "home-page", path: "/" }],
+      {
+        redirectUrls: [
+          {
+            sourceUrl: "/moved-temporarily-1",
+            destinationUrl: "/temporarily-location-1",
+            statusCode: 302,
+          },
+        ],
+      }
+    );
+    supertest(app)
+      .get("/")
+      .expect("Content-Type", /html/)
+      .expect(200)
+      .then((res) => {
+        const response = JSON.parse(res.text);
+        assert.equal(
+          '<div data-page-type="home-page">foobar</div>',
+          response.content
+        );
+        assert.equal("foobar", response.store.qt.data.text);
+        assert.equal("127.0.0.1", response.store.qt.data.host);
+        assert.equal("home-page", response.store.qt.pageType);
+      })
+      .then(done);
   });
 
   it("Redirects all the urls with status code to 301 if redirectUrls function is present", function (done) {
