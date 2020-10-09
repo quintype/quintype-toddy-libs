@@ -671,6 +671,19 @@ describe("Redirect Routes Handler", function () {
       .expect(301, done);
   });
 
+  it("Should handle Route Parameters redirects properly", function (done) {
+    const app = createApp(
+      (pageType, params, config, client, { host, next }) => next(),
+      [{ pageType: "story-page", path: "/*" }],
+      { redirectUrls: getRedirectUrl }
+    );
+    supertest(app)
+      .get("/india/news/some-slug")
+      .expect("Location", "/india/some-slug")
+      .expect(301, done);
+  });
+
+
   it("Should not crash if redirectUrls is not present", function (done) {
     const app = createApp(
       (pageType, params, config, client, { host, next }) => next(),
