@@ -30,7 +30,10 @@ function getUrlRedirect(req, res, next, sourceUrlArray, chunkUrls) {
         prepareDestinationUrl
       );
       if (prepareSourceUrl === req.url) {
-        res.redirect(chunkUrl.statusCode, `${prepareDestinationUrl}${search}`);
+        return res.redirect(
+          chunkUrl.statusCode,
+          `${prepareDestinationUrl}${search}`
+        );
       }
     });
   }
@@ -45,7 +48,6 @@ function getUrlRedirect(req, res, next, sourceUrlArray, chunkUrls) {
       `${chunkUrls[position].destinationUrl}${search}`
     );
   }
-  return next();
 }
 
 function extractAndProcess(req, res, next, urls) {
@@ -71,5 +73,4 @@ exports.getRedirectUrl = async function getRedirectUrl(
   } else if (redirectUrls && redirectUrls.length > 0) {
     extractAndProcess(req, res, next, redirectUrls);
   }
-  return next();
 };

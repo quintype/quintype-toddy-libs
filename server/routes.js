@@ -32,7 +32,6 @@ const rp = require("request-promise");
 const bodyParser = require("body-parser");
 const get = require("lodash/get");
 const { URL } = require("url");
-const { getRedirectUrl } = require("./redirect-url-helper");
 
 /**
  * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
@@ -441,14 +440,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     );
   });
 
-  // Redirects static urls
-  if (
-    typeof redirectUrls === "function" ||
-    (redirectUrls && redirectUrls.length > 0)
-  ) {
-    app.get("/*", withConfig(getRedirectUrl, { redirectUrls }));
-  }
-
   app.get(
     "/*",
     withConfig(handleIsomorphicRoute, {
@@ -464,6 +455,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       assetHelper,
       cdnProvider,
       lightPages,
+      redirectUrls,
     })
   );
 
