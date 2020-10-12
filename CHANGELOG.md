@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.2.7](https://github.com/quintype/quintype-node-framework/compare/v4.2.6...v4.2.7) (2020-10-12)
+
+
+### Bug Fixes
+
+* **amp:** pass only domain specific opts to amp lib ([#175](https://github.com/quintype/quintype-node-framework/issues/175)) ([2d01fd6](https://github.com/quintype/quintype-node-framework/commit/2d01fd6))
+
+
+
 ## [4.2.6](https://github.com/quintype/quintype-node-framework/compare/v4.2.5...v4.2.6) (2020-10-06)
 
 
