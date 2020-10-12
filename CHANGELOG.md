@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.2.8](https://github.com/quintype/quintype-node-framework/compare/v4.2.7...v4.2.8) (2020-10-12)
+
+
+### Bug Fixes
+
+* **redirectUrls:** Pass config to redirect urls function ([#177](https://github.com/quintype/quintype-node-framework/issues/177)) ([8620962](https://github.com/quintype/quintype-node-framework/commit/8620962))
+
+
+
 ## [4.2.7](https://github.com/quintype/quintype-node-framework/compare/v4.2.6...v4.2.7) (2020-10-12)
 
 
