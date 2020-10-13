@@ -2,7 +2,12 @@ const urlLib = require("url");
 const set = require("lodash/set");
 const get = require("lodash/get");
 const { Story, AmpConfig } = require("../../impl/api-client-impl");
-const { getSeoInstance, InfiniteScrollAmp, optimize } = require("../helpers");
+const {
+  getSeoInstance,
+  InfiniteScrollAmp,
+  optimize,
+  getDomainSpecificOpts,
+} = require("../helpers");
 const { storyToCacheKey } = require("../../caching");
 const { addCacheHeadersToResult } = require("../../handlers/cdn-caching");
 
@@ -13,6 +18,7 @@ async function ampStoryPageHandler(
   {
     client,
     config,
+    domainSlug,
     seo,
     cdnProvider = null,
     ampLibrary = require("@quintype/amp"),
@@ -20,6 +26,7 @@ async function ampStoryPageHandler(
   }
 ) {
   try {
+    const domainSpecificOpts = getDomainSpecificOpts(opts, domainSlug);
     const url = urlLib.parse(req.url, true);
     const { ampifyStory } = ampLibrary;
     // eslint-disable-next-line no-return-await
@@ -39,7 +46,7 @@ async function ampStoryPageHandler(
       );
     if (relatedStoriesCollection) {
       const storiesToTake = get(
-        opts,
+        domainSpecificOpts,
         ["featureConfig", "relatedStories", "storiesToTake"],
         5
       );
@@ -52,7 +59,11 @@ async function ampStoryPageHandler(
         .map((item) => item.story);
     }
     if (relatedStories.length) {
-      set(opts, ["featureConfig", "relatedStories", "stories"], relatedStories);
+      set(
+        domainSpecificOpts,
+        ["featureConfig", "relatedStories", "stories"],
+        relatedStories
+      );
     }
 
     if (
@@ -87,7 +98,7 @@ async function ampStoryPageHandler(
       return next(infiniteScrollInlineConfig);
     if (infiniteScrollInlineConfig) {
       set(
-        opts,
+        domainSpecificOpts,
         ["featureConfig", "infiniteScroll", "infiniteScrollInlineConfig"],
         infiniteScrollInlineConfig
       );
@@ -99,7 +110,7 @@ async function ampStoryPageHandler(
       ampConfig: ampConfig.ampConfig,
       relatedStories,
       client,
-      opts,
+      opts: { ...domainSpecificOpts, domainSlug },
       seo: seoTags ? seoTags.toString() : "",
       infiniteScrollInlineConfig,
     });
