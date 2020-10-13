@@ -66,14 +66,13 @@ function getRouteData(
   { location = global.location, existingFetch, mountAt = global.qtMountAt }
 ) {
   // if mountAt is set, then hit /mountAt/route-data, remove mountAt from path
-
+  console.log("-----------", path, global.location);
   const [routeDataPath, relativePath] = getRouteDataAndPath(path, mountAt);
   const url = new URL(relativePath, location.origin);
+  console.log("url", url, existingFetch)
   return (
-    existingFetch ||
     fetch(
-      `${routeDataPath}?path=${encodeURIComponent(url.pathname)}${
-      url.search ? `&${url.search.slice(1)}` : ""
+      `${routeDataPath}?path=${encodeURIComponent(url.pathname)}${url.search ? `&${url.search.slice(1)}` : ""
       }`,
       { credentials: "same-origin" }
     )
@@ -127,6 +126,8 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
   if (global.disableAjaxNavigation) {
     global.location = path;
   }
+
+  console.log(path)
 
   dispatch({ type: PAGE_LOADING });
   getRouteData(path, {}).then((page) => {
@@ -300,7 +301,9 @@ export function startApp(renderApplication, reducers, opts) {
   app.getAppVersion = () => opts.appVersion || 1;
   global.app = app;
   const { location } = global;
+  console.log("----------------1", location)
   const path = `${location.pathname}${location.search || ""}`;
+  console.log("----------------2", path);
   const staticData =
     global.staticPageStoreContent || getJsonContent("static-page");
   const dataPromise = staticData
@@ -342,9 +345,9 @@ export function startApp(renderApplication, reducers, opts) {
 
     runWithTiming("qt_render", () => renderApplication(store));
 
-    history.listen((change) =>
-      app.maybeNavigateTo(`${change.pathname}${change.search || ""}`, store)
-    );
+    history.listen((change) => {
+      return app.maybeNavigateTo(`${change.pathname}${change.search || ""}`, store)
+    });
 
     registerPageView(store.getState().qt);
 

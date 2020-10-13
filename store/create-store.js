@@ -1,11 +1,12 @@
 import {
   ComponentReducers,
   NAVIGATE_TO_PAGE,
-  SERVICE_WORKER_UPDATED,
+  SERVICE_WORKER_UPDATED
 } from "@quintype/components";
 import { combineReducers, createStore } from "redux";
 
 function internalReducers(state = {}, action) {
+  console.log("================", action)
   switch (action.type) {
     case NAVIGATE_TO_PAGE:
       return Object.assign({}, state, action.page, {
