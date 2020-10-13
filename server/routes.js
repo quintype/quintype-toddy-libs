@@ -32,7 +32,6 @@ const rp = require("request-promise");
 const bodyParser = require("body-parser");
 const get = require("lodash/get");
 const { URL } = require("url");
-const { getRedirectUrl } = require("./redirect-url-helper");
 const { addCacheHeadersToResult } = require("./handlers/cdn-caching");
 
 /**
@@ -461,13 +460,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       )
     );
   });
-  // Redirects static urls
-  if (
-    typeof redirectUrls === "function" ||
-    (redirectUrls && redirectUrls.length > 0)
-  ) {
-    getRedirectUrl(app, logError, redirectUrls);
-  }
 
   app.get(
     "/*",
@@ -484,6 +476,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       assetHelper,
       cdnProvider,
       lightPages,
+      redirectUrls,
     })
   );
 
