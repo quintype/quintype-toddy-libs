@@ -330,8 +330,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(
             "prerenderServiceUrl",
             prerenderServiceUrl
           )
+            .set('host', 'malibu.quintype.io')
             .set("afterRender", function (err, req, prerender_res) {
-              console.log(prerender_res.body, prerender_res.statusCode)
+              prerender_res.writeHead(200, { "Content-Type": "text/html" })
+              // console.log(prerender_res.body, prerender_res.statusCode)
               // addCacheHeadersToResult(
               //   prerender_res,
               //   ["preRenderCache"],
