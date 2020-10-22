@@ -323,7 +323,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
 
   if (prerenderServiceUrl) {
     app.use((req, res, next) => {
-      if (req.query.preload) {
+      if (req.query.prerender) {
         try {
           // eslint-disable-next-line global-require
           require("prerender-node")
