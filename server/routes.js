@@ -326,21 +326,22 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       if (req.query.prerender) {
         try {
           // eslint-disable-next-line global-require
-          require("prerender-node").set(
-            "prerenderServiceUrl",
-            prerenderServiceUrl
-          );
-          // .set("afterRender", function (err, req, prerender_res) {
-          //   addCacheHeadersToResult(
-          //     prerender_res,
-          //     ["preRenderCache"],
-          //     cdnProvider
-          //   );
-          //   prerender_res.setHeader(
-          //     "Content-Type",
-          //     "text/html; charset=utf-8"
-          //   );
-          // })(req, res, next);
+          require("prerender-node")
+            .set("prerenderServiceUrl", prerenderServiceUrl)
+            .set("host", "malibu.quintype.io")
+            .set("afterRender", function (err, req, prerender_res) {
+              // if (cacheableStatusCodes[prerender_res.statusCode]) {
+              //   addCacheHeadersToResult(
+              //     prerender_res,
+              //     ["preRenderCache"],
+              //     cdnProvider
+              //   );
+              //   prerender_res.setHeader(
+              //     "Content-Type",
+              //     "text/html; charset=utf-8"
+              //   );
+              // }
+            })(req, res, next);
         } catch (e) {
           logError(e);
         }
