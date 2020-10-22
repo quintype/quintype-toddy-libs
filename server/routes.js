@@ -326,13 +326,11 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       if (req.query.prerender) {
         try {
           // eslint-disable-next-line global-require
-          require("prerender-node").set(
-            "prerenderServiceUrl",
-            prerenderServiceUrl
-          )
-            .set('host', 'malibu.quintype.io')
+          require("prerender-node")
+            .set("prerenderServiceUrl", prerenderServiceUrl)
+            .set("host", "malibu.quintype.io")
             .set("afterRender", function (err, req, prerender_res) {
-              prerender_res.writeHead(200, { "Content-Type": "text/html" })
+              // prerender_res.writeHead(200, { "Content-Type": "text/html" });
               // console.log(prerender_res.body, prerender_res.statusCode)
               // addCacheHeadersToResult(
               //   prerender_res,
