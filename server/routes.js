@@ -329,18 +329,19 @@ exports.isomorphicRoutes = function isomorphicRoutes(
           require("prerender-node").set(
             "prerenderServiceUrl",
             prerenderServiceUrl
-          );
-          // .set("afterRender", function (err, req, prerender_res) {
-          //   addCacheHeadersToResult(
-          //     prerender_res,
-          //     ["preRenderCache"],
-          //     cdnProvider
-          //   );
-          //   prerender_res.setHeader(
-          //     "Content-Type",
-          //     "text/html; charset=utf-8"
-          //   );
-          // })(req, res, next);
+          )
+            .set("afterRender", function (err, req, prerender_res) {
+              console.log(prerender_res.body, prerender_res.statusCode)
+              // addCacheHeadersToResult(
+              //   prerender_res,
+              //   ["preRenderCache"],
+              //   cdnProvider
+              // );
+              // prerender_res.setHeader(
+              //   "Content-Type",
+              //   "text/html; charset=utf-8"
+              // );
+            })(req, res, next);
         } catch (e) {
           logError(e);
         }
