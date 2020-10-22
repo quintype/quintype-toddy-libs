@@ -335,8 +335,9 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         } catch (e) {
           logError(e);
         }
+      } else {
+        next();
       }
-      next();
     });
   }
 
