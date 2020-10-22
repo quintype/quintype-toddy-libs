@@ -330,17 +330,17 @@ exports.isomorphicRoutes = function isomorphicRoutes(
             .set("prerenderServiceUrl", prerenderServiceUrl)
             .set("host", "malibu.quintype.io")
             .set("afterRender", function (err, req, prerender_res) {
-              // if (cacheableStatusCodes[prerender_res.statusCode]) {
-              //   addCacheHeadersToResult(
-              //     prerender_res,
-              //     ["preRenderCache"],
-              //     cdnProvider
-              //   );
-              //   prerender_res.setHeader(
-              //     "Content-Type",
-              //     "text/html; charset=utf-8"
-              //   );
-              // }
+              // prerender_res.writeHead(200, { "Content-Type": "text/html" });
+              // console.log(prerender_res.body, prerender_res.statusCode)
+              // addCacheHeadersToResult(
+              //   prerender_res,
+              //   ["preRenderCache"],
+              //   cdnProvider
+              // );
+              // prerender_res.setHeader(
+              //   "Content-Type",
+              //   "text/html; charset=utf-8"
+              // );
             })(req, res, next);
         } catch (e) {
           logError(e);
