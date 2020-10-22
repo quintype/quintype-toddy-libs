@@ -326,20 +326,21 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       if (req.query.prerender) {
         try {
           // eslint-disable-next-line global-require
-          require("prerender-node")
-            .set("prerenderServiceUrl", prerenderServiceUrl)
-            .set("afterRender", function (error, request, preRenderRespond) {
-              console.log("response afterRender", preRenderRespond);
-              addCacheHeadersToResult(
-                preRenderRespond,
-                ["preRenderCache"],
-                cdnProvider
-              );
-              preRenderRespond.setHeader(
-                "Content-Type",
-                "text/html; charset=utf-8"
-              );
-            })(req, res, next);
+          require("prerender-node").set(
+            "prerenderServiceUrl",
+            prerenderServiceUrl
+          );
+          // .set("afterRender", function (err, req, prerender_res) {
+          //   addCacheHeadersToResult(
+          //     prerender_res,
+          //     ["preRenderCache"],
+          //     cdnProvider
+          //   );
+          //   prerender_res.setHeader(
+          //     "Content-Type",
+          //     "text/html; charset=utf-8"
+          //   );
+          // })(req, res, next);
         } catch (e) {
           logError(e);
         }
