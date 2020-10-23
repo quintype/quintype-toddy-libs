@@ -33,8 +33,7 @@ const bodyParser = require("body-parser");
 const get = require("lodash/get");
 const { URL } = require("url");
 const { addCacheHeadersToResult } = require("./handlers/cdn-caching");
-
-const prerender = require("@quintype/prerender-node");
+const prerender = require("./prerender");
 
 
 /**
