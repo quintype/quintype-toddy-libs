@@ -34,6 +34,10 @@ const get = require("lodash/get");
 const { URL } = require("url");
 const { addCacheHeadersToResult } = require("./handlers/cdn-caching");
 
+var redis = require("redis"),
+  client = redis.createClient();
+
+
 /**
  * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
  *
@@ -328,20 +332,25 @@ exports.isomorphicRoutes = function isomorphicRoutes(
           // eslint-disable-next-line global-require
           require("prerender-node")
             .set("prerenderServiceUrl", prerenderServiceUrl)
-            .set("host", "malibu.quintype.io")
-            .set("afterRender", function (err, req, prerender_res) {
-              // prerender_res.writeHead(200, { "Content-Type": "text/html" });
-              // console.log(prerender_res.body, prerender_res.statusCode)
-              // addCacheHeadersToResult(
-              //   prerender_res,
-              //   ["preRenderCache"],
-              //   cdnProvider
-              // );
-              // prerender_res.setHeader(
-              //   "Content-Type",
-              //   "text/html; charset=utf-8"
-              // );
+            .set('beforeRender', function (req, done) {
+              client.get(req.url, done);
+            }).set('afterRender', function (err, req, prerender_res) {
+              console.log('inside after render', req, prerender_res)
+              client.set(req.url, prerender_res.body)
             })(req, res, next);
+          // .set("afterRender", function (err, req, prerender_res) {
+          // prerender_res.writeHead(200, { "Content-Type": "text/html" });
+          // console.log(prerender_res.body, prerender_res.statusCode)
+          // addCacheHeadersToResult(
+          //   prerender_res,
+          //   ["preRenderCache"],
+          //   cdnProvider
+          // );
+          // prerender_res.setHeader(
+          //   "Content-Type",
+          //   "text/html; charset=utf-8"
+          // );
+          // })(req, res, next);
         } catch (e) {
           logError(e);
         }
