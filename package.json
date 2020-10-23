@@ -30,7 +30,7 @@
     "@quintype/amp": "^2.1.20",
     "@quintype/backend": "^1.23.1",
     "@quintype/components": "^2.16.1",
-    "@quintype/prerender-node": "^3.2.7-beta.0",
+    "@quintype/prerender-node": "^3.2.7-beta.1",
     "@quintype/seo": "^1.38.1",
     "atob": "^2.1.2",
     "cluster": "^0.7.7",
