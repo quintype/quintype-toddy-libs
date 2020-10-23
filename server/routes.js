@@ -34,6 +34,8 @@ const get = require("lodash/get");
 const { URL } = require("url");
 const { addCacheHeadersToResult } = require("./handlers/cdn-caching");
 
+const prerender = require("@quintype/prerender-node");
+
 
 /**
  * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
@@ -327,8 +329,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       if (req.query.prerender) {
         try {
           // eslint-disable-next-line global-require
-          require("prerender-node")
-            .set("prerenderServiceUrl", prerenderServiceUrl)(req, res, next)
+          prerender.set("prerenderServiceUrl", prerenderServiceUrl)(req, res, next)
         } catch (e) {
           logError(e);
         }
