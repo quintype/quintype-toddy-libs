@@ -34,6 +34,9 @@ const get = require("lodash/get");
 const { URL } = require("url");
 const { addCacheHeadersToResult } = require("./handlers/cdn-caching");
 
+const prerender = require("@quintype/prerender-node");
+
+
 /**
  * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
  *
@@ -326,22 +329,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       if (req.query.prerender) {
         try {
           // eslint-disable-next-line global-require
-          require("prerender-node")
-            .set("prerenderServiceUrl", prerenderServiceUrl)
-            .set("host", "malibu.quintype.io")
-            .set("afterRender", function (err, req, prerender_res) {
-              // prerender_res.writeHead(200, { "Content-Type": "text/html" });
-              // console.log(prerender_res.body, prerender_res.statusCode)
-              // addCacheHeadersToResult(
-              //   prerender_res,
-              //   ["preRenderCache"],
-              //   cdnProvider
-              // );
-              // prerender_res.setHeader(
-              //   "Content-Type",
-              //   "text/html; charset=utf-8"
-              // );
-            })(req, res, next);
+          prerender.set("prerenderServiceUrl", prerenderServiceUrl)(req, res, next)
         } catch (e) {
           logError(e);
         }
