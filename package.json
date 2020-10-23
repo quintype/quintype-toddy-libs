@@ -30,7 +30,7 @@
     "@quintype/amp": "^2.1.20",
     "@quintype/backend": "^1.23.1",
     "@quintype/components": "^2.16.1",
-    "@quintype/prerender-node": "^3.2.6-beta.1",
+    "@quintype/prerender-node": "^3.2.7",
     "@quintype/seo": "^1.38.1",
     "atob": "^2.1.2",
     "cluster": "^0.7.7",
@@ -51,8 +51,7 @@
     "react-router": "^5.0.0",
     "redux": "^4.0.1",
     "sleep-promise": "^8.0.1",
-    "winston": "3.2.1",
-    "y": "file:../prerender-node/y-3.2.5.tgz"
+    "winston": "3.2.1"
   },
   "devDependencies": {
     "@quintype/build": "^3.9.0",
