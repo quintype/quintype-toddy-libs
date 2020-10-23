@@ -45,7 +45,6 @@
     "lodash": "^4.17.15",
     "morgan": "^1.9.1",
     "path-to-regexp": "^6.2.0",
-    "prerender-node": "^3.2.5",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-redux": "^7.0.1",
