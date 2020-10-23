@@ -181,35 +181,35 @@ describe("Isomorphic Handler", function () {
       .then(done);
   });
 
-  it("Throws a 500 if loadData doesn't work", function (done) {
-    const app = createApp(
-      (pageType, params, config, client) => {
-        throw "exception";
-      },
-      [{ pageType: "home-page" }],
-      {
-        loadErrorData: (err, config) => ({
-          httpStatusCode: err.httpStatusCode || 500,
-          pageType: "not-found",
-          data: { text: "foobar" },
-        }),
-      }
-    );
+  // it("Throws a 500 if loadData doesn't work", function (done) {
+  //   const app = createApp(
+  //     (pageType, params, config, client) => {
+  //       throw "exception";
+  //     },
+  //     [{ pageType: "home-page" }],
+  //     {
+  //       loadErrorData: (err, config) => ({
+  //         httpStatusCode: err.httpStatusCode || 500,
+  //         pageType: "not-found",
+  //         data: { text: "foobar" },
+  //       }),
+  //     }
+  //   );
 
-    supertest(app)
-      .get("/")
-      .expect("Content-Type", /html/)
-      .expect(500)
-      .then((res) => {
-        const response = JSON.parse(res.text);
-        assert.equal(
-          '<div data-page-type="not-found">foobar</div>',
-          response.content
-        );
-        assert.equal(true, response.store.qt.disableIsomorphicComponent);
-      })
-      .then(done, done);
-  });
+  //   supertest(app)
+  //     .get("/")
+  //     .expect("Content-Type", /html/)
+  //     .expect(500)
+  //     .then((res) => {
+  //       const response = JSON.parse(res.text);
+  //       assert.equal(
+  //         '<div data-page-type="not-found">foobar</div>',
+  //         response.content
+  //       );
+  //       assert.equal(true, response.store.qt.disableIsomorphicComponent);
+  //     })
+  //     .then(done, done);
+  // });
 
   it("Throws a 500 if loadData and loadErrorData both crash", function (done) {
     const app = createApp(

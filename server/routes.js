@@ -34,7 +34,7 @@ const get = require("lodash/get");
 const { URL } = require("url");
 const { addCacheHeadersToResult } = require("./handlers/cdn-caching");
 
-const prerender = require("@quintype/prerender-node");
+// const prerender = require("@quintype/prerender-node");
 
 
 /**
@@ -324,20 +324,20 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     1
   );
 
-  if (prerenderServiceUrl) {
-    app.use((req, res, next) => {
-      if (req.query.prerender) {
-        try {
-          // eslint-disable-next-line global-require
-          prerender.set("prerenderServiceUrl", prerenderServiceUrl)(req, res, next)
-        } catch (e) {
-          logError(e);
-        }
-      } else {
-        next();
-      }
-    });
-  }
+  // if (prerenderServiceUrl) {
+  //   app.use((req, res, next) => {
+  //     if (req.query.prerender) {
+  //       try {
+  //         // eslint-disable-next-line global-require
+  //         prerender.set("prerenderServiceUrl", prerenderServiceUrl)(req, res, next)
+  //       } catch (e) {
+  //         logError(e);
+  //       }
+  //     } else {
+  //       next();
+  //     }
+  //   });
+  // }
 
   if (serviceWorkerPaths.length > 0) {
     app.get(
