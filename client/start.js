@@ -350,8 +350,8 @@ export function startApp(renderApplication, reducers, opts) {
     if (page.title) {
       global.document.title = get(
         page,
-        ["data", "story", "seo", "meta-title"],
-        page.title
+        ["data", "customSeo", "title"],
+        get(page, ["data", "story", "seo", "meta-title"], page.title)
       );
     }
     return store;
