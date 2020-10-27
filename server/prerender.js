@@ -81,6 +81,9 @@ prerender.crawlerUserAgents = [
   "Bitrix link preview",
   "XING-contenttabreceiver",
   "Chrome-Lighthouse",
+  "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+  "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/W.X.Y.Z‡ Safari/537.36",
+  "Googlebot/2.1 (+http://www.google.com/bot.html)",
 ];
 
 prerender.extensionsToIgnore = [
