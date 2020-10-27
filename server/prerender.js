@@ -177,12 +177,6 @@ prerender.shouldShowPrerenderedPage = function (req) {
   //if it is a bot and is requesting a resource...dont prerender
   if (
     prerender.extensionsToIgnore.some(function (extension) {
-      console.log(
-        "extensionsToIgnore index",
-        req.url.toLowerCase().indexOf(extension)
-      );
-      console.log("extensionsToIgnore", extension);
-      console.log("req url", req.req.url.toLowerCase());
       return req.url.toLowerCase().indexOf(extension) !== -1;
     })
   )
