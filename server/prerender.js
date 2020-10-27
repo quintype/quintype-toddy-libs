@@ -184,6 +184,7 @@ prerender.shouldShowPrerenderedPage = function (req) {
 
   //if it is a bot and not requesting a resource and is not whitelisted...dont prerender
   console.log("here come whitelisted domain", Array.isArray(this.whitelist));
+  console.log("whitelisted", this.whitelist);
   if (
     Array.isArray(this.whitelist) &&
     this.whitelist.every(function (whitelisted) {
