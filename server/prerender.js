@@ -11,20 +11,27 @@ var prerender = (module.exports = function (req, res, next) {
 
   prerender.beforeRenderFn(req, function (err, cachedRender) {
     if (!err && cachedRender) {
+      const cacheControlHeader = addPrerenderCacheHeadersToResult([
+        "prerenderKey",
+      ]);
       if (typeof cachedRender == "string") {
         res.writeHead(200, {
           "Content-Type": "text/html",
+          ...cacheControlHeader,
         });
         res.writeHead(400, {
           "Content-Type": "text/html",
+          ...cacheControlHeader,
         });
         return res.end(cachedRender);
       } else if (typeof cachedRender == "object") {
         res.writeHead(cachedRender.status || 200, {
           "Content-Type": "text/html",
+          ...cacheControlHeader,
         });
         res.writeHead(400, {
           "Content-Type": "text/html",
+          ...cacheControlHeader,
         });
         return res.end(cachedRender.body || "");
       }

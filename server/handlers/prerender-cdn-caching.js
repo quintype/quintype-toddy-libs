@@ -22,7 +22,7 @@ exports.addPrerenderCacheHeadersToResult = function addPrerenderCacheHeadersToRe
       };
       if (cdnProvider === "akamai") {
         cacheHeaders["Edge-Control"] =
-          "public,maxage=60,stale-while-revalidate=1000,stale-if-error=14400";
+          "public,maxage=15,stale-while-revalidate=1000,stale-if-error=14400";
       }
       cacheHeaders["Vary"] = "Accept-Encoding";
 
@@ -35,7 +35,7 @@ exports.addPrerenderCacheHeadersToResult = function addPrerenderCacheHeadersToRe
       }
       // Fastly Header
       cacheHeaders["Surrogate-Control"] =
-        "public,max-age=240,stale-while-revalidate=300,stale-if-error=14400";
+        "public,max-age=15,stale-while-revalidate=300,stale-if-error=14400";
       cacheHeaders["Surrogate-Key"] = _(cacheKeys).uniq().join(" ");
       return cacheHeaders;
     }
@@ -46,7 +46,7 @@ exports.addPrerenderCacheHeadersToResult = function addPrerenderCacheHeadersToRe
     };
     if (cdnProvider === "akamai") {
       cacheHeaders["Edge-Control"] =
-        "public,maxage=60,stale-while-revalidate=150,stale-if-error=3600";
+        "public,maxage=15,stale-while-revalidate=150,stale-if-error=3600";
     }
     cacheHeaders["Vary"] = "Accept-Encoding";
     cacheHeaders["Surrogate-Control"] =
