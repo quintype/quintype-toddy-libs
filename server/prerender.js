@@ -4,8 +4,9 @@ var request = require("request"),
   zlib = require("zlib");
 
 var prerender = (module.exports = function (req, res, next) {
+  console.log("before shouldShowPrerenderedPage res !!! ", res);
   if (!prerender.shouldShowPrerenderedPage(req)) return next();
-
+  console.log("after shouldShowPrerenderedPage res !!!", res);
   prerender.beforeRenderFn(req, function (err, cachedRender) {
     if (!err && cachedRender) {
       if (typeof cachedRender == "string") {
@@ -25,9 +26,6 @@ var prerender = (module.exports = function (req, res, next) {
         });
         return res.end(cachedRender.body || "");
       }
-    } else {
-      console.log("here error !!!!", err);
-      console.log("here cachedRender !!!!", cachedRender);
     }
 
     prerender.getPrerenderedPageResponse(req, function (
