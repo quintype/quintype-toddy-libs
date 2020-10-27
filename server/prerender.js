@@ -10,17 +10,35 @@ var prerender = (module.exports = function (req, res, next) {
       if (typeof cachedRender == "string") {
         res.writeHead(200, {
           "Content-Type": "text/html",
+          "Cache-Control":
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
         });
         res.writeHead(400, {
           "Content-Type": "text/html",
+          "Cache-Control":
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
+        });
+        res.writeHead(403, {
+          "Content-Type": "text/html",
+          "Cache-Control":
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
         });
         return res.end(cachedRender);
       } else if (typeof cachedRender == "object") {
         res.writeHead(cachedRender.status || 200, {
           "Content-Type": "text/html",
+          "Cache-Control":
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
         });
         res.writeHead(400, {
           "Content-Type": "text/html",
+          "Cache-Control":
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
+        });
+        res.writeHead(403, {
+          "Content-Type": "text/html",
+          "Cache-Control":
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
         });
         return res.end(cachedRender.body || "");
       }
@@ -31,7 +49,7 @@ var prerender = (module.exports = function (req, res, next) {
       prerenderedResponse
     ) {
       prerender.afterRenderFn(err, req, prerenderedResponse);
-
+      console.log("here prerenderedResponse", prerenderedResponse);
       if (prerenderedResponse) {
         const cacheHeader = {
           "Cache-Control":
@@ -84,6 +102,7 @@ prerender.crawlerUserAgents = [
   "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
   "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/W.X.Y.Z‡ Safari/537.36",
   "Googlebot/2.1 (+http://www.google.com/bot.html)",
+  "mozilla/5.0 (macintosh; intel mac os x 10_15_6) applewebkit/537.36 (khtml, like gecko) chrome/85.0.4183.121 safari/537.36",
 ];
 
 prerender.extensionsToIgnore = [
@@ -158,7 +177,7 @@ prerender.shouldShowPrerenderedPage = function (req) {
   if (
     prerender.crawlerUserAgents.some(function (crawlerUserAgent) {
       console.log("crawlerUserAgent", crawlerUserAgent.toLowerCase());
-      console.log("user agent", userAgent.toLowerCase());
+      console.log("user agent", userAgent.toLowerCase(), "new publish req");
       console.log(
         "here index check",
         userAgent.toLowerCase().indexOf(crawlerUserAgent.toLowerCase())
@@ -176,43 +195,38 @@ prerender.shouldShowPrerenderedPage = function (req) {
   //if it is a bot and is requesting a resource...dont prerender
   if (
     prerender.extensionsToIgnore.some(function (extension) {
-      console.log(
-        "extensionsToIgnore index",
-        req.url.toLowerCase().indexOf(extension)
-      );
-      console.log("extensionsToIgnore", extension);
-      console.log("req url", req.req.url.toLowerCase());
       return req.url.toLowerCase().indexOf(extension) !== -1;
     })
   )
     return false;
 
   //if it is a bot and not requesting a resource and is not whitelisted...dont prerender
-  console.log("here come whitelisted domain", Array.isArray(this.whitelist));
-  if (
-    Array.isArray(this.whitelist) &&
-    this.whitelist.every(function (whitelisted) {
-      return new RegExp(whitelisted).test(req.url) === false;
-    })
-  )
-    return false;
+  // console.log("here come whitelisted domain", Array.isArray(this.whitelist));
+  // console.log("whitelisted", this.whitelist);
+  // if (
+  //   Array.isArray(this.whitelist) &&
+  //   this.whitelist.every(function (whitelisted) {
+  //     return new RegExp(whitelisted).test(req.url) === false;
+  //   })
+  // )
+  //   return false;
 
   //if it is a bot and not requesting a resource and is not blacklisted(url or referer)...dont prerender
-  if (
-    Array.isArray(this.blacklist) &&
-    this.blacklist.some(function (blacklisted) {
-      var blacklistedUrl = false,
-        blacklistedReferer = false,
-        regex = new RegExp(blacklisted);
+  // if (
+  //   Array.isArray(this.blacklist) &&
+  //   this.blacklist.some(function (blacklisted) {
+  //     var blacklistedUrl = false,
+  //       blacklistedReferer = false,
+  //       regex = new RegExp(blacklisted);
 
-      blacklistedUrl = regex.test(req.url) === true;
-      if (req.headers["referer"])
-        blacklistedReferer = regex.test(req.headers["referer"]) === true;
+  //     blacklistedUrl = regex.test(req.url) === true;
+  //     if (req.headers["referer"])
+  //       blacklistedReferer = regex.test(req.headers["referer"]) === true;
 
-      return blacklistedUrl || blacklistedReferer;
-    })
-  )
-    return false;
+  //     return blacklistedUrl || blacklistedReferer;
+  //   })
+  // )
+  //   return false;
 
   return isRequestingPrerenderedPage;
 };
