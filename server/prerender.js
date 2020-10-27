@@ -4,9 +4,7 @@ var request = require("request"),
   zlib = require("zlib");
 
 var prerender = (module.exports = function (req, res, next) {
-  console.log("before shouldShowPrerenderedPage res !!! ", res);
   if (!prerender.shouldShowPrerenderedPage(req)) return next();
-  console.log("after shouldShowPrerenderedPage res !!!", res);
   prerender.beforeRenderFn(req, function (err, cachedRender) {
     if (!err && cachedRender) {
       if (typeof cachedRender == "string") {
@@ -144,9 +142,11 @@ prerender.shouldShowPrerenderedPage = function (req) {
   var userAgent = req.headers["user-agent"],
     bufferAgent = req.headers["x-bufferbot"],
     isRequestingPrerenderedPage = false;
-
+  console.log("user agent", userAgent);
   if (!userAgent) return false;
+  console.log("req method", req.method);
   if (req.method != "GET" && req.method != "HEAD") return false;
+  console.log("req headers", req.headers);
   if (req.headers && req.headers["x-prerender"]) return false;
 
   //if it contains _escaped_fragment_, show prerendered page
@@ -176,6 +176,7 @@ prerender.shouldShowPrerenderedPage = function (req) {
     return false;
 
   //if it is a bot and not requesting a resource and is not whitelisted...dont prerender
+  console.log("here come whitelisted domain", Array.isArray(this.whitelist));
   if (
     Array.isArray(this.whitelist) &&
     this.whitelist.every(function (whitelisted) {
