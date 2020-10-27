@@ -6,7 +6,9 @@ var request = require("request"),
 var prerender = (module.exports = function (req, res, next) {
   if (!prerender.shouldShowPrerenderedPage(req)) return next();
   prerender.beforeRenderFn(req, function (err, cachedRender) {
+    console.log("cachedRender before check", cachedRender);
     if (!err && cachedRender) {
+      console.log("cachedRender after check", cachedRender);
       if (typeof cachedRender == "string") {
         res.writeHead(200, {
           "Content-Type": "text/html",
@@ -14,11 +16,6 @@ var prerender = (module.exports = function (req, res, next) {
             "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
         });
         res.writeHead(400, {
-          "Content-Type": "text/html",
-          "Cache-Control":
-            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
-        });
-        res.writeHead(403, {
           "Content-Type": "text/html",
           "Cache-Control":
             "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
@@ -35,13 +32,10 @@ var prerender = (module.exports = function (req, res, next) {
           "Cache-Control":
             "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
         });
-        res.writeHead(403, {
-          "Content-Type": "text/html",
-          "Cache-Control":
-            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
-        });
         return res.end(cachedRender.body || "");
       }
+    } else {
+      console.log("Error -", err);
     }
 
     prerender.getPrerenderedPageResponse(req, function (
@@ -49,7 +43,6 @@ var prerender = (module.exports = function (req, res, next) {
       prerenderedResponse
     ) {
       prerender.afterRenderFn(err, req, prerenderedResponse);
-      console.log("here prerenderedResponse", prerenderedResponse);
       if (prerenderedResponse) {
         const header = { ...prerenderedResponse.headers };
         res.writeHead(prerenderedResponse.statusCode, header);
@@ -173,12 +166,6 @@ prerender.shouldShowPrerenderedPage = function (req) {
   //if it is a bot...show prerendered page
   if (
     prerender.crawlerUserAgents.some(function (crawlerUserAgent) {
-      console.log("crawlerUserAgent", crawlerUserAgent.toLowerCase());
-      console.log("user agent", userAgent.toLowerCase(), "new publish req");
-      console.log(
-        "here index check",
-        userAgent.toLowerCase().indexOf(crawlerUserAgent.toLowerCase())
-      );
       return (
         userAgent.toLowerCase().indexOf(crawlerUserAgent.toLowerCase()) !== -1
       );
