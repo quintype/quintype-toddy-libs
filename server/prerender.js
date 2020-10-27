@@ -2,9 +2,6 @@ const { cache } = require("ejs");
 var request = require("request"),
   url = require("url"),
   zlib = require("zlib");
-const {
-  addPrerenderCacheHeadersToResult,
-} = require("./handlers/prerender-cdn-caching");
 
 var prerender = (module.exports = function (req, res, next) {
   if (!prerender.shouldShowPrerenderedPage(req)) return next();
@@ -28,6 +25,9 @@ var prerender = (module.exports = function (req, res, next) {
         });
         return res.end(cachedRender.body || "");
       }
+    } else {
+      console.log("here error !!!!", err);
+      console.log("here cachedRender !!!!", cachedRender);
     }
 
     prerender.getPrerenderedPageResponse(req, function (
@@ -37,11 +37,12 @@ var prerender = (module.exports = function (req, res, next) {
       prerender.afterRenderFn(err, req, prerenderedResponse);
 
       if (prerenderedResponse) {
-        const cacheControlHeader = addPrerenderCacheHeadersToResult([
-          "prerenderKey",
-        ]);
-        const sam = { ...cacheControlHeader, ...prerenderedResponse.headers };
-        res.writeHead(prerenderedResponse.statusCode, sam);
+        const cacheHeader = {
+          "Cache-Control":
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
+        };
+        const header = { ...cacheHeader, ...prerenderedResponse.headers };
+        res.writeHead(prerenderedResponse.statusCode, header);
         return res.end(prerenderedResponse.body);
       } else {
         next(err);
@@ -227,7 +228,7 @@ prerender.getPrerenderedPageResponse = function (req, callback) {
   }
   (options.headers["Content-Type"] = "text/html"),
     (options.headers["Cache-Control"] =
-      "public,max-age=10,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"),
+      "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400"),
     (options.headers["User-Agent"] = req.headers["user-agent"]);
   options.headers["Accept-Encoding"] = "gzip";
   if (this.prerenderToken || process.env.PRERENDER_TOKEN) {
