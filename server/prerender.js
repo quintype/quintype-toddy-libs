@@ -5,7 +5,6 @@ var request = require("request"),
 
 var prerender = (module.exports = function (req, res, next) {
   if (!prerender.shouldShowPrerenderedPage(req)) return next();
-
   prerender.beforeRenderFn(req, function (err, cachedRender) {
     if (!err && cachedRender) {
       if (typeof cachedRender == "string") {
@@ -25,9 +24,6 @@ var prerender = (module.exports = function (req, res, next) {
         });
         return res.end(cachedRender.body || "");
       }
-    } else {
-      console.log("here error !!!!", err);
-      console.log("here cachedRender !!!!", cachedRender);
     }
 
     prerender.getPrerenderedPageResponse(req, function (
@@ -85,6 +81,9 @@ prerender.crawlerUserAgents = [
   "Bitrix link preview",
   "XING-contenttabreceiver",
   "Chrome-Lighthouse",
+  "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+  "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/W.X.Y.Z‡ Safari/537.36",
+  "Googlebot/2.1 (+http://www.google.com/bot.html)",
 ];
 
 prerender.extensionsToIgnore = [
@@ -146,7 +145,6 @@ prerender.shouldShowPrerenderedPage = function (req) {
   var userAgent = req.headers["user-agent"],
     bufferAgent = req.headers["x-bufferbot"],
     isRequestingPrerenderedPage = false;
-
   if (!userAgent) return false;
   if (req.method != "GET" && req.method != "HEAD") return false;
   if (req.headers && req.headers["x-prerender"]) return false;
@@ -159,6 +157,12 @@ prerender.shouldShowPrerenderedPage = function (req) {
   //if it is a bot...show prerendered page
   if (
     prerender.crawlerUserAgents.some(function (crawlerUserAgent) {
+      console.log("crawlerUserAgent", crawlerUserAgent.toLowerCase());
+      console.log("user agent", userAgent.toLowerCase());
+      console.log(
+        "here index check",
+        userAgent.toLowerCase().indexOf(crawlerUserAgent.toLowerCase())
+      );
       return (
         userAgent.toLowerCase().indexOf(crawlerUserAgent.toLowerCase()) !== -1
       );
@@ -172,12 +176,19 @@ prerender.shouldShowPrerenderedPage = function (req) {
   //if it is a bot and is requesting a resource...dont prerender
   if (
     prerender.extensionsToIgnore.some(function (extension) {
+      console.log(
+        "extensionsToIgnore index",
+        req.url.toLowerCase().indexOf(extension)
+      );
+      console.log("extensionsToIgnore", extension);
+      console.log("req url", req.req.url.toLowerCase());
       return req.url.toLowerCase().indexOf(extension) !== -1;
     })
   )
     return false;
 
   //if it is a bot and not requesting a resource and is not whitelisted...dont prerender
+  console.log("here come whitelisted domain", Array.isArray(this.whitelist));
   if (
     Array.isArray(this.whitelist) &&
     this.whitelist.every(function (whitelisted) {
