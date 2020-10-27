@@ -103,6 +103,7 @@ prerender.crawlerUserAgents = [
   "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/W.X.Y.Z‡ Safari/537.36",
   "Googlebot/2.1 (+http://www.google.com/bot.html)",
   "mozilla/5.0 (macintosh; intel mac os x 10_15_6) applewebkit/537.36 (khtml, like gecko) chrome/85.0.4183.121 safari/537.36",
+  "curl/7.54.0"
 ];
 
 prerender.extensionsToIgnore = [
