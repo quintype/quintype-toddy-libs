@@ -142,11 +142,8 @@ prerender.shouldShowPrerenderedPage = function (req) {
   var userAgent = req.headers["user-agent"],
     bufferAgent = req.headers["x-bufferbot"],
     isRequestingPrerenderedPage = false;
-  console.log("user agent", userAgent);
   if (!userAgent) return false;
-  console.log("req method", req.method);
   if (req.method != "GET" && req.method != "HEAD") return false;
-  console.log("req headers", req.headers);
   if (req.headers && req.headers["x-prerender"]) return false;
 
   //if it contains _escaped_fragment_, show prerendered page
@@ -157,6 +154,12 @@ prerender.shouldShowPrerenderedPage = function (req) {
   //if it is a bot...show prerendered page
   if (
     prerender.crawlerUserAgents.some(function (crawlerUserAgent) {
+      console.log("crawlerUserAgent", crawlerUserAgent.toLowerCase());
+      console.log("user agent", userAgent.toLowerCase());
+      console.log(
+        "here index check",
+        userAgent.toLowerCase().indexOf(crawlerUserAgent.toLowerCase())
+      );
       return (
         userAgent.toLowerCase().indexOf(crawlerUserAgent.toLowerCase()) !== -1
       );
@@ -170,6 +173,12 @@ prerender.shouldShowPrerenderedPage = function (req) {
   //if it is a bot and is requesting a resource...dont prerender
   if (
     prerender.extensionsToIgnore.some(function (extension) {
+      console.log(
+        "extensionsToIgnore index",
+        req.url.toLowerCase().indexOf(extension)
+      );
+      console.log("extensionsToIgnore", extension);
+      console.log("req url", req.req.url.toLowerCase());
       return req.url.toLowerCase().indexOf(extension) !== -1;
     })
   )
