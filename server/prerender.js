@@ -158,7 +158,7 @@ prerender.shouldShowPrerenderedPage = function (req) {
   if (
     prerender.crawlerUserAgents.some(function (crawlerUserAgent) {
       console.log("crawlerUserAgent", crawlerUserAgent.toLowerCase());
-      console.log("user agent", userAgent.toLowerCase());
+      console.log("user agent", userAgent.toLowerCase(), "new publish req");
       console.log(
         "here index check",
         userAgent.toLowerCase().indexOf(crawlerUserAgent.toLowerCase())
