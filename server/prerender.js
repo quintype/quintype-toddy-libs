@@ -4,25 +4,41 @@ var request = require("request"),
   zlib = require("zlib");
 
 var prerender = (module.exports = function (req, res, next) {
-  console.log("before shouldShowPrerender");
   if (!prerender.shouldShowPrerenderedPage(req)) return next();
-  console.log("after shouldShowPrerender");
   prerender.beforeRenderFn(req, function (err, cachedRender) {
     if (!err && cachedRender) {
       if (typeof cachedRender == "string") {
         res.writeHead(200, {
           "Content-Type": "text/html",
+          "Cache-Control":
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
         });
         res.writeHead(400, {
           "Content-Type": "text/html",
+          "Cache-Control":
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
+        });
+        res.writeHead(403, {
+          "Content-Type": "text/html",
+          "Cache-Control":
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
         });
         return res.end(cachedRender);
       } else if (typeof cachedRender == "object") {
         res.writeHead(cachedRender.status || 200, {
           "Content-Type": "text/html",
+          "Cache-Control":
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
         });
         res.writeHead(400, {
           "Content-Type": "text/html",
+          "Cache-Control":
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
+        });
+        res.writeHead(403, {
+          "Content-Type": "text/html",
+          "Cache-Control":
+            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
         });
         return res.end(cachedRender.body || "");
       }
@@ -33,7 +49,7 @@ var prerender = (module.exports = function (req, res, next) {
       prerenderedResponse
     ) {
       prerender.afterRenderFn(err, req, prerenderedResponse);
-
+      console.log("here prerenderedResponse", prerenderedResponse);
       if (prerenderedResponse) {
         const cacheHeader = {
           "Cache-Control":
