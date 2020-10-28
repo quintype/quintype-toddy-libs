@@ -11,26 +11,18 @@ var prerender = (module.exports = function (req, res, next) {
       console.log("cachedRender after check", cachedRender);
       if (typeof cachedRender == "string") {
         res.writeHead(200, {
-          "Content-Type": "text/html",
-          "Cache-Control":
-            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
+          "Content-Type": "text/html"
         });
         res.writeHead(400, {
-          "Content-Type": "text/html",
-          "Cache-Control":
-            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
+          "Content-Type": "text/html"
         });
         return res.end(cachedRender);
       } else if (typeof cachedRender == "object") {
         res.writeHead(cachedRender.status || 200, {
-          "Content-Type": "text/html",
-          "Cache-Control":
-            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
+          "Content-Type": "text/html"
         });
         res.writeHead(400, {
-          "Content-Type": "text/html",
-          "Cache-Control":
-            "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400",
+          "Content-Type": "text/html"
         });
         return res.end(cachedRender.body || "");
       }
@@ -44,7 +36,8 @@ var prerender = (module.exports = function (req, res, next) {
     ) {
       prerender.afterRenderFn(err, req, prerenderedResponse);
       if (prerenderedResponse) {
-        const header = { ...prerenderedResponse.headers };
+        const testThis = { "Cache-Control": "public,max-age=15,s-maxage=300,stale-while-revalidate=1000,stale-if-error=14400" }
+        const header = { ...prerenderedResponse.headers, ...testThis };
         res.writeHead(prerenderedResponse.statusCode, header);
         return res.end(prerenderedResponse.body);
       } else {
@@ -237,7 +230,7 @@ prerender.getPrerenderedPageResponse = function (req, callback) {
   }
   (options.headers["Content-Type"] = "text/html"),
     (options.headers["Cache-Control"] =
-      "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400"),
+      "public,max-age=15,s-maxage=300,stale-while-revalidate=1000,stale-if-error=14400"),
     (options.headers["User-Agent"] = req.headers["user-agent"]);
   options.headers["Accept-Encoding"] = "gzip";
   if (this.prerenderToken || process.env.PRERENDER_TOKEN) {
