@@ -16,6 +16,7 @@ const Promise = require("bluebird");
 const { getDefaultState, createBasicStore } = require("./create-store");
 const { customUrlToCacheKey } = require("../caching");
 const { addLightPageHeaders } = require("../impl/light-page-impl");
+const { getRedirectUrl } = require("../redirect-url-helper");
 const ABORT_HANDLER = "__ABORT__";
 function abortHandler() {
   return Promise.resolve({ pageType: ABORT_HANDLER, [ABORT_HANDLER]: true });
@@ -259,7 +260,6 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         client,
         logError,
         host: req.hostname,
-        logError,
         otherParams: req.query,
         domainSlug,
       }
@@ -420,6 +420,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     domainSlug,
     cdnProvider,
     lightPages,
+    redirectUrls,
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -493,6 +494,13 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
           subPageType: store.getState().qt.subPageType,
         })
       );
+  }
+
+  if (
+    typeof redirectUrls === "function" ||
+    (redirectUrls && Object.keys(redirectUrls).length > 0)
+  ) {
+    getRedirectUrl(req, res, next, { redirectUrls, config });
   }
 
   return loadDataForIsomorphicRoute(

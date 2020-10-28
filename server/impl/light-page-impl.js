@@ -1,6 +1,11 @@
 const _ = require("lodash");
 
-function addLightPageHeaders(result, lightPages, { config, res, client, req }) {
+function addLightPageHeaders(result, lightPages, {
+  config,
+  res,
+  client,
+  req
+}) {
   const isAmpSupported = _.get(
     result,
     ["data", "story", "is-amp-supported"],
@@ -20,4 +25,6 @@ function addLightPageHeaders(result, lightPages, { config, res, client, req }) {
     );
 }
 
-module.exports = { addLightPageHeaders };
+module.exports = {
+  addLightPageHeaders
+};

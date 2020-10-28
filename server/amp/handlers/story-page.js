@@ -1,45 +1,24 @@
 const urlLib = require("url");
 const set = require("lodash/set");
-const { Story, AmpConfig } = require("../impl/api-client-impl");
-const { addCacheHeadersToResult } = require("./cdn-caching");
-const { storyToCacheKey } = require("../caching");
-const { InfiniteScrollAmp, setCorsHeaders } = require("../amp-helpers");
+const get = require("lodash/get");
+const { Story, AmpConfig } = require("../../impl/api-client-impl");
+const {
+  getSeoInstance,
+  InfiniteScrollAmp,
+  optimize,
+  getDomainSpecificOpts,
+} = require("../helpers");
+const { storyToCacheKey } = require("../../caching");
+const { addCacheHeadersToResult } = require("../../handlers/cdn-caching");
 
-function getSeoInstance(seo, config, pageType = "") {
-  return typeof seo === "function" ? seo(config, pageType) : seo;
-}
-
-exports.handleInfiniteScrollRequest = async function handleInfiniteScrollRequest(
-  req,
-  res,
-  next,
-  { client, config }
-) {
-  const ampConfig = await config.memoizeAsync(
-    "amp-config",
-    async () => await AmpConfig.getAmpConfig(client)
-  );
-
-  const infiniteScrollAmp = new InfiniteScrollAmp({
-    ampConfig,
-    publisherConfig: config,
-    client,
-    queryParams: req.query,
-  });
-  const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 5 }); // itemsTaken has to match with itemsToTake in getInitialInlineConfig method
-  if (jsonResponse instanceof Error) return next(jsonResponse);
-  res.set("Content-Type", "application/json; charset=utf-8");
-  setCorsHeaders({ req, res, next, publisherConfig: config });
-  if (!res.headersSent) return res.send(jsonResponse);
-};
-
-exports.handleAmpRequest = async function handleAmpRequest(
+async function ampStoryPageHandler(
   req,
   res,
   next,
   {
     client,
     config,
+    domainSlug,
     seo,
     cdnProvider = null,
     ampLibrary = require("@quintype/amp"),
@@ -47,6 +26,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
   }
 ) {
   try {
+    const domainSpecificOpts = getDomainSpecificOpts(opts, domainSlug);
     const url = urlLib.parse(req.url, true);
     const { ampifyStory } = ampLibrary;
     // eslint-disable-next-line no-return-await
@@ -65,16 +45,25 @@ exports.handleAmpRequest = async function handleAmpRequest(
         ampConfig["related-collection-id"]
       );
     if (relatedStoriesCollection) {
+      const storiesToTake = get(
+        domainSpecificOpts,
+        ["featureConfig", "relatedStories", "storiesToTake"],
+        5
+      );
       relatedStories = relatedStoriesCollection.items
         .filter(
           (item) =>
             item.type === "story" && item.id !== story["story-content-id"]
         )
-        .slice(0, 5)
+        .slice(0, storiesToTake)
         .map((item) => item.story);
     }
     if (relatedStories.length) {
-      set(opts, ["featureConfig", "relatedStories", "stories"], relatedStories);
+      set(
+        domainSpecificOpts,
+        ["featureConfig", "relatedStories", "stories"],
+        relatedStories
+      );
     }
 
     if (
@@ -109,7 +98,7 @@ exports.handleAmpRequest = async function handleAmpRequest(
       return next(infiniteScrollInlineConfig);
     if (infiniteScrollInlineConfig) {
       set(
-        opts,
+        domainSpecificOpts,
         ["featureConfig", "infiniteScroll", "infiniteScrollInlineConfig"],
         infiniteScrollInlineConfig
       );
@@ -121,21 +110,24 @@ exports.handleAmpRequest = async function handleAmpRequest(
       ampConfig: ampConfig.ampConfig,
       relatedStories,
       client,
-      opts,
+      opts: { ...domainSpecificOpts, domainSlug },
       seo: seoTags ? seoTags.toString() : "",
       infiniteScrollInlineConfig,
     });
     if (ampHtml instanceof Error) return next(ampHtml);
-    res.set("Content-Type", "text/html");
+    const optimizedAmpHtml = await optimize(ampHtml);
 
+    res.set("Content-Type", "text/html");
     addCacheHeadersToResult(
       res,
       storyToCacheKey(config["publisher-id"], story),
       cdnProvider
     );
 
-    return res.send(ampHtml);
+    return res.send(optimizedAmpHtml);
   } catch (e) {
     return next(e);
   }
-};
+}
+
+module.exports = { ampStoryPageHandler };

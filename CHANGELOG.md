@@ -2,6 +2,123 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [4.3.0](https://github.com/quintype/quintype-node-framework/compare/v4.2.8...v4.3.0) (2020-10-13)
+
+
+### Features
+
+* **amp:** AMP Subscriptions ([768d65d](https://github.com/quintype/quintype-node-framework/commit/768d65d))
+
+
+
+## [4.2.8](https://github.com/quintype/quintype-node-framework/compare/v4.2.7...v4.2.8) (2020-10-12)
+
+
+### Bug Fixes
+
+* **redirectUrls:** Pass config to redirect urls function ([#177](https://github.com/quintype/quintype-node-framework/issues/177)) ([8620962](https://github.com/quintype/quintype-node-framework/commit/8620962))
+
+
+
+## [4.2.7](https://github.com/quintype/quintype-node-framework/compare/v4.2.6...v4.2.7) (2020-10-12)
+
+
+### Bug Fixes
+
+* **amp:** pass only domain specific opts to amp lib ([#175](https://github.com/quintype/quintype-node-framework/issues/175)) ([2d01fd6](https://github.com/quintype/quintype-node-framework/commit/2d01fd6))
+
+
+
+## [4.2.6](https://github.com/quintype/quintype-node-framework/compare/v4.2.5...v4.2.6) (2020-10-06)
+
+
+### Bug Fixes
+
+* **amp:** bump amplib to take header backgroundColor fix ([#173](https://github.com/quintype/quintype-node-framework/issues/173)) ([8bebc54](https://github.com/quintype/quintype-node-framework/commit/8bebc54))
+
+
+
+## [4.2.5](https://github.com/quintype/quintype-node-framework/compare/v4.2.4...v4.2.5) (2020-10-06)
+
+
+### Bug Fixes
+
+* **amp:** update amplib to get heroimage enlarge SEO fix ([#172](https://github.com/quintype/quintype-node-framework/issues/172)) ([ccd666c](https://github.com/quintype/quintype-node-framework/commit/ccd666c))
+
+
+
+## [4.2.4](https://github.com/quintype/quintype-node-framework/compare/v4.2.3...v4.2.4) (2020-09-23)
+
+
+### Bug Fixes
+
+* **amp:** bump amplib to take heroimage optimization ([2d6e610](https://github.com/quintype/quintype-node-framework/commit/2d6e610))
+
+
+
+## [4.2.3](https://github.com/quintype/quintype-node-framework/compare/v4.2.2...v4.2.3) (2020-09-22)
+
+
+### Bug Fixes
+
+* **amp:** hero image smaller than recommended size ([#168](https://github.com/quintype/quintype-node-framework/issues/168)) ([4a85c2e](https://github.com/quintype/quintype-node-framework/commit/4a85c2e))
+
+
+
+## [4.2.2](https://github.com/quintype/quintype-node-framework/compare/v4.2.1...v4.2.2) (2020-09-21)
+
+
+
+## [4.2.1](https://github.com/quintype/quintype-node-framework/compare/v4.2.0...v4.2.1) (2020-09-07)
+
+
+### Bug Fixes
+
+* **amp:** fix for barandbench prod issue ([#165](https://github.com/quintype/quintype-node-framework/issues/165)) ([3d42069](https://github.com/quintype/quintype-node-framework/commit/3d42069))
+
+
+
+# [4.2.0](https://github.com/quintype/quintype-node-framework/compare/v4.0.14...v4.2.0) (2020-09-04)
+
+
+### Bug Fixes
+
+* **amp:** accept html lang tag from featureconfig ([#161](https://github.com/quintype/quintype-node-framework/issues/161)) ([cdd19a5](https://github.com/quintype/quintype-node-framework/commit/cdd19a5))
+
+
+### Features
+
+* **Extend config passing configWrapper:** Wrap config with passed configWrapper ([#153](https://github.com/quintype/quintype-node-framework/issues/153)) ([9b98611](https://github.com/quintype/quintype-node-framework/commit/9b98611))
+
+
+
+## [4.0.15](https://github.com/quintype/quintype-node-framework/compare/v4.0.14...v4.0.15) (2020-09-04)
+
+
+### Bug Fixes
+
+* **amp:** accept html lang tag from featureconfig ([#161](https://github.com/quintype/quintype-node-framework/issues/161)) ([cdd19a5](https://github.com/quintype/quintype-node-framework/commit/cdd19a5))
+
+
+
+## [4.0.14](https://github.com/quintype/quintype-node-framework/compare/v4.0.11...v4.0.14) (2020-08-28)
+
+
+### Bug Fixes
+
+* **amp:** FE can now customize number of related stories using amp fe… ([#158](https://github.com/quintype/quintype-node-framework/issues/158)) ([e7a936f](https://github.com/quintype/quintype-node-framework/commit/e7a936f))
+
+
+
+## [4.0.12](https://github.com/quintype/quintype-node-framework/compare/v4.0.11...v4.0.12) (2020-08-27)
+
+
+### Bug Fixes
+
+* **amp:** FE can now customize number of related stories using amp fe… ([#158](https://github.com/quintype/quintype-node-framework/issues/158)) ([e7a936f](https://github.com/quintype/quintype-node-framework/commit/e7a936f))
+
+
+
 ## [4.0.11](https://github.com/quintype/quintype-node-framework/compare/v4.0.10...v4.0.11) (2020-08-26)
 
 
