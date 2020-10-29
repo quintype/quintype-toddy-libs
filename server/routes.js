@@ -32,8 +32,8 @@ const rp = require("request-promise");
 const bodyParser = require("body-parser");
 const get = require("lodash/get");
 const { URL } = require("url");
+const prerender = require("./prerender");
 
-const prerender = require("@quintype/prerender-node");
 
 /**
  * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
