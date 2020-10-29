@@ -186,7 +186,7 @@ describe("Isomorphic Handler", function () {
       (pageType, params, config, client) => {
         throw "exception";
       },
-      [{ pageType: "home-page", path: "/", exact: true }],
+      [{ pageType: "home-page" }],
       {
         loadErrorData: (err, config) => ({
           httpStatusCode: err.httpStatusCode || 500,
