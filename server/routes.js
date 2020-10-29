@@ -32,6 +32,7 @@ const rp = require("request-promise");
 const bodyParser = require("body-parser");
 const get = require("lodash/get");
 const { URL } = require("url");
+const prerender = require("@quintype/prerender-node");
 
 /**
  * *upstreamQuintypeRoutes* connects various routes directly to the upstream API server.
@@ -302,6 +303,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     renderServiceWorker = renderServiceWorkerFn,
     publisherConfig = require("./publisher-config"),
     redirectUrls = [],
+    prerenderServiceUrl = "",
   }
 ) {
   const withConfig = withConfigPartial(
@@ -318,6 +320,25 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     loadErrorData,
     1
   );
+
+  if (prerenderServiceUrl) {
+    app.use((req, res, next) => {
+      if (req.query.prerender) {
+        try {
+          // eslint-disable-next-line global-require
+          prerender.set("prerenderServiceUrl", prerenderServiceUrl)(
+            req,
+            res,
+            next
+          );
+        } catch (e) {
+          logError(e);
+        }
+      } else {
+        next();
+      }
+    });
+  }
 
   if (serviceWorkerPaths.length > 0) {
     app.get(
