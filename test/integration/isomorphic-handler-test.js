@@ -186,7 +186,7 @@ describe("Isomorphic Handler", function () {
       (pageType, params, config, client) => {
         throw "exception";
       },
-      [{ pageType: "home-page" }],
+      [{ pageType: "home-page", path: "/" }],
       {
         loadErrorData: (err, config) => ({
           httpStatusCode: err.httpStatusCode || 500,
@@ -225,62 +225,6 @@ describe("Isomorphic Handler", function () {
     );
 
     supertest(app).get("/").expect("Content-Type", /html/).expect(500, done);
-  });
-
-  describe("Prerender server", function () {
-    const newApp = express();
-    const newServer = newApp.listen(4000);
-
-    newApp.get("/*", (req, res) => {
-      return res.status("200").send("Prerender");
-    });
-
-    const app = createApp(
-      (pageType, params, config, client) =>
-        Promise.resolve({ pageType, data: { text: "foobar" } }),
-      [{ pageType: "home-page", path: "/" }],
-      {
-        prerenderServiceUrl: "http://localhost:4000",
-      }
-    );
-
-    it("Should run prerender servre if i pass any other server top of it", function (done) {
-      supertest(newServer)
-        .get("/http://localhost:3000")
-        .expect(200)
-        .then((res) => {
-          assert.equal("Prerender", res.text);
-        })
-        .then(done);
-    });
-
-    // TODO: Figure out how to test prerender response in framework (use token or start prerender server locally?)
-    // it("Should include prerender middleware if prerenderServiceUrl is available", async function () {
-    //   await supertest(app)
-    //     .get({
-    //       hostname: "/foo?preload=true",
-    //       headers: {
-    //         "User-Agent": "Googlebot/2.1 (+http://www.google.com/bot.html)",
-    //       },
-    //     })
-    //     .expect("Content-Type", /html/)
-    //     .expect("Vary", "Accept-Encoding")
-    //     .expect(200)
-    //     .then((res) => {
-    //       const response = JSON.parse(res.text);
-    //       const cacheControl = res.header["cache-control"];
-    //       const tag = res.header["cache-tag"];
-    //       assert.equal(
-    //         cacheControl,
-    //         "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600"
-    //       );
-    //       assert.equal(tag, "preRenderCache");
-    //       assert.equal(
-    //         '<div data-page-type="home-page">foobar</div>',
-    //         response.content
-    //       );
-    //     });
-    // });
   });
 
   it("Cache headers are set", function (done) {
@@ -329,6 +273,65 @@ describe("Isomorphic Handler", function () {
       }
     );
     supertest(app).get("/").expect(500, done);
+  });
+
+  describe("Prerender server", function () {
+    const newApp = express();
+    const newServer = newApp.listen(4000);
+
+    newApp.get("/*", (req, res) => {
+      return res.status("200").send("Prerender");
+    });
+
+    const app = createApp(
+      (pageType, params, config, client) =>
+        Promise.resolve({ pageType, data: { text: "foobar" } }),
+      [{ pageType: "home-page", path: "/" }],
+      {
+        prerenderServiceUrl: "http://localhost:4000",
+      }
+    );
+
+    it("Should run prerender servre if i pass any other server top of it", function (done) {
+      supertest(newServer)
+        .get("/http://localhost:3000")
+        .expect(200)
+        .then((res) => {
+          assert.equal("Prerender", res.text);
+        })
+        .then(done, done)
+        .finally(() => {
+          newServer.close();
+        });
+    });
+
+    // TODO: Figure out how to test prerender response in framework (use token or start prerender server locally?)
+    // it("Should include prerender middleware if prerenderServiceUrl is available", async function () {
+    //   await supertest(app)
+    //     .get({
+    //       hostname: "/foo?preload=true",
+    //       headers: {
+    //         "User-Agent": "Googlebot/2.1 (+http://www.google.com/bot.html)",
+    //       },
+    //     })
+    //     .expect("Content-Type", /html/)
+    //     .expect("Vary", "Accept-Encoding")
+    //     .expect(200)
+    //     .then((res) => {
+    //       const response = JSON.parse(res.text);
+    //       const cacheControl = res.header["cache-control"];
+    //       const tag = res.header["cache-tag"];
+    //       assert.equal(
+    //         cacheControl,
+    //         "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600"
+    //       );
+    //       assert.equal(tag, "preRenderCache");
+    //       assert.equal(
+    //         '<div data-page-type="home-page">foobar</div>',
+    //         response.content
+    //       );
+    //     });
+    // });
   });
 
   describe("aborting the data loader", () => {
