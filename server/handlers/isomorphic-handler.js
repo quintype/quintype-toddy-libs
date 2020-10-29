@@ -415,7 +415,6 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     logError,
     assetHelper,
     preloadJs,
-    preloadRouteData,
     domainSlug,
     cdnProvider,
     lightPages,
