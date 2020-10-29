@@ -234,19 +234,18 @@ prerender.getPrerenderedPageResponse = function (req, callback) {
       this.prerenderToken || process.env.PRERENDER_TOKEN;
   }
 
-  console.log("------------------------------", options.headers)
-
   request
     .get(options)
     .on("response", function (response) {
-      console.log("==========================", response.headers)
-      console.log("+++++++++++++++++++", response)
+      response.headers["Cache-Control"] = "public,max-age=15,s-maxage=60,stale-while-revalidate=1000,stale-if-error=14400";
       if (
         response.headers["content-encoding"] &&
         response.headers["content-encoding"] === "gzip"
       ) {
+        console.log("inside if------------", response)
         prerender.gunzipResponse(response, callback);
       } else {
+        console.log("inside else------------", response)
         prerender.plainResponse(response, callback);
       }
     })
@@ -272,6 +271,8 @@ prerender.gunzipResponse = function (response, callback) {
     callback(err);
   });
 
+  console.log("----------------inside gunzip", response.headers)
+
   response.pipe(gunzip);
 };
 
@@ -281,6 +282,7 @@ prerender.plainResponse = function (response, callback) {
   response.on("data", function (chunk) {
     content += chunk;
   });
+  console.log("----------------inside plain response", response.headers)
   response.on("end", function () {
     response.body = content;
     callback(null, response);
