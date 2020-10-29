@@ -239,6 +239,8 @@ prerender.getPrerenderedPageResponse = function (req, callback) {
   request
     .get(options)
     .on("response", function (response) {
+      console.log("==========================", response.headers)
+      console.log("+++++++++++++++++++", response)
       if (
         response.headers["content-encoding"] &&
         response.headers["content-encoding"] === "gzip"
