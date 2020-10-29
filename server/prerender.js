@@ -234,6 +234,8 @@ prerender.getPrerenderedPageResponse = function (req, callback) {
       this.prerenderToken || process.env.PRERENDER_TOKEN;
   }
 
+  console.log("------------------------------", options.headers)
+
   request
     .get(options)
     .on("response", function (response) {
