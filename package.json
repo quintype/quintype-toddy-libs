@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "4.2.5-preload-route-data.0",
+  "version": "4.3.0",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -27,7 +27,7 @@
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
     "@ampproject/toolbox-optimizer": "^2.6.0",
-    "@quintype/amp": "^2.1.14",
+    "@quintype/amp": "^2.1.20",
     "@quintype/backend": "^1.23.1",
     "@quintype/components": "^2.16.1",
     "@quintype/seo": "^1.38.1",
@@ -43,6 +43,7 @@
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.15",
     "morgan": "^1.9.1",
+    "path-to-regexp": "^6.2.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-redux": "^7.0.1",
