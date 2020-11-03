@@ -416,7 +416,6 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     logError,
     assetHelper,
     preloadJs,
-    preloadRouteData,
     domainSlug,
     cdnProvider,
     lightPages,
@@ -464,15 +463,6 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
       res.append(
         "Link",
         `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`
-      );
-    }
-
-    if (preloadRouteData) {
-      res.append(
-        "Link",
-        `</route-data.json?path=${encodeURIComponent(url.pathname)}${
-          url.search ? `&${url.search.substr(1)}` : ""
-        }>; rel=preload; as=fetch; crossorigin;`
       );
     }
 
