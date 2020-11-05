@@ -2,6 +2,41 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [4.5.0](https://github.com/quintype/quintype-node-framework/compare/v4.2.4...v4.5.0) (2020-11-03)
+
+
+### Bug Fixes
+
+* **amp:** bump amplib to take header backgroundColor fix ([#173](https://github.com/quintype/quintype-node-framework/issues/173)) ([8bebc54](https://github.com/quintype/quintype-node-framework/commit/8bebc54))
+* **amp:** pass only domain specific opts to amp lib ([#175](https://github.com/quintype/quintype-node-framework/issues/175)) ([2d01fd6](https://github.com/quintype/quintype-node-framework/commit/2d01fd6))
+* **amp:** update amplib to get heroimage enlarge SEO fix ([#172](https://github.com/quintype/quintype-node-framework/issues/172)) ([ccd666c](https://github.com/quintype/quintype-node-framework/commit/ccd666c))
+* **redirectUrls:** Pass config to redirect urls function ([#177](https://github.com/quintype/quintype-node-framework/issues/177)) ([8620962](https://github.com/quintype/quintype-node-framework/commit/8620962))
+
+
+### Features
+
+* Add content security policy ([#160](https://github.com/quintype/quintype-node-framework/issues/160)) ([f794efc](https://github.com/quintype/quintype-node-framework/commit/f794efc))
+* **amp:** AMP Subscriptions ([768d65d](https://github.com/quintype/quintype-node-framework/commit/768d65d))
+
+
+
+# [4.4.0](https://github.com/quintype/quintype-node-framework/compare/v4.2.4...v4.4.0) (2020-10-30)
+
+
+### Bug Fixes
+
+* **amp:** bump amplib to take header backgroundColor fix ([#173](https://github.com/quintype/quintype-node-framework/issues/173)) ([8bebc54](https://github.com/quintype/quintype-node-framework/commit/8bebc54))
+* **amp:** pass only domain specific opts to amp lib ([#175](https://github.com/quintype/quintype-node-framework/issues/175)) ([2d01fd6](https://github.com/quintype/quintype-node-framework/commit/2d01fd6))
+* **amp:** update amplib to get heroimage enlarge SEO fix ([#172](https://github.com/quintype/quintype-node-framework/issues/172)) ([ccd666c](https://github.com/quintype/quintype-node-framework/commit/ccd666c))
+* **redirectUrls:** Pass config to redirect urls function ([#177](https://github.com/quintype/quintype-node-framework/issues/177)) ([8620962](https://github.com/quintype/quintype-node-framework/commit/8620962))
+
+
+### Features
+
+* **amp:** AMP Subscriptions ([768d65d](https://github.com/quintype/quintype-node-framework/commit/768d65d))
+
+
+
 # [4.3.0](https://github.com/quintype/quintype-node-framework/compare/v4.2.8...v4.3.0) (2020-10-13)
 
 

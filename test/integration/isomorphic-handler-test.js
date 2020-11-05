@@ -130,26 +130,6 @@ describe("Isomorphic Handler", function () {
         .expect("Link", "</assets/app.js>; rel=preload; as=script;")
         .expect(200, done);
     });
-
-    it("preloads the route-data", function (done) {
-      const app = createApp(
-        (pageType, params, config, client) =>
-          Promise.resolve({ pageType, data: { text: "foobar" } }),
-        [{ pageType: "home-page", path: "/" }],
-        {
-          preloadRouteData: true,
-        }
-      );
-
-      supertest(app)
-        .get("/?foo=bar")
-        .expect("Content-Type", /html/)
-        .expect(
-          "Link",
-          "</route-data.json?path=%2F&foo=bar>; rel=preload; as=fetch; crossorigin;"
-        )
-        .expect(200, done);
-    });
   });
 
   it("Throws a 404 if the route is not matched", function (done) {
@@ -596,10 +576,25 @@ describe("Isomorphic Handler", function () {
           const edgeCacheControl = res.header["edge-control"];
           const cacheTag = res.header["cache-tag"];
           const edgeCacheTag = res.header["edge-cache-tag"];
+          const contentSecurityPolicy = res.header["content-security-policy"];
           assert.equal(cacheControl, "private,no-cache,no-store,max-age=0");
           assert.equal(edgeCacheControl, "private,no-cache,no-store,max-age=0");
           assert.equal(cacheTag, undefined);
           assert.equal(edgeCacheTag, undefined);
+          assert.equal(
+            contentSecurityPolicy,
+            `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
+              `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+              `style-src data: 'unsafe-inline' https: http: blob:;` +
+              `img-src data: https: http: blob:;` +
+              `font-src data: https: http:;` +
+              `connect-src https: wss: ws: http: blob:;` +
+              `media-src https: blob: http:;` +
+              `object-src https: http:;` +
+              `child-src https: data: blob: http:;` +
+              `form-action https: http:;` +
+              `block-all-mixed-content;`
+          );
         })
         .then(done);
     });
@@ -623,6 +618,7 @@ describe("Isomorphic Handler", function () {
           const cacheControl = res.header["cache-control"];
           const edgeCacheControl = res.header["edge-control"];
           const edgeCacheTag = res.header["edge-cache-tag"];
+          const contentSecurityPolicy = res.header["content-security-policy"];
           assert.equal(
             cacheControl,
             "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600"
@@ -632,6 +628,20 @@ describe("Isomorphic Handler", function () {
             "public,maxage=60,stale-while-revalidate=150,stale-if-error=3600"
           );
           assert.equal(edgeCacheTag, undefined);
+          assert.equal(
+            contentSecurityPolicy,
+            `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
+              `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+              `style-src data: 'unsafe-inline' https: http: blob:;` +
+              `img-src data: https: http: blob:;` +
+              `font-src data: https: http:;` +
+              `connect-src https: wss: ws: http: blob:;` +
+              `media-src https: blob: http:;` +
+              `object-src https: http:;` +
+              `child-src https: data: blob: http:;` +
+              `form-action https: http:;` +
+              `block-all-mixed-content;`
+          );
         })
         .then(done);
     });
@@ -655,6 +665,7 @@ describe("Isomorphic Handler", function () {
           const cacheControl = res.header["cache-control"];
           const edgeCacheControl = res.header["edge-control"];
           const edgeCacheTag = res.header["edge-cache-tag"];
+          const contentSecurityPolicy = res.header["content-security-policy"];
           assert.equal(
             cacheControl,
             "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
@@ -664,6 +675,20 @@ describe("Isomorphic Handler", function () {
             "public,maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
           );
           assert.equal(edgeCacheTag, "c/1/abcdefgh");
+          assert.equal(
+            contentSecurityPolicy,
+            `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
+              `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+              `style-src data: 'unsafe-inline' https: http: blob:;` +
+              `img-src data: https: http: blob:;` +
+              `font-src data: https: http:;` +
+              `connect-src https: wss: ws: http: blob:;` +
+              `media-src https: blob: http:;` +
+              `object-src https: http:;` +
+              `child-src https: data: blob: http:;` +
+              `form-action https: http:;` +
+              `block-all-mixed-content;`
+          );
         })
         .then(done);
     });
