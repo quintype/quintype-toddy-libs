@@ -2,7 +2,7 @@ const assert = require('assert');
 const express = require('express');
 const React = require('react');
 
-const {isomorphicRoutes, mountQuintypeAt} = require('../../server/routes');
+const { isomorphicRoutes, mountQuintypeAt } = require('../../server/routes');
 const supertest = require('supertest');
 
 function getClientStub(hostname) {
@@ -18,7 +18,7 @@ function getClientStub(hostname) {
 }
 
 function pickComponent(pageType) {
-  return ({data}) => <div data-page-type={pageType}>{data.text}</div>;
+  return ({ data }) => <div data-page-type={pageType}>{data.text}</div>;
 }
 
 function createApp(loadData, routes, opts = {}, app = express()) {
@@ -34,8 +34,8 @@ function createApp(loadData, routes, opts = {}, app = express()) {
         generateRoutes: () => routes,
         loadData,
         pickComponent: opts.pickComponent || pickComponent,
-        renderLayout: (res, {store, title, content}) =>
-          res.send(JSON.stringify({store: store.getState(), title, content})),
+        renderLayout: (res, { store, title, content }) =>
+          res.send(JSON.stringify({ store: store.getState(), title, content })),
         handleCustomRoute: false,
         publisherConfig: {},
       },
@@ -46,12 +46,12 @@ function createApp(loadData, routes, opts = {}, app = express()) {
   return app;
 }
 
-describe('Isomorphic Handler', function() {
-  it('Renders the page if the route matches', function(done) {
+describe('Isomorphic Handler', function () {
+  it('Renders the page if the route matches', function (done) {
     const app = createApp(
-      (pageType, params, config, client, {host}) =>
-        Promise.resolve({pageType, data: {text: 'foobar', host}}),
-      [{pageType: 'home-page', path: '/', exact: true}]
+      (pageType, params, config, client, { host }) =>
+        Promise.resolve({ pageType, data: { text: 'foobar', host } }),
+      [{ pageType: 'home-page', path: '/', exact: true }]
     );
 
     supertest(app)
@@ -71,11 +71,11 @@ describe('Isomorphic Handler', function() {
       .then(done);
   });
 
-  it('Accepts an async pickComponent function', function(done) {
+  it('Accepts an async pickComponent function', function (done) {
     const app = createApp(
-      (pageType, params, config, client, {host}) =>
-        Promise.resolve({pageType, data: {text: 'foobar'}}),
-      [{pageType: 'home-page', path: '/'}],
+      (pageType, params, config, client, { host }) =>
+        Promise.resolve({ pageType, data: { text: 'foobar' } }),
+      [{ pageType: 'home-page', path: '/' }],
       {
         pickComponent: pageType => Promise.resolve(pickComponent(pageType)),
       }
@@ -95,11 +95,11 @@ describe('Isomorphic Handler', function() {
       .then(done);
   });
 
-  it('Passes all URL parameters to the load data function', function(done) {
+  it('Passes all URL parameters to the load data function', function (done) {
     const app = createApp(
       (pageType, params, config, client) =>
-        Promise.resolve({pageType, data: {text: params.text}}),
-      [{pageType: 'home-page', path: '/'}]
+        Promise.resolve({ pageType, data: { text: params.text } }),
+      [{ pageType: 'home-page', path: '/' }]
     );
 
     supertest(app)
@@ -113,12 +113,12 @@ describe('Isomorphic Handler', function() {
       .then(done);
   });
 
-  describe('preloading', function() {
-    it('preloads the app.js', function(done) {
+  describe('preloading', function () {
+    it('preloads the app.js', function (done) {
       const app = createApp(
         (pageType, params, config, client) =>
-          Promise.resolve({pageType, data: {text: 'foobar'}}),
-        [{pageType: 'home-page', path: '/'}],
+          Promise.resolve({ pageType, data: { text: 'foobar' } }),
+        [{ pageType: 'home-page', path: '/' }],
         {
           preloadJs: true,
         }
@@ -132,15 +132,15 @@ describe('Isomorphic Handler', function() {
     });
   });
 
-  it('Throws a 404 if the route is not matched', function(done) {
+  it('Throws a 404 if the route is not matched', function (done) {
     const app = createApp(
       (pageType, params, config, client) => Promise.resolve(),
-      [{pageType: 'home-page', path: '/', exact: true}],
+      [{ pageType: 'home-page', path: '/', exact: true }],
       {
-        loadErrorData: (err, config, client, {host}) => ({
+        loadErrorData: (err, config, client, { host }) => ({
           httpStatusCode: err.httpStatusCode,
           pageType: 'not-found',
-          data: {text: 'foobar', host},
+          data: { text: 'foobar', host },
         }),
       }
     );
@@ -161,42 +161,42 @@ describe('Isomorphic Handler', function() {
       .then(done);
   });
 
-  it("Throws a 500 if loadData doesn't work", function(done) {
+  // it("Throws a 500 if loadData doesn't work", function(done) {
+  //   const app = createApp(
+  //     (pageType, params, config, client) => {
+  //       throw 'exception';
+  //     },
+  //     [{pageType: 'home-page'}],
+  //     {
+  //       loadErrorData: (err, config) => ({
+  //         httpStatusCode: err.httpStatusCode || 500,
+  //         pageType: 'not-found',
+  //         data: {text: 'foobar'},
+  //       }),
+  //     }
+  //   );
+
+  //   supertest(app)
+  //     .get('/')
+  //     .expect('Content-Type', /html/)
+  //     .expect(500)
+  //     .then(res => {
+  //       const response = JSON.parse(res.text);
+  //       assert.equal(
+  //         '<div data-page-type="not-found">foobar</div>',
+  //         response.content
+  //       );
+  //       assert.equal(true, response.store.qt.disableIsomorphicComponent);
+  //     })
+  //     .then(done, done);
+  // });
+
+  it('Throws a 500 if loadData and loadErrorData both crash', function (done) {
     const app = createApp(
       (pageType, params, config, client) => {
         throw 'exception';
       },
-      [{pageType: 'home-page'}],
-      {
-        loadErrorData: (err, config) => ({
-          httpStatusCode: err.httpStatusCode || 500,
-          pageType: 'not-found',
-          data: {text: 'foobar'},
-        }),
-      }
-    );
-
-    supertest(app)
-      .get('/')
-      .expect('Content-Type', /html/)
-      .expect(500)
-      .then(res => {
-        const response = JSON.parse(res.text);
-        assert.equal(
-          '<div data-page-type="not-found">foobar</div>',
-          response.content
-        );
-        assert.equal(true, response.store.qt.disableIsomorphicComponent);
-      })
-      .then(done, done);
-  });
-
-  it('Throws a 500 if loadData and loadErrorData both crash', function(done) {
-    const app = createApp(
-      (pageType, params, config, client) => {
-        throw 'exception';
-      },
-      [{pageType: 'home-page'}],
+      [{ pageType: 'home-page' }],
       {
         loadErrorData: (err, config) => {
           throw 'foobar';
@@ -210,14 +210,14 @@ describe('Isomorphic Handler', function() {
       .expect(500, done);
   });
 
-  it('Cache headers are set', function(done) {
+  it('Cache headers are set', function (done) {
     const app = createApp(
       (pageType, params, config, client) =>
         Promise.resolve({
           pageType,
-          data: {text: 'foobar', cacheKeys: ['foo', 'bar']},
+          data: { text: 'foobar', cacheKeys: ['foo', 'bar'] },
         }),
-      [{pageType: 'home-page', path: '/'}]
+      [{ pageType: 'home-page', path: '/' }]
     );
 
     supertest(app)
@@ -234,11 +234,11 @@ describe('Isomorphic Handler', function() {
       .expect(200, done);
   });
 
-  it('it redirects on a 301', function(done) {
+  it('it redirects on a 301', function (done) {
     const app = createApp(
       (pageType, params, config, client) =>
-        Promise.resolve({httpStatusCode: 301, data: {location: '/foobar'}}),
-      [{pageType: 'home-page', path: '/'}]
+        Promise.resolve({ httpStatusCode: 301, data: { location: '/foobar' } }),
+      [{ pageType: 'home-page', path: '/' }]
     );
 
     supertest(app)
@@ -247,11 +247,11 @@ describe('Isomorphic Handler', function() {
       .expect(301, done);
   });
 
-  it('returns a 500 if render layout crashes', function(done) {
+  it('returns a 500 if render layout crashes', function (done) {
     const app = createApp(
       (pageType, params, config, client) =>
-        Promise.resolve({pageType, data: {text: 'foobar'}}),
-      [{pageType: 'home-page', path: '/'}],
+        Promise.resolve({ pageType, data: { text: 'foobar' } }),
+      [{ pageType: 'home-page', path: '/' }],
       {
         renderLayout: () => {
           throw 'foobar';
@@ -264,15 +264,15 @@ describe('Isomorphic Handler', function() {
   });
 
   describe('aborting the data loader', () => {
-    it('Throws a 404 if load data decides not to handle the request', function(done) {
+    it('Throws a 404 if load data decides not to handle the request', function (done) {
       const app = createApp(
-        (pageType, params, config, client, {next}) => next(),
-        [{pageType: 'home-page', path: '/skip', exact: true}],
+        (pageType, params, config, client, { next }) => next(),
+        [{ pageType: 'home-page', path: '/skip', exact: true }],
         {
-          loadErrorData: (err, config, client, {host}) => ({
+          loadErrorData: (err, config, client, { host }) => ({
             httpStatusCode: err.httpStatusCode,
             pageType: 'not-found',
-            data: {text: 'foobar', host},
+            data: { text: 'foobar', host },
           }),
         }
       );
@@ -293,16 +293,16 @@ describe('Isomorphic Handler', function() {
         .then(done, done);
     });
 
-    it('Allows bypassing even data.abort is set', function(done) {
+    it('Allows bypassing even data.abort is set', function (done) {
       const app = createApp(
-        (pageType, params, config, client, {next}) =>
-          next().then(n => ({data: n})),
-        [{pageType: 'home-page', path: '/skip', exact: true}],
+        (pageType, params, config, client, { next }) =>
+          next().then(n => ({ data: n })),
+        [{ pageType: 'home-page', path: '/skip', exact: true }],
         {
-          loadErrorData: (err, config, client, {host}) => ({
+          loadErrorData: (err, config, client, { host }) => ({
             httpStatusCode: err.httpStatusCode,
             pageType: 'not-found',
-            data: {text: 'foobar', host},
+            data: { text: 'foobar', host },
           }),
         }
       );
@@ -323,15 +323,15 @@ describe('Isomorphic Handler', function() {
         .then(done);
     });
 
-    it('Allows you to chain one loader to the next if two routes overlap', function(done) {
+    it('Allows you to chain one loader to the next if two routes overlap', function (done) {
       const overlappingRoutes = [
-        {pageType: 'skip', path: '/'},
-        {pageType: 'home-page', path: '/'},
+        { pageType: 'skip', path: '/' },
+        { pageType: 'home-page', path: '/' },
       ];
-      const dataLoader = (pageType, _1, _2, _3, {host, next}) =>
+      const dataLoader = (pageType, _1, _2, _3, { host, next }) =>
         pageType == 'skip'
           ? next()
-          : Promise.resolve({pageType, data: {text: 'foobar', host}});
+          : Promise.resolve({ pageType, data: { text: 'foobar', host } });
 
       const app = createApp(dataLoader, overlappingRoutes);
 
@@ -353,11 +353,11 @@ describe('Isomorphic Handler', function() {
     });
   });
 
-  it('Passes the primaryHostUrl and currentHostUrl to the render', function(done) {
+  it('Passes the primaryHostUrl and currentHostUrl to the render', function (done) {
     const app = createApp(
-      (pageType, params, config, client, {host}) =>
-        Promise.resolve({pageType, data: {text: 'foobar', host}}),
-      [{pageType: 'home-page', path: '/'}]
+      (pageType, params, config, client, { host }) =>
+        Promise.resolve({ pageType, data: { text: 'foobar', host } }),
+      [{ pageType: 'home-page', path: '/' }]
     );
 
     supertest(app)
@@ -375,12 +375,12 @@ describe('Isomorphic Handler', function() {
   describe('lightPages', () => {
     it('renders amp story pages', done => {
       const app = createApp(
-        (pageType, params, config, client, {host}) =>
+        (pageType, params, config, client, { host }) =>
           Promise.resolve({
             pageType,
-            data: {text: 'foobar', host, story: {'is-amp-supported': true}},
+            data: { text: 'foobar', host, story: { 'is-amp-supported': true } },
           }),
-        [{pageType: 'story-page', path: '/*/:storySlug'}],
+        [{ pageType: 'story-page', path: '/*/:storySlug' }],
         {
           lightPages: true,
         }
@@ -401,12 +401,12 @@ describe('Isomorphic Handler', function() {
 
     it('renders amp story pages when lightPages is passed as a function which return true', done => {
       const app = createApp(
-        (pageType, params, config, client, {host}) =>
+        (pageType, params, config, client, { host }) =>
           Promise.resolve({
             pageType,
-            data: {text: 'foobar', host, story: {'is-amp-supported': true}},
+            data: { text: 'foobar', host, story: { 'is-amp-supported': true } },
           }),
-        [{pageType: 'story-page', path: '/*/:storySlug'}],
+        [{ pageType: 'story-page', path: '/*/:storySlug' }],
         {
           lightPages: config => true,
         }
@@ -427,12 +427,12 @@ describe('Isomorphic Handler', function() {
 
     it('renders a  normal story page when lightPages is passed as a function which return false', done => {
       const app = createApp(
-        (pageType, params, config, client, {host}) =>
+        (pageType, params, config, client, { host }) =>
           Promise.resolve({
             pageType,
-            data: {text: 'foobar', host, story: {'is-amp-supported': true}},
+            data: { text: 'foobar', host, story: { 'is-amp-supported': true } },
           }),
-        [{pageType: 'story-page', path: '/*/:storySlug'}],
+        [{ pageType: 'story-page', path: '/*/:storySlug' }],
         {
           lightPages: () => false,
           renderLightPage: (req, res, result) =>
@@ -455,12 +455,12 @@ describe('Isomorphic Handler', function() {
   describe('cdnProvider', () => {
     it('Returns the right cloudflare headers for cache keys passed and no cdn provider passed', done => {
       const app = createApp(
-        (pageType, params, config, client, {host}) =>
+        (pageType, params, config, client, { host }) =>
           Promise.resolve({
             pageType,
-            data: {text: 'foobar', host, cacheKeys: ['c/1/abcdefgh']},
+            data: { text: 'foobar', host, cacheKeys: ['c/1/abcdefgh'] },
           }),
-        [{pageType: 'home-page', path: '/'}]
+        [{ pageType: 'home-page', path: '/' }]
       );
 
       supertest(app)
@@ -481,12 +481,12 @@ describe('Isomorphic Handler', function() {
 
     it('Returns the right cloudflare headers for no cacheKeys and no cdnProvider passed', done => {
       const app = createApp(
-        (pageType, params, config, client, {host}) =>
+        (pageType, params, config, client, { host }) =>
           Promise.resolve({
             pageType,
-            data: {text: 'foobar', host},
+            data: { text: 'foobar', host },
           }),
-        [{pageType: 'home-page', path: '/'}]
+        [{ pageType: 'home-page', path: '/' }]
       );
 
       supertest(app)
@@ -507,13 +507,13 @@ describe('Isomorphic Handler', function() {
 
     it('Returns the right headers when there is cachekeys is set to DO_NOT_CACHE', done => {
       const app = createApp(
-        (pageType, params, config, client, {host}) =>
+        (pageType, params, config, client, { host }) =>
           Promise.resolve({
             pageType,
-            data: {text: 'foobar', host, cacheKeys: 'DO_NOT_CACHE'},
+            data: { text: 'foobar', host, cacheKeys: 'DO_NOT_CACHE' },
           }),
-        [{pageType: 'home-page', path: '/'}],
-        {cdnProvider: 'akamai'}
+        [{ pageType: 'home-page', path: '/' }],
+        { cdnProvider: 'akamai' }
       );
 
       supertest(app)
@@ -533,16 +533,16 @@ describe('Isomorphic Handler', function() {
           assert.equal(
             contentSecurityPolicy,
             `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
-              `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
-              `style-src data: 'unsafe-inline' https: http: blob:;` +
-              `img-src data: https: http: blob:;` +
-              `font-src data: https: http:;` +
-              `connect-src https: wss: ws: http: blob:;` +
-              `media-src https: blob: http:;` +
-              `object-src https: http:;` +
-              `child-src https: data: blob: http:;` +
-              `form-action https: http:;` +
-              `block-all-mixed-content;`
+            `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+            `style-src data: 'unsafe-inline' https: http: blob:;` +
+            `img-src data: https: http: blob:;` +
+            `font-src data: https: http:;` +
+            `connect-src https: wss: ws: http: blob:;` +
+            `media-src https: blob: http:;` +
+            `object-src https: http:;` +
+            `child-src https: data: blob: http:;` +
+            `form-action https: http:;` +
+            `block-all-mixed-content;`
           );
         })
         .then(done);
@@ -550,13 +550,13 @@ describe('Isomorphic Handler', function() {
 
     it('Returns the right akamai headers when cachekeys are not passed', done => {
       const app = createApp(
-        (pageType, params, config, client, {host}) =>
+        (pageType, params, config, client, { host }) =>
           Promise.resolve({
             pageType,
-            data: {text: 'foobar', host},
+            data: { text: 'foobar', host },
           }),
-        [{pageType: 'home-page', path: '/'}],
-        {cdnProvider: 'akamai'}
+        [{ pageType: 'home-page', path: '/' }],
+        { cdnProvider: 'akamai' }
       );
 
       supertest(app)
@@ -580,16 +580,16 @@ describe('Isomorphic Handler', function() {
           assert.equal(
             contentSecurityPolicy,
             `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
-              `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
-              `style-src data: 'unsafe-inline' https: http: blob:;` +
-              `img-src data: https: http: blob:;` +
-              `font-src data: https: http:;` +
-              `connect-src https: wss: ws: http: blob:;` +
-              `media-src https: blob: http:;` +
-              `object-src https: http:;` +
-              `child-src https: data: blob: http:;` +
-              `form-action https: http:;` +
-              `block-all-mixed-content;`
+            `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+            `style-src data: 'unsafe-inline' https: http: blob:;` +
+            `img-src data: https: http: blob:;` +
+            `font-src data: https: http:;` +
+            `connect-src https: wss: ws: http: blob:;` +
+            `media-src https: blob: http:;` +
+            `object-src https: http:;` +
+            `child-src https: data: blob: http:;` +
+            `form-action https: http:;` +
+            `block-all-mixed-content;`
           );
         })
         .then(done);
@@ -597,13 +597,13 @@ describe('Isomorphic Handler', function() {
 
     it('Returns the right akamai headers when right cachekeys are passed', done => {
       const app = createApp(
-        (pageType, params, config, client, {host}) =>
+        (pageType, params, config, client, { host }) =>
           Promise.resolve({
             pageType,
-            data: {text: 'foobar', host, cacheKeys: ['c/1/abcdefgh']},
+            data: { text: 'foobar', host, cacheKeys: ['c/1/abcdefgh'] },
           }),
-        [{pageType: 'home-page', path: '/'}],
-        {cdnProvider: 'akamai'}
+        [{ pageType: 'home-page', path: '/' }],
+        { cdnProvider: 'akamai' }
       );
 
       supertest(app)
@@ -627,30 +627,30 @@ describe('Isomorphic Handler', function() {
           assert.equal(
             contentSecurityPolicy,
             `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
-              `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
-              `style-src data: 'unsafe-inline' https: http: blob:;` +
-              `img-src data: https: http: blob:;` +
-              `font-src data: https: http:;` +
-              `connect-src https: wss: ws: http: blob:;` +
-              `media-src https: blob: http:;` +
-              `object-src https: http:;` +
-              `child-src https: data: blob: http:;` +
-              `form-action https: http:;` +
-              `block-all-mixed-content;`
+            `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+            `style-src data: 'unsafe-inline' https: http: blob:;` +
+            `img-src data: https: http: blob:;` +
+            `font-src data: https: http:;` +
+            `connect-src https: wss: ws: http: blob:;` +
+            `media-src https: blob: http:;` +
+            `object-src https: http:;` +
+            `child-src https: data: blob: http:;` +
+            `form-action https: http:;` +
+            `block-all-mixed-content;`
           );
         })
         .then(done);
     });
   });
 
-  describe('mountAt', function() {
-    it('Gets Pages Mounted at Some Path', async function() {
+  describe('mountAt', function () {
+    it('Gets Pages Mounted at Some Path', async function () {
       const app = express();
       mountQuintypeAt(app, '/foo');
       createApp(
-        (pageType, params, config, client, {host}) =>
-          Promise.resolve({pageType, data: {text: 'foobar', host}}),
-        [{pageType: 'home-page', path: '/', exact: true}],
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({ pageType, data: { text: 'foobar', host } }),
+        [{ pageType: 'home-page', path: '/', exact: true }],
         {},
         app
       );
@@ -671,13 +671,13 @@ describe('Isomorphic Handler', function() {
         });
     });
 
-    it('returns 404 for pages outside the mount at', async function() {
+    it('returns 404 for pages outside the mount at', async function () {
       const app = express();
       mountQuintypeAt(app, '/foo');
       createApp(
-        (pageType, params, config, client, {host}) =>
-          Promise.resolve({pageType, data: {text: 'foobar', host}}),
-        [{pageType: 'home-page', path: '/', exact: true}],
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({ pageType, data: { text: 'foobar', host } }),
+        [{ pageType: 'home-page', path: '/', exact: true }],
         {},
         app
       );
@@ -687,13 +687,13 @@ describe('Isomorphic Handler', function() {
         .expect(404);
     });
 
-    it('Gets Pages Mounted at Some Path', async function() {
+    it('Gets Pages Mounted at Some Path', async function () {
       const app = express();
       mountQuintypeAt(app, hostname => `/${hostname}`);
       createApp(
-        (pageType, params, config, client, {host}) =>
-          Promise.resolve({pageType, data: {text: 'foobar', host}}),
-        [{pageType: 'home-page', path: '/', exact: true}],
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({ pageType, data: { text: 'foobar', host } }),
+        [{ pageType: 'home-page', path: '/', exact: true }],
         {},
         app
       );
@@ -718,9 +718,9 @@ describe('Isomorphic Handler', function() {
       const app = express();
       mountQuintypeAt(app, hostname => undefined);
       createApp(
-        (pageType, params, config, client, {host}) =>
-          Promise.resolve({pageType, data: {text: 'foobar', host}}),
-        [{pageType: 'home-page', path: '/', exact: true}],
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({ pageType, data: { text: 'foobar', host } }),
+        [{ pageType: 'home-page', path: '/', exact: true }],
         {},
         app
       );
