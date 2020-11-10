@@ -178,11 +178,18 @@ function getClientStub(hostname) {
   };
 }
 
-function createApp(app = express()) {
+const getClientStubWithRelatedStories = (relatedStories) => (hostname) =>
+  Object.assign({}, getClientStub(hostname), {
+    getRelatedStories: () =>
+      Promise.resolve({ "related-stories": relatedStories }),
+  });
+
+function createApp(clientStub = getClientStub) {
+  const app = express();
   const ampLibrary = {};
   ampLibrary.ampifyStory = () => '<div data-page-type="home-page">foobar</div>';
   ampRoutes(app, {
-    getClient: getClientStub,
+    getClient: clientStub,
     publisherConfig: {},
     ampLibrary,
   });
@@ -233,5 +240,33 @@ describe("Amp infinite scroll handler", () => {
         assert.equal(expectedJson, response);
         return done();
       });
+  });
+});
+
+describe("Amp visual stories bookend handler", () => {
+  it("returns the bookend if there are related stories", function (done) {
+    const app = createApp(
+      getClientStubWithRelatedStories([{ headline: "foo" }])
+    );
+    supertest(app)
+      .get("/amp/api/v1/bookend.json")
+      .expect("Content-Type", /json/)
+      .expect("Cache-Control", /public/)
+      .expect(200)
+      .then((res) => {
+        const response = JSON.parse(res.text);
+        assert.equal("v1.0", response.bookendVersion);
+        assert.equal(3, response.components.length);
+        assert.equal("foo", response.components[1].title);
+      })
+      .then(() => done());
+  });
+  it("returns a 404 if there are no related stories", (done) => {
+    const app = createApp(getClientStubWithRelatedStories([]));
+    supertest(app)
+      .get("/amp/api/v1/bookend.json")
+      .expect("Content-Type", /json/)
+      .expect(404)
+      .then(() => done());
   });
 });
