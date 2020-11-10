@@ -53,7 +53,7 @@
     "winston": "3.2.1"
   },
   "devDependencies": {
-    "@quintype/build": "^3.10.3-webpack-arrow.1",
+    "@quintype/build": "^3.10.3-webpack-arrow.2",
     "babel-plugin-quintype-assets": "^1.1.1",
     "babel-plugin-react-css-modules": "^5.2.4",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
