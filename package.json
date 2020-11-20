@@ -28,7 +28,7 @@
   "dependencies": {
     "@ampproject/toolbox-optimizer": "^2.6.0",
     "@quintype/amp": "^2.1.20",
-    "@quintype/backend": "^1.23.2",
+    "@quintype/backend": "1.23.3-beta",
     "@quintype/components": "^2.16.1",
     "@quintype/seo": "^1.38.1",
     "atob": "^2.1.2",
