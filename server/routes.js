@@ -575,6 +575,7 @@ exports.ampRoutes = (app, opts = {}) => {
     ampStoryPageHandler,
     storyPageInfiniteScrollHandler,
     bookendHandler,
+    webStoriesHandler,
   } = require("./amp/handlers");
 
   getWithConfig(app, "/amp/story/*", ampStoryPageHandler, opts);
@@ -585,4 +586,5 @@ exports.ampRoutes = (app, opts = {}) => {
     opts
   );
   getWithConfig(app, "/amp/api/v1/bookend.json", bookendHandler, opts);
+  getWithConfig(app, "/ampstories/*", webStoriesHandler, {});
 };
