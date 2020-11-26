@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.5.5](https://github.com/quintype/quintype-node-framework/compare/v4.5.4...v4.5.5) (2020-11-26)
+
+
+### Bug Fixes
+
+* **amp:** bump amplib to take data-testid on infinite scroll separator ([0cfdfcb](https://github.com/quintype/quintype-node-framework/commit/0cfdfcb3011143bfbd0126b95e78092e41f694ad))
+
+
+
 ## [4.5.4](https://github.com/quintype/quintype-node-framework/compare/v4.5.3...v4.5.4) (2020-11-12)
 
 
