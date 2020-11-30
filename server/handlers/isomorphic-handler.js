@@ -281,9 +281,12 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
       res.status(statusCode < 500 ? 200 : 500);
       res.setHeader("Content-Type", "application/json");
       addCacheHeadersToResult(
-        res,
-        _.get(result, ["data", "cacheKeys"]),
-        cdnProvider
+        {
+          res: res,
+          cacheKeys: _.get(result, ["data", "cacheKeys"]),
+          cdnProvider: cdnProvider,
+          config: config
+        }
       );
       const seoInstance = getSeoInstance(seo, config, result.pageType);
       res.json(
@@ -291,10 +294,10 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
           appVersion,
           data: mobileApiEnabled
             ? chunkDataForMobile(
-                result.data,
-                mobileConfigFields,
-                result.pageType
-              )
+              result.data,
+              mobileConfigFields,
+              result.pageType
+            )
             : _.omit(result.data, ["cacheKeys"]),
           config: mobileApiEnabled
             ? chunkDataForMobile(result.config, mobileConfigFields, "config")
@@ -429,9 +432,12 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
 
     if (statusCode == 301 && result.data && result.data.location) {
       addCacheHeadersToResult(
-        res,
-        [customUrlToCacheKey(config["publisher-id"], "redirect")],
-        cdnProvider
+        {
+          res: res,
+          cacheKeys: [customUrlToCacheKey(config["publisher-id"], "redirect")],
+          cdnProvider: cdnProvider,
+          config: config
+        }
       );
       return res.redirect(301, result.data.location);
     }
@@ -454,9 +460,12 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
 
     res.status(statusCode);
     addCacheHeadersToResult(
-      res,
-      _.get(result, ["data", "cacheKeys"]),
-      cdnProvider
+      {
+        res: res,
+        cacheKeys: _.get(result, ["data", "cacheKeys"]),
+        cdnProvider: cdnProvider,
+        config: config
+      }
     );
 
     if (preloadJs) {
@@ -573,9 +582,12 @@ exports.handleStaticRoute = function handleStaticRoute(
 
       res.status(statusCode);
       addCacheHeadersToResult(
-        res,
-        _.get(result, ["data", "cacheKeys"], ["static"]),
-        cdnProvider
+        {
+          res: res,
+          cacheKeys: _.get(result, ["data", "cacheKeys"], ["static"]),
+          cdnProvider: cdnProvider,
+          config: config
+        }
       );
 
       return renderLayout(
@@ -585,11 +597,11 @@ exports.handleStaticRoute = function handleStaticRoute(
             config,
             title: seoInstance
               ? seoInstance.getTitle(
-                  config,
-                  result.pageType || match.pageType,
-                  result,
-                  { url }
-                )
+                config,
+                result.pageType || match.pageType,
+                result,
+                { url }
+              )
               : result.title,
             store,
             disableAjaxNavigation: true,

@@ -21,6 +21,8 @@ function pickComponent(pageType) {
   return ({ data }) => <div data-page-type={pageType}>{data.text}</div>;
 }
 
+const cdnProviderFunc = () => "akamai";
+
 function createApp(loadData, routes, opts = {}, app = express()) {
   isomorphicRoutes(
     app,
@@ -525,16 +527,16 @@ describe("Isomorphic Handler", function () {
           assert.equal(
             contentSecurityPolicy,
             `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
-              `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
-              `style-src data: 'unsafe-inline' https: http: blob:;` +
-              `img-src data: https: http: blob:;` +
-              `font-src data: https: http:;` +
-              `connect-src https: wss: ws: http: blob:;` +
-              `media-src https: blob: http:;` +
-              `object-src https: http:;` +
-              `child-src https: data: blob: http:;` +
-              `form-action https: http:;` +
-              `block-all-mixed-content;`
+            `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+            `style-src data: 'unsafe-inline' https: http: blob:;` +
+            `img-src data: https: http: blob:;` +
+            `font-src data: https: http:;` +
+            `connect-src https: wss: ws: http: blob:;` +
+            `media-src https: blob: http:;` +
+            `object-src https: http:;` +
+            `child-src https: data: blob: http:;` +
+            `form-action https: http:;` +
+            `block-all-mixed-content;`
           );
         })
         .then(done);
@@ -572,16 +574,16 @@ describe("Isomorphic Handler", function () {
           assert.equal(
             contentSecurityPolicy,
             `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
-              `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
-              `style-src data: 'unsafe-inline' https: http: blob:;` +
-              `img-src data: https: http: blob:;` +
-              `font-src data: https: http:;` +
-              `connect-src https: wss: ws: http: blob:;` +
-              `media-src https: blob: http:;` +
-              `object-src https: http:;` +
-              `child-src https: data: blob: http:;` +
-              `form-action https: http:;` +
-              `block-all-mixed-content;`
+            `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+            `style-src data: 'unsafe-inline' https: http: blob:;` +
+            `img-src data: https: http: blob:;` +
+            `font-src data: https: http:;` +
+            `connect-src https: wss: ws: http: blob:;` +
+            `media-src https: blob: http:;` +
+            `object-src https: http:;` +
+            `child-src https: data: blob: http:;` +
+            `form-action https: http:;` +
+            `block-all-mixed-content;`
           );
         })
         .then(done);
@@ -619,16 +621,63 @@ describe("Isomorphic Handler", function () {
           assert.equal(
             contentSecurityPolicy,
             `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
-              `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
-              `style-src data: 'unsafe-inline' https: http: blob:;` +
-              `img-src data: https: http: blob:;` +
-              `font-src data: https: http:;` +
-              `connect-src https: wss: ws: http: blob:;` +
-              `media-src https: blob: http:;` +
-              `object-src https: http:;` +
-              `child-src https: data: blob: http:;` +
-              `form-action https: http:;` +
-              `block-all-mixed-content;`
+            `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+            `style-src data: 'unsafe-inline' https: http: blob:;` +
+            `img-src data: https: http: blob:;` +
+            `font-src data: https: http:;` +
+            `connect-src https: wss: ws: http: blob:;` +
+            `media-src https: blob: http:;` +
+            `object-src https: http:;` +
+            `child-src https: data: blob: http:;` +
+            `form-action https: http:;` +
+            `block-all-mixed-content;`
+          );
+        })
+        .then(done);
+    });
+
+    it("Returns the right cache headers when cdnProvider is of type function", (done) => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host, cacheKeys: ["c/1/abcdefgh"] },
+          }),
+        [{ pageType: "home-page", path: "/" }],
+        { cdnProvider: cdnProviderFunc() }
+      );
+
+      supertest(app)
+        .get("/")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then((res) => {
+          const cacheControl = res.header["cache-control"];
+          const edgeCacheControl = res.header["edge-control"];
+          const edgeCacheTag = res.header["edge-cache-tag"];
+          const contentSecurityPolicy = res.header["content-security-policy"];
+          assert.equal(
+            cacheControl,
+            "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
+          );
+          assert.equal(
+            edgeCacheControl,
+            "public,maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
+          );
+          assert.equal(edgeCacheTag, "c/1/abcdefgh");
+          assert.equal(
+            contentSecurityPolicy,
+            `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
+            `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+            `style-src data: 'unsafe-inline' https: http: blob:;` +
+            `img-src data: https: http: blob:;` +
+            `font-src data: https: http:;` +
+            `connect-src https: wss: ws: http: blob:;` +
+            `media-src https: blob: http:;` +
+            `object-src https: http:;` +
+            `child-src https: data: blob: http:;` +
+            `form-action https: http:;` +
+            `block-all-mixed-content;`
           );
         })
         .then(done);

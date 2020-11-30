@@ -66,8 +66,10 @@ exports.customRouteHandler = function customRouteHandler(
     logError,
     seo,
     domainSlug,
+    cdnProvider = null
   }
 ) {
+  console.log("finhe")
   const url = urlLib.parse(req.url, true);
   const path = req.params[0].endsWith("/")
     ? req.params[0].slice(0, -1)
@@ -84,7 +86,7 @@ exports.customRouteHandler = function customRouteHandler(
             "Defaulting the status-code to 302 with destination-path as home-page"
           );
         }
-        addCacheHeadersToResult(res, page.cacheKeys(config["publisher-id"]));
+        addCacheHeadersToResult({ res: res, cacheKeys: page.cacheKeys(config["publisher-id"]), cdnProvider: cdnProvider, config: config });
 
         let destination = page["destination-path"] || "/";
 
@@ -97,7 +99,7 @@ exports.customRouteHandler = function customRouteHandler(
       }
 
       if (page.type === "static-page") {
-        addCacheHeadersToResult(res, page.cacheKeys(config["publisher-id"]));
+        addCacheHeadersToResult({ res: res, cacheKeys: page.cacheKeys(config["publisher-id"]), cdnProvider: cdnProvider, config: config });
 
         if (page.metadata.header || page.metadata.footer) {
           return loadData("custom-static-page", {}, config, client, {
