@@ -69,7 +69,6 @@ exports.customRouteHandler = function customRouteHandler(
     cdnProvider = null
   }
 ) {
-  console.log("finhe")
   const url = urlLib.parse(req.url, true);
   const path = req.params[0].endsWith("/")
     ? req.params[0].slice(0, -1)

@@ -66,9 +66,6 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult(
         'Surrogate-Control',
         'public,max-age=240,stale-while-revalidate=300,stale-if-error=14400'
       );
-      console.log(_(cacheKeys)
-        .uniq()
-        .join(' '))
       res.setHeader(
         'Surrogate-Key',
         _(cacheKeys)
