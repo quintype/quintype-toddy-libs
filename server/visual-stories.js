@@ -16,6 +16,8 @@
  * @module visual-stories
  */
 
+// NOTE: delete everything here once all existing publishers having visual stories move to ampLib's visual stories
+
 const { getWithConfig, withError } = require("./routes");
 const { Story } = require("./impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./handlers/cdn-caching");
@@ -95,46 +97,46 @@ async function handleBookend(req, res, next, { config, client }) {
   }
 }
 
-// async function handleVisualStory(
-//   req,
-//   res,
-//   next,
-//   { config, client, renderVisualStory, seo }
-// ) {
-//   const url = urlLib.parse(req.url, true);
-//   const story = await Story.getStoryBySlug(client, req.params.storySlug);
+async function handleVisualStory(
+  req,
+  res,
+  next,
+  { config, client, renderVisualStory, seo }
+) {
+  const url = urlLib.parse(req.url, true);
+  const story = await Story.getStoryBySlug(client, req.params.storySlug);
 
-//   if (story === null || story["story-template"] !== "visual-story") {
-//     res.status(404);
-//     res.end();
-//   } else {
-//     const seoInstance = typeof seo === "function" ? seo(config) : seo;
-//     const seoTags =
-//       seoInstance &&
-//       seoInstance.getMetaTags(config, story["story-template"], story, { url });
+  if (story === null || story["story-template"] !== "visual-story") {
+    res.status(404);
+    res.end();
+  } else {
+    const seoInstance = typeof seo === "function" ? seo(config) : seo;
+    const seoTags =
+      seoInstance &&
+      seoInstance.getMetaTags(config, story["story-template"], story, { url });
 
-//     addCacheHeadersToResult(res, [
-//       storyToCacheKey(config["publisher-id"], story),
-//     ]);
-//     await renderVisualStory(res, story, { config, client, seoTags });
-//   }
-// }
+    addCacheHeadersToResult(res, [
+      storyToCacheKey(config["publisher-id"], story),
+    ]);
+    await renderVisualStory(res, story, { config, client, seoTags });
+  }
+}
 
-// exports.enableVisualStories = function enableVisualStories(
-//   app,
-//   renderVisualStory,
-//   { logError, getClient, seo, publisherConfig = require("./publisher-config") }
-// ) {
-//   getWithConfig(
-//     app,
-//     "/ampstories/:storyId/bookend.json",
-//     withError(handleBookend, logError),
-//     { logError, getClient, publisherConfig }
-//   );
-//   getWithConfig(
-//     app,
-//     "/ampstories/*/:storySlug",
-//     withError(handleVisualStory, logError),
-//     { logError, getClient, renderVisualStory, seo, publisherConfig }
-//   );
-// };
+exports.enableVisualStories = function enableVisualStories(
+  app,
+  renderVisualStory,
+  { logError, getClient, seo, publisherConfig = require("./publisher-config") }
+) {
+  getWithConfig(
+    app,
+    "/ampstories/:storyId/bookend.json",
+    withError(handleBookend, logError),
+    { logError, getClient, publisherConfig }
+  );
+  getWithConfig(
+    app,
+    "/ampstories/*/:storySlug",
+    withError(handleVisualStory, logError),
+    { logError, getClient, renderVisualStory, seo, publisherConfig }
+  );
+};
