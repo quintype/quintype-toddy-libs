@@ -1,6 +1,6 @@
 const get = require("lodash/get");
 
-function getImageUrl(story, config) {
+function getStoryUrl(story, config) {
   if (get(story, ["story-template"]) === "news-elsewhere") {
     return get(story, ["metadata", "reference-url"], "");
   }
@@ -8,11 +8,27 @@ function getImageUrl(story, config) {
 }
 
 async function bookendHandler(req, res, next, { config, client }) {
+  const { storyId, sectionId } = req.query;
+  if (!storyId || !sectionId) {
+    res.status(400).json({
+      error: {
+        message: "Please provide 'storyId' and 'sectionId' query parameters",
+      },
+    });
+    return;
+  }
+
   const relatedStoriesResponse = await client.getRelatedStories(
-    req.query.storyId,
-    req.query.sectionId
+    storyId,
+    sectionId
   );
   const relatedStories = relatedStoriesResponse["related-stories"];
+
+  if (!relatedStories.length) {
+    res.status(404).json({ error: { message: "Not Found" } });
+    return;
+  }
+
   const fbAppId = get(
     config,
     ["public-integrations", "facebook", "app-id"],
@@ -43,7 +59,7 @@ async function bookendHandler(req, res, next, { config, client }) {
         type: "small",
         title: `${story.headline}`,
         image: `${config["cdn-name"]}${story["hero-image-s3-key"]}?w=480&auto=format&compress`,
-        url: getImageUrl(story, config),
+        url: getStoryUrl(story, config),
       })),
       [
         {
@@ -59,17 +75,12 @@ async function bookendHandler(req, res, next, { config, client }) {
     ),
   };
 
-  if (relatedStories.length > 0) {
-    res.header(
-      "Cache-Control",
-      "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
-    );
-    res.header("Vary", "Accept-Encoding");
-    res.json(jsonPayLoad);
-  } else {
-    res.status(404);
-    res.json({ error: { message: "Not Found" } });
-  }
+  res.header(
+    "Cache-Control",
+    "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
+  );
+  res.header("Vary", "Accept-Encoding");
+  res.json(jsonPayLoad);
 }
 
 module.exports = { bookendHandler };
