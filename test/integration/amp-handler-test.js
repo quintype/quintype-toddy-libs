@@ -249,7 +249,7 @@ describe("Amp visual stories bookend handler", () => {
       getClientStubWithRelatedStories([{ headline: "foo" }])
     );
     supertest(app)
-      .get("/amp/api/v1/bookend.json")
+      .get("/amp/api/v1/bookend.json?storyId=111&sectionId=222")
       .expect("Content-Type", /json/)
       .expect("Cache-Control", /public/)
       .expect(200)
@@ -264,9 +264,19 @@ describe("Amp visual stories bookend handler", () => {
   it("returns a 404 if there are no related stories", (done) => {
     const app = createApp(getClientStubWithRelatedStories([]));
     supertest(app)
-      .get("/amp/api/v1/bookend.json")
+      .get("/amp/api/v1/bookend.json?storyId=111&sectionId=222")
       .expect("Content-Type", /json/)
       .expect(404)
+      .then(() => done());
+  });
+  it("returns a 400 if 'storyId' and 'sectionId' query params aren't passed", (done) => {
+    const app = createApp(
+      getClientStubWithRelatedStories([{ headline: "foo" }])
+    );
+    supertest(app)
+      .get("/amp/api/v1/bookend.json")
+      .expect("Content-Type", /json/)
+      .expect(400)
       .then(() => done());
   });
 });
