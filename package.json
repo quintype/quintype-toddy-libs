@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "4.5.1-amp-visual-story.11",
+  "version": "4.5.6",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,7 @@
   "dependencies": {
     "@ampproject/toolbox-optimizer": "^2.6.0",
     "@quintype/amp": "^2.2.0",
-    "@quintype/backend": "^1.23.1",
+    "@quintype/backend": "^1.23.2",
     "@quintype/components": "^2.16.1",
     "@quintype/seo": "^1.38.1",
     "atob": "^2.1.2",
