@@ -1,6 +1,8 @@
 const assert = require("assert");
 const express = require("express");
 
+// NOTE: remove these tests once all existing publishers having visual stories move to ampLib's visual stories
+
 const { enableVisualStories } = require("../../server/visual-stories");
 const supertest = require("supertest");
 
