@@ -104,10 +104,14 @@ async function ampStoryPageHandler(
       );
     }
 
+    // Page Builder Config
+    const pbConfig = opts.getPbConfig && opts.getPbConfig instanceof Function && await opts.getPbConfig(config);
+
     const ampHtml = ampifyStory({
       story,
       publisherConfig: config.config,
       ampConfig: ampConfig.ampConfig,
+      pbConfig,
       relatedStories,
       client,
       opts: { ...domainSpecificOpts, domainSlug },
