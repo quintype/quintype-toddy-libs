@@ -585,5 +585,5 @@ exports.ampRoutes = (app, opts = {}) => {
     opts
   );
   getWithConfig(app, "/amp/api/v1/bookend.json", bookendHandler, opts);
-  getWithConfig(app, "/ampstories/*", ampStoryPageHandler, opts);
+  // getWithConfig(app, "/ampstories/*", ampStoryPageHandler, opts);
 };
