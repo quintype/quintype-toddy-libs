@@ -108,11 +108,8 @@ async function ampStoryPageHandler(
       story,
       publisherConfig: config.config,
       ampConfig: ampConfig.ampConfig,
-      relatedStories,
-      client,
       opts: { ...domainSpecificOpts, domainSlug },
       seo: seoTags ? seoTags.toString() : "",
-      infiniteScrollInlineConfig,
     });
     if (ampHtml instanceof Error) return next(ampHtml);
     const optimizedAmpHtml = await optimize(ampHtml);
