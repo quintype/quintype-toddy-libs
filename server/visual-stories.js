@@ -16,6 +16,8 @@
  * @module visual-stories
  */
 
+// NOTE: delete everything here once all existing publishers having visual stories move to ampLib's visual stories
+
 const { getWithConfig, withError } = require("./routes");
 const { Story } = require("./impl/api-client-impl");
 const { addCacheHeadersToResult } = require("./handlers/cdn-caching");
