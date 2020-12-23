@@ -82,7 +82,8 @@ Collection.prototype.getCollectionCacheKeys = function (publisherId, depth) {
     this.items,
     depth
   );
-  collectionCacheKeys.unshift(collectionToCacheKey(publisherId, this)).flat();
+  collectionCacheKeys.unshift(collectionToCacheKey(publisherId, this));
+  collectionCacheKeys.flat();
   return { storyCacheKeys, collectionCacheKeys };
 };
 
