@@ -56,9 +56,8 @@ exports.sorterToCacheKey = function sorterToCacheKey(
   storyGroup,
   sectionId
 ) {
-  return `q/${publisherId}/${storyGroup}/${
-    sectionId ? `section-${sectionId}` : "home"
-  }`;
+  return `q/${publisherId}/${storyGroup}/${sectionId ? `section-${sectionId}` : "home"
+    }`;
 };
 
 /**
