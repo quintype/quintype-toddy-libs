@@ -41,7 +41,9 @@ exports.collectionToCacheKey = function collectionToCacheKey(
   publisherId,
   collection
 ) {
-  return `c/${publisherId}/${collection.id}`;
+  const collectionTemplate = collection.template === "section";
+  const sectionCollectionMetadata = collection.metadata && collection.metadata.section && collection.metadata.section.length > 0;
+  return `${collectionTemplate || sectionCollectionMetadata ? "sc" : "c"}/${publisherId}/${collection.id}`;
 };
 
 exports.sorterToCacheKey = function sorterToCacheKey(
