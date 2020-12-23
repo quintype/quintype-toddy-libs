@@ -74,7 +74,7 @@ Collection.prototype.getCollectionCacheKeys = function (publisherId, depth) {
   if (!depth) {
     return {
       storyCacheKeys: [],
-      collectionCacheKeys: [collectionToCacheKey(publisherId, this)],
+      collectionCacheKeys: [collectionToCacheKey(publisherId, this)].flat(),
     };
   }
   const { storyCacheKeys, collectionCacheKeys } = getItemCacheKeys(
@@ -82,13 +82,13 @@ Collection.prototype.getCollectionCacheKeys = function (publisherId, depth) {
     this.items,
     depth
   );
-  collectionCacheKeys.unshift(collectionToCacheKey(publisherId, this));
+  collectionCacheKeys.unshift(collectionToCacheKey(publisherId, this)).flat();
   return { storyCacheKeys, collectionCacheKeys };
 };
 
 Collection.prototype.cacheKeys = function (publisherId, depth) {
   if (!depth) {
-    return [collectionToCacheKey(publisherId, this)].concat([
+    return [collectionToCacheKey(publisherId, this)].flat().concat([
       ..._.flatMap(this.items, (item) => itemToCacheKey(publisherId, item)),
       ...(this["collection-cache-keys"] ? this["collection-cache-keys"] : []),
     ]);
@@ -98,7 +98,7 @@ Collection.prototype.cacheKeys = function (publisherId, depth) {
     this.items,
     depth + 1
   );
-  return [collectionToCacheKey(publisherId, this)].concat([
+  return [collectionToCacheKey(publisherId, this)].flat().concat([
     ...collectionCacheKeys,
     ...storyCacheKeys.slice(0, 200 - collectionCacheKeys.length),
     ...(this["collection-cache-keys"] ? this["collection-cache-keys"] : []),

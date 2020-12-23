@@ -42,8 +42,13 @@ exports.collectionToCacheKey = function collectionToCacheKey(
   collection
 ) {
   const collectionTemplate = collection.template === "section";
-  const sectionCollectionMetadata = collection.metadata && collection.metadata.section && collection.metadata.section.length > 0;
-  return `${collectionTemplate || sectionCollectionMetadata ? "sc" : "c"}/${publisherId}/${collection.id}`;
+  const sectionCollectionMetadata = collection.metadata && collection.metadata.section;
+
+  if (collectionTemplate && sectionCollectionMetadata && sectionCollectionMetadata.length > 0) {
+    return sectionCollectionMetadata.map((section) => `sc/${publisherId}/${section.id}`)
+  }
+
+  return `c/${publisherId}/${collection.id}`;
 };
 
 exports.sorterToCacheKey = function sorterToCacheKey(
