@@ -104,15 +104,15 @@ async function ampStoryPageHandler(
       );
     }
 
-    // Page Builder Config
-    const pbConfig = opts.getPbConfig && opts.getPbConfig instanceof Function && await opts.getPbConfig(config);
+    // Additonal Config for Amp Library
+    const additionalConfig = opts.getAdditionalConfig && opts.getAdditionalConfig instanceof Function && await opts.getAdditionalConfig(config);
 
     const ampHtml = ampifyStory({
       story,
       publisherConfig: config.config,
       ampConfig: ampConfig.ampConfig,
-      pbConfig,
-      opts: { ...domainSpecificOpts, domainSlug },
+      additionalConfig,
+      opts: { ...domainSpecificOpts, domainSlug, additionalConfig },
       seo: seoTags ? seoTags.toString() : "",
     });
     if (ampHtml instanceof Error) return next(ampHtml);
