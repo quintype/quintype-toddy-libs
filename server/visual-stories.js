@@ -101,7 +101,7 @@ async function handleVisualStory(
   req,
   res,
   next,
-  { config, client, renderVisualStory, seo }
+  { config, client, renderVisualStory, seo, cdnProvider = null }
 ) {
   const url = urlLib.parse(req.url, true);
   const story = await Story.getStoryBySlug(client, req.params.storySlug);
@@ -115,9 +115,11 @@ async function handleVisualStory(
       seoInstance &&
       seoInstance.getMetaTags(config, story["story-template"], story, { url });
 
-    addCacheHeadersToResult(res, [
-      storyToCacheKey(config["publisher-id"], story),
-    ]);
+    addCacheHeadersToResult({
+      res: res, cacheKeys: [
+        storyToCacheKey(config["publisher-id"], story),
+      ], cdnProvider: cdnProvider, config: config
+    });
     await renderVisualStory(res, story, { config, client, seoTags });
   }
 }
@@ -125,7 +127,7 @@ async function handleVisualStory(
 exports.enableVisualStories = function enableVisualStories(
   app,
   renderVisualStory,
-  { logError, getClient, seo, publisherConfig = require("./publisher-config") }
+  { logError, getClient, seo, publisherConfig = require("./publisher-config"), cdnProvider = null }
 ) {
   getWithConfig(
     app,
@@ -137,6 +139,6 @@ exports.enableVisualStories = function enableVisualStories(
     app,
     "/ampstories/*/:storySlug",
     withError(handleVisualStory, logError),
-    { logError, getClient, renderVisualStory, seo, publisherConfig }
+    { logError, getClient, renderVisualStory, seo, publisherConfig, cdnProvider }
   );
 };
