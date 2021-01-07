@@ -111,7 +111,6 @@ async function ampStoryPageHandler(
       story,
       publisherConfig: config.config,
       ampConfig: ampConfig.ampConfig,
-      additionalConfig,
       opts: { ...domainSpecificOpts, domainSlug, additionalConfig },
       seo: seoTags ? seoTags.toString() : "",
     });
