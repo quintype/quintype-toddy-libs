@@ -26,6 +26,9 @@ async function ampStoryPageHandler(
   }
 ) {
   try {
+    const bkConfig = require("../../publisher-config");
+    console.log("*****************************************************");
+    console.log("bkConfig >> \n", bkConfig);
     const domainSpecificOpts = getDomainSpecificOpts(opts, domainSlug);
     const url = urlLib.parse(req.url, true);
     const { ampifyStory } = ampLibrary;
@@ -38,6 +41,7 @@ async function ampStoryPageHandler(
     const story = await Story.getStoryBySlug(client, req.params[slug]);
     let relatedStoriesCollection;
     let relatedStories = [];
+    let additionalConfig = null;
 
     if (!story) return next();
     if (ampConfig["related-collection-id"])
@@ -103,15 +107,23 @@ async function ampStoryPageHandler(
         infiniteScrollInlineConfig
       );
     }
-
-    // Additonal Config for Amp Library
-    const additionalConfig = opts.getAdditionalConfig && opts.getAdditionalConfig instanceof Function && await opts.getAdditionalConfig(config);
+    if (
+      opts.getAdditionalConfig &&
+      opts.getAdditionalConfig instanceof Function
+    ) {
+      additionalConfig = await opts.getAdditionalConfig({
+        story,
+        publisherConfig: config.config,
+        ampConfig: ampConfig.ampConfig,
+      });
+    }
 
     const ampHtml = ampifyStory({
       story,
       publisherConfig: config.config,
       ampConfig: ampConfig.ampConfig,
-      opts: { ...domainSpecificOpts, domainSlug, additionalConfig },
+      additionalConfig,
+      opts: { ...domainSpecificOpts, domainSlug },
       seo: seoTags ? seoTags.toString() : "",
     });
     if (ampHtml instanceof Error) return next(ampHtml);
