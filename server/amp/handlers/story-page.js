@@ -1,6 +1,7 @@
 const urlLib = require("url");
 const set = require("lodash/set");
 const get = require("lodash/get");
+const merge = require("lodash/merge");
 const { Story, AmpConfig } = require("../../impl/api-client-impl");
 const {
   getSeoInstance,
@@ -10,6 +11,16 @@ const {
 } = require("../helpers");
 const { storyToCacheKey } = require("../../caching");
 const { addCacheHeadersToResult } = require("../../handlers/cdn-caching");
+
+/**
+ * ampStoryPageHandler gets all the things needed and calls "ampifyStory" function (which comes from ampLib)
+ * From ampifyStory's perspective,
+ *  - ampConfig is /api/v1/amp/config
+ *  - publisherConfig is /api/v1/config
+ *  - additionalConfig is an obj containing any extra config. If the publisher passes an async function "opts.getAdditionalConfig", its returnd value is merged into additionalConfig. Use case - Ahead can use this to fetch the pagebuilder config
+ *
+ * @category AmpHandler
+ */
 
 async function ampStoryPageHandler(
   req,
@@ -22,13 +33,11 @@ async function ampStoryPageHandler(
     seo,
     cdnProvider = null,
     ampLibrary = require("@quintype/amp"),
-    bkConfig = require("../../publisher-config"),
+    additionalConfig = require("../../publisher-config"),
     ...opts
   }
 ) {
   try {
-    console.log("*****************************************************");
-    console.log("bkConfig >> \n", bkConfig);
     const domainSpecificOpts = getDomainSpecificOpts(opts, domainSlug);
     const url = urlLib.parse(req.url, true);
     const { ampifyStory } = ampLibrary;
@@ -41,7 +50,6 @@ async function ampStoryPageHandler(
     const story = await Story.getStoryBySlug(client, req.params[slug]);
     let relatedStoriesCollection;
     let relatedStories = [];
-    let additionalConfig = null;
 
     if (!story) return next();
     if (ampConfig["related-collection-id"])
@@ -111,11 +119,12 @@ async function ampStoryPageHandler(
       opts.getAdditionalConfig &&
       opts.getAdditionalConfig instanceof Function
     ) {
-      additionalConfig = await opts.getAdditionalConfig({
+      const fetchedAdditionalConfig = await opts.getAdditionalConfig({
         story,
         publisherConfig: config.config,
         ampConfig: ampConfig.ampConfig,
       });
+      merge(additionalConfig, fetchedAdditionalConfig);
     }
 
     const ampHtml = ampifyStory({
