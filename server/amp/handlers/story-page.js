@@ -22,11 +22,11 @@ async function ampStoryPageHandler(
     seo,
     cdnProvider = null,
     ampLibrary = require("@quintype/amp"),
+    bkConfig = require("../../publisher-config"),
     ...opts
   }
 ) {
   try {
-    const bkConfig = require("../../publisher-config");
     console.log("*****************************************************");
     console.log("bkConfig >> \n", bkConfig);
     const domainSpecificOpts = getDomainSpecificOpts(opts, domainSlug);

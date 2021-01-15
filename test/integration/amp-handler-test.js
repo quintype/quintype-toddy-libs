@@ -192,6 +192,7 @@ function createApp(clientStub = getClientStub) {
     getClient: clientStub,
     publisherConfig: {},
     ampLibrary,
+    bkConfig: {},
   });
   return app;
 }
