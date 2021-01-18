@@ -121,8 +121,9 @@ async function ampStoryPageHandler(
     ) {
       const fetchedAdditionalConfig = await opts.getAdditionalConfig({
         story,
-        publisherConfig: config.config,
-        ampConfig: ampConfig.ampConfig,
+        apiConfig: config.config,
+        ampApiConfig: ampConfig.ampConfig,
+        publisherConfig: additionalConfig,
       });
       merge(additionalConfig, fetchedAdditionalConfig);
     }
