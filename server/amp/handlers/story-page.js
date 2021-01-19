@@ -1,6 +1,7 @@
 const urlLib = require("url");
 const set = require("lodash/set");
 const get = require("lodash/get");
+const merge = require("lodash/merge");
 const { Story, AmpConfig } = require("../../impl/api-client-impl");
 const {
   getSeoInstance,
@@ -10,6 +11,16 @@ const {
 } = require("../helpers");
 const { storyToCacheKey } = require("../../caching");
 const { addCacheHeadersToResult } = require("../../handlers/cdn-caching");
+
+/**
+ * ampStoryPageHandler gets all the things needed and calls "ampifyStory" function (which comes from ampLib)
+ * From ampifyStory's perspective,
+ *  - ampConfig is /api/v1/amp/config
+ *  - publisherConfig is /api/v1/config
+ *  - additionalConfig is an obj containing any extra config. If the publisher passes an async function "opts.getAdditionalConfig", its returnd value is merged into additionalConfig. Use case - Ahead can use this to fetch the pagebuilder config
+ *
+ * @category AmpHandler
+ */
 
 async function ampStoryPageHandler(
   req,
@@ -22,6 +33,7 @@ async function ampStoryPageHandler(
     seo,
     cdnProvider = null,
     ampLibrary = require("@quintype/amp"),
+    additionalConfig = require("../../publisher-config"),
     ...opts
   }
 ) {
@@ -103,15 +115,25 @@ async function ampStoryPageHandler(
         infiniteScrollInlineConfig
       );
     }
-
-    // Additonal Config for Amp Library
-    const additionalConfig = opts.getAdditionalConfig && opts.getAdditionalConfig instanceof Function && await opts.getAdditionalConfig(config);
+    if (
+      opts.getAdditionalConfig &&
+      opts.getAdditionalConfig instanceof Function
+    ) {
+      const fetchedAdditionalConfig = await opts.getAdditionalConfig({
+        story,
+        apiConfig: config.config,
+        ampApiConfig: ampConfig.ampConfig,
+        publisherConfig: additionalConfig,
+      });
+      merge(additionalConfig, fetchedAdditionalConfig);
+    }
 
     const ampHtml = ampifyStory({
       story,
       publisherConfig: config.config,
       ampConfig: ampConfig.ampConfig,
-      opts: { ...domainSpecificOpts, domainSlug, additionalConfig },
+      additionalConfig,
+      opts: { ...domainSpecificOpts, domainSlug },
       seo: seoTags ? seoTags.toString() : "",
     });
     if (ampHtml instanceof Error) return next(ampHtml);
