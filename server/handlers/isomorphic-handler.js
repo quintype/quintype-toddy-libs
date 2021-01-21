@@ -27,7 +27,7 @@ function loadDataForIsomorphicRoute(
   loadErrorData,
   url,
   routes,
-  { otherParams, config, client, host, logError, domainSlug, res, req }
+  { otherParams, config, client, host, logError, domainSlug, res }
 ) {
   return loadDataForEachRoute().catch((error) => {
     logError(error);
@@ -43,7 +43,6 @@ function loadDataForIsomorphicRoute(
         next: abortHandler,
         domainSlug,
         res,
-        req,
       });
 
       if (result && result[ABORT_HANDLER]) continue;
@@ -265,7 +264,6 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         otherParams: req.query,
         domainSlug,
         res,
-        req,
       }
     ).catch((e) => {
       logError(e);
@@ -505,7 +503,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     loadErrorData,
     url,
     generateRoutes(config, domainSlug),
-    { config, client, logError, host: req.hostname, domainSlug, res, req }
+    { config, client, logError, host: req.hostname, domainSlug, res }
   )
     .catch((e) => {
       logError(e);
