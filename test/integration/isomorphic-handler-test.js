@@ -707,6 +707,28 @@ describe("Isomorphic Handler", function () {
         })
         .then(done);
     });
+
+    it("when enabled, it does not redirect for story slugs containing accents or non-latin letters", (done) => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host },
+          }),
+        [{ pageType: "story-page", path: "/*/:storySlug" }],
+        { redirectToLowercaseSlugs: true }
+      );
+
+      supertest(app)
+        .get("/foo/%E0%A6%85%E0%A6%B8%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%AD%E0%A6%BE%E0%A6%AC%E0%A6%BF%E0%A6%95-%C3%81%C3%89%C3%8D%C3%93%C3%9A%C3%9D-%C3%9Cber-%C4%B0nsensitive") // Actual URL is অস্বাভাবিক-ÁÉÍÓÚÝ-Über-İnsensitive
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then((res) => {
+          const response = JSON.parse(res.text);
+          assert.equal("foobar", response.store.qt.data.text);
+        })
+        .then(done);
+    });
     
     it("when not enabled, story slug with capital letters gives a normal response", (done) => {
       const app = createApp(
