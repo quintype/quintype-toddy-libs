@@ -27,7 +27,7 @@ function loadDataForIsomorphicRoute(
   loadErrorData,
   url,
   routes,
-  { otherParams, config, client, host, logError, domainSlug }
+  { otherParams, config, client, host, logError, domainSlug, res, req }
 ) {
   return loadDataForEachRoute().catch((error) => {
     logError(error);
@@ -42,6 +42,8 @@ function loadDataForIsomorphicRoute(
         host,
         next: abortHandler,
         domainSlug,
+        res,
+        req,
       });
 
       if (result && result[ABORT_HANDLER]) continue;
@@ -262,6 +264,8 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         host: req.hostname,
         otherParams: req.query,
         domainSlug,
+        res,
+        req,
       }
     ).catch((e) => {
       logError(e);
@@ -280,24 +284,22 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
       const statusCode = result.httpStatusCode || 200;
       res.status(statusCode < 500 ? 200 : 500);
       res.setHeader("Content-Type", "application/json");
-      addCacheHeadersToResult(
-        {
-          res: res,
-          cacheKeys: _.get(result, ["data", "cacheKeys"]),
-          cdnProvider: cdnProvider,
-          config: config
-        }
-      );
+      addCacheHeadersToResult({
+        res: res,
+        cacheKeys: _.get(result, ["data", "cacheKeys"]),
+        cdnProvider: cdnProvider,
+        config: config,
+      });
       const seoInstance = getSeoInstance(seo, config, result.pageType);
       res.json(
         Object.assign({}, result, {
           appVersion,
           data: mobileApiEnabled
             ? chunkDataForMobile(
-              result.data,
-              mobileConfigFields,
-              result.pageType
-            )
+                result.data,
+                mobileConfigFields,
+                result.pageType
+              )
             : _.omit(result.data, ["cacheKeys"]),
           config: mobileApiEnabled
             ? chunkDataForMobile(result.config, mobileConfigFields, "config")
@@ -431,14 +433,12 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     const statusCode = result.httpStatusCode || 200;
 
     if (statusCode == 301 && result.data && result.data.location) {
-      addCacheHeadersToResult(
-        {
-          res: res,
-          cacheKeys: [customUrlToCacheKey(config["publisher-id"], "redirect")],
-          cdnProvider: cdnProvider,
-          config: config
-        }
-      );
+      addCacheHeadersToResult({
+        res: res,
+        cacheKeys: [customUrlToCacheKey(config["publisher-id"], "redirect")],
+        cdnProvider: cdnProvider,
+        config: config,
+      });
       return res.redirect(301, result.data.location);
     }
     const seoInstance = getSeoInstance(seo, config, result.pageType);
@@ -459,14 +459,12 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     }
 
     res.status(statusCode);
-    addCacheHeadersToResult(
-      {
-        res: res,
-        cacheKeys: _.get(result, ["data", "cacheKeys"]),
-        cdnProvider: cdnProvider,
-        config: config
-      }
-    );
+    addCacheHeadersToResult({
+      res: res,
+      cacheKeys: _.get(result, ["data", "cacheKeys"]),
+      cdnProvider: cdnProvider,
+      config: config,
+    });
 
     if (preloadJs) {
       res.append(
@@ -507,7 +505,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     loadErrorData,
     url,
     generateRoutes(config, domainSlug),
-    { config, client, logError, host: req.hostname, domainSlug }
+    { config, client, logError, host: req.hostname, domainSlug, res, req }
   )
     .catch((e) => {
       logError(e);
@@ -581,14 +579,12 @@ exports.handleStaticRoute = function handleStaticRoute(
       });
 
       res.status(statusCode);
-      addCacheHeadersToResult(
-        {
-          res: res,
-          cacheKeys: _.get(result, ["data", "cacheKeys"], ["static"]),
-          cdnProvider: cdnProvider,
-          config: config
-        }
-      );
+      addCacheHeadersToResult({
+        res: res,
+        cacheKeys: _.get(result, ["data", "cacheKeys"], ["static"]),
+        cdnProvider: cdnProvider,
+        config: config,
+      });
 
       return renderLayout(
         res,
@@ -597,11 +593,11 @@ exports.handleStaticRoute = function handleStaticRoute(
             config,
             title: seoInstance
               ? seoInstance.getTitle(
-                config,
-                result.pageType || match.pageType,
-                result,
-                { url }
-              )
+                  config,
+                  result.pageType || match.pageType,
+                  result,
+                  { url }
+                )
               : result.title,
             store,
             disableAjaxNavigation: true,
