@@ -115,14 +115,12 @@ async function ampStoryPageHandler(
     const optimizedAmpHtml = await optimize(ampHtml);
 
     res.set("Content-Type", "text/html");
-    addCacheHeadersToResult(
-      {
-        res: res,
-        cacheKeys: storyToCacheKey(config["publisher-id"], story),
-        cdnProvider: cdnProvider,
-        config: config
-      }
-    );
+    addCacheHeadersToResult({
+      res,
+      cacheKeys: storyToCacheKey(config["publisher-id"], story),
+      cdnProvider,
+      config,
+    });
 
     return res.send(optimizedAmpHtml);
   } catch (e) {
