@@ -43,7 +43,7 @@ function loadDataForIsomorphicRoute(
        * redirect the browser to the URL having all lowercase letters. We need to be
        * wary of any asset routes that might make its way here and get wrongly redirected.
        */
-      if (redirectToLowercaseSlugsValue && match.pageType === 'story-page' && params.storySlug && params.storySlug !== params.storySlug.toLowerCase()) {
+      if (redirectToLowercaseSlugsValue && match.pageType === 'story-page' && params.storySlug && decodeURIComponent(params.storySlug) !== decodeURIComponent(params.storySlug.toLowerCase())) {
         return {
           httpStatusCode: 301,
           data: {
