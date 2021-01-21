@@ -24,6 +24,7 @@ function pickComponent(pageType) {
 const cdnProviderFunc = () => "akamai";
 
 function createApp(loadData, routes, opts = {}, app = express()) {
+  const { redirectToLowercaseSlugs = false } = opts;
   isomorphicRoutes(
     app,
     Object.assign(
@@ -40,6 +41,7 @@ function createApp(loadData, routes, opts = {}, app = express()) {
           res.send(JSON.stringify({ store: store.getState(), title, content })),
         handleCustomRoute: false,
         publisherConfig: {},
+        redirectToLowercaseSlugs,
       },
       opts
     )
@@ -679,6 +681,51 @@ describe("Isomorphic Handler", function () {
             `form-action https: http:;` +
             `block-all-mixed-content;`
           );
+        })
+        .then(done);
+    });
+  });
+
+  describe("redirectToLowercaseSlugs", () => {
+    it("when enabled, redirects story slug with capital letters to lowercase slug URL", (done) => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host },
+          }),
+        [{ pageType: "story-page", path: "/*/:storySlug" }],
+        { redirectToLowercaseSlugs: true }
+      );
+
+      supertest(app)
+        .get("/foo/Bar")
+        .expect("Location", '/foo/bar')
+        .expect(301)
+        .then((res) => {
+          assert(true)
+        })
+        .then(done);
+    });
+    
+    it("when not enabled, story slug with capital letters gives a normal response", (done) => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host },
+          }),
+        [{ pageType: "story-page", path: "/*/:storySlug" }],
+        { redirectToLowercaseSlugs: false }
+      );
+
+      supertest(app)
+        .get("/foo/Bar")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then((res) => {
+          const response = JSON.parse(res.text);
+          assert.equal("foobar", response.store.qt.data.text);
         })
         .then(done);
     });
