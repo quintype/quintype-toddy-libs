@@ -224,6 +224,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
     mobileApiEnabled,
     mobileConfigFields,
     cdnProvider,
+    redirectToLowercaseSlugs
   }
 ) {
   const url = urlLib.parse(req.query.path || "/", true);
@@ -275,6 +276,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         host: req.hostname,
         otherParams: req.query,
         domainSlug,
+        redirectToLowercaseSlugs
       }
     ).catch((e) => {
       logError(e);

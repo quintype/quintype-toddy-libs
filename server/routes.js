@@ -379,6 +379,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       seo,
       appVersion,
       cdnProvider,
+      redirectToLowercaseSlugs
     })
   );
 
@@ -409,6 +410,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         mobileApiEnabled,
         mobileConfigFields,
         cdnProvider,
+        redirectToLowercaseSlugs
       })
     );
   }
