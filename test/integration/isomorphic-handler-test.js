@@ -729,6 +729,28 @@ describe("Isomorphic Handler", function () {
         })
         .then(done);
     });
+
+    it("when enabled, it does not redirect for section pages containing capital letters", (done) => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host },
+          }),
+        [{ pageType: "section-page", path: "/:section/:subSection" }],
+        { redirectToLowercaseSlugs: true }
+      );
+
+      supertest(app)
+        .get("/foo/Bar")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then((res) => {
+          const response = JSON.parse(res.text);
+          assert.equal("foobar", response.store.qt.data.text);
+        })
+        .then(done);
+    });
     
     it("when not enabled, story slug with capital letters gives a normal response", (done) => {
       const app = createApp(
