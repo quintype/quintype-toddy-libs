@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "4.5.14-revert-visual.0",
+  "version": "4.5.13",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
