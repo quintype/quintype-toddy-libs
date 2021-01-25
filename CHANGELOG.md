@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.5.14](https://github.com/quintype/quintype-node-framework/compare/v4.5.13...v4.5.14) (2021-01-25)
+
+
+### Bug Fixes
+
+* **package:** Revert package to stable version ([5ddc655](https://github.com/quintype/quintype-node-framework/commit/5ddc655b9827e823f112fd05d829e295af798957))
+* **visual-stories:** Revert visual story 🔨 ([#193](https://github.com/quintype/quintype-node-framework/issues/193)) ([d605b25](https://github.com/quintype/quintype-node-framework/commit/d605b252ad11e5366ca00a5c99c0ec0100a1929a))
+
+
+
 ## [4.5.13](https://github.com/quintype/quintype-node-framework/compare/v4.5.12...v4.5.13) (2021-01-21)
 
 
