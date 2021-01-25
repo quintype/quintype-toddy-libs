@@ -27,7 +27,7 @@ function loadDataForIsomorphicRoute(
   loadErrorData,
   url,
   routes,
-  { otherParams, config, client, host, logError, domainSlug, redirectToLowercaseSlugsValue }
+  { otherParams, config, client, host, logError, domainSlug, redirectToLowercaseSlugs }
 ) {
   return loadDataForEachRoute().catch((error) => {
     logError(error);
@@ -36,6 +36,7 @@ function loadDataForIsomorphicRoute(
 
   // Using async because this for loop reads really really well
   async function loadDataForEachRoute() {
+    const redirectToLowercaseSlugsValue = typeof redirectToLowercaseSlugs === 'function' ? redirectToLowercaseSlugs(config) : redirectToLowercaseSlugs;
     for (const match of matchAllRoutes(url.pathname, routes)) {
       const params = Object.assign({}, url.query, otherParams, match.params);
       /* On story pages, if the slug contains any capital letters (latin), we want to
@@ -263,7 +264,6 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
   }
 
   function isomorphicDataLoader() {
-    const redirectToLowercaseSlugsValue = typeof redirectToLowercaseSlugs === 'function' ? redirectToLowercaseSlugs() : redirectToLowercaseSlugs;
     return loadDataForIsomorphicRoute(
       loadData,
       loadErrorData,
@@ -276,7 +276,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         host: req.hostname,
         otherParams: req.query,
         domainSlug,
-        redirectToLowercaseSlugsValue
+        redirectToLowercaseSlugs
       }
     ).catch((e) => {
       logError(e);
@@ -518,14 +518,12 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     getRedirectUrl(req, res, next, { redirectUrls, config });
   }
 
-  const redirectToLowercaseSlugsValue = typeof redirectToLowercaseSlugs === 'function' ? redirectToLowercaseSlugs() : redirectToLowercaseSlugs;
-
   return loadDataForIsomorphicRoute(
     loadData,
     loadErrorData,
     url,
     generateRoutes(config, domainSlug),
-    { config, client, logError, host: req.hostname, domainSlug, redirectToLowercaseSlugsValue }
+    { config, client, logError, host: req.hostname, domainSlug, redirectToLowercaseSlugs }
   )
     .catch((e) => {
       logError(e);
