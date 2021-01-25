@@ -229,8 +229,6 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
   const url = urlLib.parse(req.query.path || "/", true);
   const dataLoader = staticDataLoader() || isomorphicDataLoader();
 
-  const redirectToLowercaseSlugsValue = typeof redirectToLowercaseSlugs === 'function' ? redirectToLowercaseSlugs() : redirectToLowercaseSlugs;
-
   return dataLoader.then((result) => {
     if (!result) {
       return returnNotFound();
@@ -265,6 +263,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
   }
 
   function isomorphicDataLoader() {
+    const redirectToLowercaseSlugsValue = typeof redirectToLowercaseSlugs === 'function' ? redirectToLowercaseSlugs() : redirectToLowercaseSlugs;
     return loadDataForIsomorphicRoute(
       loadData,
       loadErrorData,
