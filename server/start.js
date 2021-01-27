@@ -71,9 +71,19 @@ async function startWorker(appThunk, opts) {
     const app = appThunk();
 
     await initializeAllClients();
-    const server = app.listen(opts.port || 3000, () =>
+    let server = app.listen(opts.port || 3000, () =>
       console.log(`App listening on port ${opts.port || 3000}!`)
     );
+
+    /*
+      Add timeout to our server network requests
+      https://nodejs.org/dist/latest-v6.x/docs/api/http.html#http_server_settimeout_msecs_callback
+    */
+
+    server = server.setTimeout(20000, socket => {
+      logger.info(`Socket connection timed out`, e);
+      socket.destroy();
+    });
 
     process.on("SIGTERM", () => {
       server.close(() => {
