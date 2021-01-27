@@ -85,7 +85,7 @@ async function startWorker(appThunk, opts) {
       socket.destroy();
     });
 
-    server.once('timeout', (req, socket)=> {
+    server.on('timeout', (req, socket)=> {
       logger.info('Ah, we have our first user!', req, socket);
     });
 
