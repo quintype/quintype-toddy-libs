@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [4.7.0](https://github.com/quintype/quintype-node-framework/compare/v4.5.14...v4.7.0) (2021-01-27)
+
+
+### Bug Fixes
+
+* **package:** Bump patch version to avoid tag conflict ([a51424e](https://github.com/quintype/quintype-node-framework/commit/a51424e4f124d244aea2a0e61bac4f53d646b33e))
+* **package:** Replace version from beta to last stable ([133cc4e](https://github.com/quintype/quintype-node-framework/commit/133cc4e07b4e8f3514411df513ead914a6898154))
+
+
+### Features
+
+* Redirect story pages to lower case slugs if the slug contains any capital latin letters ([#191](https://github.com/quintype/quintype-node-framework/issues/191)) ([efc4ecd](https://github.com/quintype/quintype-node-framework/commit/efc4ecdfd0ab21203c316c8c7948878d3ca88ba9))
+
+
+
 # [4.6.0](https://github.com/quintype/quintype-node-framework/compare/v4.5.14...v4.6.0) (2021-01-27)
 
 
