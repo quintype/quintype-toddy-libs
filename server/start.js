@@ -71,7 +71,7 @@ async function startWorker(appThunk, opts) {
     const app = appThunk();
 
     await initializeAllClients();
-    let server = app.listen(opts.port || 3000, () =>
+    const server = app.listen(opts.port || 3000, () =>
       console.log(`App listening on port ${opts.port || 3000}!`)
     );
 
