@@ -27,7 +27,7 @@ function loadDataForIsomorphicRoute(
   loadErrorData,
   url,
   routes,
-  { otherParams, config, client, host, logError, domainSlug }
+  { otherParams, config, client, host, logError, domainSlug, redirectToLowercaseSlugs }
 ) {
   return loadDataForEachRoute().catch((error) => {
     logError(error);
@@ -36,8 +36,21 @@ function loadDataForIsomorphicRoute(
 
   // Using async because this for loop reads really really well
   async function loadDataForEachRoute() {
+    const redirectToLowercaseSlugsValue = typeof redirectToLowercaseSlugs === 'function' ? redirectToLowercaseSlugs(config) : redirectToLowercaseSlugs;
     for (const match of matchAllRoutes(url.pathname, routes)) {
       const params = Object.assign({}, url.query, otherParams, match.params);
+      /* On story pages, if the slug contains any capital letters (latin), we want to
+       * redirect the browser to the URL having all lowercase letters. We need to be
+       * wary of any asset routes that might make its way here and get wrongly redirected.
+       */
+      if (redirectToLowercaseSlugsValue && match.pageType === 'story-page' && params.storySlug && decodeURIComponent(params.storySlug) !== decodeURIComponent(params.storySlug.toLowerCase())) {
+        return {
+          httpStatusCode: 301,
+          data: {
+            location: `${url.pathname.toLowerCase()}${url.search || ''}`
+          }
+        }
+      }
       const result = await loadData(match.pageType, params, config, client, {
         host,
         next: abortHandler,
@@ -211,6 +224,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
     mobileApiEnabled,
     mobileConfigFields,
     cdnProvider,
+    redirectToLowercaseSlugs
   }
 ) {
   const url = urlLib.parse(req.query.path || "/", true);
@@ -262,6 +276,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         host: req.hostname,
         otherParams: req.query,
         domainSlug,
+        redirectToLowercaseSlugs
       }
     ).catch((e) => {
       logError(e);
@@ -423,6 +438,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     cdnProvider,
     lightPages,
     redirectUrls,
+    redirectToLowercaseSlugs
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -507,7 +523,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     loadErrorData,
     url,
     generateRoutes(config, domainSlug),
-    { config, client, logError, host: req.hostname, domainSlug }
+    { config, client, logError, host: req.hostname, domainSlug, redirectToLowercaseSlugs }
   )
     .catch((e) => {
       logError(e);
