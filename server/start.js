@@ -81,7 +81,7 @@ async function startWorker(appThunk, opts) {
     */
 
     server = server.setTimeout(20000, socket => {
-      logger.info(`Socket connection timed out`, e);
+      logger.info(`Socket connection timed out`, socket);
       socket.destroy();
     });
 
