@@ -80,13 +80,12 @@ async function startWorker(appThunk, opts) {
       https://nodejs.org/dist/latest-v6.x/docs/api/http.html#http_server_settimeout_msecs_callback
     */
 
-    server = server.setTimeout(20000, socket => {
-      logger.info(`Socket connection timed out`, socket);
+    server.setTimeout(10000, socket => {
+      logger.info(`Request timed out`);
+      socket.write('HTTP/1.1 408 Connection Timeout\r\n' +
+          'Proxy-agent: MITM-proxy\r\n' +
+          '\r\n');
       socket.destroy();
-    });
-
-    server.on('timeout', (req, socket)=> {
-      logger.info('Ah, we have our first user!', req, socket);
     });
 
     process.on("SIGTERM", () => {
