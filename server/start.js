@@ -85,6 +85,10 @@ async function startWorker(appThunk, opts) {
       socket.destroy();
     });
 
+    server.once('timeout', (req, socket)=> {
+      logger.info('Ah, we have our first user!', req, socket);
+    });
+
     process.on("SIGTERM", () => {
       server.close(() => {
         cluster.worker.disconnect();
