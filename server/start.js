@@ -15,6 +15,8 @@ const process = require("process");
 const { initializeAllClients } = require("./api-client");
 const logger = require("./logger");
 
+const SOCKET_TIMEOUT_MS = 6000;
+
 function startMaster({ workers = 4 }) {
   let terminating = false;
 
@@ -51,7 +53,7 @@ function startMaster({ workers = 4 }) {
     );
 
     if (terminating) {
-      if (aliveWorkers.length == 0) {
+      if (aliveWorkers.length === 0) {
         logger.info("All Workers Terminated. Gracefully Exiting");
         process.exit();
       }
@@ -62,7 +64,7 @@ function startMaster({ workers = 4 }) {
 }
 
 async function startWorker(appThunk, opts) {
-  if (process.env.NODE_ENV != "production") {
+  if (process.env.NODE_ENV !== "production") {
     require("@quintype/build")(opts);
   }
   require("../assetify/server")();
@@ -80,7 +82,7 @@ async function startWorker(appThunk, opts) {
       https://nodejs.org/dist/latest-v6.x/docs/api/http.html#http_server_settimeout_msecs_callback
     */
 
-    server.setTimeout(10000, socket => {
+    server.setTimeout(opts.socketTimeout || SOCKET_TIMEOUT_MS, socket => {
       logger.info(`Request timed out`);
       socket.write('HTTP/1.1 408 Connection Timeout\r\n' +
           'Proxy-agent: MITM-proxy\r\n' +
@@ -96,8 +98,8 @@ async function startWorker(appThunk, opts) {
     });
     process.on("SIGHUP", () => {});
   } catch (e) {
-    if (process.env.NODE_ENV != "production") {
-      console.log(e.stack);
+    if (process.env.NODE_ENV !== "production") {
+      logger.info(e.stack);
     }
 
     e = e || "";
@@ -116,6 +118,7 @@ async function startWorker(appThunk, opts) {
  * @param {number} opts.workers The number of workers to be spawned (default 4)
  * @param {number} opts.port The port to start on (default 3000)
  * @param {number} opts.sleep Number of milliseconds to wait to respawn a terminated worker (default 250)
+ * @param {number} opts.socketTimeout Number of milliseconds to wait before terminating the socket connection (default 6000)
  */
 module.exports.startApp = function (appThunk, opts = {}) {
   if (cluster.isMaster) {
