@@ -18,7 +18,7 @@ function addLightPageHeaders(result, lightPages, {
   }
 
   if(isAmpSupported){
-    let {path} = req || "";
+    let {path = ""} = req;
 
     path = shouldEncodeAmpUri ? encodeURIComponent(path) : path;
 
