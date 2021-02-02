@@ -5,7 +5,7 @@ function addLightPageHeaders(result, lightPages, {
   res,
   client,
   req,
-  shouldEncodeAmpUri
+  shouldEncodeAmpUri = true
 }) {
   const isAmpSupported = _.get(
     result,

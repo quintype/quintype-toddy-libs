@@ -421,7 +421,7 @@ describe("Isomorphic Handler", function () {
         .then(done);
     });
 
-    it("renders a  normal story page when lightPages is passed as a function which return false", (done) => {
+    it("renders a normal story page when lightPages is passed as a function which return false", (done) => {
       const app = createApp(
         (pageType, params, config, client, { host }) =>
           Promise.resolve({
@@ -446,6 +446,39 @@ describe("Isomorphic Handler", function () {
         })
         .then(done);
     });
+
+
+      it("renders amp story pages using non-encode slug when lightPages is passed as a function which return true and shouldEncodeAmpUri is false", (done) => {
+          const app = createApp(
+              (pageType, params, config, client, { host }) =>
+                  Promise.resolve({
+                      pageType,
+                      data: { text: "foobar", host, story: { "is-amp-supported": true } },
+                  }),
+              [],
+              {
+                  lightPages: () => true,
+                  shouldEncodeAmpUri: false
+              }
+          );
+
+          supertest(app)
+              .get("%2Fgeneral-news%2F%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B8%A3%E0%B8%AD%E0%B8%94-%E0%B8%95%E0%B8%B3%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%9A%E0%B8%B8%E0%B8%81%E0%B8%88%E0%B8%B1%E0%B8%9A-%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B9%81%E0%B8%97%E0%B8%87-%E0%B8%AB%E0%B8%A7%E0%B8%A2%E0%B8%AD%E0%B8%AD%E0%B8%99%E0%B9%84%E0%B8%A5%E0%B8%99%E0%B9%8C")
+              .expect("Content-Type", /html/)
+              .expect(200)
+              .then((res) => {
+                  assert.equal(
+                      `http://127.0.0.1/amp/story/%2Fgeneral-news%2F%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B8%A3%E0%B8%AD%E0%B8%94-%E0%B8%95%E0%B8%B3%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%9A%E0%B8%B8%E0%B8%81%E0%B8%88%E0%B8%B1%E0%B8%9A-%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B9%81%E0%B8%97%E0%B8%87-%E0%B8%AB%E0%B8%A7%E0%B8%A2%E0%B8%AD%E0%B8%AD%E0%B8%99%E0%B9%84%E0%B8%A5%E0%B8%99%E0%B9%8C`,
+                      res.get("X-QT-Light-Pages-Url")
+                  );
+              })
+              .then(done);
+      });
+
+
+
+
+
   });
 
   describe("cdnProvider", () => {
@@ -751,7 +784,7 @@ describe("Isomorphic Handler", function () {
         })
         .then(done);
     });
-    
+
     it("when not enabled, story slug with capital letters gives a normal response", (done) => {
       const app = createApp(
         (pageType, params, config, client, { host }) =>
