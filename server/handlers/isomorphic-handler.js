@@ -439,7 +439,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     lightPages,
     redirectUrls,
     redirectToLowercaseSlugs,
-      shouldEncodeURI
+      shouldEncodeAmpUri
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -472,7 +472,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     });
 
     if (lightPages) {
-      addLightPageHeaders(result, lightPages, { config, res, client, req, shouldEncodeURI });
+      addLightPageHeaders(result, lightPages, { config, res, client, req, shouldEncodeAmpUri });
     }
 
     res.status(statusCode);
