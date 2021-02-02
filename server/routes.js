@@ -303,7 +303,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     renderServiceWorker = renderServiceWorkerFn,
     publisherConfig = require("./publisher-config"),
     redirectUrls = [],
-    redirectToLowercaseSlugs = false
+    redirectToLowercaseSlugs = false,
   }
 ) {
   const withConfig = withConfigPartial(
@@ -379,7 +379,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       seo,
       appVersion,
       cdnProvider,
-      redirectToLowercaseSlugs
+      redirectToLowercaseSlugs,
     })
   );
 
@@ -410,7 +410,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         mobileApiEnabled,
         mobileConfigFields,
         cdnProvider,
-        redirectToLowercaseSlugs
+        redirectToLowercaseSlugs,
       })
     );
   }
@@ -460,18 +460,28 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       cdnProvider,
       lightPages,
       redirectUrls,
-      redirectToLowercaseSlugs
+      redirectToLowercaseSlugs,
+      oneSignalServiceWorkers,
     })
   );
 
   if (redirectRootLevelStories) {
-    app.get("/:storySlug", withConfig(redirectStory, { logError, cdnProvider }));
+    app.get(
+      "/:storySlug",
+      withConfig(redirectStory, { logError, cdnProvider })
+    );
   }
 
   if (handleCustomRoute) {
     app.get(
       "/*",
-      withConfig(customRouteHandler, { loadData, renderLayout, logError, seo, cdnProvider })
+      withConfig(customRouteHandler, {
+        loadData,
+        renderLayout,
+        logError,
+        seo,
+        cdnProvider,
+      })
     );
   }
 
