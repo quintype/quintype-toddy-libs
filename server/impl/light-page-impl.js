@@ -4,7 +4,8 @@ function addLightPageHeaders(result, lightPages, {
   config,
   res,
   client,
-  req
+  req,
+  shouldEncodeURI
 }) {
   const isAmpSupported = _.get(
     result,
@@ -16,13 +17,17 @@ function addLightPageHeaders(result, lightPages, {
     return;
   }
 
-  isAmpSupported &&
+  if(isAmpSupported){
+    let {path} = req || "";
+
+    path = shouldEncodeURI ? encodeURIComponent(path) : path;
+
     res.set(
-      "X-QT-Light-Pages-Url",
-      `${req.protocol}://${req.hostname}/amp/story/${encodeURIComponent(
-        req.path
-      )}`
+        "X-QT-Light-Pages-Url",
+        `${req.protocol}://${req.hostname}/amp/story/${path}`
     );
+  }
+
 }
 
 module.exports = {
