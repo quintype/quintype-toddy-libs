@@ -265,6 +265,7 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {function} opts.maxConfigVersion An async function which resolves to a integer version of the config. This defaults to config.theme-attributes.cache-burst
  * @param {Array<object>|function} opts.redirectUrls An array or async function which used to render the redirect url provided in the array of object - >ex- REDIRECT_URLS = [{sourceUrl: "/tag/:tagSlug",destinationUrl: "/topic/:tagSlug",statusCode: 301,}]
  * @param {boolean|function} redirectToLowercaseSlugs If set or evaluates to true, then for every story-page request having capital latin letters in the slug, it responds with a 301 redirect to the lowercase slug URL. (default: true)
+ * @param {boolean|function} shouldEncodeAmpUri If set to true, then for every story-page request the slug will be encoded, in case of a vernacular slug this should be set to false. Receives path as param (default: true)
  */
 exports.isomorphicRoutes = function isomorphicRoutes(
   app,
@@ -303,7 +304,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     renderServiceWorker = renderServiceWorkerFn,
     publisherConfig = require("./publisher-config"),
     redirectUrls = [],
-    redirectToLowercaseSlugs = false
+    redirectToLowercaseSlugs = false,
+    shouldEncodeAmpUri,
   }
 ) {
   const withConfig = withConfigPartial(
@@ -379,7 +381,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       seo,
       appVersion,
       cdnProvider,
-      redirectToLowercaseSlugs
+      redirectToLowercaseSlugs,
     })
   );
 
@@ -410,7 +412,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         mobileApiEnabled,
         mobileConfigFields,
         cdnProvider,
-        redirectToLowercaseSlugs
+        redirectToLowercaseSlugs,
       })
     );
   }
@@ -460,18 +462,28 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       cdnProvider,
       lightPages,
       redirectUrls,
-      redirectToLowercaseSlugs
+      redirectToLowercaseSlugs,
+      shouldEncodeAmpUri,
     })
   );
 
   if (redirectRootLevelStories) {
-    app.get("/:storySlug", withConfig(redirectStory, { logError, cdnProvider }));
+    app.get(
+      "/:storySlug",
+      withConfig(redirectStory, { logError, cdnProvider })
+    );
   }
 
   if (handleCustomRoute) {
     app.get(
       "/*",
-      withConfig(customRouteHandler, { loadData, renderLayout, logError, seo, cdnProvider })
+      withConfig(customRouteHandler, {
+        loadData,
+        renderLayout,
+        logError,
+        seo,
+        cdnProvider,
+      })
     );
   }
 

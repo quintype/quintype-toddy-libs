@@ -30,7 +30,7 @@ function createApp(loadData, routes, opts = {}, app = express()) {
     Object.assign(
       {
         assetHelper: {
-          assetHash: (file) => (file == "app.js" ? "abcdef" : null),
+          assetHash: (file) => (file === "app.js" ? "abcdef" : null),
           assetPath: (file) => `/assets/${file}`,
         },
         getClient: getClientStub,
@@ -325,7 +325,7 @@ describe("Isomorphic Handler", function () {
         { pageType: "home-page", path: "/" },
       ];
       const dataLoader = (pageType, _1, _2, _3, { host, next }) =>
-        pageType == "skip"
+        pageType === "skip"
           ? next()
           : Promise.resolve({ pageType, data: { text: "foobar", host } });
 
@@ -421,7 +421,7 @@ describe("Isomorphic Handler", function () {
         .then(done);
     });
 
-    it("renders a  normal story page when lightPages is passed as a function which return false", (done) => {
+    it("renders a normal story page when lightPages is passed as a function which return false", (done) => {
       const app = createApp(
         (pageType, params, config, client, { host }) =>
           Promise.resolve({
@@ -433,6 +433,7 @@ describe("Isomorphic Handler", function () {
           lightPages: () => false,
           renderLightPage: (req, res, result) =>
             res.send("<h1> Amp Page </h1>"),
+          shouldEncodeAmpUri: true,
         }
       );
 
@@ -443,6 +444,34 @@ describe("Isomorphic Handler", function () {
         .then((res) => {
           const response = JSON.parse(res.text);
           assert.equal("foobar", response.store.qt.data.text);
+        })
+        .then(done);
+    });
+
+    it("renders amp story pages using non-encode slug when lightPages is passed as a function which return true and shouldEncodeAmpUri is false", (done) => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host, story: { "is-amp-supported": true } },
+          }),
+        [{ pageType: "story-page", path: "/*/:storySlug" }],
+        {
+          lightPages: () => true,
+          shouldEncodeAmpUri: () => false,
+        }
+      );
+
+      supertest(app)
+        .get(
+          "/general-news/%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B8%A3%E0%B8%AD%E0%B8%94-%E0%B8%95%E0%B8%B3%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%9A%E0%B8%B8%E0%B8%81%E0%B8%88%E0%B8%B1%E0%B8%9A-%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B9%81%E0%B8%97%E0%B8%87-%E0%B8%AB%E0%B8%A7%E0%B8%A2%E0%B8%AD%E0%B8%AD%E0%B8%99%E0%B9%84%E0%B8%A5%E0%B8%99%E0%B9%8C"
+        )
+        .expect(200)
+        .then((res) => {
+          assert.equal(
+            `http://127.0.0.1/amp/story//general-news/%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B8%A3%E0%B8%AD%E0%B8%94-%E0%B8%95%E0%B8%B3%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%9A%E0%B8%B8%E0%B8%81%E0%B8%88%E0%B8%B1%E0%B8%9A-%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B9%81%E0%B8%97%E0%B8%87-%E0%B8%AB%E0%B8%A7%E0%B8%A2%E0%B8%AD%E0%B8%AD%E0%B8%99%E0%B9%84%E0%B8%A5%E0%B8%99%E0%B9%8C`,
+            res.get("X-QT-Light-Pages-Url")
+          );
         })
         .then(done);
     });
@@ -529,16 +558,16 @@ describe("Isomorphic Handler", function () {
           assert.equal(
             contentSecurityPolicy,
             `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
-            `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
-            `style-src data: 'unsafe-inline' https: http: blob:;` +
-            `img-src data: https: http: blob:;` +
-            `font-src data: https: http:;` +
-            `connect-src https: wss: ws: http: blob:;` +
-            `media-src https: blob: http:;` +
-            `object-src https: http:;` +
-            `child-src https: data: blob: http:;` +
-            `form-action https: http:;` +
-            `block-all-mixed-content;`
+              `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+              `style-src data: 'unsafe-inline' https: http: blob:;` +
+              `img-src data: https: http: blob:;` +
+              `font-src data: https: http:;` +
+              `connect-src https: wss: ws: http: blob:;` +
+              `media-src https: blob: http:;` +
+              `object-src https: http:;` +
+              `child-src https: data: blob: http:;` +
+              `form-action https: http:;` +
+              `block-all-mixed-content;`
           );
         })
         .then(done);
@@ -576,16 +605,16 @@ describe("Isomorphic Handler", function () {
           assert.equal(
             contentSecurityPolicy,
             `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
-            `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
-            `style-src data: 'unsafe-inline' https: http: blob:;` +
-            `img-src data: https: http: blob:;` +
-            `font-src data: https: http:;` +
-            `connect-src https: wss: ws: http: blob:;` +
-            `media-src https: blob: http:;` +
-            `object-src https: http:;` +
-            `child-src https: data: blob: http:;` +
-            `form-action https: http:;` +
-            `block-all-mixed-content;`
+              `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+              `style-src data: 'unsafe-inline' https: http: blob:;` +
+              `img-src data: https: http: blob:;` +
+              `font-src data: https: http:;` +
+              `connect-src https: wss: ws: http: blob:;` +
+              `media-src https: blob: http:;` +
+              `object-src https: http:;` +
+              `child-src https: data: blob: http:;` +
+              `form-action https: http:;` +
+              `block-all-mixed-content;`
           );
         })
         .then(done);
@@ -623,16 +652,16 @@ describe("Isomorphic Handler", function () {
           assert.equal(
             contentSecurityPolicy,
             `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
-            `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
-            `style-src data: 'unsafe-inline' https: http: blob:;` +
-            `img-src data: https: http: blob:;` +
-            `font-src data: https: http:;` +
-            `connect-src https: wss: ws: http: blob:;` +
-            `media-src https: blob: http:;` +
-            `object-src https: http:;` +
-            `child-src https: data: blob: http:;` +
-            `form-action https: http:;` +
-            `block-all-mixed-content;`
+              `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+              `style-src data: 'unsafe-inline' https: http: blob:;` +
+              `img-src data: https: http: blob:;` +
+              `font-src data: https: http:;` +
+              `connect-src https: wss: ws: http: blob:;` +
+              `media-src https: blob: http:;` +
+              `object-src https: http:;` +
+              `child-src https: data: blob: http:;` +
+              `form-action https: http:;` +
+              `block-all-mixed-content;`
           );
         })
         .then(done);
@@ -670,16 +699,16 @@ describe("Isomorphic Handler", function () {
           assert.equal(
             contentSecurityPolicy,
             `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
-            `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
-            `style-src data: 'unsafe-inline' https: http: blob:;` +
-            `img-src data: https: http: blob:;` +
-            `font-src data: https: http:;` +
-            `connect-src https: wss: ws: http: blob:;` +
-            `media-src https: blob: http:;` +
-            `object-src https: http:;` +
-            `child-src https: data: blob: http:;` +
-            `form-action https: http:;` +
-            `block-all-mixed-content;`
+              `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+              `style-src data: 'unsafe-inline' https: http: blob:;` +
+              `img-src data: https: http: blob:;` +
+              `font-src data: https: http:;` +
+              `connect-src https: wss: ws: http: blob:;` +
+              `media-src https: blob: http:;` +
+              `object-src https: http:;` +
+              `child-src https: data: blob: http:;` +
+              `form-action https: http:;` +
+              `block-all-mixed-content;`
           );
         })
         .then(done);
@@ -700,10 +729,10 @@ describe("Isomorphic Handler", function () {
 
       supertest(app)
         .get("/foo/Bar")
-        .expect("Location", '/foo/bar')
+        .expect("Location", "/foo/bar")
         .expect(301)
         .then((res) => {
-          assert(true)
+          assert(true);
         })
         .then(done);
     });
@@ -720,7 +749,9 @@ describe("Isomorphic Handler", function () {
       );
 
       supertest(app)
-        .get("/foo/%E0%A6%85%E0%A6%B8%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%AD%E0%A6%BE%E0%A6%AC%E0%A6%BF%E0%A6%95-%C3%81%C3%89%C3%8D%C3%93%C3%9A%C3%9D-%C3%9Cber-%C4%B0nsensitive") // Actual URL is অস্বাভাবিক-ÁÉÍÓÚÝ-Über-İnsensitive
+        .get(
+          "/foo/%E0%A6%85%E0%A6%B8%E0%A7%8D%E0%A6%AC%E0%A6%BE%E0%A6%AD%E0%A6%BE%E0%A6%AC%E0%A6%BF%E0%A6%95-%C3%81%C3%89%C3%8D%C3%93%C3%9A%C3%9D-%C3%9Cber-%C4%B0nsensitive"
+        ) // Actual URL is অস্বাভাবিক-ÁÉÍÓÚÝ-Über-İnsensitive
         .expect("Content-Type", /html/)
         .expect(200)
         .then((res) => {
@@ -751,7 +782,7 @@ describe("Isomorphic Handler", function () {
         })
         .then(done);
     });
-    
+
     it("when not enabled, story slug with capital letters gives a normal response", (done) => {
       const app = createApp(
         (pageType, params, config, client, { host }) =>
