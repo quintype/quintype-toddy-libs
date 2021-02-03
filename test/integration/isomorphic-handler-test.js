@@ -30,7 +30,7 @@ function createApp(loadData, routes, opts = {}, app = express()) {
     Object.assign(
       {
         assetHelper: {
-          assetHash: (file) => (file == "app.js" ? "abcdef" : null),
+          assetHash: (file) => (file === "app.js" ? "abcdef" : null),
           assetPath: (file) => `/assets/${file}`,
         },
         getClient: getClientStub,
@@ -325,7 +325,7 @@ describe("Isomorphic Handler", function () {
         { pageType: "home-page", path: "/" },
       ];
       const dataLoader = (pageType, _1, _2, _3, { host, next }) =>
-        pageType == "skip"
+        pageType === "skip"
           ? next()
           : Promise.resolve({ pageType, data: { text: "foobar", host } });
 
@@ -433,6 +433,7 @@ describe("Isomorphic Handler", function () {
           lightPages: () => false,
           renderLightPage: (req, res, result) =>
             res.send("<h1> Amp Page </h1>"),
+            shouldEncodeAmpUri: true
         }
       );
 
@@ -455,20 +456,19 @@ describe("Isomorphic Handler", function () {
                       pageType,
                       data: { text: "foobar", host, story: { "is-amp-supported": true } },
                   }),
-              [],
+              [{ pageType: "story-page", path: "/*/:storySlug" }],
               {
                   lightPages: () => true,
                   shouldEncodeAmpUri: false
-              }
+                }
           );
 
           supertest(app)
-              .get("%2Fgeneral-news%2F%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B8%A3%E0%B8%AD%E0%B8%94-%E0%B8%95%E0%B8%B3%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%9A%E0%B8%B8%E0%B8%81%E0%B8%88%E0%B8%B1%E0%B8%9A-%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B9%81%E0%B8%97%E0%B8%87-%E0%B8%AB%E0%B8%A7%E0%B8%A2%E0%B8%AD%E0%B8%AD%E0%B8%99%E0%B9%84%E0%B8%A5%E0%B8%99%E0%B9%8C")
-              .expect("Content-Type", /html/)
+              .get("/general-news/%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B8%A3%E0%B8%AD%E0%B8%94-%E0%B8%95%E0%B8%B3%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%9A%E0%B8%B8%E0%B8%81%E0%B8%88%E0%B8%B1%E0%B8%9A-%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B9%81%E0%B8%97%E0%B8%87-%E0%B8%AB%E0%B8%A7%E0%B8%A2%E0%B8%AD%E0%B8%AD%E0%B8%99%E0%B9%84%E0%B8%A5%E0%B8%99%E0%B9%8C")
               .expect(200)
               .then((res) => {
                   assert.equal(
-                      `http://127.0.0.1/amp/story/%2Fgeneral-news%2F%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B8%A3%E0%B8%AD%E0%B8%94-%E0%B8%95%E0%B8%B3%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%9A%E0%B8%B8%E0%B8%81%E0%B8%88%E0%B8%B1%E0%B8%9A-%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B9%81%E0%B8%97%E0%B8%87-%E0%B8%AB%E0%B8%A7%E0%B8%A2%E0%B8%AD%E0%B8%AD%E0%B8%99%E0%B9%84%E0%B8%A5%E0%B8%99%E0%B9%8C`,
+                      `http://127.0.0.1/amp/story//general-news/%E0%B9%84%E0%B8%A1%E0%B9%88%E0%B8%A3%E0%B8%AD%E0%B8%94-%E0%B8%95%E0%B8%B3%E0%B8%A3%E0%B8%A7%E0%B8%88%E0%B8%9A%E0%B8%B8%E0%B8%81%E0%B8%88%E0%B8%B1%E0%B8%9A-%E0%B9%80%E0%B8%88%E0%B9%89%E0%B8%B2%E0%B8%A1%E0%B8%B7%E0%B8%AD%E0%B8%A3%E0%B8%B1%E0%B8%9A%E0%B9%81%E0%B8%97%E0%B8%87-%E0%B8%AB%E0%B8%A7%E0%B8%A2%E0%B8%AD%E0%B8%AD%E0%B8%99%E0%B9%84%E0%B8%A5%E0%B8%99%E0%B9%8C`,
                       res.get("X-QT-Light-Pages-Url")
                   );
               })

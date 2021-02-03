@@ -303,7 +303,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     renderServiceWorker = renderServiceWorkerFn,
     publisherConfig = require("./publisher-config"),
     redirectUrls = [],
-    redirectToLowercaseSlugs = false
+    redirectToLowercaseSlugs = false,
+      shouldEncodeAmpUri
   }
 ) {
   const withConfig = withConfigPartial(
@@ -460,7 +461,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       cdnProvider,
       lightPages,
       redirectUrls,
-      redirectToLowercaseSlugs
+      redirectToLowercaseSlugs,
+        shouldEncodeAmpUri
     })
   );
 
