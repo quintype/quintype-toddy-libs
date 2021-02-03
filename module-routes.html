@@ -464,7 +464,7 @@ GET - &quot;/amp/api/v1/amp-infinite-scroll&quot; returns the infinite scroll co
         <p class="tag-source">
             <a href="server_routes.js.html" class="button">View Source</a>
             <span>
-                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line578">line 578</a>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line590">line 590</a>
             </span>
         </p>
     
@@ -505,7 +505,7 @@ GET - &quot;/amp/api/v1/amp-infinite-scroll&quot; returns the infinite scroll co
         
         <span class="code-name">
             
-                isomorphicRoutes<span class="signature">(app, opts, redirectToLowercaseSlugs)</span><span class="type-signature"></span>
+                isomorphicRoutes<span class="signature">(app, opts, redirectToLowercaseSlugs, shouldEncodeAmpUri)</span><span class="type-signature"></span>
             
         </span>
     </h4>
@@ -1192,6 +1192,34 @@ It accepts all the pieces needed, and implements all the plumbing to make these 
 
 
     
+
+        
+<tr class="deep-level-0">
+  
+      <td class="name"><code>shouldEncodeAmpUri</code></td>
+  
+
+  <td class="type">
+  
+      
+<span class="param-type">boolean</span>
+|
+
+<span class="param-type">function</span>
+
+
+  
+  </td>
+
+  
+
+  
+
+  <td class="description last"><p>If set to true, then for every story-page request the slug will be encoded, in case of a vernacular slug this should be set to false. Receives path as param (default: true)</p></td>
+</tr>
+
+
+    
     </tbody>
 </table>
 
@@ -1234,7 +1262,7 @@ It accepts all the pieces needed, and implements all the plumbing to make these 
         <p class="tag-source">
             <a href="server_routes.js.html" class="button">View Source</a>
             <span>
-                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line269">line 269</a>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line270">line 270</a>
             </span>
         </p>
     
@@ -1484,7 +1512,7 @@ It accepts all the pieces needed, and implements all the plumbing to make these 
         <p class="tag-source">
             <a href="server_routes.js.html" class="button">View Source</a>
             <span>
-                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line511">line 511</a>
+                <a href="server_routes.js.html">server/routes.js</a>, <a href="server_routes.js.html#line523">line 523</a>
             </span>
         </p>
     
