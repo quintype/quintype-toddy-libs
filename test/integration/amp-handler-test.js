@@ -204,7 +204,7 @@ describe("Amp story page handler", () => {
       .expect("Content-Type", /html/)
       .expect(200)
       .then(() => done())
-      .catch(done);
+      .catch((error) => done(error));
   });
 });
 
