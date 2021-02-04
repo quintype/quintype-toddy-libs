@@ -243,6 +243,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
     mobileConfigFields,
     cdnProvider,
     redirectToLowercaseSlugs,
+    oneSignalServiceWorkers,
   }
 ) {
   const url = urlLib.parse(req.query.path || "/", true);
@@ -320,6 +321,9 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         config: config,
       });
       const seoInstance = getSeoInstance(seo, config, result.pageType);
+      const oneSignalScript = oneSignalServiceWorkers
+        ? getOneSignalScript({ config })
+        : null;
       res.json(
         Object.assign({}, result, {
           appVersion,
@@ -336,6 +340,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
           title: seoInstance
             ? seoInstance.getTitle(config, result.pageType, result)
             : result.title,
+          oneSignalScript,
         })
       );
     })

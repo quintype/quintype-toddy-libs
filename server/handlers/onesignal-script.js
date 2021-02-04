@@ -14,13 +14,13 @@ exports.getOneSignalScript = function getOneSignalScript({
     publisherConfig.publisher.onesignal.safari_web_id;
 
   const publisherName = config["publisher-name'"] || "malibu";
-
-  var OneSignal = OneSignal || [];
+  const onesignalScripts = `<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+  <script>var OneSignal = OneSignal || [];
 
   OneSignal.push(function () {
     OneSignal.init({
-      appId: `"${appId}"`,
-      safari_web_id: `"${safariWebId}"`,
+      appId: "${appId}",
+      safari_web_id: "${safariWebId}",
       autoRegister: true,
       notifyButton: {
         enable: true,
@@ -28,12 +28,13 @@ exports.getOneSignalScript = function getOneSignalScript({
     });
   });
   OneSignal.push(function () {
-    OneSignal.sendTag(`"<%= ${publisherName} %>-breaking-news"`, "true").then(
-      function (tagsSent) {
-        console.info("Onesignal tags sent --> ", tagsSent);
-      }
-    );
-  });
+    OneSignal.sendTag(
+      "${publisherName}-breaking-news",
+      "true"
+    ).then(function (tagsSent) {
+      console.info("Onesignal tags sent --> ", tagsSent);
+    });
+  })</script>`;
 
-  return OneSignal;
+  return onesignalScripts;
 };
