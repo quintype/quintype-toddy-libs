@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.7.3](https://github.com/quintype/quintype-node-framework/compare/v4.7.2...v4.7.3) (2021-02-03)
+
+
+### Bug Fixes
+
+* **amp:** Implement toggle to encode slug :zap: ([#197](https://github.com/quintype/quintype-node-framework/issues/197)) ([311a638](https://github.com/quintype/quintype-node-framework/commit/311a638fc2c710d92f2dadf511be12c40b06f5e2))
+
+
+
 ## [4.7.2](https://github.com/quintype/quintype-node-framework/compare/v4.7.1...v4.7.2) (2021-02-01)
 
 
