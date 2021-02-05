@@ -324,12 +324,6 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
       const oneSignalScript = oneSignalServiceWorkers
         ? getOneSignalScript({ config })
         : null;
-      console.log(
-        " route data json oneSignalServiceWorkers",
-        oneSignalServiceWorkers
-      );
-      console.log("route data json", oneSignalScript);
-      console.log("here config", config);
       res.json(
         Object.assign({}, result, {
           appVersion,
