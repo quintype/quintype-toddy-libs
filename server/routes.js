@@ -305,10 +305,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     publisherConfig = require("./publisher-config"),
     redirectUrls = [],
     redirectToLowercaseSlugs = false,
-<<<<<<< HEAD
-=======
     shouldEncodeAmpUri,
->>>>>>> c9af926bc0899ac97414d7894e2c847a4dcec969
   }
 ) {
   const withConfig = withConfigPartial(
