@@ -141,10 +141,11 @@ function withConfigPartial(
 ) {
   return function withConfig(f, staticParams) {
     return function (req, res, next) {
+      const domainSlug = getDomainSlug(publisherConfig, req.hostname);
       const client = getClient(req.hostname);
       return client
         .getConfig()
-        .then((config) => configWrapper(config))
+        .then((config) => configWrapper(config, domainSlug))
         .then((config) =>
           f(
             req,
@@ -153,7 +154,7 @@ function withConfigPartial(
             Object.assign({}, staticParams, {
               config,
               client,
-              domainSlug: getDomainSlug(publisherConfig, req.hostname),
+              domainSlug,
             })
           )
         )
