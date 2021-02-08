@@ -101,7 +101,7 @@ async function handleVisualStory(
     req,
     res,
     next,
-    { config, client, renderVisualStory, seo, cdnProvider = null }
+    { config, client, renderVisualStory, seo, cdnProvider = null, domainSlug }
 ) {
     const url = urlLib.parse(req.url, true);
     const story = await Story.getStoryBySlug(client, req.params.storySlug);
@@ -120,7 +120,7 @@ async function handleVisualStory(
                 storyToCacheKey(config["publisher-id"], story),
             ], cdnProvider: cdnProvider, config: config
         });
-        await renderVisualStory(res, story, { config, client, seoTags });
+        await renderVisualStory(res, story, { config, client, seoTags, domainSlug });
     }
 }
 
