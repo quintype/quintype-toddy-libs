@@ -1,5 +1,19 @@
+const ejs = require("ejs");
+const path = require("path");
+const fs = require("fs");
+
+const partialTemplateStr = fs.readFileSync(
+  path.join(__dirname, "../views/partial/one-signal.ejs"),
+  {
+    encoding: "utf-8",
+  }
+);
+
+const partialTemplate = ejs.compile(partialTemplateStr);
+
 exports.getOneSignalScript = function getOneSignalScript({
   config,
+  // eslint-disable-next-line global-require
   publisherConfig = require("../publisher-config"),
 }) {
   const appId =
@@ -14,27 +28,12 @@ exports.getOneSignalScript = function getOneSignalScript({
     publisherConfig.publisher.onesignal.safari_web_id;
 
   const publisherName = config["publisher-name'"] || "malibu";
-  const onesignalScripts = `<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
-  <script>var OneSignal = OneSignal || [];
 
-  OneSignal.push(function () {
-    OneSignal.init({
-      appId: "${appId}",
-      safari_web_id: "${safariWebId}",
-      autoRegister: true,
-      notifyButton: {
-        enable: true,
-      },
-    });
+  const renderedContent = partialTemplate({
+    appId,
+    safariWebId,
+    publisherName,
   });
-  OneSignal.push(function () {
-    OneSignal.sendTag(
-      "${publisherName}-breaking-news",
-      "true"
-    ).then(function (tagsSent) {
-      console.info("Onesignal tags sent --> ", tagsSent);
-    });
-  })</script>`;
 
-  return onesignalScripts;
+  return renderedContent;
 };
