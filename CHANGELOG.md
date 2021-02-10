@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [4.8.0](https://github.com/quintype/quintype-node-framework/compare/v4.7.3...v4.8.0) (2021-02-10)
+
+
+### Bug Fixes
+
+* remove old visual stories ([#200](https://github.com/quintype/quintype-node-framework/issues/200)) ([0fbd674](https://github.com/quintype/quintype-node-framework/commit/0fbd674a60af46af5138bf9524f75d7a88bb324b)), closes [#188](https://github.com/quintype/quintype-node-framework/issues/188)
+
+
+### Features
+
+* **PB subdomain:** pass domainSlug to required methods(PB) ([#198](https://github.com/quintype/quintype-node-framework/issues/198)) ([b072bf5](https://github.com/quintype/quintype-node-framework/commit/b072bf5853cddc44ca8b168647ff44bc03709837))
+
+
+
 ## [4.7.3](https://github.com/quintype/quintype-node-framework/compare/v4.7.2...v4.7.3) (2021-02-03)
 
 
