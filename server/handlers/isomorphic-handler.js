@@ -510,9 +510,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
         `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`
       );
     }
-    const oneSignalScript = oneSignalServiceWorkers
-      ? getOneSignalScript({ config })
-      : null;
+
     return pickComponent
       .preloadComponent(
         store.getState().qt.pageType,
@@ -529,7 +527,9 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
           seoTags,
           pageType: store.getState().qt.pageType,
           subPageType: store.getState().qt.subPageType,
-          oneSignalScript,
+          oneSignalScript: oneSignalServiceWorkers
+            ? getOneSignalScript({ config })
+            : null,
         })
       );
   }
@@ -635,10 +635,6 @@ exports.handleStaticRoute = function handleStaticRoute(
         config: config,
       });
 
-      const oneSignalScript = oneSignalServiceWorkers
-        ? getOneSignalScript({ config })
-        : null;
-
       return renderLayout(
         res,
         Object.assign(
@@ -655,7 +651,9 @@ exports.handleStaticRoute = function handleStaticRoute(
             store,
             disableAjaxNavigation: true,
             seoTags,
-            oneSignalScript,
+            oneSignalScript: oneSignalServiceWorkers
+              ? getOneSignalScript({ config })
+              : null,
           },
           renderParams
         )
