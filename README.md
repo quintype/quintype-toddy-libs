@@ -96,21 +96,6 @@ Doing this will enable a field called `domainSlug` to be passed to various funct
 
 Further, `/route-data.json` will have two more fields at the root level. `domainSlug`, which is the slug of the loaded domain. `currentHostUrl` specifies which domain you are on. The `currentHostUrl` is used by the link field to decide if it should do an ajax navigation or not.
 
-## Visual Stories (amp stories)	
-
-In order to use the visual-stories, do the following in `app/server/app.js`	
-
-```javascript	
-import { enableVisualStories } from "@quintype/framework/server/visual-stories";	
-function renderVisualStory(res, story, { config, client }) {	
-  res.render("pages/visual-story", {	
-    seo: "",	
-    content: ReactDom.renderToStaticMarkup(<amp-story></amp-story>),	
-  });	
-}	
-enableVisualStories(app, renderVisualStory, { logError });	
-```
-
 ## Debugging
 
 - In order to use `assetify` function, please annotate the application-js with id="app-js". The hostname specified here is assumed to be the cdn

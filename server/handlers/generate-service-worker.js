@@ -12,7 +12,7 @@ async function generateServiceWorker(
     maxConfigVersion,
   }
 ) {
-  const configVersion = await maxConfigVersion(config);
+  const configVersion = await maxConfigVersion(config, domainSlug);
 
   return new Promise((resolve) => {
     renderServiceWorker(

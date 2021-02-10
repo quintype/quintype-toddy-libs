@@ -5,9 +5,9 @@ exports.handleManifest = function handleManifest(
   req,
   res,
   next,
-  { config, logError, manifestFn }
+  { config, logError, manifestFn, domainSlug }
 ) {
-  return new Promise((resolve) => resolve(manifestFn(config)))
+  return new Promise((resolve) => resolve(manifestFn(config, domainSlug)))
     .then((result) => {
       res.setHeader("Cache-Control", "public,max-age=900");
       res.setHeader("Vary", "Accept-Encoding");

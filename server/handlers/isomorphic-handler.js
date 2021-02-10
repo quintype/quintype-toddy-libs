@@ -135,7 +135,7 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
 ) {
   const freshRevision = `${assetHelper.assetHash(
     "app.js"
-  )}-${await maxConfigVersion(config)}`;
+  )}-${await maxConfigVersion(config, domainSlug)}`;
 
   if (req.query.revision && req.query.revision !== freshRevision)
     return res.status(503).send("Requested Shell Is Not Current");
