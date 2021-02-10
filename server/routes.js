@@ -382,7 +382,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       appVersion,
       cdnProvider,
       redirectToLowercaseSlugs,
-      oneSignalServiceWorkers,
     })
   );
 
