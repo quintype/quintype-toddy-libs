@@ -596,6 +596,7 @@ exports.handleStaticRoute = function handleStaticRoute(
     disableIsomorphicComponent,
     domainSlug,
     cdnProvider,
+    oneSignalServiceWorkers,
   }
 ) {
   const url = urlLib.parse(path);
@@ -639,6 +640,10 @@ exports.handleStaticRoute = function handleStaticRoute(
         config: config,
       });
 
+      const oneSignalScript = oneSignalServiceWorkers
+        ? getOneSignalScript({ config })
+        : null;
+
       return renderLayout(
         res,
         Object.assign(
@@ -655,6 +660,7 @@ exports.handleStaticRoute = function handleStaticRoute(
             store,
             disableAjaxNavigation: true,
             seoTags,
+            oneSignalScript,
           },
           renderParams
         )
