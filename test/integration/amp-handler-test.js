@@ -203,8 +203,10 @@ describe("Amp story page handler", () => {
       .get("/amp/story/foo")
       .expect("Content-Type", /html/)
       .expect(200)
-      .then(() => done())
-      .catch((error) => done(error));
+      .end((err) => {
+        if (err) return done(err);
+        return done();
+      });
   });
 });
 
