@@ -440,7 +440,16 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       withConfig(
         handleStaticRoute,
         Object.assign(
-          { logError, loadData, loadErrorData, renderLayout, seo, cdnProvider },
+          {
+            logError,
+            loadData,
+            loadErrorData,
+            renderLayout,
+            seo,
+            cdnProvider,
+            oneSignalServiceWorkers,
+            publisherConfig,
+          },
           route
         )
       )
@@ -465,6 +474,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       redirectUrls,
       redirectToLowercaseSlugs,
       shouldEncodeAmpUri,
+      oneSignalServiceWorkers,
+      publisherConfig,
     })
   );
 
