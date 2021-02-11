@@ -448,6 +448,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
             seo,
             cdnProvider,
             oneSignalServiceWorkers,
+            publisherConfig,
           },
           route
         )
@@ -472,8 +473,9 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       lightPages,
       redirectUrls,
       redirectToLowercaseSlugs,
-      oneSignalServiceWorkers,
       shouldEncodeAmpUri,
+      oneSignalServiceWorkers,
+      publisherConfig,
     })
   );
 

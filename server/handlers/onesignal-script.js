@@ -13,8 +13,7 @@ const partialTemplate = ejs.compile(partialTemplateStr);
 
 exports.getOneSignalScript = function getOneSignalScript({
   config,
-  // eslint-disable-next-line global-require
-  publisherConfig = require("../publisher-config"),
+  publisherConfig = {},
 }) {
   const appId =
     (config["public-integrations"]["one-signal"] &&
@@ -23,17 +22,24 @@ exports.getOneSignalScript = function getOneSignalScript({
 
   // will take safariWebId from public integration once bold have option to put safari id.
   const safariWebId =
-    publisherConfig.publisher &&
-    publisherConfig.publisher.onesignal &&
-    publisherConfig.publisher.onesignal.safari_web_id;
+    (publisherConfig.publisher &&
+      publisherConfig.publisher.onesignal &&
+      publisherConfig.publisher.onesignal.safari_web_id) ||
+    null;
+  const isEnable =
+    (publisherConfig.publisher &&
+      publisherConfig.publisher.onesignal &&
+      publisherConfig.publisher.onesignal.is_enable) ||
+    false;
 
   const publisherName = config["publisher-name'"] || "malibu";
-
-  const renderedContent = partialTemplate({
-    appId,
-    safariWebId,
-    publisherName,
-  });
+  const renderedContent = isEnable
+    ? partialTemplate({
+        appId,
+        safariWebId,
+        publisherName,
+      })
+    : null;
 
   return renderedContent;
 };

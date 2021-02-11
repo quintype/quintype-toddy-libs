@@ -457,6 +457,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     redirectToLowercaseSlugs,
     oneSignalServiceWorkers,
     shouldEncodeAmpUri,
+    publisherConfig,
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -511,7 +512,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
       );
     }
     const oneSignalScript = oneSignalServiceWorkers
-      ? getOneSignalScript({ config })
+      ? getOneSignalScript({ config, publisherConfig })
       : null;
     return pickComponent
       .preloadComponent(
@@ -592,6 +593,7 @@ exports.handleStaticRoute = function handleStaticRoute(
     domainSlug,
     cdnProvider,
     oneSignalServiceWorkers,
+    publisherConfig,
   }
 ) {
   const url = urlLib.parse(path);
@@ -636,7 +638,7 @@ exports.handleStaticRoute = function handleStaticRoute(
       });
 
       const oneSignalScript = oneSignalServiceWorkers
-        ? getOneSignalScript({ config })
+        ? getOneSignalScript({ config, publisherConfig })
         : null;
 
       return renderLayout(
