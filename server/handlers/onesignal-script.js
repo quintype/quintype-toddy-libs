@@ -31,8 +31,7 @@ exports.getOneSignalScript = function getOneSignalScript({
       publisherConfig.publisher.onesignal &&
       publisherConfig.publisher.onesignal.is_enable) ||
     false;
-
-  const publisherName = config["publisher-name'"] || "malibu";
+  const publisherName = config["publisher-name"] || "malibu";
   const renderedContent = isEnable
     ? partialTemplate({
         appId,
