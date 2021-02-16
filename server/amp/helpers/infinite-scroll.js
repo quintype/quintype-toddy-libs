@@ -3,6 +3,7 @@ class InfiniteScrollAmp {
     this.client = client;
     this.publisherConfig = publisherConfig;
     this.queryParams = queryParams;
+    this.inlineStoriesTaken = 5; // sets stories given as inline config. Has to be > 0 as we are using this to check if infinite scroll exists in amplib
     this.collSlug = "amp-infinite-scroll"; // this is hardcoded to "amp-infinite-scroll" temporarily. Ideally it should come from ampConfig from platform
   }
 
@@ -42,7 +43,7 @@ class InfiniteScrollAmp {
     return `${hostWithProtocol}/${s3Key}?format=webp&w=250`;
   }
 
-  async getResponse({ itemsTaken }) {
+  async getResponse() {
     const { "story-id": storyId } = this.queryParams;
     if (!storyId) return new Error(`Query param "story-id" missing`);
     const collection = await this.client.getCollectionBySlug(this.collSlug);
@@ -51,18 +52,16 @@ class InfiniteScrollAmp {
         `Infinite scroll collection ${this.collSlug} returned falsy value`
       );
     const filteredItems = this.getFilteredCollItems(collection, storyId);
-    const slicedItems = filteredItems.slice(itemsTaken);
+    const slicedItems = filteredItems.slice(this.inlineStoriesTaken);
     const formattedData = this.formatData({ itemsArr: slicedItems });
     return JSON.stringify(formattedData);
   }
 
-  async getInitialInlineConfig({ itemsToTake, storyId }) {
-    if (!itemsToTake || !storyId)
-      return new Error("Required params for getInitialInlineConfig missing");
+  async getInitialInlineConfig({ storyId }) {
     const collection = await this.client.getCollectionBySlug(this.collSlug);
     if (!collection) return null;
     const filteredItems = this.getFilteredCollItems(collection, storyId);
-    const slicedItems = filteredItems.slice(0, itemsToTake);
+    const slicedItems = filteredItems.slice(0, this.inlineStoriesTaken);
     const formattedData = this.formatData({
       itemsArr: slicedItems,
       type: "inline",

@@ -90,7 +90,6 @@ async function ampStoryPageHandler(
     });
     const infiniteScrollInlineConfig = await infiniteScrollAmp.getInitialInlineConfig(
       {
-        itemsToTake: 5,
         storyId: story["story-content-id"],
       }
     );
