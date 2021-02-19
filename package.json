@@ -44,11 +44,6 @@
     "lodash": "^4.17.15",
     "morgan": "^1.9.1",
     "path-to-regexp": "^6.2.0",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-redux": "^7.0.1",
-    "react-router": "^5.0.0",
-    "redux": "^4.0.1",
     "sleep-promise": "^8.0.1",
     "winston": "3.2.1"
   },
@@ -83,7 +78,12 @@
     "supertest": "^4.0.2"
   },
   "peerDependencies": {
-    "@quintype/seo": "^1.22.0"
+    "@quintype/seo": "^1.22.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.0.1",
+    "react-router": "^5.0.0",
+    "redux": "^4.0.1"
   },
   "nyc": {
     "exclude": [
