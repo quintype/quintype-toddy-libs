@@ -306,6 +306,10 @@ describe("Custom Route Handler", function () {
             "Cache-Control",
             "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
         )
+        .expect("Vary", "Accept-Encoding")
+        .expect("Surrogate-Control", /public/)
+        .expect("Surrogate-Key", "u/42/104")
+        .expect("Cache-Tag", "u/42/104")
         .expect("Content-Type", "text/html; charset=utf-8")
         .expect(200, done);
   });
