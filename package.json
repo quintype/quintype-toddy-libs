@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "4.8.5-fix-amp-related-stories.1",
+  "version": "4.8.5-fix-amp-related-stories.2",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
