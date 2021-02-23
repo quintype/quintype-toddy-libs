@@ -30,7 +30,10 @@ async function ampStoryPageHandler(
     const url = urlLib.parse(req.url, true);
     const { ampifyStory } = ampLibrary;
     // eslint-disable-next-line no-return-await
-    const ampConfig = await AmpConfig.getAmpConfig(client);
+    const ampConfig = await config.memoizeAsync(
+      `ampConfig_${config["publisher-id"]}`,
+      async () => await AmpConfig.getAmpConfig(client)
+    );
     const slug = String(0);
     const story = await Story.getStoryBySlug(client, req.params[slug]);
     let relatedStoriesCollection;
