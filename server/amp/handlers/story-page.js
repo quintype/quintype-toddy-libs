@@ -30,15 +30,22 @@ async function ampStoryPageHandler(
     const url = urlLib.parse(req.url, true);
     const { ampifyStory } = ampLibrary;
     // eslint-disable-next-line no-return-await
-    const ampConfig = await config.memoizeAsync(
-      `ampConfig_${config["publisher-id"]}`,
-      async () => await AmpConfig.getAmpConfig(client)
-    );
+    /* const ampConfig = await config.memoizeAsync(
+        `ampConfig_${config["publisher-id"]}`,
+        async () => await AmpConfig.getAmpConfig(client)
+    ); */
+
+    const ampConfig = await AmpConfig.getAmpConfig(client);
     const slug = String(0);
     const story = await Story.getStoryBySlug(client, req.params[slug]);
     let relatedStoriesCollection;
     let relatedStories = [];
-    console.log("DEBUG-TEST", "related-collection-id", ampConfig["related-collection-id"]);
+    console.log(
+      `================================================================================`
+    );
+
+    console.log("DEBUG-TEST", "related-collection-id", ampConfig);
+    console.log("DEBUG-TEST", "URL", url);
     console.log("DEBUG-TEST", "client", client);
     if (!story) return next();
     if (ampConfig["related-collection-id"]) {
@@ -47,7 +54,11 @@ async function ampStoryPageHandler(
       );
     }
 
-    console.log("DEBUG-TEST", "relatedStoriesCollection", relatedStoriesCollection);
+    console.log(
+      "DEBUG-TEST",
+      "relatedStoriesCollection",
+      relatedStoriesCollection
+    );
 
     if (relatedStoriesCollection) {
       const storiesToTake = get(
@@ -116,6 +127,14 @@ async function ampStoryPageHandler(
       opts: { ...domainSpecificOpts, domainSlug },
       seo: seoTags ? seoTags.toString() : "",
     });
+
+    console.log("DEBUG-TEST", "domainSpecificOpts", domainSpecificOpts);
+    console.log("DEBUG-TEST", "domainSlug", domainSlug);
+
+    console.log(
+      `================================================================================`
+    );
+
     if (ampHtml instanceof Error) return next(ampHtml);
     const optimizedAmpHtml = await optimize(ampHtml);
 

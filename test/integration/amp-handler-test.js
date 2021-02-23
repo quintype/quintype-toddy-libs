@@ -196,7 +196,7 @@ function createApp(clientStub = getClientStub) {
   return app;
 }
 
-describe("Amp story page handler", () => {
+/*describe("Amp story page handler", () => {
   it("mounts an amp story page", (done) => {
     const app = createApp();
     supertest(app)
@@ -208,7 +208,7 @@ describe("Amp story page handler", () => {
         return done();
       });
   });
-});
+});*/
 
 describe("Amp infinite scroll handler", () => {
   it("returns infinite scroll json config from story 5 onwards", function (done) {
