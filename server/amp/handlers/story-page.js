@@ -45,8 +45,10 @@ async function ampStoryPageHandler(
       relatedStoriesCollection = await client.getCollectionBySlug(
         ampConfig["related-collection-id"]
       );
-      console.log("DEBUG-TEST", "relatedStoriesCollection", relatedStoriesCollection);
     }
+
+    console.log("DEBUG-TEST", "relatedStoriesCollection", relatedStoriesCollection);
+
     if (relatedStoriesCollection) {
       const storiesToTake = get(
         domainSpecificOpts,
