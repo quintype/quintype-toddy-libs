@@ -31,7 +31,7 @@ async function ampStoryPageHandler(
     const { ampifyStory } = ampLibrary;
     // eslint-disable-next-line no-return-await
     const ampConfig = await config.memoizeAsync(
-      "amp-config",
+      `ampConfig_${config["publisher-id"]}`,
       async () => await AmpConfig.getAmpConfig(client)
     );
     const slug = String(0);
