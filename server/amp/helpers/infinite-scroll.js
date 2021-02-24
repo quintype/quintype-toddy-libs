@@ -45,7 +45,13 @@ class InfiniteScrollAmp {
   async getResponse({ itemsTaken }) {
     const { "story-id": storyId } = this.queryParams;
     if (!storyId) return new Error(`Query param "story-id" missing`);
+    console.log(`****************************************************************************`);
+    console.log("DEBUG-TEST", "getResponse - helper", this.client);
+    console.log("DEBUG-TEST", "getResponse - storyId -  helper", storyId);
     const collection = await this.client.getCollectionBySlug(this.collSlug);
+    console.log("DEBUG-TEST", "getResponse - collection -  helper", collection);
+    console.log(`****************************************************************************`);
+
     if (!collection)
       return new Error(
         `Infinite scroll collection ${this.collSlug} returned falsy value`
@@ -59,7 +65,13 @@ class InfiniteScrollAmp {
   async getInitialInlineConfig({ itemsToTake, storyId }) {
     if (!itemsToTake || !storyId)
       return new Error("Required params for getInitialInlineConfig missing");
+    console.log(`****************************************************************************`);
+
+    console.log("DEBUG-TEST", "getInitialInlineConfig - helper", this.client);
     const collection = await this.client.getCollectionBySlug(this.collSlug);
+    console.log("DEBUG-TEST", "getInitialInlineConfig - collection -  helper", collection);
+    console.log(`****************************************************************************`);
+
     if (!collection) return null;
     const filteredItems = this.getFilteredCollItems(collection, storyId);
     const slicedItems = filteredItems.slice(0, itemsToTake);
