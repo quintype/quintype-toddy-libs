@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.10.1](https://github.com/quintype/quintype-node-framework/compare/v4.10.0...v4.10.1) (2021-02-25)
+
+
+### Bug Fixes
+
+* **amp:** bump amplib to take submenu validation err hotfix ([#207](https://github.com/quintype/quintype-node-framework/issues/207)) ([773e847](https://github.com/quintype/quintype-node-framework/commit/773e847e07f5edf2b844b7259381601ce378d17f))
+* **amp:** Fix related stories across domains :hammer: ([#206](https://github.com/quintype/quintype-node-framework/issues/206)) ([ed4f65a](https://github.com/quintype/quintype-node-framework/commit/ed4f65a1f03bc98770effcc5a19db35de1a6dbca))
+
+
+
 # [4.10.0](https://github.com/quintype/quintype-node-framework/compare/v4.9.0...v4.10.0) (2021-02-25)
 
 
