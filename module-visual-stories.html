@@ -3,7 +3,7 @@
 <head>
     <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create', 'UA-66074042-1', 'auto');ga('send', 'pageview');</script>
     <meta charset="utf-8">
-    <title>JSDoc: render</title>
+    <title>JSDoc: visual-stories</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -67,7 +67,7 @@
                 <div class="content" id="main-content-wrapper">
                     <header class="page-title">
                         <p>Module</p>
-                        <h1>render</h1>
+                        <h1>visual-stories</h1>
                     </header>
 
                     
@@ -89,8 +89,17 @@
     <div class="container-overview">
     
         
-            <div class="description"><p>This namespace a helper method for render</p>
-<pre class="prettyprint source lang-javascript"><code>import {renderReduxComponent} from &quot;@quintype/framework/server/render&quot;;
+            <div class="description"><p>This namespace exports a utility function rendering visual stories</p>
+<pre class="prettyprint source lang-javascript"><code>import {enableVisualStories} from '@quintype/framework/server/visual-stories';
+
+function renderVisualStory(res, story, {config, client}) {
+  res.render(&quot;pages/visual-story&quot;, {
+    seo: &quot;&quot;,
+    content: ReactDom.renderToStaticMarkup(&lt;amp-story>&lt;/amp-story>)
+  })
+}
+
+enableVisualStories(app, renderVisualStory, {logError})
 </code></pre></div>
         
 
@@ -143,9 +152,9 @@
 
     
         <p class="tag-source">
-            <a href="server_render.js.html" class="button">View Source</a>
+            <a href="server_visual-stories.js.html" class="button">View Source</a>
             <span>
-                <a href="server_render.js.html">server/render.js</a>, <a href="server_render.js.html#line1">line 1</a>
+                <a href="server_visual-stories.js.html">server/visual-stories.js</a>, <a href="server_visual-stories.js.html#line1">line 1</a>
             </span>
         </p>
     
@@ -190,214 +199,6 @@
 
     
 
-    
-        <div class='vertical-section'>
-            <h3 class="title"><span>Methods</span></h3>
-            <div class="members">
-            
-                <div class="member">
-
-
-    
-    <h4 class="name" id=".renderReduxComponent">
-        <a class="href-link" href="#.renderReduxComponent">#</a>
-        
-            
-                <span class='tag'>static</span>
-            
-        
-        <span class="code-name">
-            
-                renderReduxComponent<span class="signature">(Component, store, props)</span><span class="type-signature"></span>
-            
-        </span>
-    </h4>
-    
-
-    
-    
-    <div class="description">
-        <p>Render the given component in the redux store</p>
-    </div>
-    
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>Component</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Component</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The Component to render</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>store</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Redux</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The store to render</p></td>
-</tr>
-
-
-    
-
-        
-<tr class="deep-level-0">
-  
-      <td class="name"><code>props</code></td>
-  
-
-  <td class="type">
-  
-      
-<span class="param-type">Object</span>
-
-
-  
-  </td>
-
-  
-
-  
-
-  <td class="description last"><p>The props to pass to the component</p></td>
-</tr>
-
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    
-
-    
-
-    
-
-    
-        <p class="tag-source">
-            <a href="server_render.js.html" class="button">View Source</a>
-            <span>
-                <a href="server_render.js.html">server/render.js</a>, <a href="server_render.js.html#line21">line 21</a>
-            </span>
-        </p>
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</div>
-            
-            </div>
-        </div>
     
 
     
