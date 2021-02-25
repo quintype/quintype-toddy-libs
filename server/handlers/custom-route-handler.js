@@ -14,6 +14,7 @@ const staticPageTemplate = ejs.compile(staticPageTemplateStr);
 const { CustomPath } = require("../impl/api-client-impl");
 const { createBasicStore } = require("./create-store");
 const { addCacheHeadersToResult } = require("./cdn-caching");
+const { addStaticPageMimeType } = require("./mime-type-handler");
 
 function renderStaticPageContent(store, content) {
   const renderedContent = staticPageTemplate({ store, content });
@@ -99,6 +100,7 @@ exports.customRouteHandler = function customRouteHandler(
 
       if (page.type === "static-page") {
         addCacheHeadersToResult({ res: res, cacheKeys: page.cacheKeys(config["publisher-id"]), cdnProvider: cdnProvider, config: config });
+        addStaticPageMimeType({ res, page });
 
         if (page.metadata.header || page.metadata.footer) {
           return loadData("custom-static-page", {}, config, client, {

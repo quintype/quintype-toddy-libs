@@ -67,6 +67,22 @@ function getClientStub(hostname) {
               "status-code": 200,
             },
           });
+        case "/static-with-mime-type":
+          return Promise.resolve({
+            page: {
+              id: 105,
+              title: "Testing mime type",
+              content:
+                  "<html><head><title>Test</title></head><body><h1>Heading</h1></body></html>",
+              metadata: {
+                header: false,
+                footer: false,
+                "mime-type": "text/plain"
+              },
+              type: "static-page",
+              "status-code": 200,
+            },
+          });
         default:
           return Promise.resolve({ page: null, "status-code": 404 });
       }
@@ -259,4 +275,43 @@ describe("Custom Route Handler", function () {
       .expect("Cache-Tag", "u/42/105")
       .expect(301, done);
   });
+
+  it("Adds content type as per metadata in response", function (done) {
+    const app = createApp(
+        (pageType, params, config, client, { host, next }) => next(),
+        [{ pageType: "story-page", path: "/*" }]
+    );
+    supertest(app)
+        .get("/static-with-mime-type")
+        .expect(
+            "Cache-Control",
+            "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
+        )
+        .expect("Vary", /Accept\-Encoding/)
+        .expect("Surrogate-Control", /public/)
+        .expect("Surrogate-Key", "u/42/105")
+        .expect("Cache-Tag", "u/42/105")
+        .expect("Content-Type", "text/plain; charset=utf-8")
+        .expect(200, done);
+  });
+
+  it("Adds content type default if metadata in response is not set", function (done) {
+    const app = createApp(
+        (pageType, params, config, client, { next }) => next(),
+        [{ pageType: "story-page", path: "/*" }]
+    );
+    supertest(app)
+        .get("/static-without-header-footer")
+        .expect(
+            "Cache-Control",
+            "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
+        )
+        .expect("Vary", "Accept-Encoding")
+        .expect("Surrogate-Control", /public/)
+        .expect("Surrogate-Key", "u/42/104")
+        .expect("Cache-Tag", "u/42/104")
+        .expect("Content-Type", "text/html; charset=utf-8")
+        .expect(200, done);
+  });
+
 });
