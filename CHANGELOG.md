@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [4.9.0](https://github.com/quintype/quintype-node-framework/compare/v4.8.4...v4.9.0) (2021-02-25)
+
+
+### Bug Fixes
+
+* **related-stories:** Fix related stories memoize :hammer: ([0265458](https://github.com/quintype/quintype-node-framework/commit/02654580e9f3d5601e7056e8a43ae2e9fb24cb7b))
+* **relatedstories:** Revert previous commit ([f1cf455](https://github.com/quintype/quintype-node-framework/commit/f1cf45565ce6b0b5500d57950610112da1788d61))
+
+
+### Features
+
+* **static-page:** Add chosen content type to static pages :zap: ([#203](https://github.com/quintype/quintype-node-framework/issues/203)) ([a69d29e](https://github.com/quintype/quintype-node-framework/commit/a69d29e8459dc97a3041cc59bd031aaea23ef64f)), closes [#200](https://github.com/quintype/quintype-node-framework/issues/200)
+
+
+
 ## [4.8.4](https://github.com/quintype/quintype-node-framework/compare/v4.8.3...v4.8.4) (2021-02-12)
 
 
