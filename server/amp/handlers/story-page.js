@@ -11,22 +11,21 @@ const {
 const { storyToCacheKey } = require("../../caching");
 const { addCacheHeadersToResult } = require("../../handlers/cdn-caching");
 
-async function ampStoryPageHandler(
-  req,
-  res,
-  next,
-  {
-    client,
-    config,
-    domainSlug,
-    seo,
-    cdnProvider = null,
-    ampLibrary = require("@quintype/amp"),
-    /* Note: Using `...rest` operators within destructing will be equivalent to `Object.assign()` */
-    opts
-  }
-) {
+async function ampStoryPageHandler(req, res, next, staticParams) {
   try {
+    const {
+      client,
+      config,
+      domainSlug,
+      cdnProvider = null,
+      ampLibrary = require("@quintype/amp"),
+      seo,
+      templates,
+      slots,
+      render,
+      featureConfig,
+    } = staticParams;
+    const opts = { templates, slots, render, featureConfig };
     const domainSpecificOpts = getDomainSpecificOpts(opts, domainSlug);
     const url = urlLib.parse(req.url, true);
     const { ampifyStory } = ampLibrary;
