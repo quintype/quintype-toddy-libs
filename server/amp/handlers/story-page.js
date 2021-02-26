@@ -22,8 +22,7 @@ async function ampStoryPageHandler(
     seo,
     cdnProvider = null,
     ampLibrary = require("@quintype/amp"),
-    /* Note: Using `...rest` operators within destructing will be equivalent to `Object.assign()` */
-    opts
+    ...opts
   }
 ) {
   try {
