@@ -2,6 +2,74 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.10.2](https://github.com/quintype/quintype-node-framework/compare/v4.10.1...v4.10.2) (2021-02-26)
+
+
+
+## [4.10.1](https://github.com/quintype/quintype-node-framework/compare/v4.10.0...v4.10.1) (2021-02-25)
+
+
+### Bug Fixes
+
+* **amp:** bump amplib to take submenu validation err hotfix ([#207](https://github.com/quintype/quintype-node-framework/issues/207)) ([773e847](https://github.com/quintype/quintype-node-framework/commit/773e847e07f5edf2b844b7259381601ce378d17f))
+* **amp:** Fix related stories across domains :hammer: ([#206](https://github.com/quintype/quintype-node-framework/issues/206)) ([ed4f65a](https://github.com/quintype/quintype-node-framework/commit/ed4f65a1f03bc98770effcc5a19db35de1a6dbca))
+
+
+
+# [4.10.0](https://github.com/quintype/quintype-node-framework/compare/v4.9.0...v4.10.0) (2021-02-25)
+
+
+### Features
+
+* **visual-stories:** remove old visual stories ([#200](https://github.com/quintype/quintype-node-framework/issues/200)) ([#205](https://github.com/quintype/quintype-node-framework/issues/205)) ([8492593](https://github.com/quintype/quintype-node-framework/commit/84925935f404658bde35a049efa1bb731391293b)), closes [#188](https://github.com/quintype/quintype-node-framework/issues/188)
+
+
+
+# [4.9.0](https://github.com/quintype/quintype-node-framework/compare/v4.8.4...v4.9.0) (2021-02-25)
+
+
+### Bug Fixes
+
+* **related-stories:** Fix related stories memoize :hammer: ([0265458](https://github.com/quintype/quintype-node-framework/commit/02654580e9f3d5601e7056e8a43ae2e9fb24cb7b))
+* **relatedstories:** Revert previous commit ([f1cf455](https://github.com/quintype/quintype-node-framework/commit/f1cf45565ce6b0b5500d57950610112da1788d61))
+
+
+### Features
+
+* **static-page:** Add chosen content type to static pages :zap: ([#203](https://github.com/quintype/quintype-node-framework/issues/203)) ([a69d29e](https://github.com/quintype/quintype-node-framework/commit/a69d29e8459dc97a3041cc59bd031aaea23ef64f)), closes [#200](https://github.com/quintype/quintype-node-framework/issues/200)
+
+
+
+## [4.8.4](https://github.com/quintype/quintype-node-framework/compare/v4.8.3...v4.8.4) (2021-02-12)
+
+
+
+## [4.8.3](https://github.com/quintype/quintype-node-framework/compare/v4.8.2...v4.8.3) (2021-02-11)
+
+
+
+## [4.8.2](https://github.com/quintype/quintype-node-framework/compare/v4.8.1...v4.8.2) (2021-02-11)
+
+
+
+## [4.8.1](https://github.com/quintype/quintype-node-framework/compare/v4.8.0...v4.8.1) (2021-02-11)
+
+
+
+# [4.8.0](https://github.com/quintype/quintype-node-framework/compare/v4.7.3...v4.8.0) (2021-02-10)
+
+
+### Bug Fixes
+
+* remove old visual stories ([#200](https://github.com/quintype/quintype-node-framework/issues/200)) ([0fbd674](https://github.com/quintype/quintype-node-framework/commit/0fbd674a60af46af5138bf9524f75d7a88bb324b)), closes [#188](https://github.com/quintype/quintype-node-framework/issues/188)
+
+
+### Features
+
+* **PB subdomain:** pass domainSlug to required methods(PB) ([#198](https://github.com/quintype/quintype-node-framework/issues/198)) ([b072bf5](https://github.com/quintype/quintype-node-framework/commit/b072bf5853cddc44ca8b168647ff44bc03709837))
+
+
+
 ## [4.7.3](https://github.com/quintype/quintype-node-framework/compare/v4.7.2...v4.7.3) (2021-02-03)
 
 
