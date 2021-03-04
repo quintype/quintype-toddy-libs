@@ -1,5 +1,5 @@
 const assert = require("assert");
-const { getDomainSpecificOpts } = require("../../server/amp/helpers");
+const { getDomainSpecificOpts } = require("../../../server/amp/helpers");
 
 describe("getDomainSpecificOpts helper function", function () {
   const opts = {
