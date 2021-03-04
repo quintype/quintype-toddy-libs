@@ -1,6 +1,7 @@
 const urlLib = require("url");
 const set = require("lodash/set");
 const get = require("lodash/get");
+const cloneDeep = require("lodash/cloneDeep");
 const merge = require("lodash/merge");
 const { Story, AmpConfig } = require("../../impl/api-client-impl");
 const {
@@ -34,10 +35,11 @@ async function ampStoryPageHandler(
     cdnProvider = null,
     ampLibrary = require("@quintype/amp"),
     additionalConfig = require("../../publisher-config"),
-    ...opts
+    ...rest
   }
 ) {
   try {
+    const opts = cloneDeep(rest);
     const domainSpecificOpts = getDomainSpecificOpts(opts, domainSlug);
     const url = urlLib.parse(req.url, true);
     const { ampifyStory } = ampLibrary;
@@ -46,8 +48,7 @@ async function ampStoryPageHandler(
       "amp-config",
       async () => await AmpConfig.getAmpConfig(client)
     );
-    const slug = String(0);
-    const story = await Story.getStoryBySlug(client, req.params[slug]);
+    const story = await Story.getStoryBySlug(client, req.params["0"]);
     let relatedStoriesCollection;
     let relatedStories = [];
 
