@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.12.1](https://github.com/quintype/quintype-node-framework/compare/v4.12.0...v4.12.1) (2021-03-08)
+
 ### [4.11.1](https://github.com/quintype/quintype-node-framework/compare/v4.11.0...v4.11.1) (2021-03-08)
 
 ## [4.10.4](https://github.com/quintype/quintype-node-framework/compare/v4.10.3...v4.10.4) (2021-03-04)
