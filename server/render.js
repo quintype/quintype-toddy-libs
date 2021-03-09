@@ -50,7 +50,7 @@ exports.renderReduxComponent = function renderReduxComponent(
 /**
  * @param {Component} Component The Component to render
  * @param {Redux} store The store to render
- * @param {extractor} props Extractor from the statsFile
+ * @param {extractor} props Instance of ChunkExtractor from loadable
  * @param {Object} props The props to pass to the component
  */
 exports.renderLoadableReduxComponent = function renderLoadableReduxComponent(
