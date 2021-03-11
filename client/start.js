@@ -157,7 +157,10 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
       });
 
       if (!doNotPushPath) {
-        history.push(pathname);
+        history.push({
+          pathname,
+          search: "",
+        });
         registerPageView(page, pathname);
       }
     });
