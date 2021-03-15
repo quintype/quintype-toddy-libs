@@ -14,11 +14,11 @@
 <url><loc>https://developers.quintype.com/quintype-node-framework/module-match-best-route.html</loc></url>
 <url><loc>https://developers.quintype.com/quintype-node-framework/module-pick-component-helper.html</loc></url>
 <url><loc>https://developers.quintype.com/quintype-node-framework/module-publisher-config.html</loc></url>
-<url><loc>https://developers.quintype.com/quintype-node-framework/module-render.html</loc></url>
+<url><loc>https://developers.quintype.com/quintype-node-framework/module-render-loadable-redux-component.html</loc></url>
+<url><loc>https://developers.quintype.com/quintype-node-framework/module-render-redux-component.html</loc></url>
 <url><loc>https://developers.quintype.com/quintype-node-framework/module-routes.html</loc></url>
 <url><loc>https://developers.quintype.com/quintype-node-framework/module-server-start.html</loc></url>
 <url><loc>https://developers.quintype.com/quintype-node-framework/module-service-worker-helper.html</loc></url>
 <url><loc>https://developers.quintype.com/quintype-node-framework/module-start.html</loc></url>
 <url><loc>https://developers.quintype.com/quintype-node-framework/module-static-configuration.html</loc></url>
-<url><loc>https://developers.quintype.com/quintype-node-framework/render%0A%0ARender%20the%20given%20component%20in%20the%20redux%20storemodule_.html</loc></url>
 </urlset>
