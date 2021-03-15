@@ -5,7 +5,7 @@
 <head>
     <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create', 'UA-66074042-1', 'auto');ga('send', 'pageview');</script>
     <meta charset="utf-8">
-    <title>JSDoc: isomorphic/component.js</title>
+    <title>JSDoc: server/amp/handlers/story-page.js</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -69,7 +69,7 @@
                 <div class="content" id="main-content-wrapper">
                     <header class="page-title">
                         <p>Source</p>
-                        <h1>isomorphic/component.js</h1>
+                        <h1>server/amp/handlers/story-page.js</h1>
                     </header>
 
                     
@@ -79,60 +79,163 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const React = require("react");
-const { connect } = require("react-redux");
-
-class IsomorphicComponentBase extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.currentPath != prevProps.currentPath) {
-      window.scrollTo(0, 0);
-    }
-
-    if (this.props.title) global.document.title = this.props.title;
-  }
-
-  render() {
-    const props = Object.assign({}, this.props, {
-      key: this.props.currentPath || "",
-    });
-    return React.createElement(
-      this.props.pickComponent(this.props.pageType, this.props.subPageType),
-      props
-    );
-  }
-}
-
-function mapStateToProps(state) {
-  return {
-    pageType: state.qt.pageType,
-    subPageType: state.qt.subPageType,
-    config: state.qt.config,
-    data: state.qt.data,
-    currentPath: state.qt.currentPath,
-    title: state.qt.title || "",
-  };
-}
-
-function mapDispatchToProps() {
-  return {};
-}
+            <pre class="prettyprint source linenums"><code>const urlLib = require("url");
+const set = require("lodash/set");
+const get = require("lodash/get");
+const cloneDeep = require("lodash/cloneDeep");
+const merge = require("lodash/merge");
+const { Story, AmpConfig } = require("../../impl/api-client-impl");
+const {
+  getSeoInstance,
+  InfiniteScrollAmp,
+  optimize,
+  getDomainSpecificOpts,
+} = require("../helpers");
+const { storyToCacheKey } = require("../../caching");
+const { addCacheHeadersToResult } = require("../../handlers/cdn-caching");
 
 /**
- * IsomorphicComponent is used to render the main content of all isomorphic pages.
- * IsomorphicComponent is used during the {@link https://developers.quintype.com/malibu/isomorphic-rendering/server-side-architecture#render render} phase.
- * This component is not meant to be used directly, instead see {@link module:start.renderIsomorphicComponent renderIsomorphicComponent}
+ * ampStoryPageHandler gets all the things needed and calls "ampifyStory" function (which comes from ampLib)
+ * From ampifyStory's perspective,
+ *  - ampConfig is /api/v1/amp/config
+ *  - publisherConfig is /api/v1/config
+ *  - additionalConfig is an obj containing any extra config. If the publisher passes an async function "opts.getAdditionalConfig", its returnd value is merged into additionalConfig. Use case - Ahead can use this to fetch the pagebuilder config
  *
- * @category Isomorphic
- * @module IsomorphicComponent
+ * @category AmpHandler
  */
-exports.IsomorphicComponent = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(IsomorphicComponentBase);
+
+async function ampStoryPageHandler(
+  req,
+  res,
+  next,
+  {
+    client,
+    config,
+    domainSlug,
+    seo,
+    cdnProvider = null,
+    ampLibrary = require("@quintype/amp"),
+    additionalConfig = require("../../publisher-config"),
+    ...rest
+  }
+) {
+  try {
+    const opts = cloneDeep(rest);
+    const domainSpecificOpts = getDomainSpecificOpts(opts, domainSlug);
+    const url = urlLib.parse(req.url, true);
+    const { ampifyStory } = ampLibrary;
+    // eslint-disable-next-line no-return-await
+    const ampConfig = await config.memoizeAsync(
+      "amp-config",
+      async () => await AmpConfig.getAmpConfig(client)
+    );
+    const story = await Story.getStoryBySlug(client, req.params["0"]);
+    let relatedStoriesCollection;
+    let relatedStories = [];
+
+    if (!story) return next();
+    if (ampConfig["related-collection-id"])
+      relatedStoriesCollection = await client.getCollectionBySlug(
+        ampConfig["related-collection-id"]
+      );
+    if (relatedStoriesCollection) {
+      const storiesToTake = get(
+        domainSpecificOpts,
+        ["featureConfig", "relatedStories", "storiesToTake"],
+        5
+      );
+      relatedStories = relatedStoriesCollection.items
+        .filter(
+          (item) =>
+            item.type === "story" &amp;&amp; item.id !== story["story-content-id"]
+        )
+        .slice(0, storiesToTake)
+        .map((item) => item.story);
+    }
+    if (relatedStories.length) {
+      set(
+        domainSpecificOpts,
+        ["featureConfig", "relatedStories", "stories"],
+        relatedStories
+      );
+    }
+
+    if (
+      !story["is-amp-supported"] &amp;&amp;
+      ampConfig.ampConfig["invalid-elements-strategy"] ===
+        "redirect-to-web-version"
+    )
+      return res.redirect(story.url);
+
+    const seoInstance = getSeoInstance(seo, config, "story-page-amp");
+    const seoTags =
+      seoInstance &amp;&amp;
+      seoInstance.getMetaTags(
+        config,
+        "story-page-amp",
+        { data: story, config },
+        { url }
+      );
+
+    const infiniteScrollAmp = new InfiniteScrollAmp({
+      ampConfig,
+      publisherConfig: config,
+      client,
+    });
+    const infiniteScrollInlineConfig = await infiniteScrollAmp.getInitialInlineConfig(
+      {
+        itemsToTake: 5,
+        storyId: story["story-content-id"],
+      }
+    );
+    if (infiniteScrollInlineConfig instanceof Error)
+      return next(infiniteScrollInlineConfig);
+    if (infiniteScrollInlineConfig) {
+      set(
+        domainSpecificOpts,
+        ["featureConfig", "infiniteScroll", "infiniteScrollInlineConfig"],
+        infiniteScrollInlineConfig
+      );
+    }
+    if (
+      opts.getAdditionalConfig &amp;&amp;
+      opts.getAdditionalConfig instanceof Function
+    ) {
+      const fetchedAdditionalConfig = await opts.getAdditionalConfig({
+        story,
+        apiConfig: config.config,
+        ampApiConfig: ampConfig.ampConfig,
+        publisherConfig: additionalConfig,
+      });
+      merge(additionalConfig, fetchedAdditionalConfig);
+    }
+
+    const ampHtml = ampifyStory({
+      story,
+      publisherConfig: config.config,
+      ampConfig: ampConfig.ampConfig,
+      additionalConfig,
+      opts: { ...domainSpecificOpts, domainSlug },
+      seo: seoTags ? seoTags.toString() : "",
+    });
+    if (ampHtml instanceof Error) return next(ampHtml);
+    const optimizedAmpHtml = await optimize(ampHtml);
+
+    res.set("Content-Type", "text/html");
+    addCacheHeadersToResult({
+      res,
+      cacheKeys: storyToCacheKey(config["publisher-id"], story),
+      cdnProvider,
+      config,
+    });
+
+    return res.send(optimizedAmpHtml);
+  } catch (e) {
+    return next(e);
+  }
+}
+
+module.exports = { ampStoryPageHandler };
 </code></pre>
         </article>
     </section>
