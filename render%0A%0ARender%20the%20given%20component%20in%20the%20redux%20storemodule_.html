@@ -1,11 +1,11 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <script>(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');ga('create', 'UA-66074042-1', 'auto');ga('send', 'pageview');</script>
     <meta charset="utf-8">
-    <title>JSDoc: server/publisher-config.js</title>
+    <title>JSDoc: render
+
+Render the given component in the redux store</title>
 
     <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -70,38 +70,103 @@ Render the given component in the redux store</a></li></ul></div><div class="cat
             <div class="column is-9-desktop">
                 <div class="content" id="main-content-wrapper">
                     <header class="page-title">
-                        <p>Source</p>
-                        <h1>server/publisher-config.js</h1>
+                        <p>Module</p>
+                        <h1>render
+
+Render the given component in the redux store</h1>
                     </header>
 
                     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
- * This namespace exposes a the publisher config from publisher.yml
- * ```javascript
- * import config from "@quintype/framework/server/publisher-config";
- *
- * config["sketches_host"]
- * ```
- * @category Server
- * @module publisher-config
- */
-// istanbul ignore file
+</header>
 
-const fs = require("fs");
-const yaml = require("js-yaml");
+<article>
+    <div class="container-overview">
+    
+        
+            <div class="description"><p>This namespace a helper method for render</p>
+<pre class="prettyprint source lang-javascript"><code>import {renderReduxComponent} from &quot;@quintype/framework/server/render&quot;;
+</code></pre></div>
+        
 
-const publisher = yaml.safeLoad(fs.readFileSync("config/publisher.yml"));
+        
 
-module.exports = publisher;
-</code></pre>
-        </article>
-    </section>
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    
+
+    
+
+    
+
+    
+        <p class="tag-source">
+            <a href="server_render.js.html" class="button">View Source</a>
+            <span>
+                <a href="server_render.js.html">server/render.js</a>, <a href="server_render.js.html#line6">line 6</a>
+            </span>
+        </p>
+    
+</dl>
+
+
+        
+    
+    </div>
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
