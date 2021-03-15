@@ -4,7 +4,7 @@
  * import {renderReduxComponent} from "@quintype/framework/server/render";
  * ```
  * @category Server
- * @module render
+ * @module render-redux-component
  */
 
 const ReactDOMServer = require("react-dom/server");
@@ -44,7 +44,7 @@ exports.renderReduxComponent = function renderReduxComponent(
  * renderLoadableReduxComponent(Header, params.store, extractor)
  * ```
  * @category Server
- * @module render
+ * @module render-loadable-redux-component
  */
 /**
  * @param {Component} Component The Component to render
@@ -59,7 +59,7 @@ exports.renderLoadableReduxComponent = function renderLoadableReduxComponent(
   props
 ) {
   const children = React.createElement(Component, props);
-  //Wrap your component using "collectChunks"
+  // Wrap your component using "collectChunks"
   const component = extractor.collectChunks(
     React.createElement(Provider, { store }, children)
   );
