@@ -42,6 +42,7 @@
     "http-proxy": "^1.17.0",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.15",
+    "mocha-snapshots": "^4.2.0",
     "morgan": "^1.9.1",
     "path-to-regexp": "^6.2.0",
     "react": "^16.8.6",
@@ -53,6 +54,8 @@
     "winston": "3.2.1"
   },
   "devDependencies": {
+    "@loadable/component": "^5.14.1",
+    "@loadable/server": "^5.14.2",
     "@quintype/build": "^3.9.0",
     "babel-plugin-quintype-assets": "^1.1.1",
     "babel-plugin-react-css-modules": "^5.2.4",
@@ -78,6 +81,7 @@
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",
     "onchange": "^4.1.0",
+    "path": "^0.12.7",
     "prettier": "^2.2.1",
     "standard-version": "^8.0.1",
     "supertest": "^4.0.2"
