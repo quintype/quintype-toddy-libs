@@ -1,3 +1,8 @@
+const ReactDOMServer = require("react-dom/server");
+const React = require("react");
+
+const { Provider } = require("react-redux");
+
 /**
  * This namespace a helper method for render
  * ```javascript
@@ -5,14 +10,7 @@
  * ```
  * @category Server
  * @module render
- */
-
-const ReactDOMServer = require("react-dom/server");
-const React = require("react");
-
-const { Provider } = require("react-redux");
-
-/**
+ *
  * Render the given component in the redux store
  * @param {Component} Component The Component to render
  * @param {Redux} store The store to render
@@ -45,8 +43,6 @@ exports.renderReduxComponent = function renderReduxComponent(
  * ```
  * @category Server
  * @module render
- */
-/**
  * @param {Component} Component The Component to render
  * @param {Redux} store The store to render
  * @param {extractor} props Instance of ChunkExtractor from loadable
@@ -59,7 +55,7 @@ exports.renderLoadableReduxComponent = function renderLoadableReduxComponent(
   props
 ) {
   const children = React.createElement(Component, props);
-  //Wrap your component using "collectChunks"
+  // Wrap your component using "collectChunks"
   const component = extractor.collectChunks(
     React.createElement(Provider, { store }, children)
   );
