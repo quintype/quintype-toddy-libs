@@ -178,16 +178,21 @@ function getClientStub(hostname) {
   };
 }
 
+const dummyAmpLib = {
+  ampifyStory: () => '<div data-page-type="home-page">foobar</div>',
+};
+
 const getClientStubWithRelatedStories = (relatedStories) => (hostname) =>
   Object.assign({}, getClientStub(hostname), {
     getRelatedStories: () =>
       Promise.resolve({ "related-stories": relatedStories }),
   });
 
-function createApp(clientStub = getClientStub) {
+function createApp({
+  clientStub = getClientStub,
+  ampLibrary = dummyAmpLib,
+} = {}) {
   const app = express();
-  const ampLibrary = {};
-  ampLibrary.ampifyStory = () => '<div data-page-type="home-page">foobar</div>';
   ampRoutes(app, {
     getClient: clientStub,
     publisherConfig: {},
@@ -197,7 +202,7 @@ function createApp(clientStub = getClientStub) {
   return app;
 }
 
-describe("Amp story page handler", () => {
+describe("ampStoryPageHandler", () => {
   it("mounts an amp story page", (done) => {
     const app = createApp();
     supertest(app)
@@ -205,6 +210,20 @@ describe("Amp story page handler", () => {
       .expect("Content-Type", /html/)
       .expect(200)
       .end((err) => {
+        if (err) return done(err);
+        return done();
+      });
+  });
+  it("passes on errors to express error handler", (done) => {
+    const app = createApp({
+      ampLibrary: {
+        ampifyStory: () => new Error("Dummy error"),
+      },
+    });
+    supertest(app)
+      .get("/amp/story/test")
+      .expect(500, /Dummy error/)
+      .end(function (err, res) {
         if (err) return done(err);
         return done();
       });
@@ -246,9 +265,9 @@ describe("Amp infinite scroll handler", () => {
 
 describe("Amp visual stories bookend handler", () => {
   it("returns the bookend if there are related stories", function (done) {
-    const app = createApp(
-      getClientStubWithRelatedStories([{ headline: "foo" }])
-    );
+    const app = createApp({
+      clientStub: getClientStubWithRelatedStories([{ headline: "foo" }]),
+    });
     supertest(app)
       .get("/amp/api/v1/bookend.json?storyId=111&sectionId=222")
       .expect("Content-Type", /json/)
@@ -263,7 +282,7 @@ describe("Amp visual stories bookend handler", () => {
       .then(() => done());
   });
   it("returns a 404 if there are no related stories", (done) => {
-    const app = createApp(getClientStubWithRelatedStories([]));
+    const app = createApp({ clientStub: getClientStubWithRelatedStories([]) });
     supertest(app)
       .get("/amp/api/v1/bookend.json?storyId=111&sectionId=222")
       .expect("Content-Type", /json/)
@@ -271,9 +290,9 @@ describe("Amp visual stories bookend handler", () => {
       .then(() => done());
   });
   it("returns a 400 if 'storyId' and 'sectionId' query params aren't passed", (done) => {
-    const app = createApp(
-      getClientStubWithRelatedStories([{ headline: "foo" }])
-    );
+    const app = createApp({
+      clientStub: getClientStubWithRelatedStories([{ headline: "foo" }]),
+    });
     supertest(app)
       .get("/amp/api/v1/bookend.json")
       .expect("Content-Type", /json/)
