@@ -71,4 +71,4 @@ class InfiniteScrollAmp {
   }
 }
 
-module.exports = { InfiniteScrollAmp };
+module.exports = InfiniteScrollAmp;
