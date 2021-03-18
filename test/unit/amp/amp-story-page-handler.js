@@ -76,6 +76,27 @@ describe("ampStoryPageHandler unit tests", function () {
     });
     assert.deepStrictEqual(dummyOptsClone, dummyOpts);
   });
+  it("should not mutate req, res, client, config", async function() {
+    const client1 = getClientStub()
+    const client2 = cloneDeep(client1)
+    const config1 = dummyConfig;
+    const config2 = cloneDeep(config1)
+    const req1 = dummyReq
+    const req2 = cloneDeep(req1)
+    const res1 = dummyRes
+    const res2 = cloneDeep(res1)
+    await ampStoryPageHandler(req1, res1, dummyNext, {
+      client: client1,
+      config: config1,
+      domainSlug: null,
+      seo: "",
+      additionalConfig: "something",
+    });
+    assert.deepStrictEqual(client1, client2)
+    assert.deepStrictEqual(config1, config2)
+    assert.deepStrictEqual(req1, req2)
+    assert.deepStrictEqual(res1, res2)
+  })
   it("should call the next middleware if story not found", async function () {
     let nextCalled = false;
     const dummyNext = () => {
