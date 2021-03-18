@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.12.4](https://github.com/quintype/quintype-node-framework/compare/v4.12.3...v4.12.4) (2021-03-18)
+
+
+### Bug Fixes
+
+* **amp:** Bump Amp library to take Q and A element changes ([#214](https://github.com/quintype/quintype-node-framework/issues/214)) ([97074bf](https://github.com/quintype/quintype-node-framework/commit/97074bfb6bd072b603655a5c1d5ebb8e223160f3))
+
 ### [4.12.3](https://github.com/quintype/quintype-node-framework/compare/v4.12.2...v4.12.3) (2021-03-16)
 
 
