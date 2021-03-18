@@ -173,7 +173,31 @@ describe("ampStoryPageHandler unit tests", function () {
     // removes current story from related stories
     assert.strictEqual(false, /Dogecoin surges to \$10 billion/.test(relatedStories))
   });
-  // it("should not pass related stories to amplib if absent", function() {
-
-  // })
+  it("should not pass related stories to amplib if absent", async function() {
+    let relatedStories;
+    const dummyAmpLib = {
+      ampifyStory: (params) => {
+        const relStories = params.opts.featureConfig.relatedStories.stories;
+        if (relStories.length) relatedStories = JSON.stringify(relStories);
+      },
+    };
+    const dummyConfig2 = {
+      memoizeAsync: (key, fn) =>
+        Promise.resolve({
+          "related-collection-id": null,
+        }),
+    };
+    await ampStoryPageHandler(dummyReq, dummyRes, dummyNext, {
+      client: getClientStub({
+        getCollectionBySlug: (slug) => Promise.resolve("collection")
+      }),
+      config: dummyConfig2,
+      domainSlug: null,
+      seo: "",
+      additionalConfig: "something",
+      ampLibrary: dummyAmpLib,
+      InfiniteScrollAmp: DummyInfiniteScrollAmp,
+    });
+    assert.strictEqual(relatedStories, undefined)
+  })
 });
