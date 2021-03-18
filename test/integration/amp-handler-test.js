@@ -202,7 +202,7 @@ function createApp({
   return app;
 }
 
-describe("ampStoryPageHandler", () => {
+describe("ampStoryPageHandler integration tests", () => {
   it("mounts an amp story page", (done) => {
     const app = createApp();
     supertest(app)
