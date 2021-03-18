@@ -162,6 +162,7 @@ describe("ampStoryPageHandler unit tests", function () {
       ampLibrary: dummyAmpLib,
       InfiniteScrollAmp: DummyInfiniteScrollAmp,
     });
+    // passes related stories to amplib
     assert.strictEqual(
       relatedStories,
       JSON.stringify([
@@ -169,6 +170,8 @@ describe("ampStoryPageHandler unit tests", function () {
         "SpaceX Starship SN10 lands successfully",
       ])
     );
+    // removes current story from related stories
+    assert.strictEqual(false, /Dogecoin surges to \$10 billion/.test(relatedStories))
   });
   // it("should not pass related stories to amplib if absent", function() {
 
