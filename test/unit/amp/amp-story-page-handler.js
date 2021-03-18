@@ -188,9 +188,7 @@ describe("ampStoryPageHandler unit tests", function () {
         }),
     };
     await ampStoryPageHandler(dummyReq, dummyRes, dummyNext, {
-      client: getClientStub({
-        getCollectionBySlug: (slug) => Promise.resolve("collection")
-      }),
+      client: getClientStub(),
       config: dummyConfig2,
       domainSlug: null,
       seo: "",
@@ -199,5 +197,35 @@ describe("ampStoryPageHandler unit tests", function () {
       InfiniteScrollAmp: DummyInfiniteScrollAmp,
     });
     assert.strictEqual(relatedStories, undefined)
+  })
+  it("should call seo function with pageType == 'story-page-amp' if passed from FE", async function() {
+    let isCorrectPageType = false;
+    let seoPassedToAmpLib;
+    const dummySeo = (config, pageType) => {
+      if (pageType === "story-page-amp") isCorrectPageType = true
+      return {
+        getMetaTags: () => {
+          return {
+            toString: () => "this is the seo string"
+          }
+        }
+      }
+    }
+    const dummyAmpLib = {
+      ampifyStory: (params) => {
+        seoPassedToAmpLib = params.seo
+      },
+    };
+    await ampStoryPageHandler(dummyReq, dummyRes, dummyNext, {
+      client: getClientStub(),
+      config: dummyConfig,
+      domainSlug: null,
+      seo: dummySeo,
+      additionalConfig: "something",
+      ampLibrary: dummyAmpLib,
+      InfiniteScrollAmp: DummyInfiniteScrollAmp,
+    });
+    assert.strictEqual(isCorrectPageType, true)
+    assert.strictEqual(seoPassedToAmpLib, "this is the seo string")
   })
 });

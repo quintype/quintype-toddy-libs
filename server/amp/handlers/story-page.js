@@ -5,8 +5,6 @@ const cloneDeep = require("lodash/cloneDeep");
 const merge = require("lodash/merge");
 const { Story, AmpConfig } = require("../../impl/api-client-impl");
 const {
-  getSeoInstance,
-  InfiniteScrollAmp,
   optimize,
   getDomainSpecificOpts,
 } = require("../helpers");
@@ -23,6 +21,17 @@ const { addCacheHeadersToResult } = require("../../handlers/cdn-caching");
  * @category AmpHandler
  */
 
+/**
+ * !!!! REMOVE THIS COMMENT BLOCK BEFORE MERGING TO MASTER !!!
+ * unit tests:
+ * - if !story call next middleware [done]
+ * - should have no side effects (don't mutate config, client etc) [done]
+ * - if ampConfig["related-collection-id"] exists, pass related stories to amplib [done]
+ * - if FE passes seo, call seo with pagetype = story-page-amp, pass result to amplib [done]
+ * - pass infiniteScrollInlineConfig to amplib
+ * - if getAdditionalConfig, call it and pass AdditionalConfig to amplib
+ */
+
 async function ampStoryPageHandler(
   req,
   res,
@@ -31,10 +40,11 @@ async function ampStoryPageHandler(
     client,
     config,
     domainSlug,
-    seo,
+    seo = "",
     cdnProvider = null,
     ampLibrary = require("@quintype/amp"),
     additionalConfig = require("../../publisher-config"),
+    InfiniteScrollAmp = require("../helpers/infinite-scroll"),
     ...rest
   }
 ) {
@@ -86,7 +96,7 @@ async function ampStoryPageHandler(
     )
       return res.redirect(story.url);
 
-    const seoInstance = getSeoInstance(seo, config, "story-page-amp");
+    const seoInstance = typeof seo === "function" ? seo(config, "story-page-amp") : seo;
     const seoTags =
       seoInstance &&
       seoInstance.getMetaTags(
