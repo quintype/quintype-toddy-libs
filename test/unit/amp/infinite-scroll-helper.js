@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable func-names */
 
 const assert = require("assert");
@@ -34,6 +35,33 @@ function getClientStub({
                 "story-content-id": 3333,
                 slug: "sports/cc",
                 "hero-image-s3-key": "cc/c.jpg",
+              },
+            },
+            {
+              type: "story",
+              id: 4444,
+              story: {
+                "story-content-id": 4444,
+                slug: "sports/dd",
+                "hero-image-s3-key": "dd/d.jpg",
+              },
+            },
+            {
+              type: "story",
+              id: 5555,
+              story: {
+                "story-content-id": 5555,
+                slug: "sports/ee",
+                "hero-image-s3-key": "ee/e.jpg",
+              },
+            },
+            {
+              type: "story",
+              id: 6666,
+              story: {
+                "story-content-id": 6666,
+                slug: "sports/ff",
+                "hero-image-s3-key": "ff/f.jpg",
               },
             },
           ],
@@ -141,4 +169,78 @@ describe("getInitialInlineConfig method of InfiniteScrollAmp helper function", f
     }
     assert.strictEqual(isInlineConfigStructureValid(inlineConfig), true);
   });
+  // it("should take the first 'n' stories", async function() {
+  //   // this test needs to be written after https://github.com/quintype/quintype-node-framework/pull/202 is merged
+  // })
+});
+
+describe("getResponse method of InfiniteScrollAmp helper function", function () {
+  it("should throw an error if 'story-id' isn't passed as query param", async function () {
+    const infiniteScrollAmp = new InfiniteScrollAmp({
+      ampConfig: {},
+      client: getClientStub(),
+      publisherConfig: dummyPublisherConfig,
+      queryParams: { foo: "bar" },
+    });
+    const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 2 });
+    assert.strictEqual(jsonResponse instanceof Error, true);
+    assert.throws(() => {
+      throw new Error(`Query param "story-id" missing`);
+    }, jsonResponse);
+  });
+  it("should throw an error if infinite scroll collection doesn't exist", async function () {
+    const clientStub = getClientStub({
+      getCollectionBySlug: () =>
+        new Promise((resolve) => {
+          resolve(null);
+        }),
+    });
+    const infiniteScrollAmp = new InfiniteScrollAmp({
+      ampConfig: {},
+      client: clientStub,
+      publisherConfig: dummyPublisherConfig,
+      queryParams: { "story-id": 2222 },
+    });
+    const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 2 });
+    assert.strictEqual(jsonResponse instanceof Error, true);
+  });
+  it("should remove current story from response", async function() {
+    const clientStub = getClientStub();
+    const infiniteScrollAmp = new InfiniteScrollAmp({
+      ampConfig: {},
+      client: clientStub,
+      publisherConfig: dummyPublisherConfig,
+      queryParams: { "story-id": 4444 },
+    });
+    const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 2 });
+    assert.strictEqual(false, /sports\/dd/.test(jsonResponse));
+    assert.strictEqual(false, /dd\/d.jpg/.test(jsonResponse));
+  })
+  it("should format JSON as per AMP spec", async function() {
+    // https://amp.dev/documentation/components/amp-next-page/
+    const clientStub = getClientStub();
+    const infiniteScrollAmp = new InfiniteScrollAmp({
+      ampConfig: {},
+      client: clientStub,
+      publisherConfig: dummyPublisherConfig,
+      queryParams: { "story-id": 4444 },
+    });
+    const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 2 });
+    function isJsonConfigStructureValid(jsonStr) {
+      const parsed = JSON.parse(jsonStr);
+      const stories = parsed.pages
+      if (!stories.length) throw new Error("Can't verify empty array!");
+      stories.forEach((story) => {
+        const keys = Object.keys(story);
+        if (keys.includes("image") && keys.includes("url") && keys.length === 2)
+          return;
+        throw new Error("Invalid InlineConfigStructure");
+      });
+      return true;
+    }
+    assert.strictEqual(isJsonConfigStructureValid(jsonResponse), true)
+  })
+  // it("should omit the first 'n' stories, take the rest", async function() {
+  //   // this test needs to be written after https://github.com/quintype/quintype-node-framework/pull/202 is merged
+  // })
 });
