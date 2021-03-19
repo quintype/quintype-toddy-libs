@@ -171,9 +171,12 @@ describe("ampStoryPageHandler unit tests", function () {
       ])
     );
     // removes current story from related stories
-    assert.strictEqual(false, /Dogecoin surges to \$10 billion/.test(relatedStories))
+    assert.strictEqual(
+      false,
+      /Dogecoin surges to \$10 billion/.test(relatedStories)
+    );
   });
-  it("should not pass related stories to amplib if absent", async function() {
+  it("should not pass related stories to amplib if absent", async function () {
     let relatedStories;
     const dummyAmpLib = {
       ampifyStory: (params) => {
@@ -196,24 +199,24 @@ describe("ampStoryPageHandler unit tests", function () {
       ampLibrary: dummyAmpLib,
       InfiniteScrollAmp: DummyInfiniteScrollAmp,
     });
-    assert.strictEqual(relatedStories, undefined)
-  })
-  it("should call seo function with pageType == 'story-page-amp' if passed from FE", async function() {
+    assert.strictEqual(relatedStories, undefined);
+  });
+  it("should call seo function with pageType == 'story-page-amp' if passed from FE", async function () {
     let isCorrectPageType = false;
     let seoPassedToAmpLib;
     const dummySeo = (config, pageType) => {
-      if (pageType === "story-page-amp") isCorrectPageType = true
+      if (pageType === "story-page-amp") isCorrectPageType = true;
       return {
         getMetaTags: () => {
           return {
-            toString: () => "this is the seo string"
-          }
-        }
-      }
-    }
+            toString: () => "this is the seo string",
+          };
+        },
+      };
+    };
     const dummyAmpLib = {
       ampifyStory: (params) => {
-        seoPassedToAmpLib = params.seo
+        seoPassedToAmpLib = params.seo;
       },
     };
     await ampStoryPageHandler(dummyReq, dummyRes, dummyNext, {
@@ -225,7 +228,31 @@ describe("ampStoryPageHandler unit tests", function () {
       ampLibrary: dummyAmpLib,
       InfiniteScrollAmp: DummyInfiniteScrollAmp,
     });
-    assert.strictEqual(isCorrectPageType, true)
-    assert.strictEqual(seoPassedToAmpLib, "this is the seo string")
-  })
+    assert.strictEqual(isCorrectPageType, true);
+    assert.strictEqual(seoPassedToAmpLib, "this is the seo string");
+  });
+  it("should call getAdditionalConfig method if it's passed from FE; pass it on to amplib as additionalConfig", async function () {
+    let getAdditionalConfigCalled = false;
+    async function dummyGetAdditionalConfig(params) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          getAdditionalConfigCalled = true;
+          resolve({ some: "value" });
+        }, 15);
+      });
+    }
+    const dummyOpts = {
+      getAdditionalConfig: dummyGetAdditionalConfig,
+    };
+    await ampStoryPageHandler(dummyReq, dummyRes, dummyNext, {
+      client: getClientStub(),
+      config: dummyConfig,
+      domainSlug: null,
+      seo: "",
+      additionalConfig: { sideNote: "this contains bk config by default" },
+      InfiniteScrollAmp: DummyInfiniteScrollAmp,
+      ...dummyOpts,
+    });
+    assert.strictEqual(getAdditionalConfigCalled, true);
+  });
 });
