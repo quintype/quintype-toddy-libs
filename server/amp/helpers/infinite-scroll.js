@@ -4,9 +4,9 @@
  * Test scenarios:
  *
  * getInitialInlineConfig:
- *  - throws err if `storyId` isn't passed
- *  - should return null if infinite scroll collection doesn't exist, or it contains no stories
- *  - should remove current story from infinite scroll
+ *  - throws err if `storyId` isn't passed [done]
+ *  - should return null if infinite scroll collection doesn't exist, or it contains no stories [done]
+ *  - should remove current story from infinite scroll [done]
  *  - should return a JSON in a format given here > https://amp.dev/documentation/components/amp-next-page/
  *  - the image should be thumbnail sized
  *  - take the first 'n' stories, set by itemsToTake (!)
@@ -29,7 +29,6 @@ class InfiniteScrollAmp {
 
   // eslint-disable-next-line class-methods-use-this
   getFilteredCollItems(coll, storyId) {
-    console.log("coll >> ", coll)
     return coll.items.filter(
       ({ type, story }) =>
         type === "story" &&
@@ -82,7 +81,7 @@ class InfiniteScrollAmp {
     if (!itemsToTake || !storyId)
       return new Error("Required params for getInitialInlineConfig missing");
     const collection = await this.client.getCollectionBySlug(this.collSlug);
-    if (!collection || !collection.length) return null;
+    if (!collection || !collection.items || !collection.items.length) return null;
     const filteredItems = this.getFilteredCollItems(collection, storyId);
     const slicedItems = filteredItems.slice(0, itemsToTake);
     const formattedData = this.formatData({

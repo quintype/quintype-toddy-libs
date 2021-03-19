@@ -7,11 +7,37 @@ function getClientStub({
   getCollectionBySlug = (slug) =>
     new Promise((resolve) => {
       if (slug === "amp-infinite-scroll")
-        resolve({
-          items: [
-            { type: "story", id: 123, story: { "story-content-id": 1111 } },
-          ],
-        });
+      resolve({
+        items: [
+          {
+            type: "story",
+            id: 1111,
+            story: {
+              "story-content-id": 1111,
+              slug: "sports/aa",
+              "hero-image-s3-key": "aa/a.jpg",
+            },
+          },
+          {
+            type: "story",
+            id: 2222,
+            story: {
+              "story-content-id": 2222,
+              slug: "sports/bb",
+              "hero-image-s3-key": "bb/b.jpg",
+            },
+          },
+          {
+            type: "story",
+            id: 3333,
+            story: {
+              "story-content-id": 3333,
+              slug: "sports/cc",
+              "hero-image-s3-key": "cc/c.jpg",
+            },
+          },
+        ],
+      });
       resolve(null);
     }),
 } = {}) {
@@ -75,5 +101,19 @@ describe("getInitialInlineConfig method of InfiniteScrollAmp helper function", f
       storyId: 2222,
     });
     assert.strictEqual(inlineConfig, null);
+  });
+  it("should remove current story from infinite scroll", async function () {
+    const clientStub = getClientStub();
+    const infiniteScrollAmp = new InfiniteScrollAmp({
+      ampConfig: {},
+      client: clientStub,
+      publisherConfig: dummyPublisherConfig,
+    });
+    const inlineConfig = await infiniteScrollAmp.getInitialInlineConfig({
+      itemsToTake: 5,
+      storyId: 2222,
+    });
+    assert.strictEqual(false, /sports\/bb/.test(inlineConfig));
+    assert.strictEqual(false, /bb\/b.jpg/.test(inlineConfig));
   });
 });
