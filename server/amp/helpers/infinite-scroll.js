@@ -29,6 +29,7 @@ class InfiniteScrollAmp {
 
   // eslint-disable-next-line class-methods-use-this
   getFilteredCollItems(coll, storyId) {
+    console.log("coll >> ", coll)
     return coll.items.filter(
       ({ type, story }) =>
         type === "story" &&
@@ -81,7 +82,7 @@ class InfiniteScrollAmp {
     if (!itemsToTake || !storyId)
       return new Error("Required params for getInitialInlineConfig missing");
     const collection = await this.client.getCollectionBySlug(this.collSlug);
-    if (!collection) return null;
+    if (!collection || !collection.length) return null;
     const filteredItems = this.getFilteredCollItems(collection, storyId);
     const slicedItems = filteredItems.slice(0, itemsToTake);
     const formattedData = this.formatData({
