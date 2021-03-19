@@ -7,37 +7,37 @@ function getClientStub({
   getCollectionBySlug = (slug) =>
     new Promise((resolve) => {
       if (slug === "amp-infinite-scroll")
-      resolve({
-        items: [
-          {
-            type: "story",
-            id: 1111,
-            story: {
-              "story-content-id": 1111,
-              slug: "sports/aa",
-              "hero-image-s3-key": "aa/a.jpg",
+        resolve({
+          items: [
+            {
+              type: "story",
+              id: 1111,
+              story: {
+                "story-content-id": 1111,
+                slug: "sports/aa",
+                "hero-image-s3-key": "aa/a.jpg",
+              },
             },
-          },
-          {
-            type: "story",
-            id: 2222,
-            story: {
-              "story-content-id": 2222,
-              slug: "sports/bb",
-              "hero-image-s3-key": "bb/b.jpg",
+            {
+              type: "story",
+              id: 2222,
+              story: {
+                "story-content-id": 2222,
+                slug: "sports/bb",
+                "hero-image-s3-key": "bb/b.jpg",
+              },
             },
-          },
-          {
-            type: "story",
-            id: 3333,
-            story: {
-              "story-content-id": 3333,
-              slug: "sports/cc",
-              "hero-image-s3-key": "cc/c.jpg",
+            {
+              type: "story",
+              id: 3333,
+              story: {
+                "story-content-id": 3333,
+                slug: "sports/cc",
+                "hero-image-s3-key": "cc/c.jpg",
+              },
             },
-          },
-        ],
-      });
+          ],
+        });
       resolve(null);
     }),
 } = {}) {
@@ -115,5 +115,30 @@ describe("getInitialInlineConfig method of InfiniteScrollAmp helper function", f
     });
     assert.strictEqual(false, /sports\/bb/.test(inlineConfig));
     assert.strictEqual(false, /bb\/b.jpg/.test(inlineConfig));
+  });
+  it("should format JSON as per AMP spec", async function () {
+    // https://amp.dev/documentation/components/amp-next-page/
+    const clientStub = getClientStub();
+    const infiniteScrollAmp = new InfiniteScrollAmp({
+      ampConfig: {},
+      client: clientStub,
+      publisherConfig: dummyPublisherConfig,
+    });
+    const inlineConfig = await infiniteScrollAmp.getInitialInlineConfig({
+      itemsToTake: 5,
+      storyId: 2222,
+    });
+    function isInlineConfigStructureValid(jsonStr) {
+      const stories = JSON.parse(jsonStr);
+      if (!stories.length) throw new Error("Can't verify empty array!");
+      stories.forEach((story) => {
+        const keys = Object.keys(story);
+        if (keys.includes("image") && keys.includes("url") && keys.length === 2)
+          return;
+        throw new Error("Invalid InlineConfigStructure");
+      });
+      return true;
+    }
+    assert.strictEqual(isInlineConfigStructureValid(inlineConfig), true);
   });
 });

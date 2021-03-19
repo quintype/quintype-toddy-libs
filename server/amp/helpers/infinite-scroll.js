@@ -7,7 +7,7 @@
  *  - throws err if `storyId` isn't passed [done]
  *  - should return null if infinite scroll collection doesn't exist, or it contains no stories [done]
  *  - should remove current story from infinite scroll [done]
- *  - should return a JSON in a format given here > https://amp.dev/documentation/components/amp-next-page/
+ *  - should return a JSON in a format given here > https://amp.dev/documentation/components/amp-next-page/ [done]
  *  - the image should be thumbnail sized
  *  - take the first 'n' stories, set by itemsToTake (!)
  *
