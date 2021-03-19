@@ -1,3 +1,24 @@
+/**
+ * Note: Tests to be written for this once https://github.com/quintype/quintype-node-framework/pull/202 is merged
+ *!!!! REMOVE THIS COMMENT BLOCK BEFORE MERGING TO MASTER !!!
+ * Test scenarios:
+ *
+ * getInitialInlineConfig:
+ *  - throws err if `storyId` isn't passed
+ *  - should return null if infinite scroll collection doesn't exist, or it contains no stories
+ *  - should remove current story from infinite scroll
+ *  - should return a JSON in a format given here > https://amp.dev/documentation/components/amp-next-page/
+ *  - the image should be thumbnail sized
+ *  - take the first 'n' stories, set by itemsToTake (!)
+ *
+ * getResponse:
+ *  - throw err if storyId isn't passed
+ *  - should return null if infinite scroll collection doesn't exist, or it contains no stories
+ *  - should remove current story from infinite scroll
+ *  - omit the first 'n' stories, take the rest (!)
+ *  - should return a JSON in a format given here > https://amp.dev/documentation/components/amp-next-page/
+ */
+
 class InfiniteScrollAmp {
   constructor({ ampConfig, client, publisherConfig, queryParams }) {
     this.client = client;

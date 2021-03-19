@@ -231,6 +231,66 @@ describe("ampStoryPageHandler integration tests", () => {
 });
 
 describe("Amp infinite scroll handler", () => {
+  it("Should return a 200 if request is same origin", function (done) {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=foo")
+      .set("amp-same-origin", "true")
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .end((err) => {
+        if (err) return done(err);
+        return done();
+      })
+  });
+  it("Should return a 200 if origin is google/bing CDN", function (done) {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=55de49e4-de83-487c-93d3-82da3a3eb20b&__amp_source_origin=https://www.vikatan.com")
+      .set("origin", "https://www-vikatan-com.cdn.ampproject.org")
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .end((err) => {
+        if (err) return done(err);
+        return done();
+      })
+  });
+  it("Should return a 200 if origin is subdomain", function (done) {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=0743fa17-c39b-4b14-a21d-41a7ed35c4c6&__amp_source_origin=https://sports.vikatan.com")
+      .set("origin", "https://sports.vikatan.com")
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .end((err) => {
+        if (err) return done(err);
+        return done();
+      })
+  });
+  it("Should return a 200 if origin is CDN of subdomain", function (done) {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=0743fa17-c39b-4b14-a21d-41a7ed35c4c6&__amp_source_origin=https://sports.vikatan.com")
+      .set("origin", "https://sports-vikatan-com.cdn.ampproject.org")
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .end((err) => {
+        if (err) return done(err);
+        return done();
+      })
+  });
+  it("Should return a 401 if not same origin or origin is not in whitelist", function (done) {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=0743fa17-c39b-4b14-a21d-41a7ed35c4c6&__amp_source_origin=https://sports.vikatan.com")
+      .set("origin", "https://www.google.com")
+      .expect(401)
+      .end((err, res) => {
+        if (err) return done(err);
+        assert.strictEqual(res.body, "Unauthorized")
+        return done();
+      })
+  });
   it("returns infinite scroll json config from story 5 onwards", function (done) {
     const app = createApp();
     const expectedJson = `{"pages":[{"image":"https://gumlet.assettype.com/pqr/heroimage.jpg?format=webp&w=250","title":"headline6","url":"/amp/story/foo.com/story-f"},{"image":"https://gumlet.assettype.com/stu/heroimage.jpg?format=webp&w=250","title":"headline7","url":"/amp/story/foo.com/story-g"}]}`;

@@ -29,7 +29,7 @@ const { addCacheHeadersToResult } = require("../../handlers/cdn-caching");
  * - if ampConfig["related-collection-id"] exists, pass related stories to amplib [done]
  * - if FE passes seo, call seo with pagetype = story-page-amp, pass result to amplib [done]
  * - pass infiniteScrollInlineConfig to amplib
- * - if getAdditionalConfig, call it and pass AdditionalConfig to amplib
+ * - if getAdditionalConfig, call it and pass AdditionalConfig to amplib [done]
  */
 
 async function ampStoryPageHandler(
