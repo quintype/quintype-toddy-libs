@@ -1,3 +1,4 @@
+
 class InfiniteScrollAmp {
   constructor({ ampConfig, client, publisherConfig, queryParams }) {
     this.client = client;
@@ -60,7 +61,8 @@ class InfiniteScrollAmp {
     if (!itemsToTake || !storyId)
       return new Error("Required params for getInitialInlineConfig missing");
     const collection = await this.client.getCollectionBySlug(this.collSlug);
-    if (!collection) return null;
+    if (!collection || (collection.items && !collection.items.length))
+      return null;
     const filteredItems = this.getFilteredCollItems(collection, storyId);
     const slicedItems = filteredItems.slice(0, itemsToTake);
     const formattedData = this.formatData({
@@ -71,4 +73,4 @@ class InfiniteScrollAmp {
   }
 }
 
-module.exports = { InfiniteScrollAmp };
+module.exports = InfiniteScrollAmp;

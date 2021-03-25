@@ -1,15 +1,25 @@
 const urlLib = require("url");
 const set = require("lodash/set");
 const get = require("lodash/get");
+const cloneDeep = require("lodash/cloneDeep");
+const merge = require("lodash/merge");
 const { Story, AmpConfig } = require("../../impl/api-client-impl");
 const {
-  getSeoInstance,
-  InfiniteScrollAmp,
   optimize,
   getDomainSpecificOpts,
 } = require("../helpers");
 const { storyToCacheKey } = require("../../caching");
 const { addCacheHeadersToResult } = require("../../handlers/cdn-caching");
+
+/**
+ * ampStoryPageHandler gets all the things needed and calls "ampifyStory" function (which comes from ampLib)
+ * From ampifyStory's perspective,
+ *  - ampConfig is /api/v1/amp/config
+ *  - publisherConfig is /api/v1/config
+ *  - additionalConfig is an obj containing any extra config. If the publisher passes an async function "opts.getAdditionalConfig", its returnd value is merged into additionalConfig. Use case - Ahead can use this to fetch the pagebuilder config
+ *
+ * @category AmpHandler
+ */
 
 async function ampStoryPageHandler(
   req,
@@ -19,13 +29,16 @@ async function ampStoryPageHandler(
     client,
     config,
     domainSlug,
-    seo,
+    seo = "",
     cdnProvider = null,
     ampLibrary = require("@quintype/amp"),
-    ...opts
+    additionalConfig = require("../../publisher-config"),
+    InfiniteScrollAmp = require("../helpers/infinite-scroll"),
+    ...rest
   }
 ) {
   try {
+    const opts = cloneDeep(rest);
     const domainSpecificOpts = getDomainSpecificOpts(opts, domainSlug);
     const url = urlLib.parse(req.url, true);
     const { ampifyStory } = ampLibrary;
@@ -34,8 +47,7 @@ async function ampStoryPageHandler(
       "amp-config",
       async () => await AmpConfig.getAmpConfig(client)
     );
-    const slug = String(0);
-    const story = await Story.getStoryBySlug(client, req.params[slug]);
+    const story = await Story.getStoryBySlug(client, req.params["0"]);
     let relatedStoriesCollection;
     let relatedStories = [];
 
@@ -73,7 +85,7 @@ async function ampStoryPageHandler(
     )
       return res.redirect(story.url);
 
-    const seoInstance = getSeoInstance(seo, config, "story-page-amp");
+    const seoInstance = typeof seo === "function" ? seo(config, "story-page-amp") : seo;
     const seoTags =
       seoInstance &&
       seoInstance.getMetaTags(
@@ -103,26 +115,37 @@ async function ampStoryPageHandler(
         infiniteScrollInlineConfig
       );
     }
+    if (
+      opts.getAdditionalConfig &&
+      opts.getAdditionalConfig instanceof Function
+    ) {
+      const fetchedAdditionalConfig = await opts.getAdditionalConfig({
+        story,
+        apiConfig: config.config,
+        ampApiConfig: ampConfig.ampConfig,
+        publisherConfig: additionalConfig,
+      });
+      merge(additionalConfig, fetchedAdditionalConfig);
+    }
 
     const ampHtml = ampifyStory({
       story,
       publisherConfig: config.config,
       ampConfig: ampConfig.ampConfig,
-      relatedStories,
-      client,
+      additionalConfig,
       opts: { ...domainSpecificOpts, domainSlug },
       seo: seoTags ? seoTags.toString() : "",
-      infiniteScrollInlineConfig,
     });
     if (ampHtml instanceof Error) return next(ampHtml);
     const optimizedAmpHtml = await optimize(ampHtml);
 
     res.set("Content-Type", "text/html");
-    addCacheHeadersToResult(
+    addCacheHeadersToResult({
       res,
-      storyToCacheKey(config["publisher-id"], story),
-      cdnProvider
-    );
+      cacheKeys: storyToCacheKey(config["publisher-id"], story),
+      cdnProvider,
+      config,
+    });
 
     return res.send(optimizedAmpHtml);
   } catch (e) {

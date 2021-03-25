@@ -142,10 +142,11 @@ function withConfigPartial(
 ) {
   return function withConfig(f, staticParams) {
     return function (req, res, next) {
+      const domainSlug = getDomainSlug(publisherConfig, req.hostname);
       const client = getClient(req.hostname);
       return client
         .getConfig()
-        .then((config) => configWrapper(config))
+        .then((config) => configWrapper(config, domainSlug))
         .then((config) =>
           f(
             req,
@@ -154,7 +155,7 @@ function withConfigPartial(
             Object.assign({}, staticParams, {
               config,
               client,
-              domainSlug: getDomainSlug(publisherConfig, req.hostname),
+              domainSlug,
             })
           )
         )
@@ -262,9 +263,11 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {Object} opts.mobileConfigFields List of fields that are needed in the config field of the *&#47;mobile-data.json* API. This is primarily used by the React Native starter kit. (default: {})
  * @param {boolean} opts.templateOptions If set to true, then *&#47;template-options.json* will return a list of available components so that components can be sorted in the CMS. This reads data from *config/template-options.yml*. See [Adding a homepage component](https://developers.quintype.com/malibu/tutorial/adding-a-homepage-component) for more details
  * @param {boolean|function} opts.lightPages If set to true, then all story pages will render amp pages.
- * @param {string} opts.cdnProvider The name of the cdn provider. Supported cdn providers are akamai, cloudflare. Default value is cloudflare.
+ * @param {string | function} opts.cdnProvider The name of the cdn provider. Supported cdn providers are akamai, cloudflare. Default value is cloudflare.
  * @param {function} opts.maxConfigVersion An async function which resolves to a integer version of the config. This defaults to config.theme-attributes.cache-burst
  * @param {Array<object>|function} opts.redirectUrls An array or async function which used to render the redirect url provided in the array of object - >ex- REDIRECT_URLS = [{sourceUrl: "/tag/:tagSlug",destinationUrl: "/topic/:tagSlug",statusCode: 301,}]
+ * @param {boolean|function} redirectToLowercaseSlugs If set or evaluates to true, then for every story-page request having capital latin letters in the slug, it responds with a 301 redirect to the lowercase slug URL. (default: true)
+ * @param {boolean|function} shouldEncodeAmpUri If set to true, then for every story-page request the slug will be encoded, in case of a vernacular slug this should be set to false. Receives path as param (default: true)
  */
 exports.isomorphicRoutes = function isomorphicRoutes(
   app,
@@ -304,6 +307,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     publisherConfig = require("./publisher-config"),
     redirectUrls = [],
     prerenderServiceUrl = "",
+    redirectToLowercaseSlugs = false,
+    shouldEncodeAmpUri,
   }
 ) {
   const withConfig = withConfigPartial(
@@ -398,6 +403,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       seo,
       appVersion,
       cdnProvider,
+      redirectToLowercaseSlugs,
     })
   );
 
@@ -428,6 +434,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         mobileApiEnabled,
         mobileConfigFields,
         cdnProvider,
+        redirectToLowercaseSlugs,
       })
     );
   }
@@ -454,7 +461,16 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       withConfig(
         handleStaticRoute,
         Object.assign(
-          { logError, loadData, loadErrorData, renderLayout, seo, cdnProvider },
+          {
+            logError,
+            loadData,
+            loadErrorData,
+            renderLayout,
+            seo,
+            cdnProvider,
+            oneSignalServiceWorkers,
+            publisherConfig,
+          },
           route
         )
       )
@@ -477,17 +493,30 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       cdnProvider,
       lightPages,
       redirectUrls,
+      redirectToLowercaseSlugs,
+      shouldEncodeAmpUri,
+      oneSignalServiceWorkers,
+      publisherConfig,
     })
   );
 
   if (redirectRootLevelStories) {
-    app.get("/:storySlug", withConfig(redirectStory, { logError }));
+    app.get(
+      "/:storySlug",
+      withConfig(redirectStory, { logError, cdnProvider })
+    );
   }
 
   if (handleCustomRoute) {
     app.get(
       "/*",
-      withConfig(customRouteHandler, { loadData, renderLayout, logError, seo })
+      withConfig(customRouteHandler, {
+        loadData,
+        renderLayout,
+        logError,
+        seo,
+        cdnProvider,
+      })
     );
   }
 
@@ -595,6 +624,7 @@ exports.ampRoutes = (app, opts = {}) => {
   const {
     ampStoryPageHandler,
     storyPageInfiniteScrollHandler,
+    bookendHandler,
   } = require("./amp/handlers");
 
   getWithConfig(app, "/amp/story/*", ampStoryPageHandler, opts);
@@ -604,4 +634,6 @@ exports.ampRoutes = (app, opts = {}) => {
     storyPageInfiniteScrollHandler,
     opts
   );
+  getWithConfig(app, "/amp/api/v1/bookend.json", bookendHandler, opts);
+  getWithConfig(app, "/ampstories/*", ampStoryPageHandler, opts);
 };

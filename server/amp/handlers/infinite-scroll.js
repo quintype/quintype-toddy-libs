@@ -1,5 +1,6 @@
 const { AmpConfig } = require("../../impl/api-client-impl");
-const { InfiniteScrollAmp, setCorsHeaders } = require("../helpers");
+const InfiniteScrollAmp = require("../helpers/infinite-scroll")
+const { setCorsHeaders } = require("../helpers");
 
 // eslint-disable-next-line consistent-return
 async function storyPageInfiniteScrollHandler(

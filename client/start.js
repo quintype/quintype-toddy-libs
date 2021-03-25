@@ -124,12 +124,15 @@ let pickComponentWrapper = null;
  * @returns {void}
  */
 export function navigateToPage(dispatch, path, doNotPushPath) {
+  const pathname =
+    !path || path === "undefined" ? global.location.pathname : path;
+
   if (global.disableAjaxNavigation) {
-    global.location = path;
+    global.location = pathname;
   }
 
   dispatch({ type: PAGE_LOADING });
-  getRouteData(path, {}).then((page) => {
+  getRouteData(pathname, {}).then((page) => {
     if (!page) {
       console &&
         console.log("Recieved a null page. Expecting the browser to redirect.");
@@ -139,7 +142,7 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
     checkForServiceWorkerUpdates(app, page);
 
     if (page.disableIsomorphicComponent) {
-      global.location = path;
+      global.location = pathname;
       return;
     }
 
@@ -150,12 +153,15 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
       dispatch({
         type: NAVIGATE_TO_PAGE,
         page,
-        currentPath: path,
+        currentPath: pathname,
       });
 
       if (!doNotPushPath) {
-        history.push(path);
-        registerPageView(page, path);
+        history.push({
+          pathname,
+          search: "",
+        });
+        registerPageView(page, pathname);
       }
     });
     return page;

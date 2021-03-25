@@ -16,6 +16,7 @@ const Promise = require("bluebird");
 const { getDefaultState, createBasicStore } = require("./create-store");
 const { customUrlToCacheKey } = require("../caching");
 const { addLightPageHeaders } = require("../impl/light-page-impl");
+const { getOneSignalScript } = require("./onesignal-script");
 const { getRedirectUrl } = require("../redirect-url-helper");
 const ABORT_HANDLER = "__ABORT__";
 function abortHandler() {
@@ -27,7 +28,15 @@ function loadDataForIsomorphicRoute(
   loadErrorData,
   url,
   routes,
-  { otherParams, config, client, host, logError, domainSlug }
+  {
+    otherParams,
+    config,
+    client,
+    host,
+    logError,
+    domainSlug,
+    redirectToLowercaseSlugs,
+  }
 ) {
   return loadDataForEachRoute().catch((error) => {
     logError(error);
@@ -36,8 +45,30 @@ function loadDataForIsomorphicRoute(
 
   // Using async because this for loop reads really really well
   async function loadDataForEachRoute() {
+    const redirectToLowercaseSlugsValue =
+      typeof redirectToLowercaseSlugs === "function"
+        ? redirectToLowercaseSlugs(config)
+        : redirectToLowercaseSlugs;
     for (const match of matchAllRoutes(url.pathname, routes)) {
       const params = Object.assign({}, url.query, otherParams, match.params);
+      /* On story pages, if the slug contains any capital letters (latin), we want to
+       * redirect the browser to the URL having all lowercase letters. We need to be
+       * wary of any asset routes that might make its way here and get wrongly redirected.
+       */
+      if (
+        redirectToLowercaseSlugsValue &&
+        match.pageType === "story-page" &&
+        params.storySlug &&
+        decodeURIComponent(params.storySlug) !==
+          decodeURIComponent(params.storySlug.toLowerCase())
+      ) {
+        return {
+          httpStatusCode: 301,
+          data: {
+            location: `${url.pathname.toLowerCase()}${url.search || ""}`,
+          },
+        };
+      }
       const result = await loadData(match.pageType, params, config, client, {
         host,
         next: abortHandler,
@@ -104,7 +135,7 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
 ) {
   const freshRevision = `${assetHelper.assetHash(
     "app.js"
-  )}-${await maxConfigVersion(config)}`;
+  )}-${await maxConfigVersion(config, domainSlug)}`;
 
   if (req.query.revision && req.query.revision !== freshRevision)
     return res.status(503).send("Requested Shell Is Not Current");
@@ -211,6 +242,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
     mobileApiEnabled,
     mobileConfigFields,
     cdnProvider,
+    redirectToLowercaseSlugs,
   }
 ) {
   const url = urlLib.parse(req.query.path || "/", true);
@@ -262,6 +294,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         host: req.hostname,
         otherParams: req.query,
         domainSlug,
+        redirectToLowercaseSlugs,
       }
     ).catch((e) => {
       logError(e);
@@ -280,11 +313,12 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
       const statusCode = result.httpStatusCode || 200;
       res.status(statusCode < 500 ? 200 : 500);
       res.setHeader("Content-Type", "application/json");
-      addCacheHeadersToResult(
-        res,
-        _.get(result, ["data", "cacheKeys"]),
-        cdnProvider
-      );
+      addCacheHeadersToResult({
+        res: res,
+        cacheKeys: _.get(result, ["data", "cacheKeys"]),
+        cdnProvider: cdnProvider,
+        config: config,
+      });
       const seoInstance = getSeoInstance(seo, config, result.pageType);
       res.json(
         Object.assign({}, result, {
@@ -420,6 +454,10 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     cdnProvider,
     lightPages,
     redirectUrls,
+    redirectToLowercaseSlugs,
+    oneSignalServiceWorkers,
+    shouldEncodeAmpUri,
+    publisherConfig,
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -428,11 +466,12 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     const statusCode = result.httpStatusCode || 200;
 
     if (statusCode == 301 && result.data && result.data.location) {
-      addCacheHeadersToResult(
-        res,
-        [customUrlToCacheKey(config["publisher-id"], "redirect")],
-        cdnProvider
-      );
+      addCacheHeadersToResult({
+        res: res,
+        cacheKeys: [customUrlToCacheKey(config["publisher-id"], "redirect")],
+        cdnProvider: cdnProvider,
+        config: config,
+      });
       return res.redirect(301, result.data.location);
     }
     const seoInstance = getSeoInstance(seo, config, result.pageType);
@@ -449,15 +488,22 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     });
 
     if (lightPages) {
-      addLightPageHeaders(result, lightPages, { config, res, client, req });
+      addLightPageHeaders(result, lightPages, {
+        config,
+        res,
+        client,
+        req,
+        shouldEncodeAmpUri,
+      });
     }
 
     res.status(statusCode);
-    addCacheHeadersToResult(
-      res,
-      _.get(result, ["data", "cacheKeys"]),
-      cdnProvider
-    );
+    addCacheHeadersToResult({
+      res: res,
+      cacheKeys: _.get(result, ["data", "cacheKeys"]),
+      cdnProvider: cdnProvider,
+      config: config,
+    });
 
     if (preloadJs) {
       res.append(
@@ -465,7 +511,9 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
         `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`
       );
     }
-
+    const oneSignalScript = oneSignalServiceWorkers
+      ? getOneSignalScript({ config, publisherConfig })
+      : null;
     return pickComponent
       .preloadComponent(
         store.getState().qt.pageType,
@@ -482,6 +530,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
           seoTags,
           pageType: store.getState().qt.pageType,
           subPageType: store.getState().qt.subPageType,
+          oneSignalScript,
         })
       );
   }
@@ -498,7 +547,14 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     loadErrorData,
     url,
     generateRoutes(config, domainSlug),
-    { config, client, logError, host: req.hostname, domainSlug }
+    {
+      config,
+      client,
+      logError,
+      host: req.hostname,
+      domainSlug,
+      redirectToLowercaseSlugs,
+    }
   )
     .catch((e) => {
       logError(e);
@@ -536,6 +592,8 @@ exports.handleStaticRoute = function handleStaticRoute(
     disableIsomorphicComponent,
     domainSlug,
     cdnProvider,
+    oneSignalServiceWorkers,
+    publisherConfig,
   }
 ) {
   const url = urlLib.parse(path);
@@ -572,11 +630,16 @@ exports.handleStaticRoute = function handleStaticRoute(
       });
 
       res.status(statusCode);
-      addCacheHeadersToResult(
-        res,
-        _.get(result, ["data", "cacheKeys"], ["static"]),
-        cdnProvider
-      );
+      addCacheHeadersToResult({
+        res: res,
+        cacheKeys: _.get(result, ["data", "cacheKeys"], ["static"]),
+        cdnProvider: cdnProvider,
+        config: config,
+      });
+
+      const oneSignalScript = oneSignalServiceWorkers
+        ? getOneSignalScript({ config, publisherConfig })
+        : null;
 
       return renderLayout(
         res,
@@ -594,6 +657,7 @@ exports.handleStaticRoute = function handleStaticRoute(
             store,
             disableAjaxNavigation: true,
             seoTags,
+            oneSignalScript,
           },
           renderParams
         )

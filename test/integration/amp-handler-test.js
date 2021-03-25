@@ -178,18 +178,31 @@ function getClientStub(hostname) {
   };
 }
 
-function createApp(app = express()) {
-  const ampLibrary = {};
-  ampLibrary.ampifyStory = () => '<div data-page-type="home-page">foobar</div>';
+const dummyAmpLib = {
+  ampifyStory: () => '<div data-page-type="home-page">foobar</div>',
+};
+
+const getClientStubWithRelatedStories = (relatedStories) => (hostname) =>
+  Object.assign({}, getClientStub(hostname), {
+    getRelatedStories: () =>
+      Promise.resolve({ "related-stories": relatedStories }),
+  });
+
+function createApp({
+  clientStub = getClientStub,
+  ampLibrary = dummyAmpLib,
+} = {}) {
+  const app = express();
   ampRoutes(app, {
-    getClient: getClientStub,
+    getClient: clientStub,
     publisherConfig: {},
     ampLibrary,
+    additionalConfig: {},
   });
   return app;
 }
 
-describe("Amp story page handler", () => {
+describe("ampStoryPageHandler integration tests", () => {
   it("mounts an amp story page", (done) => {
     const app = createApp();
     supertest(app)
@@ -201,9 +214,83 @@ describe("Amp story page handler", () => {
         return done();
       });
   });
+  it("passes on errors to express error handler", (done) => {
+    const app = createApp({
+      ampLibrary: {
+        ampifyStory: () => new Error("Dummy error"),
+      },
+    });
+    supertest(app)
+      .get("/amp/story/test")
+      .expect(500, /Dummy error/)
+      .end(function (err, res) {
+        if (err) return done(err);
+        return done();
+      });
+  });
 });
 
 describe("Amp infinite scroll handler", () => {
+  it("Should return a 200 if request is same origin", function (done) {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=foo")
+      .set("amp-same-origin", "true")
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .end((err) => {
+        if (err) return done(err);
+        return done();
+      })
+  });
+  it("Should return a 200 if origin is google/bing CDN", function (done) {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=55de49e4-de83-487c-93d3-82da3a3eb20b&__amp_source_origin=https://www.vikatan.com")
+      .set("origin", "https://www-vikatan-com.cdn.ampproject.org")
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .end((err) => {
+        if (err) return done(err);
+        return done();
+      })
+  });
+  it("Should return a 200 if origin is subdomain", function (done) {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=0743fa17-c39b-4b14-a21d-41a7ed35c4c6&__amp_source_origin=https://sports.vikatan.com")
+      .set("origin", "https://sports.vikatan.com")
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .end((err) => {
+        if (err) return done(err);
+        return done();
+      })
+  });
+  it("Should return a 200 if origin is CDN of subdomain", function (done) {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=0743fa17-c39b-4b14-a21d-41a7ed35c4c6&__amp_source_origin=https://sports.vikatan.com")
+      .set("origin", "https://sports-vikatan-com.cdn.ampproject.org")
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .end((err) => {
+        if (err) return done(err);
+        return done();
+      })
+  });
+  it("Should return a 401 if not same origin or origin is not in whitelist", function (done) {
+    const app = createApp();
+    supertest(app)
+      .get("/amp/api/v1/amp-infinite-scroll?story-id=0743fa17-c39b-4b14-a21d-41a7ed35c4c6&__amp_source_origin=https://sports.vikatan.com")
+      .set("origin", "https://www.google.com")
+      .expect(401)
+      .end((err, res) => {
+        if (err) return done(err);
+        assert.strictEqual(res.body, "Unauthorized")
+        return done();
+      })
+  });
   it("returns infinite scroll json config from story 5 onwards", function (done) {
     const app = createApp();
     const expectedJson = `{"pages":[{"image":"https://gumlet.assettype.com/pqr/heroimage.jpg?format=webp&w=250","title":"headline6","url":"/amp/story/foo.com/story-f"},{"image":"https://gumlet.assettype.com/stu/heroimage.jpg?format=webp&w=250","title":"headline7","url":"/amp/story/foo.com/story-g"}]}`;
@@ -233,5 +320,43 @@ describe("Amp infinite scroll handler", () => {
         assert.equal(expectedJson, response);
         return done();
       });
+  });
+});
+
+describe("Amp visual stories bookend handler", () => {
+  it("returns the bookend if there are related stories", function (done) {
+    const app = createApp({
+      clientStub: getClientStubWithRelatedStories([{ headline: "foo" }]),
+    });
+    supertest(app)
+      .get("/amp/api/v1/bookend.json?storyId=111&sectionId=222")
+      .expect("Content-Type", /json/)
+      .expect("Cache-Control", /public/)
+      .expect(200)
+      .then((res) => {
+        const response = JSON.parse(res.text);
+        assert.equal("v1.0", response.bookendVersion);
+        assert.equal(3, response.components.length);
+        assert.equal("foo", response.components[1].title);
+      })
+      .then(() => done());
+  });
+  it("returns a 404 if there are no related stories", (done) => {
+    const app = createApp({ clientStub: getClientStubWithRelatedStories([]) });
+    supertest(app)
+      .get("/amp/api/v1/bookend.json?storyId=111&sectionId=222")
+      .expect("Content-Type", /json/)
+      .expect(404)
+      .then(() => done());
+  });
+  it("returns a 400 if 'storyId' and 'sectionId' query params aren't passed", (done) => {
+    const app = createApp({
+      clientStub: getClientStubWithRelatedStories([{ headline: "foo" }]),
+    });
+    supertest(app)
+      .get("/amp/api/v1/bookend.json")
+      .expect("Content-Type", /json/)
+      .expect(400)
+      .then(() => done());
   });
 });

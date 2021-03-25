@@ -1,6 +1,253 @@
-# Change Log
+# Changelog
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+### [4.12.6](https://github.com/quintype/quintype-node-framework/compare/v4.12.5...v4.12.6) (2021-03-23)
+
+### [4.12.5](https://github.com/quintype/quintype-node-framework/compare/v4.12.4...v4.12.5) (2021-03-18)
+
+### [4.12.4](https://github.com/quintype/quintype-node-framework/compare/v4.12.3...v4.12.4) (2021-03-18)
+
+
+### Bug Fixes
+
+* **amp:** Bump Amp library to take Q and A element changes ([#214](https://github.com/quintype/quintype-node-framework/issues/214)) ([97074bf](https://github.com/quintype/quintype-node-framework/commit/97074bfb6bd072b603655a5c1d5ebb8e223160f3))
+
+### [4.12.3](https://github.com/quintype/quintype-node-framework/compare/v4.12.2...v4.12.3) (2021-03-16)
+
+
+### Bug Fixes
+
+* commit package lock ([da49bf9](https://github.com/quintype/quintype-node-framework/commit/da49bf92428d17717511607960b3c112661db291))
+
+### [4.12.2](https://github.com/quintype/quintype-node-framework/compare/v4.12.1...v4.12.2) (2021-03-15)
+
+
+### Bug Fixes
+
+* update package lock ([f81c5e6](https://github.com/quintype/quintype-node-framework/commit/f81c5e6669a107cfbe09be59c2ca309f6fe3e3d0))
+
+### [4.12.1](https://github.com/quintype/quintype-node-framework/compare/v4.12.0...v4.12.1) (2021-03-08)
+
+### [4.11.1](https://github.com/quintype/quintype-node-framework/compare/v4.11.0...v4.11.1) (2021-03-08)
+
+## [4.10.4](https://github.com/quintype/quintype-node-framework/compare/v4.10.3...v4.10.4) (2021-03-04)
+
+
+### Bug Fixes
+
+* ampStoryPageHandler mutating opts | test ([#211](https://github.com/quintype/quintype-node-framework/issues/211)) ([68bf31d](https://github.com/quintype/quintype-node-framework/commit/68bf31df3556d0ecaaf174f998c973a2e4a69272))
+
+
+
+## [4.10.3](https://github.com/quintype/quintype-node-framework/compare/v4.10.2...v4.10.3) (2021-03-02)
+
+
+
+## [4.10.2](https://github.com/quintype/quintype-node-framework/compare/v4.10.1...v4.10.2) (2021-02-26)
+
+
+
+## [4.10.1](https://github.com/quintype/quintype-node-framework/compare/v4.10.0...v4.10.1) (2021-02-25)
+
+
+### Bug Fixes
+
+* **amp:** bump amplib to take submenu validation err hotfix ([#207](https://github.com/quintype/quintype-node-framework/issues/207)) ([773e847](https://github.com/quintype/quintype-node-framework/commit/773e847e07f5edf2b844b7259381601ce378d17f))
+* **amp:** Fix related stories across domains :hammer: ([#206](https://github.com/quintype/quintype-node-framework/issues/206)) ([ed4f65a](https://github.com/quintype/quintype-node-framework/commit/ed4f65a1f03bc98770effcc5a19db35de1a6dbca))
+
+
+
+# [4.10.0](https://github.com/quintype/quintype-node-framework/compare/v4.9.0...v4.10.0) (2021-02-25)
+
+
+### Features
+
+* **visual-stories:** remove old visual stories ([#200](https://github.com/quintype/quintype-node-framework/issues/200)) ([#205](https://github.com/quintype/quintype-node-framework/issues/205)) ([8492593](https://github.com/quintype/quintype-node-framework/commit/84925935f404658bde35a049efa1bb731391293b)), closes [#188](https://github.com/quintype/quintype-node-framework/issues/188)
+
+
+
+# [4.9.0](https://github.com/quintype/quintype-node-framework/compare/v4.8.4...v4.9.0) (2021-02-25)
+
+
+### Bug Fixes
+
+* **related-stories:** Fix related stories memoize :hammer: ([0265458](https://github.com/quintype/quintype-node-framework/commit/02654580e9f3d5601e7056e8a43ae2e9fb24cb7b))
+* **relatedstories:** Revert previous commit ([f1cf455](https://github.com/quintype/quintype-node-framework/commit/f1cf45565ce6b0b5500d57950610112da1788d61))
+
+
+### Features
+
+* **static-page:** Add chosen content type to static pages :zap: ([#203](https://github.com/quintype/quintype-node-framework/issues/203)) ([a69d29e](https://github.com/quintype/quintype-node-framework/commit/a69d29e8459dc97a3041cc59bd031aaea23ef64f)), closes [#200](https://github.com/quintype/quintype-node-framework/issues/200)
+
+
+
+## [4.8.4](https://github.com/quintype/quintype-node-framework/compare/v4.8.3...v4.8.4) (2021-02-12)
+
+
+
+## [4.8.3](https://github.com/quintype/quintype-node-framework/compare/v4.8.2...v4.8.3) (2021-02-11)
+
+
+
+## [4.8.2](https://github.com/quintype/quintype-node-framework/compare/v4.8.1...v4.8.2) (2021-02-11)
+
+
+
+## [4.8.1](https://github.com/quintype/quintype-node-framework/compare/v4.8.0...v4.8.1) (2021-02-11)
+
+
+
+# [4.8.0](https://github.com/quintype/quintype-node-framework/compare/v4.7.3...v4.8.0) (2021-02-10)
+
+
+### Bug Fixes
+
+* remove old visual stories ([#200](https://github.com/quintype/quintype-node-framework/issues/200)) ([0fbd674](https://github.com/quintype/quintype-node-framework/commit/0fbd674a60af46af5138bf9524f75d7a88bb324b)), closes [#188](https://github.com/quintype/quintype-node-framework/issues/188)
+
+
+### Features
+
+* **PB subdomain:** pass domainSlug to required methods(PB) ([#198](https://github.com/quintype/quintype-node-framework/issues/198)) ([b072bf5](https://github.com/quintype/quintype-node-framework/commit/b072bf5853cddc44ca8b168647ff44bc03709837))
+
+
+
+## [4.7.3](https://github.com/quintype/quintype-node-framework/compare/v4.7.2...v4.7.3) (2021-02-03)
+
+
+### Bug Fixes
+
+* **amp:** Implement toggle to encode slug :zap: ([#197](https://github.com/quintype/quintype-node-framework/issues/197)) ([311a638](https://github.com/quintype/quintype-node-framework/commit/311a638fc2c710d92f2dadf511be12c40b06f5e2))
+
+
+
+## [4.7.2](https://github.com/quintype/quintype-node-framework/compare/v4.7.1...v4.7.2) (2021-02-01)
+
+
+
+## [4.7.1](https://github.com/quintype/quintype-node-framework/compare/v4.7.0...v4.7.1) (2021-01-29)
+
+
+
+# [4.7.0](https://github.com/quintype/quintype-node-framework/compare/v4.5.14...v4.7.0) (2021-01-27)
+
+
+### Bug Fixes
+
+* **package:** Bump patch version to avoid tag conflict ([a51424e](https://github.com/quintype/quintype-node-framework/commit/a51424e4f124d244aea2a0e61bac4f53d646b33e))
+* **package:** Replace version from beta to last stable ([133cc4e](https://github.com/quintype/quintype-node-framework/commit/133cc4e07b4e8f3514411df513ead914a6898154))
+
+
+### Features
+
+* Redirect story pages to lower case slugs if the slug contains any capital latin letters ([#191](https://github.com/quintype/quintype-node-framework/issues/191)) ([efc4ecd](https://github.com/quintype/quintype-node-framework/commit/efc4ecdfd0ab21203c316c8c7948878d3ca88ba9))
+
+
+
+# [4.6.0](https://github.com/quintype/quintype-node-framework/compare/v4.5.14...v4.6.0) (2021-01-27)
+
+
+### Bug Fixes
+
+* **package:** Replace version from beta to last stable ([133cc4e](https://github.com/quintype/quintype-node-framework/commit/133cc4e07b4e8f3514411df513ead914a6898154))
+
+
+### Features
+
+* Redirect story pages to lower case slugs if the slug contains any capital latin letters ([#191](https://github.com/quintype/quintype-node-framework/issues/191)) ([efc4ecd](https://github.com/quintype/quintype-node-framework/commit/efc4ecdfd0ab21203c316c8c7948878d3ca88ba9))
+
+
+
+## [4.5.14](https://github.com/quintype/quintype-node-framework/compare/v4.5.13...v4.5.14) (2021-01-25)
+
+
+### Bug Fixes
+
+* **package:** Revert package to stable version ([5ddc655](https://github.com/quintype/quintype-node-framework/commit/5ddc655b9827e823f112fd05d829e295af798957))
+* **visual-stories:** Revert visual story 🔨 ([#193](https://github.com/quintype/quintype-node-framework/issues/193)) ([d605b25](https://github.com/quintype/quintype-node-framework/commit/d605b252ad11e5366ca00a5c99c0ec0100a1929a))
+
+
+
+## [4.5.13](https://github.com/quintype/quintype-node-framework/compare/v4.5.12...v4.5.13) (2021-01-21)
+
+
+### Bug Fixes
+
+* bump amplib | linting ([b76bf0a](https://github.com/quintype/quintype-node-framework/commit/b76bf0acf01cdfce8e1e8898e9669cdf303a06f5))
+
+
+
+## [4.5.12](https://github.com/quintype/quintype-node-framework/compare/v4.5.11...v4.5.12) (2021-01-19)
+
+
+### Bug Fixes
+
+* commit package lock ([791b16e](https://github.com/quintype/quintype-node-framework/commit/791b16e18a5c44ab58a4a8d2103ee5db8ef39d1e))
+* remove old visual stories ([#188](https://github.com/quintype/quintype-node-framework/issues/188)) ([54681bb](https://github.com/quintype/quintype-node-framework/commit/54681bb40099f334a06e7be46801928f42b6263a))
+
+
+
+## [4.5.11](https://github.com/quintype/quintype-node-framework/compare/v4.5.4...v4.5.11) (2020-12-30)
+
+
+### Bug Fixes
+
+* **amp:** bump amplib to take visual story fixes ([#184](https://github.com/quintype/quintype-node-framework/issues/184)) ([ad40fd2](https://github.com/quintype/quintype-node-framework/commit/ad40fd2b30b95200724b0c64691aa361230d19ad))
+* commit package lock ([043285e](https://github.com/quintype/quintype-node-framework/commit/043285ed03777e730bc2b67ab67024c5df7ea8bb))
+* **amp:** bump amplib to take data-testid on infinite scroll separator ([0cfdfcb](https://github.com/quintype/quintype-node-framework/commit/0cfdfcb3011143bfbd0126b95e78092e41f694ad))
+
+
+
+## [4.5.9](https://github.com/quintype/quintype-node-framework/compare/v4.5.8...v4.5.9) (2020-12-16)
+
+
+
+## [4.5.8](https://github.com/quintype/quintype-node-framework/compare/v4.5.7...v4.5.8) (2020-12-09)
+
+
+### Bug Fixes
+
+* **amp:** bump amplib to take visual story fixes ([#184](https://github.com/quintype/quintype-node-framework/issues/184)) ([ad40fd2](https://github.com/quintype/quintype-node-framework/commit/ad40fd2b30b95200724b0c64691aa361230d19ad))
+
+
+
+## [4.5.7](https://github.com/quintype/quintype-node-framework/compare/v4.5.6...v4.5.7) (2020-12-04)
+
+
+### Bug Fixes
+
+* commit package lock ([043285e](https://github.com/quintype/quintype-node-framework/commit/043285ed03777e730bc2b67ab67024c5df7ea8bb))
+
+
+
+## [4.5.6](https://github.com/quintype/quintype-node-framework/compare/v4.5.5...v4.5.6) (2020-12-03)
+
+
+
+## [4.5.5](https://github.com/quintype/quintype-node-framework/compare/v4.5.4...v4.5.5) (2020-11-26)
+
+
+### Bug Fixes
+
+* **amp:** bump amplib to take data-testid on infinite scroll separator ([0cfdfcb](https://github.com/quintype/quintype-node-framework/commit/0cfdfcb3011143bfbd0126b95e78092e41f694ad))
+
+
+
+## [4.5.4](https://github.com/quintype/quintype-node-framework/compare/v4.5.3...v4.5.4) (2020-11-12)
+
+
+
+## [4.5.3](https://github.com/quintype/quintype-node-framework/compare/v4.5.0...v4.5.3) (2020-11-11)
+
+
+
+## [4.5.2](https://github.com/quintype/quintype-node-framework/compare/v4.5.0...v4.5.2) (2020-11-11)
+
+
+
+## [4.5.1](https://github.com/quintype/quintype-node-framework/compare/v4.5.0...v4.5.1) (2020-11-11)
+
+
 
 # [4.5.0](https://github.com/quintype/quintype-node-framework/compare/v4.2.4...v4.5.0) (2020-11-03)
 
