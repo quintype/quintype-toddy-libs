@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.13.0](https://github.com/quintype/quintype-node-framework/compare/v4.12.6...v4.13.0) (2021-03-25)
+
+
+### Features
+
+* **Pre-render webpages:** Support for prerender.io ([#179](https://github.com/quintype/quintype-node-framework/issues/179)) ([dff1ae3](https://github.com/quintype/quintype-node-framework/commit/dff1ae3a6483be223986f9fd57ad42d5558e6905))
+
 ### [4.12.6](https://github.com/quintype/quintype-node-framework/compare/v4.12.5...v4.12.6) (2021-03-23)
 
 ### [4.12.5](https://github.com/quintype/quintype-node-framework/compare/v4.12.4...v4.12.5) (2021-03-18)
