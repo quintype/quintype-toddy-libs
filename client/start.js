@@ -347,9 +347,12 @@ export function startApp(renderApplication, reducers, opts) {
 
     runWithTiming("qt_render", () => renderApplication(store));
 
-    history.listen((change) =>
-      app.maybeNavigateTo(`${change.pathname}${change.search || ""}`, store)
-    );
+    history.listen((change) => {
+      // The package: historyv5.0.0(https://github.com/ReactTraining/history#readme) has a key called location.
+      // To support versions less than 5.0.0 a fallback is added.
+      const locationObj = change.location || change;
+      return app.maybeNavigateTo(`${locationObj.pathname}${locationObj.search || ""}`, store)
+    });
 
     registerPageView(store.getState().qt);
 
