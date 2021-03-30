@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.13.1](https://github.com/quintype/quintype-node-framework/compare/v4.13.0...v4.13.1) (2021-03-30)
+
+
+### Bug Fixes
+
+* bump amplib to take GA infinite scroll fix ([#218](https://github.com/quintype/quintype-node-framework/issues/218)) ([5046b67](https://github.com/quintype/quintype-node-framework/commit/5046b67dd5d073777465d9ba85f0126530c8c31d))
+
 ## [4.13.0](https://github.com/quintype/quintype-node-framework/compare/v4.12.6...v4.13.0) (2021-03-25)
 
 
