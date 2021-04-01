@@ -364,7 +364,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         generateRoutes,
         renderServiceWorker,
         assetHelper,
-        appendFn: oneSignalImport,
         maxConfigVersion,
       })
     );
@@ -374,7 +373,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         generateRoutes,
         renderServiceWorker,
         assetHelper,
-        appendFn: oneSignalImport,
         maxConfigVersion,
       })
     );
