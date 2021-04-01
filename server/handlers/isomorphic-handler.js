@@ -455,7 +455,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     lightPages,
     redirectUrls,
     redirectToLowercaseSlugs,
-    oneSignalServiceWorkers,
+    oneSignalServiceWorkers = false,
     shouldEncodeAmpUri,
     publisherConfig,
   }
@@ -592,7 +592,7 @@ exports.handleStaticRoute = function handleStaticRoute(
     disableIsomorphicComponent,
     domainSlug,
     cdnProvider,
-    oneSignalServiceWorkers,
+    oneSignalServiceWorkers = false,
     publisherConfig,
   }
 ) {
