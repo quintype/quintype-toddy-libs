@@ -76,14 +76,14 @@ describe("ServiceWorker Generator", function () {
       .then(done);
   });
 
-  it("generates the one signal handler", function (done) {
-    supertest(app)
-      .get("/OneSignalSDKWorker.js")
-      .expect("Content-Type", /javascript/)
-      .expect(200)
-      .then((res) => {
-        assert(res.text.match(/OneSignalSDK.js/));
-      })
-      .then(done);
-  });
+  // it("generates the one signal handler", function (done) {
+  //   supertest(app)
+  //     .get("/OneSignalSDKWorker.js")
+  //     .expect("Content-Type", /javascript/)
+  //     .expect(200)
+  //     .then((res) => {
+  //       assert(res.text.match(/OneSignalSDK.js/));
+  //     })
+  //     .then(done);
+  // });
 });
