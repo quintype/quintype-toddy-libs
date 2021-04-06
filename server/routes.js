@@ -309,6 +309,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     prerenderServiceUrl = "",
     redirectToLowercaseSlugs = false,
     shouldEncodeAmpUri,
+    enableClientSideOneSignal = false,
   }
 ) {
   const withConfig = withConfigPartial(
@@ -470,6 +471,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
             cdnProvider,
             oneSignalServiceWorkers,
             publisherConfig,
+            enableClientSideOneSignal,
           },
           route
         )
@@ -497,6 +499,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       shouldEncodeAmpUri,
       oneSignalServiceWorkers,
       publisherConfig,
+      enableClientSideOneSignal,
     })
   );
 

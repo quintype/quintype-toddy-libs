@@ -458,6 +458,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     oneSignalServiceWorkers,
     shouldEncodeAmpUri,
     publisherConfig,
+    enableClientSideOneSignal,
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -511,9 +512,10 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
         `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`
       );
     }
-    const oneSignalScript = oneSignalServiceWorkers
-      ? getOneSignalScript({ config, publisherConfig })
-      : null;
+    const oneSignalScript =
+      !enableClientSideOneSignal && oneSignalServiceWorkers
+        ? getOneSignalScript({ config, publisherConfig })
+        : null;
     return pickComponent
       .preloadComponent(
         store.getState().qt.pageType,
@@ -594,6 +596,7 @@ exports.handleStaticRoute = function handleStaticRoute(
     cdnProvider,
     oneSignalServiceWorkers,
     publisherConfig,
+    enableClientSideOneSignal,
   }
 ) {
   const url = urlLib.parse(path);
@@ -637,9 +640,10 @@ exports.handleStaticRoute = function handleStaticRoute(
         config: config,
       });
 
-      const oneSignalScript = oneSignalServiceWorkers
-        ? getOneSignalScript({ config, publisherConfig })
-        : null;
+      const oneSignalScript =
+        !enableClientSideOneSignal && oneSignalServiceWorkers
+          ? getOneSignalScript({ config, publisherConfig })
+          : null;
 
       return renderLayout(
         res,
