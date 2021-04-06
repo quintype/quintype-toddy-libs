@@ -364,6 +364,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         generateRoutes,
         renderServiceWorker,
         assetHelper,
+        appendFn: oneSignalImport,
         maxConfigVersion,
       })
     );
@@ -373,6 +374,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         generateRoutes,
         renderServiceWorker,
         assetHelper,
+        appendFn: oneSignalImport,
         maxConfigVersion,
       })
     );
@@ -466,8 +468,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(
             renderLayout,
             seo,
             cdnProvider,
-            oneSignalServiceWorkers,
-            publisherConfig,
           },
           route
         )
@@ -493,8 +493,6 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       redirectUrls,
       redirectToLowercaseSlugs,
       shouldEncodeAmpUri,
-      oneSignalServiceWorkers,
-      publisherConfig,
     })
   );
 

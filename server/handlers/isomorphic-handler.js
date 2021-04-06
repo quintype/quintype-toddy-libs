@@ -16,7 +16,6 @@ const Promise = require("bluebird");
 const { getDefaultState, createBasicStore } = require("./create-store");
 const { customUrlToCacheKey } = require("../caching");
 const { addLightPageHeaders } = require("../impl/light-page-impl");
-const { getOneSignalScript } = require("./onesignal-script");
 const { getRedirectUrl } = require("../redirect-url-helper");
 const ABORT_HANDLER = "__ABORT__";
 function abortHandler() {
@@ -455,13 +454,10 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     lightPages,
     redirectUrls,
     redirectToLowercaseSlugs,
-    oneSignalServiceWorkers,
     shouldEncodeAmpUri,
-    publisherConfig,
   }
 ) {
   const url = urlLib.parse(req.url, true);
-
   function writeResponse(result) {
     const statusCode = result.httpStatusCode || 200;
 
@@ -511,9 +507,6 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
         `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`
       );
     }
-    const oneSignalScript = oneSignalServiceWorkers
-      ? getOneSignalScript({ config, publisherConfig })
-      : null;
     return pickComponent
       .preloadComponent(
         store.getState().qt.pageType,
@@ -530,7 +523,6 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
           seoTags,
           pageType: store.getState().qt.pageType,
           subPageType: store.getState().qt.subPageType,
-          oneSignalScript,
         })
       );
   }
@@ -592,8 +584,6 @@ exports.handleStaticRoute = function handleStaticRoute(
     disableIsomorphicComponent,
     domainSlug,
     cdnProvider,
-    oneSignalServiceWorkers,
-    publisherConfig,
   }
 ) {
   const url = urlLib.parse(path);
@@ -636,11 +626,6 @@ exports.handleStaticRoute = function handleStaticRoute(
         cdnProvider: cdnProvider,
         config: config,
       });
-
-      const oneSignalScript = oneSignalServiceWorkers
-        ? getOneSignalScript({ config, publisherConfig })
-        : null;
-
       return renderLayout(
         res,
         Object.assign(
@@ -657,7 +642,6 @@ exports.handleStaticRoute = function handleStaticRoute(
             store,
             disableAjaxNavigation: true,
             seoTags,
-            oneSignalScript,
           },
           renderParams
         )
