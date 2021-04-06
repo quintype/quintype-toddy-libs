@@ -511,11 +511,13 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
         `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`
       );
     }
+    // The onesignal logic will deprecate in sometimes, will move this logic to client side.
     const enableClientSideOneSignal =
       (publisherConfig.publisher &&
         publisherConfig.publisher.onesignal &&
         publisherConfig.publisher.onesignal.enable_clientside_onesignal) ||
       false;
+
     const oneSignalScript =
       !enableClientSideOneSignal && oneSignalServiceWorkers
         ? getOneSignalScript({ config, publisherConfig })
@@ -647,6 +649,7 @@ exports.handleStaticRoute = function handleStaticRoute(
           publisherConfig.publisher.onesignal &&
           publisherConfig.publisher.onesignal.enable_clientside_onesignal) ||
         false;
+
       const oneSignalScript =
         !enableClientSideOneSignal && oneSignalServiceWorkers
           ? getOneSignalScript({ config, publisherConfig })
