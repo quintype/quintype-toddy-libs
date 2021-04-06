@@ -458,7 +458,6 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     oneSignalServiceWorkers,
     shouldEncodeAmpUri,
     publisherConfig,
-    enableClientSideOneSignal,
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -512,6 +511,11 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
         `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`
       );
     }
+    const enableClientSideOneSignal =
+      (publisherConfig.publisher &&
+        publisherConfig.publisher.onesignal &&
+        publisherConfig.publisher.onesignal.enable_clientside_onesignal) ||
+      false;
     const oneSignalScript =
       !enableClientSideOneSignal && oneSignalServiceWorkers
         ? getOneSignalScript({ config, publisherConfig })
@@ -596,7 +600,6 @@ exports.handleStaticRoute = function handleStaticRoute(
     cdnProvider,
     oneSignalServiceWorkers,
     publisherConfig,
-    enableClientSideOneSignal,
   }
 ) {
   const url = urlLib.parse(path);
@@ -639,7 +642,11 @@ exports.handleStaticRoute = function handleStaticRoute(
         cdnProvider: cdnProvider,
         config: config,
       });
-
+      const enableClientSideOneSignal =
+        (publisherConfig.publisher &&
+          publisherConfig.publisher.onesignal &&
+          publisherConfig.publisher.onesignal.enable_clientside_onesignal) ||
+        false;
       const oneSignalScript =
         !enableClientSideOneSignal && oneSignalServiceWorkers
           ? getOneSignalScript({ config, publisherConfig })
