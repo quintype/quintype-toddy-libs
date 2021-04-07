@@ -32,11 +32,17 @@ exports.getOneSignalScript = function getOneSignalScript({
       publisherConfig.publisher.onesignal.is_enable) ||
     false;
   const publisherName = config["publisher-name"] || "malibu";
+  const timeOut =
+    (publisherConfig.publisher &&
+      publisherConfig.publisher.onesignal &&
+      publisherConfig.publisher.onesignal.time_out) ||
+    4000;
   const renderedContent = isEnable
     ? partialTemplate({
         appId,
         safariWebId,
         publisherName,
+        timeOut,
       })
     : null;
 
