@@ -1,11 +1,11 @@
 <script>
-  (() => setTimeout(() => {
+  const initOneSingnalScript = () => setTimeout(() => {
     const myScript = document.createElement("script");
     myScript.setAttribute("src", "https://cdn.onesignal.com/sdks/OneSignalSDK.js");
     myScript.setAttribute("defer", "true");
     const head = document.head;
     head.insertBefore(myScript, head.firstElementChild);
-  }, 4000)());
+  }, 4000);
   var OneSignal = OneSignal || [];
   OneSignal.push(function() {
     OneSignal.init({
@@ -22,4 +22,5 @@
       console.info("Onesignal tags sent --> ", tagsSent);
     });
   });
+  initOneSingnalScript();
 </script>
