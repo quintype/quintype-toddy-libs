@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 /* eslint-disable func-names */
 
 const assert = require("assert");
@@ -120,6 +122,7 @@ describe("ampStoryPageHandler unit tests", function () {
         const relStories = params.opts.featureConfig.relatedStories.stories;
         if (relStories.length) relatedStories = JSON.stringify(relStories);
       },
+      unsupportedStoryElementsPresent: () => false,
     };
     const dummyConfig2 = {
       memoizeAsync: (key, fn) =>
@@ -183,6 +186,7 @@ describe("ampStoryPageHandler unit tests", function () {
         const relStories = params.opts.featureConfig.relatedStories.stories;
         if (relStories.length) relatedStories = JSON.stringify(relStories);
       },
+      unsupportedStoryElementsPresent: () => false,
     };
     const dummyConfig2 = {
       memoizeAsync: (key, fn) =>
@@ -218,6 +222,7 @@ describe("ampStoryPageHandler unit tests", function () {
       ampifyStory: (params) => {
         seoPassedToAmpLib = params.seo;
       },
+      unsupportedStoryElementsPresent: () => false,
     };
     await ampStoryPageHandler(dummyReq, dummyRes, dummyNext, {
       client: getClientStub(),
@@ -231,6 +236,7 @@ describe("ampStoryPageHandler unit tests", function () {
     assert.strictEqual(isCorrectPageType, true);
     assert.strictEqual(seoPassedToAmpLib, "this is the seo string");
   });
+  // this is failing
   it("should call getAdditionalConfig method if it's passed from FE; pass it on to amplib as additionalConfig", async function () {
     let getAdditionalConfigCalled = false;
     async function dummyGetAdditionalConfig(params) {
