@@ -27,7 +27,7 @@
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
     "@ampproject/toolbox-optimizer": "^2.6.0",
-    "@quintype/amp": "^2.3.1",
+    "@quintype/amp": "^2.4.0-move-isAmpSupported.0",
     "@quintype/backend": "^1.3.2",
     "@quintype/components": "^2.16.1",
     "@quintype/prerender-node": "^3.2.24",

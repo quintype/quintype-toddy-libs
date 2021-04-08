@@ -5,6 +5,7 @@
 const assert = require("assert");
 const cloneDeep = require("lodash/cloneDeep");
 const { ampStoryPageHandler } = require("../../../server/amp/handlers");
+const { getTextStory } = require("../../data/amp-test-data");
 
 const ampConfig = {
   "related-collection-id": "related-stories-collection",
@@ -13,11 +14,7 @@ const ampConfig = {
 function getClientStub({
   getStoryBySlug = (slug, params) =>
     Promise.resolve({
-      story: {
-        "is-amp-supported": true,
-        "story-content-id": 111,
-        heading: "Dogecoin surges to $10 billion",
-      },
+      story: getTextStory({ "story-content-id": 111 }),
     }),
   getCollectionBySlug = (slug) => {
     switch (slug) {
@@ -135,7 +132,6 @@ describe("ampStoryPageHandler unit tests", function () {
         {
           type: "story",
           id: 111,
-          heading: "Dogecoin surges to $10 billion",
           story: "Dogecoin surges to $10 billion",
         },
         {
@@ -236,29 +232,40 @@ describe("ampStoryPageHandler unit tests", function () {
     assert.strictEqual(isCorrectPageType, true);
     assert.strictEqual(seoPassedToAmpLib, "this is the seo string");
   });
-  // this is failing
   it("should call getAdditionalConfig method if it's passed from FE; pass it on to amplib as additionalConfig", async function () {
     let getAdditionalConfigCalled = false;
+    let additionalConfigReceivedByAmplib;
     async function dummyGetAdditionalConfig(params) {
       return new Promise((resolve) => {
         setTimeout(() => {
           getAdditionalConfigCalled = true;
-          resolve({ some: "value" });
+          resolve({ key222: "this is the fetched additional config" });
         }, 15);
       });
     }
     const dummyOpts = {
       getAdditionalConfig: dummyGetAdditionalConfig,
     };
+    const dummyAmpLib = {
+      ampifyStory: (params) => {
+        additionalConfigReceivedByAmplib = JSON.stringify(params.additionalConfig)
+      },
+      unsupportedStoryElementsPresent: () => false,
+    };
     await ampStoryPageHandler(dummyReq, dummyRes, dummyNext, {
       client: getClientStub(),
       config: dummyConfig,
       domainSlug: null,
       seo: "",
-      additionalConfig: { sideNote: "this contains bk config by default" },
+      additionalConfig: { key111: "this contains bk config by default" },
+      ampLibrary: dummyAmpLib,
       InfiniteScrollAmp: DummyInfiniteScrollAmp,
       ...dummyOpts,
     });
     assert.strictEqual(getAdditionalConfigCalled, true);
+    assert.strictEqual(additionalConfigReceivedByAmplib, JSON.stringify({
+      key111: 'this contains bk config by default',
+      key222: 'this is the fetched additional config'
+    }))
   });
 });
