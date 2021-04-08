@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.13.2](https://github.com/quintype/quintype-node-framework/compare/v4.13.1...v4.13.2) (2021-04-08)
+
+
+### Bug Fixes
+
+* **Onesignal:** Code refactor ([#223](https://github.com/quintype/quintype-node-framework/issues/223)) ([9cc50bf](https://github.com/quintype/quintype-node-framework/commit/9cc50bf7f6ec00b14cb58cac0efc8335cf22ab49))
+
 ### [4.13.1](https://github.com/quintype/quintype-node-framework/compare/v4.13.0...v4.13.1) (2021-03-30)
 
 
