@@ -1,5 +1,11 @@
-<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
 <script>
+  (() => setTimeout(() => {
+    const scriptTag = document.createElement("script");
+    scriptTag.setAttribute("src", "https://cdn.onesignal.com/sdks/OneSignalSDK.js");
+    scriptTag.setAttribute("defer", "true");
+    const head = document.head;
+    head.insertBefore(scriptTag, head.firstElementChild);
+  }, "<%= timeOut %>"))();
   var OneSignal = OneSignal || [];
   OneSignal.push(function() {
     OneSignal.init({
