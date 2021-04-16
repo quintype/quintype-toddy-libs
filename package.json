@@ -28,7 +28,7 @@
   "dependencies": {
     "@ampproject/toolbox-optimizer": "^2.6.0",
     "@quintype/amp": "^2.4.0",
-    "@quintype/backend": "^1.3.3-default-nested-co.0",
+    "@quintype/backend": "^1.3.3-default-nested-co.1",
     "@quintype/components": "^2.16.1",
     "@quintype/prerender-node": "^3.2.24",
     "@quintype/seo": "^1.38.1",
