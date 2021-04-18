@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "4.14.0-default-nested-co.2",
+  "version": "4.14.0-default-nested-co.3",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
