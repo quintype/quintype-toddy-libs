@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "4.13.3",
+  "version": "4.13.4-default-story-limit-framework.3",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -28,7 +28,7 @@
   "dependencies": {
     "@ampproject/toolbox-optimizer": "^2.6.0",
     "@quintype/amp": "^2.4.0",
-    "@quintype/backend": "^1.3.2",
+    "@quintype/backend": "^1.4.0",
     "@quintype/components": "^2.16.1",
     "@quintype/prerender-node": "^3.2.24",
     "@quintype/seo": "^1.38.1",
