@@ -4,10 +4,7 @@ const get = require("lodash/get");
 const cloneDeep = require("lodash/cloneDeep");
 const merge = require("lodash/merge");
 const { Story, AmpConfig } = require("../../impl/api-client-impl");
-const {
-  optimize,
-  getDomainSpecificOpts,
-} = require("../helpers");
+const { optimize, getDomainSpecificOpts } = require("../helpers");
 const { storyToCacheKey } = require("../../caching");
 const { addCacheHeadersToResult } = require("../../handlers/cdn-caching");
 
@@ -41,7 +38,7 @@ async function ampStoryPageHandler(
     const opts = cloneDeep(rest);
     const domainSpecificOpts = getDomainSpecificOpts(opts, domainSlug);
     const url = urlLib.parse(req.url, true);
-    const { ampifyStory } = ampLibrary;
+    const { ampifyStory, unsupportedStoryElementsPresent } = ampLibrary;
     // eslint-disable-next-line no-return-await
     const ampConfig = await config.memoizeAsync(
       "amp-config",
@@ -79,13 +76,14 @@ async function ampStoryPageHandler(
     }
 
     if (
-      !story["is-amp-supported"] &&
+      unsupportedStoryElementsPresent(story) &&
       ampConfig.ampConfig["invalid-elements-strategy"] ===
         "redirect-to-web-version"
     )
       return res.redirect(story.url);
 
-    const seoInstance = typeof seo === "function" ? seo(config, "story-page-amp") : seo;
+    const seoInstance =
+      typeof seo === "function" ? seo(config, "story-page-amp") : seo;
     const seoTags =
       seoInstance &&
       seoInstance.getMetaTags(
