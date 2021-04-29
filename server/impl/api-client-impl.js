@@ -99,21 +99,18 @@ Collection.prototype.getChildStories = function() {
   return this.items && this.items.filter((i) => i.type === "story");
 };
 
-Collection.prototype.getCacheableChildItems = function(depth) {
-  let cacheableChildItems;
-  if (depth <= 0) {
-    cacheableChildItems = this.isAutomated() ? [] : this.getChildStories();
-  } else {
-    cacheableChildItems = this.isAutomated() ? this.getChildCollections() : this.items;
-  }
-  return cacheableChildItems;
+Collection.prototype.getCacheableChildItems = function() {
+  return this.isAutomated() ? this.getChildCollections() : this.items;
 };
 
 Collection.prototype.cacheKeys = function (publisherId, depth) {
+  if (depth < 0) {
+    return [collectionToCacheKey(publisherId,this)];
+  }
   const remainingDepth = _.isNumber(depth) ? (depth - 1) : depth;
   return ([
     ...(this["collection-cache-keys"] ? this["collection-cache-keys"] : []),
-    ..._.flatMap(this.getCacheableChildItems(depth), (item) => itemToCacheKey(publisherId, item, remainingDepth)),
+    ..._.flatMap(this.getCacheableChildItems(), (item) => itemToCacheKey(publisherId, item, remainingDepth)),
   ]);
 };
 

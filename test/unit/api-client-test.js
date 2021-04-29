@@ -489,6 +489,7 @@ describe("ApiClient", function () {
                 items: [
                   {
                     type: "collection",
+                    "collection-cache-keys": ["c/1/900"],
                     id: "900",
                     items: [
                       { type: "story", story: { id: "xyz12" } },
@@ -517,14 +518,17 @@ describe("ApiClient", function () {
             "sc/1/38588",
             "c/1/700",
             "s/1/abcdef12",
+            "c/1/850",
             "c/1/800",
+            "c/1/900",
             "s/1/xyz12",
+            "c/1/851"
           ],
         collection.cacheKeys(1, 3)
       );
     });
 
-    it("should only include base collection cache keys for an automated collection when depth is given as zero", function () {
+    it("should only include base collection cache keys and child items id as tags for an automated collection when depth is zero", function () {
       const collection = Collection.build({
         id: "42",
         "collection-cache-keys": ["c/1/42", "sc/1/38586"],
@@ -587,10 +591,10 @@ describe("ApiClient", function () {
         ],
       });
 
-      assert.deepEqual(["c/1/42", "sc/1/38586"], collection.cacheKeys(1, 0));
+      assert.deepEqual(["c/1/42", "sc/1/38586", "c/1/500"], collection.cacheKeys(1, 0));
     });
 
-    it("should only include base collection cache keys and base stories for manual collection when depth is given as zero", function () {
+    it("should only include base collection cache keys, item ids at level zero for manual collection when depth is zero", function () {
       const collection = Collection.build({
         id: "42",
         "collection-cache-keys": ["c/1/42"],
@@ -622,7 +626,7 @@ describe("ApiClient", function () {
         ],
       });
 
-      assert.deepEqual(["c/1/42", "s/1/abcdef12"], collection.cacheKeys(1, 0));
+      assert.deepEqual(["c/1/42", "c/1/500", "s/1/abcdef12"], collection.cacheKeys(1, 0));
     });
 
     it("should add all nested collection cache tags when depth is not passed", function () {
