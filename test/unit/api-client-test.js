@@ -174,6 +174,73 @@ describe("ApiClient", function () {
 
       assert.doesNotThrow(() => collection.getChildCollections());
     });
+
+    it("should return empty array as cacheable child items when depth is less than or equal to zero for an automated collection", () => {
+      const collection = Collection.build({
+        id: "42",
+        automated: true,
+        "collection-cache-keys": ["c/1/42", "sc/1/1233"],
+        items: [{ type: "story", story: { id: "xyz1235" } }],
+      });
+
+      assert.strictEqual(collection.getCacheableChildItems(0).length, 0);
+      assert.strictEqual(collection.getCacheableChildItems(-1).length, 0);
+    });
+
+    it("should return all child collections as cacheable child items when depth is undefined or greater than zero for an automated collection", () => {
+      const collection = Collection.build({
+        id: "42",
+        automated: true,
+        "collection-cache-keys": ["c/1/42", "sc/1/1233"],
+        items: [
+          { type: "story", story: { id: "xyz1235" } },
+          {
+            type: "collection",
+            "collection-cache-keys": ["c/1/851", "sc/1/114"],
+            automated: true,
+            id: "851",
+            items: [{ type: "story", story: { id: "xyz1235" } }],
+          },
+        ],
+      });
+
+      assert.strictEqual(collection.getCacheableChildItems(1).filter((c) => c.type === 'collection').length, 1);
+      assert.strictEqual(collection.getCacheableChildItems(1)[0].id, "851");
+
+      assert.strictEqual(collection.getCacheableChildItems().filter((c) => c.type === 'collection').length, 1);
+      assert.strictEqual(collection.getCacheableChildItems()[0].id, "851");
+    });
+
+    it("should return only stories as cacheable child items when depth is less than or equal to zero for manual collection", () => {
+      const collection = Collection.build({
+        id: "42",
+        automated: false,
+        "collection-cache-keys": ["c/1/42", "sc/1/1233"],
+        items: [{ type: "story", story: { id: "xyz1235" } }],
+      });
+
+      assert.notStrictEqual(collection.getCacheableChildItems(0), ["s/1/xyz1235"]);
+    });
+
+    it("should return all child items as cacheable child items when depth is undefined or greater than zero for an automated collection", () => {
+      const collection = Collection.build({
+        id: "42",
+        "collection-cache-keys": ["c/1/42", "sc/1/1233"],
+        items: [
+          { type: "story", story: { id: "xyz1235" } },
+          {
+            type: "collection",
+            "collection-cache-keys": ["c/1/851", "sc/1/114"],
+            automated: true,
+            id: "851",
+            items: [{ type: "story", story: { id: "xyz1235" } }],
+          },
+        ],
+      });
+
+      assert.strictEqual(collection.getCacheableChildItems(1).length, 2);
+      assert.strictEqual(collection.getCacheableChildItems().length, 2);
+    });
   });
 
   describe("caching", function () {

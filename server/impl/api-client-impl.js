@@ -99,18 +99,21 @@ Collection.prototype.getChildStories = function() {
   return this.items && this.items.filter((i) => i.type !== 'collection');
 };
 
-Collection.prototype.cacheKeys = function (publisherId, depth) {
+Collection.prototype.getCacheableChildItems = function(depth) {
   let cacheableChildItems;
   if (depth <= 0) {
     cacheableChildItems = this.isAutomated() ? [] : this.getChildStories();
   } else {
     cacheableChildItems = this.isAutomated() ? this.getChildCollections() : this.items;
   }
+  return cacheableChildItems;
+};
 
+Collection.prototype.cacheKeys = function (publisherId, depth) {
   const remainingDepth = _.isNumber(depth) ? (depth - 1) : depth;
   return ([
     ...(this["collection-cache-keys"] ? this["collection-cache-keys"] : []),
-    ..._.flatMap(cacheableChildItems, (item) => itemToCacheKey(publisherId, item, remainingDepth)),
+    ..._.flatMap(this.getCacheableChildItems(depth), (item) => itemToCacheKey(publisherId, item, remainingDepth)),
   ]);
 };
 
