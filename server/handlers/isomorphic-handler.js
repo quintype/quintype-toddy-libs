@@ -521,6 +521,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
       )
       .then(() =>
         renderLayout(res, {
+          data: result.data,
           config,
           title: result.title,
           content: renderReduxComponent(IsomorphicComponent, store, {
