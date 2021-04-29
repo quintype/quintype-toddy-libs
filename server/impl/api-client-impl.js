@@ -92,11 +92,11 @@ Collection.prototype.isAutomated = function() {
 };
 
 Collection.prototype.getChildCollections = function() {
-  return this.items && this.items.filter((i) => i.type === 'collection');
+  return this.items && this.items.filter((i) => i.type === "collection");
 };
 
 Collection.prototype.getChildStories = function() {
-  return this.items && this.items.filter((i) => i.type !== 'collection');
+  return this.items && this.items.filter((i) => i.type === "story");
 };
 
 Collection.prototype.getCacheableChildItems = function(depth) {
