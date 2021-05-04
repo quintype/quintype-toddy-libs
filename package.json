@@ -57,7 +57,7 @@
   "devDependencies": {
     "@loadable/component": "^5.14.1",
     "@loadable/server": "^5.14.2",
-    "@quintype/build": "^3.9.0",
+    "@quintype/build": "^3.12.1-static-assets.1",
     "babel-plugin-quintype-assets": "^1.1.1",
     "babel-plugin-react-css-modules": "^5.2.4",
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
