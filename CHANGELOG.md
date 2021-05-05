@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.13.8](https://github.com/quintype/quintype-node-framework/compare/v4.13.6...v4.13.8) (2021-05-05)
+
+
+### Bug Fixes
+
+* added prepublish script; someone had removed it ([dfb4a5d](https://github.com/quintype/quintype-node-framework/commit/dfb4a5de2ff3d336af606800fb197d5ca39e2cdd))
+
 ### [4.13.6](https://github.com/quintype/quintype-node-framework/compare/v4.13.5...v4.13.6) (2021-04-22)
 
 ### [4.13.4](https://github.com/quintype/quintype-node-framework/compare/v4.13.3...v4.13.4) (2021-04-22)
