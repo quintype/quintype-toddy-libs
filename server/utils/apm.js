@@ -6,11 +6,15 @@
  */
 const apm = require("elastic-apm-node");
 
-export const handleSpanInstance = ({ apmInstance, isStart, title }) => {
+const handleSpanInstance = ({ apmInstance, isStart, title }) => {
     if (isStart && !apmInstance) {
         return apm.startSpan(title);
     }
 
     apmInstance && apmInstance.end();
     return true;
+};
+
+module.exports = {
+    handleSpanInstance
 };
