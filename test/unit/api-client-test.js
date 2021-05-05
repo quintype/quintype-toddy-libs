@@ -103,37 +103,6 @@ describe("ApiClient", function () {
       assert.strictEqual(collection.isAutomated(), true);
     });
 
-    it("should return all child stories at current level for a collection", () => {
-      const collection = Collection.build({
-        id: "42",
-        automated: true,
-        "collection-cache-keys": ["c/1/42", "sc/1/1233"],
-        items: [
-          {
-            type: "story",
-            story: { id: "264f46f9-e624-4718-b391-45e4bca7aeb6" },
-          },
-          {
-            type: "story",
-            story: { id: "1e5acfe4-d8d2-40f8-a8f4-049cf1ac9fb4" },
-          },
-        ],
-      });
-
-      assert.strictEqual(collection.getChildStories().length, 2);
-      assert.strictEqual(collection.getChildStories().filter((f) => f.type === "story").length, 2);
-    });
-
-    it("should handle get child stories when items is missing in a collection", () => {
-      const collection = Collection.build({
-        id: "42",
-        automated: true,
-        "collection-cache-keys": ["c/1/42", "sc/1/1233"],
-      });
-
-      assert.doesNotThrow(() => collection.getChildStories());
-    });
-
     it("should return all child collections at current level for a collection", () => {
       const collection = Collection.build({
         id: "42",
@@ -173,6 +142,41 @@ describe("ApiClient", function () {
       });
 
       assert.doesNotThrow(() => collection.getChildCollections());
+    });
+
+    it("should return as leaf collection when it has no items and has no collection cache keys", () => {
+      const collection = Collection.build({
+        id: 851,
+        'associated-metadata': {},
+        type: 'collection',
+        name: 'review-fashion',
+        slug: 'review-fashion',
+        template: 'default',
+        metadata: { 'cover-image': null },
+        'collection-date': null
+      });
+
+      assert.strictEqual(collection.isLeafCollection(), true);
+    });
+
+    it("should not be a leaf collection when collection has items or collection cache keys", () => {
+      const collectionWithCacheKeys = Collection.build({
+        id: 851,
+        'associated-metadata': {},
+        type: 'collection',
+        slug: 'review-fashion',
+        "collection-cache-keys": ["c/1/851", "sc/1/1233"],
+      });
+      const collectionWithItems = Collection.build({
+        id: 851,
+        'associated-metadata': {},
+        type: 'collection',
+        slug: 'review-fashion',
+        items: [{ type: "story", story: { id: "xyz1235" } }],
+      });
+
+      assert.strictEqual(collectionWithCacheKeys.isLeafCollection(), false);
+      assert.strictEqual(collectionWithItems.isLeafCollection(), false);
     });
 
     it("should return empty array as cacheable child items when depth is less than or equal to zero for an automated collection", () => {
@@ -494,11 +498,14 @@ describe("ApiClient", function () {
                     items: [
                       { type: "story", story: { id: "xyz12" } },
                       {
-                        type: "collection",
-                        "collection-cache-keys": ["c/1/851", "sc/1/152"],
-                        automated: true,
-                        id: "851",
-                        items: [{ type: "story", story: { id: "xyz1245" } }],
+                        id: 851,
+                        'associated-metadata': {},
+                        type: 'collection',
+                        name: 'review-fashion',
+                        slug: 'review-fashion',
+                        template: 'default',
+                        metadata: { 'cover-image': null },
+                        'collection-date': null
                       },
                     ],
                   },
@@ -645,6 +652,38 @@ describe("ApiClient", function () {
       });
       assert.deepEqual(
         ["c/1/42", "sc/1/38586", "c/1/500", "s/1/abcdef12"],
+        collection.cacheKeys(1)
+      );
+    });
+
+    it("should add all nested collection cache tags even when leaf collection does not have much data", function () {
+      const collection = Collection.build({
+        id: "42",
+        "collection-cache-keys": ["c/1/42", "sc/1/38586"],
+        automated: true,
+        items: [
+          {
+            type: "collection",
+            "collection-cache-keys": ["c/1/500"],
+            id: "500",
+            items: [
+              { type: "story", story: { id: "abcdef12" } },
+              {
+                id: 147182,
+                'associated-metadata': {},
+                type: 'collection',
+                name: 'review-fashion',
+                slug: 'review-fashion',
+                template: 'default',
+                metadata: { 'cover-image': null },
+                'collection-date': null
+              }
+            ],
+          },
+        ],
+      });
+      assert.deepEqual(
+        ["c/1/42", "sc/1/38586", "c/1/500", "s/1/abcdef12", "c/1/147182"],
         collection.cacheKeys(1)
       );
     });

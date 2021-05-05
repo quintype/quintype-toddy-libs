@@ -95,16 +95,16 @@ Collection.prototype.getChildCollections = function() {
   return this.items && this.items.filter((i) => i.type === "collection");
 };
 
-Collection.prototype.getChildStories = function() {
-  return this.items && this.items.filter((i) => i.type === "story");
-};
-
 Collection.prototype.getCacheableChildItems = function() {
   return this.isAutomated() ? this.getChildCollections() : this.items;
 };
 
+Collection.prototype.isLeafCollection = function() {
+  return !this.getCacheableChildItems() && !this["collection-cache-keys"];
+};
+
 Collection.prototype.cacheKeys = function (publisherId, depth) {
-  if (depth < 0) {
+  if (depth < 0 || this.isLeafCollection()) {
     return [collectionToCacheKey(publisherId,this)];
   }
   const remainingDepth = _.isNumber(depth) ? (depth - 1) : depth;
