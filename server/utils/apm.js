@@ -7,11 +7,12 @@
 const apm = require("elastic-apm-node");
 
 const handleSpanInstance = ({ apmInstance, isStart, title }) => {
+    console.log(" DEBUG: ", "YY --------------------------->", isStart, title, apmInstance );
     if (isStart && !apmInstance) {
         return apm.startSpan(title);
     }
 
-    apmInstance && apmInstance.end();
+    if(apmInstance) apmInstance.end();
     return true;
 };
 
