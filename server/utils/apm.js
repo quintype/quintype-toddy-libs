@@ -5,8 +5,7 @@
  *  *************************************************************************
  */
 
-// Start the agent in your app
-const apm = require("elastic-apm-node").start();
+const apm = require("elastic-apm-node");
 
 const handleSpanInstance = ({ apmInstance, isStart, title }) => {
     console.log(" DEBUG: ", "YY --------------------------->", isStart, title, apmInstance );
