@@ -4,13 +4,15 @@
  *  *  All Rights Reserved.
  *  *************************************************************************
  */
-const apm = require("elastic-apm-node");
+
+// Start the agent in your app
+const apm = require("elastic-apm-node").start();
 
 const handleSpanInstance = ({ apmInstance, isStart, title }) => {
     console.log(" DEBUG: ", "YY --------------------------->", isStart, title, apmInstance );
     if (isStart && !apmInstance) {
         const startSpan = apm.startSpan(title);
-        console.log(" DEBUG: ", "ZZ --------------------------->",startSpan);
+        console.log(" DEBUG:  ", apm, "ZZ --------------------------->",startSpan);
         return startSpan;
     }
 
