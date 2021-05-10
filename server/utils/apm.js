@@ -9,8 +9,7 @@ const apm = require("elastic-apm-node");
 
 const handleSpanInstance = ({ apmInstance, isStart, title }) => {
   if (isStart && !apmInstance) {
-    const startSpan = apm.startSpan(title);
-    return startSpan;
+    return apm.startSpan(title);
   }
 
   if (apmInstance) apmInstance.end();
