@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.14.0](https://github.com/quintype/quintype-node-framework/compare/v4.13.8...v4.14.0) (2021-05-11)
+
+
+### Features
+
+* **APM:** Implement distribution tracing spans :zap:  ([#232](https://github.com/quintype/quintype-node-framework/issues/232)) ([e111800](https://github.com/quintype/quintype-node-framework/commit/e11180096b81c5e6d5d40413f53c2f8a13ba9e3a))
+* **APM:** Update package lock :zap: ([4bca76f](https://github.com/quintype/quintype-node-framework/commit/4bca76f56510ddc8316bab8a0e1975eed56e03c2))
+
 ### [4.13.8](https://github.com/quintype/quintype-node-framework/compare/v4.13.6...v4.13.8) (2021-05-05)
 
 
