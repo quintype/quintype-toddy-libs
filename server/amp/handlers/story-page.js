@@ -1,3 +1,4 @@
+
 const urlLib = require("url");
 const set = require("lodash/set");
 const get = require("lodash/get");
@@ -7,6 +8,7 @@ const { Story, AmpConfig } = require("../../impl/api-client-impl");
 const { optimize, getDomainSpecificOpts } = require("../helpers");
 const { storyToCacheKey } = require("../../caching");
 const { addCacheHeadersToResult } = require("../../handlers/cdn-caching");
+const { handleSpanInstance } = require("../../utils/apm");
 
 /**
  * ampStoryPageHandler gets all the things needed and calls "ampifyStory" function (which comes from ampLib)
@@ -35,6 +37,7 @@ async function ampStoryPageHandler(
   }
 ) {
   try {
+    const apmInstance = handleSpanInstance({ isStart: true, title: "ampStoryPageHandler" });
     const opts = cloneDeep(rest);
     const domainSpecificOpts = getDomainSpecificOpts(opts, domainSlug);
     const url = urlLib.parse(req.url, true);
@@ -144,7 +147,7 @@ async function ampStoryPageHandler(
       cdnProvider,
       config,
     });
-
+    handleSpanInstance({ apmInstance });
     return res.send(optimizedAmpHtml);
   } catch (e) {
     return next(e);

@@ -1,6 +1,7 @@
 const { AmpConfig } = require("../../impl/api-client-impl");
-const InfiniteScrollAmp = require("../helpers/infinite-scroll")
+const InfiniteScrollAmp = require("../helpers/infinite-scroll");
 const { setCorsHeaders } = require("../helpers");
+const { handleSpanInstance } = require("../../utils/apm");
 
 // eslint-disable-next-line consistent-return
 async function storyPageInfiniteScrollHandler(
@@ -9,6 +10,7 @@ async function storyPageInfiniteScrollHandler(
   next,
   { client, config }
 ) {
+  const apmInstance = handleSpanInstance({ isStart: true, title: "storyPageInfiniteScrollHandler" });
   const ampConfig = await config.memoizeAsync(
     "amp-config",
     async () => await AmpConfig.getAmpConfig(client)
@@ -24,6 +26,7 @@ async function storyPageInfiniteScrollHandler(
   if (jsonResponse instanceof Error) return next(jsonResponse);
   res.set("Content-Type", "application/json; charset=utf-8");
   setCorsHeaders({ req, res, next, publisherConfig: config });
+  handleSpanInstance({ apmInstance });
   if (!res.headersSent) return res.send(jsonResponse);
 }
 
