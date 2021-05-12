@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "4.13.8-collection-cache.4",
+  "version": "4.13.8-collection-cache.5",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
