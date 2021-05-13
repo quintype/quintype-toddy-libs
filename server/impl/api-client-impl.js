@@ -38,12 +38,12 @@ function createTemporaryClient(config, hostname) {
     return new Client(`https://${hostname.replace(matchedString, "")}`, true);
 }
 
-function itemToCacheKey(publisherId, item) {
+function itemToCacheKey(publisherId, item, depth) {
   switch (item.type) {
     case "story":
       return [storyToCacheKey(publisherId, item.story)];
     case "collection":
-      return Collection.build(item).cacheKeys(publisherId).slice(0, 5);
+      return Collection.build(item).cacheKeys(publisherId, depth);
     default:
       return [];
   }
@@ -70,6 +70,7 @@ function getItemCacheKeys(publisherId, items, depth) {
   return { storyCacheKeys, collectionCacheKeys };
 }
 
+// TODO: Can getCollectionCacheKeys be removed?
 Collection.prototype.getCollectionCacheKeys = function (publisherId, depth) {
   if (!depth) {
     return {
@@ -86,22 +87,30 @@ Collection.prototype.getCollectionCacheKeys = function (publisherId, depth) {
   return { storyCacheKeys, collectionCacheKeys };
 };
 
+Collection.prototype.isAutomated = function() {
+  return !!this.automated;
+};
+
+Collection.prototype.getChildCollections = function() {
+  return this.items && this.items.filter((i) => i.type === "collection");
+};
+
+Collection.prototype.getCacheableChildItems = function() {
+  return this.isAutomated() ? this.getChildCollections() : this.items;
+};
+
+Collection.prototype.isLeafCollection = function() {
+  return !this.getCacheableChildItems() && !this["collection-cache-keys"];
+};
+
 Collection.prototype.cacheKeys = function (publisherId, depth) {
-  if (!depth) {
-    return [collectionToCacheKey(publisherId, this)].concat([
-      ..._.flatMap(this.items, (item) => itemToCacheKey(publisherId, item)),
-      ...(this["collection-cache-keys"] ? this["collection-cache-keys"] : []),
-    ]);
+  if (depth < 0 || this.isLeafCollection()) {
+    return [collectionToCacheKey(publisherId,this)];
   }
-  const { storyCacheKeys, collectionCacheKeys } = getItemCacheKeys(
-    publisherId,
-    this.items,
-    depth + 1
-  );
-  return [collectionToCacheKey(publisherId, this)].concat([
-    ...collectionCacheKeys,
-    ...storyCacheKeys.slice(0, 200 - collectionCacheKeys.length),
+  const remainingDepth = _.isNumber(depth) ? (depth - 1) : depth;
+  return ([
     ...(this["collection-cache-keys"] ? this["collection-cache-keys"] : []),
+    ..._.flatMap(this.getCacheableChildItems(), (item) => itemToCacheKey(publisherId, item, remainingDepth)),
   ]);
 };
 
