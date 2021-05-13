@@ -1,9 +1,10 @@
 {
   "name": "@quintype/framework",
-  "version": "4.13.8-collection-cache.6",
+  "version": "4.14.8-collection-cache.6",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
+    "prepublishOnly": "npm test && ./bin-dev-scripts/standard-version-release.sh",
     "test": "NODE_ENV=test npx mocha --recursive --require ./test/babel",
     "watch-test": "NODE_ENV=test npx mocha --recursive --watch --require ./test/babel",
     "coverage": "nyc --all npm test",
@@ -35,6 +36,7 @@
     "cluster": "^0.7.7",
     "compression": "^1.7.4",
     "ejs": "^2.6.1",
+    "elastic-apm-node": "^3.14.0",
     "express": "^4.16.4",
     "firebase": "^6.0.2",
     "get-youtube-id": "^1.0.1",
