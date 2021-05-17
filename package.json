@@ -29,7 +29,7 @@
     "@ampproject/toolbox-optimizer": "^2.6.0",
     "@quintype/amp": "^2.4.1",
     "@quintype/backend": "1.25.1",
-    "@quintype/components": "^2.16.1",
+    "@quintype/components": "^2.29.2",
     "@quintype/prerender-node": "^3.2.24",
     "@quintype/seo": "^1.38.1",
     "atob": "^2.1.2",
