@@ -66,3 +66,9 @@ exports.renderLoadableReduxComponent = function renderLoadableReduxComponent(
   // Render your Component
   return ReactDOMServer.renderToString(component);
 };
+
+exports.getCriticalCss = async (extractor) => {
+  const criticalCss = await extractor.getCssString();
+  console.log(criticalCss)
+  return criticalCss.trim();
+};
