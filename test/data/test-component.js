@@ -1,5 +1,6 @@
 const React = require("react");
 const { connect } = require("react-redux");
+import "./style.css";
 
 class TestComponentBase extends React.Component {
   constructor(props) {
@@ -7,7 +8,11 @@ class TestComponentBase extends React.Component {
   }
 
   render() {
-    return <h1>This is a test component to check loadable component</h1>;
+    return (
+      <h1 className="headline">
+        This is a test component to check loadable component
+      </h1>
+    );
   }
 }
 
