@@ -7,7 +7,7 @@ class TestComponentBase extends React.Component {
   }
 
   render() {
-    return <h1>This is a test component to check loadable component</h1>
+    return <h1>This is a test component to check loadable component</h1>;
   }
 }
 
@@ -30,3 +30,12 @@ exports.TestComponent = connect(
   mapStateToProps,
   mapDispatchToProps
 )(TestComponentBase);
+
+const TestComponent = () => {
+  return (
+    <div>
+      <button type="button">Click me</button>
+      <p>Hello</p>
+    </div>
+  );
+};

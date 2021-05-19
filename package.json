@@ -6,6 +6,8 @@
   "scripts": {
     "prepublishOnly": "npm test && ./bin-dev-scripts/standard-version-release.sh",
     "test": "NODE_ENV=test npx mocha --recursive --require ./test/babel",
+    "build": "npm run clean:dist && webpack --mode production",
+    "clean:dist": "rimraf dist",
     "watch-test": "NODE_ENV=test npx mocha --recursive --watch --require ./test/babel",
     "coverage": "nyc --all npm test",
     "coverage-html": "nyc --all --reporter=html npm test",
@@ -27,6 +29,7 @@
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
     "@ampproject/toolbox-optimizer": "^2.6.0",
+    "@babel/preset-env": "^7.14.2",
     "@quintype/amp": "^2.4.1",
     "@quintype/backend": "1.25.1",
     "@quintype/components": "^2.29.2",
@@ -56,6 +59,8 @@
     "winston": "3.2.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.14.3",
+    "@babel/preset-react": "^7.13.13",
     "@loadable/component": "^5.14.1",
     "@loadable/server": "^5.14.2",
     "@quintype/build": "^3.13.0",
@@ -86,7 +91,8 @@
     "path": "^0.12.7",
     "prettier": "^2.2.1",
     "standard-version": "^8.0.1",
-    "supertest": "^4.0.2"
+    "supertest": "^4.0.2",
+    "webpack": "^5.37.0"
   },
   "peerDependencies": {
     "@quintype/seo": "^1.22.0"
