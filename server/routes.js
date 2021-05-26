@@ -559,32 +559,38 @@ exports.proxyGetRequest = function (app, route, handler, opts = {}) {
     timeout = 1500,
   } = opts;
 
+  const sendResult = result => {
+        if (result) {
+            res.setHeader("Cache-Control", cacheControl);
+            res.setHeader("Vary", "Accept-Encoding");
+            res.json(result);
+        } else {
+            res.status(503);
+            res.end();
+        }
+    };
+
+
+    async function proxyHandler(req, res, next, { config, client }) {
+        try {
+            const result = await handler(req.params, { config, client });
+            if (typeof result === "string" && result.startsWith("http")) {
+                /*
+                  NOTE: Bindu, this was one the edge cases we've to think about. Await does not resolve the promise to data..
+                  We would have to destructure data from response, please make the needed change on backend.
+                */
+                const { data } = await axios.get(result, { json: true, timeout });
+                sendResult(data);
+            } else {
+                sendResult(result);
+            }
+        } catch (e) {
+            logError(e);
+            sendResult(null);
+        }
+    }
+
   getWithConfig(app, route, proxyHandler, opts);
-
-  async function proxyHandler(req, res, next, { config, client }) {
-    try {
-      const result = await handler(req.params, { config, client });
-      if (typeof result === "string" && result.startsWith("http")) {
-        sendResult(await axios.get(result, { json: true, timeout }));
-      } else {
-        sendResult(result);
-      }
-    } catch (e) {
-      logError(e);
-      sendResult(null);
-    }
-
-    function sendResult(result) {
-      if (result) {
-        res.setHeader("Cache-Control", cacheControl);
-        res.setHeader("Vary", "Accept-Encoding");
-        res.json(result);
-      } else {
-        res.status(503);
-        res.end();
-      }
-    }
-  }
 };
 
 // This could also be done using express's mount point, but /ping stops working
