@@ -1,5 +1,5 @@
 const { get } = require("lodash");
-const request = require("request-promise");
+const axios = require("axios");
 
 exports.registerFCMTopic = async function registerFCM(
   req,
@@ -20,15 +20,15 @@ exports.registerFCMTopic = async function registerFCM(
   }
   const url = `https://iid.googleapis.com/iid/v1/${token}/rel/topics/all`;
   try {
-    await request({
-      uri: url,
-      method: "POST",
+    await axios.post({
+      url,
       headers: {
         Authorization: `key=${serverKey}`,
         "content-type": "application/json",
       },
+      timeout: config.timeout || 1500,
     });
-    res.status(200).send("Registration Done Suceessfuly");
+    res.status(200).send("Registration Done Successfuly");
     return;
   } catch (error) {
     res.status(500).send("FCM Subscription Failed");

@@ -28,7 +28,7 @@ const {
   makePickComponentSync,
 } = require("../isomorphic/impl/make-pick-component-sync");
 const { registerFCMTopic } = require("./handlers/fcm-registration-handler");
-const rp = require("request-promise");
+const axios = require("axios");
 const bodyParser = require("body-parser");
 const get = require("lodash/get");
 const { URL } = require("url");
@@ -556,6 +556,7 @@ exports.getWithConfig = getWithConfig;
 exports.proxyGetRequest = function (app, route, handler, opts = {}) {
   const {
     cacheControl = "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600",
+    timeout = 1500,
   } = opts;
 
   getWithConfig(app, route, proxyHandler, opts);
@@ -564,7 +565,7 @@ exports.proxyGetRequest = function (app, route, handler, opts = {}) {
     try {
       const result = await handler(req.params, { config, client });
       if (typeof result === "string" && result.startsWith("http")) {
-        sendResult(await rp(result, { json: true }));
+        sendResult(await axios.get(result, { json: true, timeout }));
       } else {
         sendResult(result);
       }
