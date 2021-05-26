@@ -565,7 +565,8 @@ exports.proxyGetRequest = function (app, route, handler, opts = {}) {
     try {
       const result = await handler(req.params, { config, client });
       if (typeof result === "string" && result.startsWith("http")) {
-        sendResult(await axios.get(result, { json: true, timeout }));
+          const { data } = await axios.get(result, { json: true, timeout });
+          sendResult(data);
       } else {
         sendResult(result);
       }
