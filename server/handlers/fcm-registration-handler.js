@@ -28,7 +28,7 @@ exports.registerFCMTopic = async function registerFCM(
       },
       timeout: config.timeout || 1500,
     });
-    res.status(200).send("Registration Done Successfuly");
+    res.status(200).send("Registration Done Successfully");
     return;
   } catch (error) {
     res.status(500).send("FCM Subscription Failed");

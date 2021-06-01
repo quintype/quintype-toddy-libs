@@ -1,4 +1,3 @@
-
 const urlLib = require("url");
 const set = require("lodash/set");
 const get = require("lodash/get");
@@ -37,7 +36,10 @@ async function ampStoryPageHandler(
   }
 ) {
   try {
-    const apmInstance = handleSpanInstance({ isStart: true, title: "ampStoryPageHandler" });
+    const apmInstance = handleSpanInstance({
+      isStart: true,
+      title: "ampStoryPageHandler",
+    });
     const opts = cloneDeep(rest);
     const domainSpecificOpts = getDomainSpecificOpts(opts, domainSlug);
     const url = urlLib.parse(req.url, true);
@@ -132,7 +134,7 @@ async function ampStoryPageHandler(
     const ampHtml = ampifyStory({
       story,
       publisherConfig: config.config,
-      ampConfig: ampConfig.ampConfig,
+      ampConfig: ampConfig.ampConfig.data,
       additionalConfig,
       opts: { ...domainSpecificOpts, domainSlug },
       seo: seoTags ? seoTags.toString() : "",

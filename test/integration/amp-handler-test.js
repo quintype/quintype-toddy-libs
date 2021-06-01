@@ -51,133 +51,137 @@ function getClientStub({
     }),
   getStoryBySlug = (slug, params) =>
     Promise.resolve({
-      story: {
-        id: "1",
-        url: "https://www.foo.com/cricket/ipl-2021",
-        "hero-image-metadata": {
-          width: 5472,
-          height: 3648,
-          "mime-type": "image/jpeg",
-          "file-size": 6127839,
-          "file-name": "Sample file",
-          "focus-point": [2609, 1102],
-        },
-        "hero-image-s3-key": "barandbench/2020-01/sample.jpg",
-        "story-content-id": "987c0480-41c8-41d2-ad35-36b5f92be73e",
-
-        cards: [
-          {
-            "story-elements": [
-              {
-                description: "",
-                "page-url":
-                  "/story/7f3d5bdb-ec52-4047-ac0d-df4036ec974b/element/9eb8f5cc-6ebe-4fb0-88b8-eca79efde210",
-                type: "text",
-                "family-id": "e9e12f9f-8b9f-4b93-a8c8-83c7b278000f",
-                title: "",
-                id: "9eb8f5cc-6ebe-4fb0-88b8-eca79efde210",
-                metadata: {},
-                subtype: null,
-                text:
-                  "<p>In India today, the legal profession is growing in lockstep with one of the world’s most dynamic economies. It’s no surprise then— that in terms of absolute numbers— India’s legal profession is the world’s second largest, with over 1.4 million enrolled lawyers in legal practices nationwide.</p>",
-              },
-            ],
-            "card-updated-at": 1581327522163,
-            "content-version-id": "efaf78de-c90b-4d15-b040-c84ebb29cabf",
-            "card-added-at": 1581327522163,
-            status: "draft",
-            id: "bf486412-1e8b-45d1-a5fd-51939cfe1ce1",
-            "content-id": "bf486412-1e8b-45d1-a5fd-51939cfe1ce1",
-            version: 1,
-            metadata: {},
+      data: {
+        story: {
+          id: "1",
+          url: "https://www.foo.com/cricket/ipl-2021",
+          "hero-image-metadata": {
+            width: 5472,
+            height: 3648,
+            "mime-type": "image/jpeg",
+            "file-size": 6127839,
+            "file-name": "Sample file",
+            "focus-point": [2609, 1102],
           },
-        ],
-        sections: [{ id: 1, name: "Sports" }],
-        "story-template": "text",
-        "is-amp-supported": true,
+          "hero-image-s3-key": "barandbench/2020-01/sample.jpg",
+          "story-content-id": "987c0480-41c8-41d2-ad35-36b5f92be73e",
+
+          cards: [
+            {
+              "story-elements": [
+                {
+                  description: "",
+                  "page-url":
+                    "/story/7f3d5bdb-ec52-4047-ac0d-df4036ec974b/element/9eb8f5cc-6ebe-4fb0-88b8-eca79efde210",
+                  type: "text",
+                  "family-id": "e9e12f9f-8b9f-4b93-a8c8-83c7b278000f",
+                  title: "",
+                  id: "9eb8f5cc-6ebe-4fb0-88b8-eca79efde210",
+                  metadata: {},
+                  subtype: null,
+                  text:
+                    "<p>In India today, the legal profession is growing in lockstep with one of the world’s most dynamic economies. It’s no surprise then— that in terms of absolute numbers— India’s legal profession is the world’s second largest, with over 1.4 million enrolled lawyers in legal practices nationwide.</p>",
+                },
+              ],
+              "card-updated-at": 1581327522163,
+              "content-version-id": "efaf78de-c90b-4d15-b040-c84ebb29cabf",
+              "card-added-at": 1581327522163,
+              status: "draft",
+              id: "bf486412-1e8b-45d1-a5fd-51939cfe1ce1",
+              "content-id": "bf486412-1e8b-45d1-a5fd-51939cfe1ce1",
+              version: 1,
+              metadata: {},
+            },
+          ],
+          sections: [{ id: 1, name: "Sports" }],
+          "story-template": "text",
+          "is-amp-supported": true,
+        },
       },
     }),
   getCollectionBySlug = (slug) =>
     Promise.resolve({
-      items: [
-        {
-          id: "1111",
-          type: "story",
-          story: {
-            "story-content-id": "abc",
-            "cdn-image": "gumlet.assettype.com",
-            "hero-image-s3-key": "abc/heroimage.jpg",
-            headline: "headline1",
-            slug: "foo.com/story-a",
+      data: {
+        items: [
+          {
+            id: "1111",
+            type: "story",
+            story: {
+              "story-content-id": "abc",
+              "cdn-image": "gumlet.assettype.com",
+              "hero-image-s3-key": "abc/heroimage.jpg",
+              headline: "headline1",
+              slug: "foo.com/story-a",
+            },
           },
-        },
-        {
-          id: "2222",
-          type: "story",
-          story: {
-            "story-content-id": "def",
-            "cdn-image": "gumlet.assettype.com",
-            "hero-image-s3-key": "def/heroimage.jpg",
-            headline: "headline2",
-            slug: "foo.com/story-a",
+          {
+            id: "2222",
+            type: "story",
+            story: {
+              "story-content-id": "def",
+              "cdn-image": "gumlet.assettype.com",
+              "hero-image-s3-key": "def/heroimage.jpg",
+              headline: "headline2",
+              slug: "foo.com/story-a",
+            },
           },
-        },
-        {
-          id: "3333",
-          type: "story",
-          story: {
-            "story-content-id": "ghi",
-            "cdn-image": "gumlet.assettype.com",
-            "hero-image-s3-key": "ghi/heroimage.jpg",
-            headline: "headline3",
-            slug: "foo.com/story-c",
+          {
+            id: "3333",
+            type: "story",
+            story: {
+              "story-content-id": "ghi",
+              "cdn-image": "gumlet.assettype.com",
+              "hero-image-s3-key": "ghi/heroimage.jpg",
+              headline: "headline3",
+              slug: "foo.com/story-c",
+            },
           },
-        },
-        {
-          id: "4444",
-          type: "story",
-          story: {
-            "story-content-id": "jkl",
-            "cdn-image": "gumlet.assettype.com",
-            "hero-image-s3-key": "jkl/heroimage.jpg",
-            headline: "headline4",
-            slug: "foo.com/story-d",
+          {
+            id: "4444",
+            type: "story",
+            story: {
+              "story-content-id": "jkl",
+              "cdn-image": "gumlet.assettype.com",
+              "hero-image-s3-key": "jkl/heroimage.jpg",
+              headline: "headline4",
+              slug: "foo.com/story-d",
+            },
           },
-        },
-        {
-          id: "5555",
-          type: "story",
-          story: {
-            "story-content-id": "mno",
-            "cdn-image": "gumlet.assettype.com",
-            "hero-image-s3-key": "mno/heroimage.jpg",
-            headline: "headline5",
-            slug: "foo.com/story-e",
+          {
+            id: "5555",
+            type: "story",
+            story: {
+              "story-content-id": "mno",
+              "cdn-image": "gumlet.assettype.com",
+              "hero-image-s3-key": "mno/heroimage.jpg",
+              headline: "headline5",
+              slug: "foo.com/story-e",
+            },
           },
-        },
-        {
-          id: "6666",
-          type: "story",
-          story: {
-            "story-content-id": "pqr",
-            "cdn-image": "gumlet.assettype.com",
-            "hero-image-s3-key": "pqr/heroimage.jpg",
-            headline: "headline6",
-            slug: "foo.com/story-f",
+          {
+            id: "6666",
+            type: "story",
+            story: {
+              "story-content-id": "pqr",
+              "cdn-image": "gumlet.assettype.com",
+              "hero-image-s3-key": "pqr/heroimage.jpg",
+              headline: "headline6",
+              slug: "foo.com/story-f",
+            },
           },
-        },
-        {
-          id: "7777",
-          type: "story",
-          story: {
-            "story-content-id": "stu",
-            "cdn-image": "gumlet.assettype.com",
-            "hero-image-s3-key": "stu/heroimage.jpg",
-            headline: "headline7",
-            slug: "foo.com/story-g",
+          {
+            id: "7777",
+            type: "story",
+            story: {
+              "story-content-id": "stu",
+              "cdn-image": "gumlet.assettype.com",
+              "hero-image-s3-key": "stu/heroimage.jpg",
+              headline: "headline7",
+              slug: "foo.com/story-g",
+            },
           },
-        },
-      ],
+        ],
+      },
     }),
 } = {}) {
   return {
@@ -312,7 +316,10 @@ describe("ampStoryPageHandler integration tests", () => {
       .expect("Content-Type", /html/)
       .end((err, res) => {
         if (err) return done(err);
-        assert.strictEqual(res.text, `<div data-page-type="home-page">foobar</div>`);
+        assert.strictEqual(
+          res.text,
+          `<div data-page-type="home-page">foobar</div>`
+        );
         return done();
       });
   });

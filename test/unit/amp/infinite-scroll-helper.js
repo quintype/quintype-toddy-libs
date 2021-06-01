@@ -215,7 +215,7 @@ describe("getResponse method of InfiniteScrollAmp helper function", function () 
     const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 2 });
     assert.strictEqual(jsonResponse instanceof Error, true);
   });
-  it("should remove current story from response", async function() {
+  it("should remove current story from response", async function () {
     const clientStub = getClientStub();
     const infiniteScrollAmp = new InfiniteScrollAmp({
       ampConfig: {},
@@ -226,8 +226,8 @@ describe("getResponse method of InfiniteScrollAmp helper function", function () 
     const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 2 });
     assert.strictEqual(false, /sports\/dd/.test(jsonResponse));
     assert.strictEqual(false, /dd\/d.jpg/.test(jsonResponse));
-  })
-  it("should format JSON as per AMP spec", async function() {
+  });
+  it("should format JSON as per AMP spec", async function () {
     // https://amp.dev/documentation/components/amp-next-page/
     const clientStub = getClientStub();
     const infiniteScrollAmp = new InfiniteScrollAmp({
@@ -239,7 +239,7 @@ describe("getResponse method of InfiniteScrollAmp helper function", function () 
     const jsonResponse = await infiniteScrollAmp.getResponse({ itemsTaken: 2 });
     function isJsonConfigStructureValid(jsonStr) {
       const parsed = JSON.parse(jsonStr);
-      const stories = parsed.pages
+      const stories = parsed.pages;
       if (!stories.length) throw new Error("Can't verify empty array!");
       stories.forEach((story) => {
         const keys = Object.keys(story);
@@ -254,8 +254,8 @@ describe("getResponse method of InfiniteScrollAmp helper function", function () 
       });
       return true;
     }
-    assert.strictEqual(isJsonConfigStructureValid(jsonResponse), true)
-  })
+    assert.strictEqual(isJsonConfigStructureValid(jsonResponse), true);
+  });
   // it("should omit the first 'n' stories, take the rest", async function() {
   //   // this test needs to be written after https://github.com/quintype/quintype-node-framework/pull/202 is merged
   // })

@@ -46,7 +46,7 @@ describe("Redirect Handler", function () {
         getConfig: () => Promise.resolve({ "publisher-id": 42 }),
         getStoryBySlug: (slug) =>
           Promise.resolve({
-            story: { slug: `section/${slug}`, id: "abcdefgh-blah" },
+            data: { story: { slug: `section/${slug}`, id: "abcdefgh-blah" } },
           }),
       }),
     });
@@ -65,7 +65,7 @@ describe("Redirect Handler", function () {
         getConfig: () => Promise.resolve({ "publisher-id": 42 }),
         getStoryBySlug: (slug) =>
           Promise.resolve({
-            story: { slug: `section/${slug}`, id: "abcdefgh-blah" },
+            data: { story: { slug: `section/${slug}`, id: "abcdefgh-blah" } },
           }),
       }),
     });

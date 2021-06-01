@@ -248,7 +248,9 @@ describe("ampStoryPageHandler unit tests", function () {
     };
     const dummyAmpLib = {
       ampifyStory: (params) => {
-        additionalConfigReceivedByAmplib = JSON.stringify(params.additionalConfig)
+        additionalConfigReceivedByAmplib = JSON.stringify(
+          params.additionalConfig
+        );
       },
       unsupportedStoryElementsPresent: () => false,
     };
@@ -263,9 +265,12 @@ describe("ampStoryPageHandler unit tests", function () {
       ...dummyOpts,
     });
     assert.strictEqual(getAdditionalConfigCalled, true);
-    assert.strictEqual(additionalConfigReceivedByAmplib, JSON.stringify({
-      key111: 'this contains bk config by default',
-      key222: 'this is the fetched additional config'
-    }))
+    assert.strictEqual(
+      additionalConfigReceivedByAmplib,
+      JSON.stringify({
+        key111: "this contains bk config by default",
+        key222: "this is the fetched additional config",
+      })
+    );
   });
 });

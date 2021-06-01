@@ -47,8 +47,13 @@ class InfiniteScrollAmp {
   async getResponse({ itemsTaken }) {
     const { "story-id": storyId } = this.queryParams;
     if (!storyId) return new Error(`Query param "story-id" missing`);
-    const apmInstance = handleSpanInstance({ isStart: true, title: "infinite scroll - get collection response" });
-    const collection = await this.client.getCollectionBySlug(this.collSlug);
+    const apmInstance = handleSpanInstance({
+      isStart: true,
+      title: "infinite scroll - get collection response",
+    });
+    const { data: collection } = await this.client.getCollectionBySlug(
+      this.collSlug
+    );
     if (!collection)
       return new Error(
         `Infinite scroll collection ${this.collSlug} returned falsy value`
@@ -63,8 +68,13 @@ class InfiniteScrollAmp {
   async getInitialInlineConfig({ itemsToTake, storyId }) {
     if (!itemsToTake || !storyId)
       return new Error("Required params for getInitialInlineConfig missing");
-    const apmInstance = handleSpanInstance({ isStart: true, title: "getInitialInlineConfig" });
-    const collection = await this.client.getCollectionBySlug(this.collSlug);
+    const apmInstance = handleSpanInstance({
+      isStart: true,
+      title: "getInitialInlineConfig",
+    });
+    const { data: collection } = await this.client.getCollectionBySlug(
+      this.collSlug
+    );
     if (!collection || (collection.items && !collection.items.length))
       return null;
     const filteredItems = this.getFilteredCollItems(collection, storyId);
