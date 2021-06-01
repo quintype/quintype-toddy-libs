@@ -45,7 +45,7 @@ async function ampStoryPageHandler(
     const url = urlLib.parse(req.url, true);
     const { ampifyStory, unsupportedStoryElementsPresent } = ampLibrary;
     // eslint-disable-next-line no-return-await
-    const ampConfig = await config.memoizeAsync(
+    const { data: ampConfig } = await config.memoizeAsync(
       "amp-config",
       async () => await AmpConfig.getAmpConfig(client)
     );
@@ -64,13 +64,16 @@ async function ampStoryPageHandler(
         ["featureConfig", "relatedStories", "storiesToTake"],
         5
       );
-      relatedStories = relatedStoriesCollection.items
-        .filter(
-          (item) =>
-            item.type === "story" && item.id !== story["story-content-id"]
-        )
-        .slice(0, storiesToTake)
-        .map((item) => item.story);
+
+      relatedStories =
+        relatedStoriesCollection &&
+        relatedStoriesCollection.data.items
+          .filter(
+            (item) =>
+              item.type === "story" && item.id !== story["story-content-id"]
+          )
+          .slice(0, storiesToTake)
+          .map((item) => item.story);
     }
     if (relatedStories.length) {
       set(
@@ -82,7 +85,7 @@ async function ampStoryPageHandler(
 
     if (
       unsupportedStoryElementsPresent(story) &&
-      ampConfig.ampConfig["invalid-elements-strategy"] ===
+      ampConfig.ampConfig.data["invalid-elements-strategy"] ===
         "redirect-to-web-version"
     )
       return res.redirect(story.url);
@@ -125,7 +128,7 @@ async function ampStoryPageHandler(
       const fetchedAdditionalConfig = await opts.getAdditionalConfig({
         story,
         apiConfig: config.config,
-        ampApiConfig: ampConfig.ampConfig,
+        ampApiConfig: ampConfig,
         publisherConfig: additionalConfig,
       });
       merge(additionalConfig, fetchedAdditionalConfig);
@@ -134,7 +137,7 @@ async function ampStoryPageHandler(
     const ampHtml = ampifyStory({
       story,
       publisherConfig: config.config,
-      ampConfig: ampConfig.ampConfig.data,
+      ampConfig,
       additionalConfig,
       opts: { ...domainSpecificOpts, domainSlug },
       seo: seoTags ? seoTags.toString() : "",
