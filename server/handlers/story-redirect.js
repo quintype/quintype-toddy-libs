@@ -8,13 +8,15 @@ exports.redirectStory = function redirectStory(
   next,
   { logError, config, client, cdnProvider = null }
 ) {
-  return Story.getStoryBySlug(client, req.params.storySlug)
+  const storySlug = req.params.storySlug.toLowerCase() || "";
+  return Story.getStoryBySlug(client, storySlug)
     .then((story) => {
       if (story) {
         addCacheHeadersToResult({
-          res: res, cacheKeys: [
-            storyToCacheKey(config["publisher-id"], story),
-          ], cdnProvider: cdnProvider, config: config
+          res: res,
+          cacheKeys: [storyToCacheKey(config["publisher-id"], story)],
+          cdnProvider: cdnProvider,
+          config: config,
         });
         return res.redirect(301, `/${story.slug}`);
       } else {
