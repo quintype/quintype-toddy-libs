@@ -9,68 +9,70 @@ function getClientStub({
     new Promise((resolve) => {
       if (slug === "amp-infinite-scroll")
         resolve({
-          items: [
-            {
-              type: "story",
-              id: 1111,
-              story: {
-                headline: "aaa",
-                "story-content-id": 1111,
-                slug: "sports/aa",
-                "hero-image-s3-key": "aa/a.jpg",
+          data: {
+            items: [
+              {
+                type: "story",
+                id: 1111,
+                story: {
+                  headline: "aaa",
+                  "story-content-id": 1111,
+                  slug: "sports/aa",
+                  "hero-image-s3-key": "aa/a.jpg",
+                },
               },
-            },
-            {
-              type: "story",
-              id: 2222,
-              story: {
-                headline: "bbb",
-                "story-content-id": 2222,
-                slug: "sports/bb",
-                "hero-image-s3-key": "bb/b.jpg",
+              {
+                type: "story",
+                id: 2222,
+                story: {
+                  headline: "bbb",
+                  "story-content-id": 2222,
+                  slug: "sports/bb",
+                  "hero-image-s3-key": "bb/b.jpg",
+                },
               },
-            },
-            {
-              type: "story",
-              id: 3333,
-              story: {
-                headline: "ccc",
-                "story-content-id": 3333,
-                slug: "sports/cc",
-                "hero-image-s3-key": "cc/c.jpg",
+              {
+                type: "story",
+                id: 3333,
+                story: {
+                  headline: "ccc",
+                  "story-content-id": 3333,
+                  slug: "sports/cc",
+                  "hero-image-s3-key": "cc/c.jpg",
+                },
               },
-            },
-            {
-              type: "story",
-              id: 4444,
-              story: {
-                headline: "ddd",
-                "story-content-id": 4444,
-                slug: "sports/dd",
-                "hero-image-s3-key": "dd/d.jpg",
+              {
+                type: "story",
+                id: 4444,
+                story: {
+                  headline: "ddd",
+                  "story-content-id": 4444,
+                  slug: "sports/dd",
+                  "hero-image-s3-key": "dd/d.jpg",
+                },
               },
-            },
-            {
-              type: "story",
-              id: 5555,
-              story: {
-                headline: "eee",
-                "story-content-id": 5555,
-                slug: "sports/ee",
-                "hero-image-s3-key": "ee/e.jpg",
+              {
+                type: "story",
+                id: 5555,
+                story: {
+                  headline: "eee",
+                  "story-content-id": 5555,
+                  slug: "sports/ee",
+                  "hero-image-s3-key": "ee/e.jpg",
+                },
               },
-            },
-            {
-              type: "story",
-              id: 6666,
-              story: {
-                headline: "fff",
-                "story-content-id": 6666,
-                slug: "sports/ff",
-                "hero-image-s3-key": "ff/f.jpg",
+              {
+                type: "story",
+                id: 6666,
+                story: {
+                  headline: "fff",
+                  "story-content-id": 6666,
+                  slug: "sports/ff",
+                  "hero-image-s3-key": "ff/f.jpg",
+                },
               },
-            },
-          ],
+            ],
+          },
         });
       resolve(null);
     }),
