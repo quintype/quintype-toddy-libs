@@ -4,7 +4,6 @@ const { bookendHandler } = require("./visual-stories-bookend");
 const {
   webengageHelperIframeHandler,
   webengagePermissionDialogHandler,
-  webengageServiceWorkerHandler,
 } = require("./webengage");
 
 module.exports = {
@@ -13,5 +12,4 @@ module.exports = {
   bookendHandler,
   webengageHelperIframeHandler,
   webengagePermissionDialogHandler,
-  webengageServiceWorkerHandler,
 };

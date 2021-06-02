@@ -1,6 +1,3 @@
-const get = require("lodash/get");
-const { AmpConfig } = require("../../impl/api-client-impl");
-
 function getHelperIframeHtmlStr() {
   // https://cdn.ampproject.org/v0/amp-web-push-helper-frame.html
   return `
@@ -223,7 +220,7 @@ function getPermissionDialogStr() {
     </html>`;
 }
 
-export async function webengageHelperIframeHandler(req, res) {
+async function webengageHelperIframeHandler(req, res) {
   return res
     .set({
       "Content-Type": "text/html",
@@ -232,8 +229,7 @@ export async function webengageHelperIframeHandler(req, res) {
     .status(200)
     .send(getHelperIframeHtmlStr());
 }
-
-export async function webengagePermissionDialogHandler(req, res) {
+async function webengagePermissionDialogHandler(req, res) {
   return res
     .set({
       "Content-Type": "text/html",
@@ -243,30 +239,7 @@ export async function webengagePermissionDialogHandler(req, res) {
     .send(getPermissionDialogStr());
 }
 
-export async function webengageServiceWorkerHandler(
-  req,
-  res,
-  next,
-  { client, config, domainSlug }
-) {
-  const ampConfig = await config.memoizeAsync(
-    "amp-config",
-    async () => await AmpConfig.getAmpConfig(client)
-  );
-  const licenseCode = get(ampConfig, ["webengage", "license-code"], null);
-  const isIndiaDataCenter = get(ampConfig, ["webengage", "india-data-center"]);
-  if (!licenseCode)
-    return next(`webengage licenseCode not present in amp config`);
-
-  const ampWebengageSwJs = await client.getAmpWebengageSw({
-    licenseCode,
-    isIndiaDataCenter,
-  });
-  return res
-    .set({
-      "Content-Type": "application/javascript",
-      "Cache-Control": "public,max-age=31104000,s-maxage=31104000",
-    })
-    .status(200)
-    .send(ampWebengageSwJs);
-}
+module.exports = {
+  webengageHelperIframeHandler,
+  webengagePermissionDialogHandler,
+};

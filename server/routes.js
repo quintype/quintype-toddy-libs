@@ -627,7 +627,6 @@ exports.ampRoutes = (app, opts = {}) => {
     bookendHandler,
     webengageHelperIframeHandler,
     webengagePermissionDialogHandler,
-    webengageServiceWorkerHandler,
   } = require("./amp/handlers");
 
   getWithConfig(app, "/amp/story/*", ampStoryPageHandler, opts);
@@ -646,11 +645,5 @@ exports.ampRoutes = (app, opts = {}) => {
   app.get(
     "/amp/api/v1/amp-permission-dialog-web-engage.html",
     webengagePermissionDialogHandler
-  );
-  getWithConfig(
-    app,
-    "/amp/api/v1/amp-service-worker-web-engage.js",
-    webengageServiceWorkerHandler,
-    opts
   );
 };
