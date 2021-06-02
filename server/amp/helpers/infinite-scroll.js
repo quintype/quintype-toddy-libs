@@ -1,3 +1,4 @@
+const get = require("lodash/get");
 const { handleSpanInstance } = require("../../utils/apm");
 
 class InfiniteScrollAmp {
@@ -51,9 +52,10 @@ class InfiniteScrollAmp {
       isStart: true,
       title: "infinite scroll - get collection response",
     });
-    const { data: collection } = await this.client.getCollectionBySlug(
+    const res = await this.client.getCollectionBySlug(
       this.collSlug
     );
+    const collection = get(res, ["data"], null);
     if (!collection)
       return new Error(
         `Infinite scroll collection ${this.collSlug} returned falsy value`
@@ -72,9 +74,10 @@ class InfiniteScrollAmp {
       isStart: true,
       title: "getInitialInlineConfig",
     });
-    const { data: collection } = await this.client.getCollectionBySlug(
+    const res = await this.client.getCollectionBySlug(
       this.collSlug
     );
+    const collection = get(res, ["data"], null);
     if (!collection || (collection.items && !collection.items.length))
       return null;
     const filteredItems = this.getFilteredCollItems(collection, storyId);
