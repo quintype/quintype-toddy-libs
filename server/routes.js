@@ -625,6 +625,9 @@ exports.ampRoutes = (app, opts = {}) => {
     ampStoryPageHandler,
     storyPageInfiniteScrollHandler,
     bookendHandler,
+    webengageHelperIframeHandler,
+    webengagePermissionDialogHandler,
+    webengageServiceWorkerHandler,
   } = require("./amp/handlers");
 
   getWithConfig(app, "/amp/story/*", ampStoryPageHandler, opts);
@@ -636,4 +639,18 @@ exports.ampRoutes = (app, opts = {}) => {
   );
   getWithConfig(app, "/amp/api/v1/bookend.json", bookendHandler, opts);
   getWithConfig(app, "/ampstories/*", ampStoryPageHandler, opts);
+  app.get(
+    "/amp/api/v1/amp-web-push-helper-frame.html",
+    webengageHelperIframeHandler
+  );
+  app.get(
+    "/amp/api/v1/amp-permission-dialog-web-engage.html",
+    webengagePermissionDialogHandler
+  );
+  getWithConfig(
+    app,
+    "/amp/api/v1/amp-service-worker-web-engage.js",
+    webengageServiceWorkerHandler,
+    opts
+  );
 };
