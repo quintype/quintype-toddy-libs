@@ -26,7 +26,7 @@ exports.registerFCMTopic = async function registerFCM(
         Authorization: `key=${serverKey}`,
         "content-type": "application/json",
       },
-      timeout: config.timeout || 1500,
+      timeout: config.timeout || 4000,
     });
     res.status(200).send("Registration Done Successfully");
     return;

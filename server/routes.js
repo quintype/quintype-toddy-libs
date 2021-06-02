@@ -556,7 +556,7 @@ exports.getWithConfig = getWithConfig;
 exports.proxyGetRequest = function (app, route, handler, opts = {}) {
   const {
     cacheControl = "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600",
-    timeout = 1500,
+    timeout = 4000,
   } = opts;
 
   getWithConfig(app, route, proxyHandler, opts);
@@ -565,8 +565,8 @@ exports.proxyGetRequest = function (app, route, handler, opts = {}) {
     try {
       const result = await handler(req.params, { config, client });
       if (typeof result === "string" && result.startsWith("http")) {
-          const { data } = await axios.get(result, { json: true, timeout });
-          sendResult(data);
+        const { data } = await axios.get(result, { json: true, timeout });
+        sendResult(data);
       } else {
         sendResult(result);
       }
