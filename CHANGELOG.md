@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.16.1](https://github.com/quintype/quintype-node-framework/compare/v4.16.0...v4.16.1) (2021-06-03)
+
+
+### Bug Fixes
+
+* bump amplib to take gtm fix ([#242](https://github.com/quintype/quintype-node-framework/issues/242)) ([3481a62](https://github.com/quintype/quintype-node-framework/commit/3481a629810ad4c7c3d4f00dde85527338aafcbf))
+
 ## [4.16.0](https://github.com/quintype/quintype-node-framework/compare/v4.15.7...v4.16.0) (2021-06-03)
 
 
