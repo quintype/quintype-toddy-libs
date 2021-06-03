@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.16.0](https://github.com/quintype/quintype-node-framework/compare/v4.15.7...v4.16.0) (2021-06-03)
+
+
+### Features
+
+* support custom style for visual story ([#241](https://github.com/quintype/quintype-node-framework/issues/241)) ([d20979f](https://github.com/quintype/quintype-node-framework/commit/d20979f20a643ab0aff7113ba0c1fe2551dee559))
+
 ### [4.15.7](https://github.com/quintype/quintype-node-framework/compare/v4.15.6...v4.15.7) (2021-06-01)
 
 ### [4.15.5](https://github.com/quintype/quintype-node-framework/compare/v4.15.4...v4.15.5) (2021-05-27)
