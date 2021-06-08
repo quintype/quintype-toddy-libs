@@ -117,7 +117,6 @@ function getSeoInstance(seo, config, pageType = "") {
   return typeof seo === "function" ? seo(config, pageType) : seo;
 }
 
-// point of interest
 exports.handleIsomorphicShell = async function handleIsomorphicShell(
   req,
   res,
@@ -136,11 +135,6 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
     maxConfigVersion,
   }
 ) {
-  console.log("**************************************************************");
-  console.log("**                                                          **");
-  console.log("************ INSIDE handleIsomorphicShell ********************");
-  console.log("**                                                          **");
-  console.log("**************************************************************");
   const url = urlLib.parse(req.url, true);
   const freshRevision = `${assetHelper.assetHash(
     "app.js"
@@ -167,7 +161,6 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
         `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`
       );
     }
-    // GET THIS PART PROPERLY REVIEWED!!
     const seoInstance = getSeoInstance(seo, config, "shell");
     const seoTags =
       seoInstance && seoInstance.getMetaTags(config, "shell", result, { url });
