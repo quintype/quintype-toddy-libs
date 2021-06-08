@@ -136,11 +136,12 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
     maxConfigVersion,
   }
 ) {
-  console.log("**************************************************************")
-  console.log("**                                                          **")
-  console.log("************ INSIDE handleIsomorphicShell ********************")
-  console.log("**                                                          **")
-  console.log("**************************************************************")
+  console.log("**************************************************************");
+  console.log("**                                                          **");
+  console.log("************ INSIDE handleIsomorphicShell ********************");
+  console.log("**                                                          **");
+  console.log("**************************************************************");
+  const url = urlLib.parse(req.url, true);
   const freshRevision = `${assetHelper.assetHash(
     "app.js"
   )}-${await maxConfigVersion(config, domainSlug)}`;
@@ -169,13 +170,7 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
     // GET THIS PART PROPERLY REVIEWED!!
     const seoInstance = getSeoInstance(seo, config, "shell");
     const seoTags =
-      seoInstance &&
-      seoInstance.getMetaTags(
-        config,
-        "shell",
-        result,
-        {}
-      );
+      seoInstance && seoInstance.getMetaTags(config, "shell", result, { url });
 
     return renderLayout(res, {
       config,
