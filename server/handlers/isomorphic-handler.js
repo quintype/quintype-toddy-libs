@@ -117,6 +117,7 @@ function getSeoInstance(seo, config, pageType = "") {
   return typeof seo === "function" ? seo(config, pageType) : seo;
 }
 
+// point of interest
 exports.handleIsomorphicShell = async function handleIsomorphicShell(
   req,
   res,
@@ -124,6 +125,7 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
   {
     config,
     renderLayout,
+    seo,
     assetHelper,
     client,
     loadData,
@@ -134,6 +136,11 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
     maxConfigVersion,
   }
 ) {
+  console.log("**************************************************************")
+  console.log("**                                                          **")
+  console.log("************ INSIDE handleIsomorphicShell ********************")
+  console.log("**                                                          **")
+  console.log("**************************************************************")
   const freshRevision = `${assetHelper.assetHash(
     "app.js"
   )}-${await maxConfigVersion(config, domainSlug)}`;
@@ -159,9 +166,20 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
         `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`
       );
     }
+    // GET THIS PART PROPERLY REVIEWED!!
+    const seoInstance = getSeoInstance(seo, config, "shell");
+    const seoTags =
+      seoInstance &&
+      seoInstance.getMetaTags(
+        config,
+        "shell",
+        result,
+        {}
+      );
 
     return renderLayout(res, {
       config,
+      seoTags,
       content:
         '<div class="app-loading"><script type="text/javascript">window.qtLoadedFromShell = true</script></div>',
       store: createStore((state) => state, getDefaultState(result)),

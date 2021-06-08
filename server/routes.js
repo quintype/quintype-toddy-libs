@@ -383,6 +383,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
   app.get(
     "/shell.html",
     withConfig(handleIsomorphicShell, {
+      seo,
       renderLayout,
       assetHelper,
       loadData,
