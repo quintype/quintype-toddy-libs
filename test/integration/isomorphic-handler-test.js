@@ -771,6 +771,54 @@ describe("Isomorphic Handler", function () {
         })
         .then(done);
     });
+    it("Override the s-maxage cache headers when ttlCacheControl value present", (done) => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host, cacheKeys: ["c/1/abcdefgh"] },
+          }),
+        [{ pageType: "home-page", path: "/" }],
+        { cdnProvider: cdnProviderFunc(), ttlCacheControl: "1800" }
+      );
+
+      supertest(app)
+        .get("/")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then((res) => {
+          const cacheControl = res.header["cache-control"];
+          assert.equal(
+            cacheControl,
+            "public,max-age=15,s-maxage=1800,stale-while-revalidate=1000,stale-if-error=14400"
+          );
+        })
+        .then(done);
+    });
+    it("Fallback the value of s-maxage to 900 second if when ttlCacheControl value not present", (done) => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host, cacheKeys: ["c/1/abcdefgh"] },
+          }),
+        [{ pageType: "home-page", path: "/" }],
+        { cdnProvider: cdnProviderFunc() }
+      );
+
+      supertest(app)
+        .get("/")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then((res) => {
+          const cacheControl = res.header["cache-control"];
+          assert.equal(
+            cacheControl,
+            "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
+          );
+        })
+        .then(done);
+    });
   });
 
   describe("redirectToLowercaseSlugs", () => {
