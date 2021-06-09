@@ -131,6 +131,7 @@ describe("Custom Route Handler", function () {
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
       .expect("Vary", /Accept\-Encoding/)
+      .expect("Surrogate-Key", "u/42/101")
       .expect("Cache-Tag", "u/42/101")
       .expect(301, done);
   });
@@ -148,6 +149,7 @@ describe("Custom Route Handler", function () {
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
       .expect("Vary", /Accept\-Encoding/)
+      .expect("Surrogate-Key", "u/42/102")
       .expect("Cache-Tag", "u/42/102")
       .expect(302, done);
   });
@@ -166,6 +168,7 @@ describe("Custom Route Handler", function () {
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
       .expect("Vary", "Accept-Encoding")
+      .expect("Surrogate-Key", "u/42/103")
       .expect("Cache-Tag", "u/42/103")
       .expect(200)
       .then((res) => {
@@ -190,6 +193,7 @@ describe("Custom Route Handler", function () {
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
       .expect("Vary", "Accept-Encoding")
+      .expect("Surrogate-Key", "u/42/104")
       .expect("Cache-Tag", "u/42/104")
       .expect(200)
       .then((res) => {
@@ -259,6 +263,7 @@ describe("Custom Route Handler", function () {
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
       .expect("Vary", /Accept\-Encoding/)
+      .expect("Surrogate-Key", "u/42/105")
       .expect("Cache-Tag", "u/42/105")
       .expect(301, done);
   });
@@ -275,6 +280,7 @@ describe("Custom Route Handler", function () {
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
       .expect("Vary", /Accept\-Encoding/)
+      .expect("Surrogate-Key", "u/42/105")
       .expect("Cache-Tag", "u/42/105")
       .expect("Content-Type", "text/plain; charset=utf-8")
       .expect(200, done);
@@ -292,6 +298,7 @@ describe("Custom Route Handler", function () {
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
       .expect("Vary", "Accept-Encoding")
+      .expect("Surrogate-Key", "u/42/104")
       .expect("Cache-Tag", "u/42/104")
       .expect("Content-Type", "text/html; charset=utf-8")
       .expect(200, done);

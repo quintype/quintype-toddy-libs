@@ -229,6 +229,7 @@ describe("Isomorphic Handler", function () {
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
       .expect("Vary", "Accept-Encoding")
+      .expect("Surrogate-Key", "foo bar")
       .expect("Cache-Tag", "foo,bar")
       .expect(200, done);
   });

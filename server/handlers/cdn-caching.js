@@ -52,6 +52,7 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult({
       cdnProviderVal === "akamai" &&
         res.setHeader("Edge-Cache-Tag", _(cacheKeys).uniq().join(","));
 
+      res.setHeader("Surrogate-Key", _(cacheKeys).uniq().join(" "));
       res.setHeader(
         "Content-Security-Policy",
         `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
