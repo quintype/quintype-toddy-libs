@@ -6,7 +6,7 @@ exports.redirectStory = function redirectStory(
   req,
   res,
   next,
-  { logError, config, client, cdnProvider = null, ttlCacheControl }
+  { logError, config, client, cdnProvider = null, sMaxAge }
 ) {
   const storySlug = req.params.storySlug.toLowerCase() || "";
   return Story.getStoryBySlug(client, storySlug)
@@ -17,7 +17,7 @@ exports.redirectStory = function redirectStory(
           cacheKeys: [storyToCacheKey(config["publisher-id"], story)],
           cdnProvider: cdnProvider,
           config: config,
-          ttlCacheControl,
+          sMaxAge,
         });
         return res.redirect(301, `/${story.slug}`);
       } else {

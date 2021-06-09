@@ -68,7 +68,7 @@ exports.customRouteHandler = function customRouteHandler(
     seo,
     domainSlug,
     cdnProvider = null,
-    ttlCacheControl,
+    sMaxAge,
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -92,7 +92,7 @@ exports.customRouteHandler = function customRouteHandler(
           cacheKeys: page.cacheKeys(config["publisher-id"]),
           cdnProvider: cdnProvider,
           config: config,
-          ttlCacheControl,
+          sMaxAge,
         });
 
         let destination = page["destination-path"] || "/";
@@ -111,7 +111,7 @@ exports.customRouteHandler = function customRouteHandler(
           cacheKeys: page.cacheKeys(config["publisher-id"]),
           cdnProvider: cdnProvider,
           config: config,
-          ttlCacheControl,
+          sMaxAge,
         });
         addStaticPageMimeType({ res, page });
 

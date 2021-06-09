@@ -771,7 +771,7 @@ describe("Isomorphic Handler", function () {
         })
         .then(done);
     });
-    it("Override the s-maxage cache headers when ttlCacheControl value present", (done) => {
+    it("Override the s-maxage cache headers when sMaxAge value present", (done) => {
       const app = createApp(
         (pageType, params, config, client, { host }) =>
           Promise.resolve({
@@ -779,7 +779,7 @@ describe("Isomorphic Handler", function () {
             data: { text: "foobar", host, cacheKeys: ["c/1/abcdefgh"] },
           }),
         [{ pageType: "home-page", path: "/" }],
-        { cdnProvider: cdnProviderFunc(), ttlCacheControl: "1800" }
+        { cdnProvider: cdnProviderFunc(), sMaxAge: "1800" }
       );
 
       supertest(app)
@@ -795,7 +795,7 @@ describe("Isomorphic Handler", function () {
         })
         .then(done);
     });
-    it("Fallback the value of s-maxage to 900 second if when ttlCacheControl value not present", (done) => {
+    it("Fallback the value of s-maxage to 900 second if when sMaxAge value not present", (done) => {
       const app = createApp(
         (pageType, params, config, client, { host }) =>
           Promise.resolve({

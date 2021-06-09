@@ -12,7 +12,7 @@ async function bookendHandler(
   req,
   res,
   next,
-  { config, client, ttlCacheControl = "900" }
+  { config, client, sMaxAge = "900" }
 ) {
   const apmInstance = handleSpanInstance({
     isStart: true,
@@ -87,7 +87,7 @@ async function bookendHandler(
 
   res.header(
     "Cache-Control",
-    `public,max-age=15,s-maxage=${ttlCacheControl},stale-while-revalidate=1000,stale-if-error=14400`
+    `public,max-age=15,s-maxage=${sMaxAge},stale-while-revalidate=1000,stale-if-error=14400`
   );
   res.header("Vary", "Accept-Encoding");
   handleSpanInstance({ apmInstance });

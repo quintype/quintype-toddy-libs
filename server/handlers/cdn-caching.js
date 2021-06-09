@@ -6,7 +6,7 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult({
   cacheKeys,
   cdnProvider = "cloudflare",
   config,
-  ttlCacheControl = "900",
+  sMaxAge = "900",
 }) {
   let cdnProviderVal = null;
   cdnProviderVal =
@@ -36,12 +36,12 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult({
     } else {
       res.setHeader(
         "Cache-Control",
-        `public,max-age=15,s-maxage=${ttlCacheControl},stale-while-revalidate=1000,stale-if-error=14400`
+        `public,max-age=15,s-maxage=${sMaxAge},stale-while-revalidate=1000,stale-if-error=14400`
       );
       cdnProviderVal === "akamai" &&
         res.setHeader(
           "Edge-Control",
-          "public,maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
+          `public,maxage=${sMaxAge},stale-while-revalidate=1000,stale-if-error=14400`
         );
       res.setHeader("Vary", "Accept-Encoding");
 
