@@ -8,8 +8,16 @@ function getStoryUrl(story, config) {
   return `${config["sketches-host"]}/${story.slug}`;
 }
 
-async function bookendHandler(req, res, next, { config, client }) {
-  const apmInstance = handleSpanInstance({ isStart: true, title: "bookendHandler" });
+async function bookendHandler(
+  req,
+  res,
+  next,
+  { config, client, ttlCacheControl = "900" }
+) {
+  const apmInstance = handleSpanInstance({
+    isStart: true,
+    title: "bookendHandler",
+  });
   const { storyId, sectionId } = req.query;
   if (!storyId || !sectionId) {
     res.status(400).json({
@@ -79,7 +87,7 @@ async function bookendHandler(req, res, next, { config, client }) {
 
   res.header(
     "Cache-Control",
-    "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
+    `public,max-age=15,s-maxage=${ttlCacheControl},stale-while-revalidate=1000,stale-if-error=14400`
   );
   res.header("Vary", "Accept-Encoding");
   handleSpanInstance({ apmInstance });

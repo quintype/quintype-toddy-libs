@@ -1,120 +1,97 @@
-const { cache } = require('ejs');
-const _ = require('lodash');
+const { cache } = require("ejs");
+const _ = require("lodash");
 
-exports.addCacheHeadersToResult = function addCacheHeadersToResult(
-  {
-    res,
-    cacheKeys,
-    cdnProvider = 'cloudflare',
-    config
-  }
-) {
+exports.addCacheHeadersToResult = function addCacheHeadersToResult({
+  res,
+  cacheKeys,
+  cdnProvider = "cloudflare",
+  config,
+  ttlCacheControl = "900",
+}) {
   let cdnProviderVal = null;
-  cdnProviderVal = (typeof cdnProvider === "function" && Object.keys(config).length > 0) ? cdnProvider(config) : cdnProvider;
+  cdnProviderVal =
+    typeof cdnProvider === "function" && Object.keys(config).length > 0
+      ? cdnProvider(config)
+      : cdnProvider;
   if (cacheKeys) {
-    if (cacheKeys === 'DO_NOT_CACHE') {
-      res.setHeader('Cache-Control', 'private,no-cache,no-store,max-age=0');
-      cdnProviderVal === 'akamai' &&
-        res.setHeader('Edge-Control', 'private,no-cache,no-store,max-age=0');
-      res.setHeader('Vary', 'Accept-Encoding');
-      res.setHeader('Surrogate-Control', 'private,no-cache,no-store,max-age=0');
+    if (cacheKeys === "DO_NOT_CACHE") {
+      res.setHeader("Cache-Control", "private,no-cache,no-store,max-age=0");
+      cdnProviderVal === "akamai" &&
+        res.setHeader("Edge-Control", "private,no-cache,no-store,max-age=0");
+      res.setHeader("Vary", "Accept-Encoding");
       res.setHeader(
-        'Content-Security-Policy',
+        "Content-Security-Policy",
         `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
-        `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
-        `style-src data: 'unsafe-inline' https: http: blob:;` +
-        `img-src data: https: http: blob:;` +
-        `font-src data: https: http:;` +
-        `connect-src https: wss: ws: http: blob:;` +
-        `media-src https: blob: http:;` +
-        `object-src https: http:;` +
-        `child-src https: data: blob: http:;` +
-        `form-action https: http:;` +
-        `block-all-mixed-content;`
+          `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+          `style-src data: 'unsafe-inline' https: http: blob:;` +
+          `img-src data: https: http: blob:;` +
+          `font-src data: https: http:;` +
+          `connect-src https: wss: ws: http: blob:;` +
+          `media-src https: blob: http:;` +
+          `object-src https: http:;` +
+          `child-src https: data: blob: http:;` +
+          `form-action https: http:;` +
+          `block-all-mixed-content;`
       );
     } else {
       res.setHeader(
-        'Cache-Control',
-        'public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400'
+        "Cache-Control",
+        `public,max-age=15,s-maxage=${ttlCacheControl},stale-while-revalidate=1000,stale-if-error=14400`
       );
-      cdnProviderVal === 'akamai' &&
+      cdnProviderVal === "akamai" &&
         res.setHeader(
-          'Edge-Control',
-          'public,maxage=900,stale-while-revalidate=1000,stale-if-error=14400'
+          "Edge-Control",
+          "public,maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
         );
-      res.setHeader('Vary', 'Accept-Encoding');
+      res.setHeader("Vary", "Accept-Encoding");
 
       // Cloudflare Headers
-      res.setHeader(
-        'Cache-Tag',
-        _(cacheKeys)
-          .uniq()
-          .join(',')
-      );
+      res.setHeader("Cache-Tag", _(cacheKeys).uniq().join(","));
 
       //Akamai Headers
-      cdnProviderVal === 'akamai' &&
-        res.setHeader(
-          'Edge-Cache-Tag',
-          _(cacheKeys)
-            .uniq()
-            .join(',')
-        );
+      cdnProviderVal === "akamai" &&
+        res.setHeader("Edge-Cache-Tag", _(cacheKeys).uniq().join(","));
 
-      // Fastly Header
+      res.setHeader("Surrogate-Key", _(cacheKeys).uniq().join(" "));
       res.setHeader(
-        'Surrogate-Control',
-        'public,max-age=240,stale-while-revalidate=300,stale-if-error=14400'
-      );
-      res.setHeader(
-        'Surrogate-Key',
-        _(cacheKeys)
-          .uniq()
-          .join(' ')
-      );
-      res.setHeader(
-        'Content-Security-Policy',
+        "Content-Security-Policy",
         `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
-        `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
-        `style-src data: 'unsafe-inline' https: http: blob:;` +
-        `img-src data: https: http: blob:;` +
-        `font-src data: https: http:;` +
-        `connect-src https: wss: ws: http: blob:;` +
-        `media-src https: blob: http:;` +
-        `object-src https: http:;` +
-        `child-src https: data: blob: http:;` +
-        `form-action https: http:;` +
-        `block-all-mixed-content;`
+          `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+          `style-src data: 'unsafe-inline' https: http: blob:;` +
+          `img-src data: https: http: blob:;` +
+          `font-src data: https: http:;` +
+          `connect-src https: wss: ws: http: blob:;` +
+          `media-src https: blob: http:;` +
+          `object-src https: http:;` +
+          `child-src https: data: blob: http:;` +
+          `form-action https: http:;` +
+          `block-all-mixed-content;`
       );
     }
   } else {
     res.setHeader(
-      'Cache-Control',
-      'public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600'
+      "Cache-Control",
+      "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600"
     );
-    cdnProviderVal === 'akamai' &&
+    cdnProviderVal === "akamai" &&
       res.setHeader(
-        'Edge-Control',
-        'public,maxage=60,stale-while-revalidate=150,stale-if-error=3600'
+        "Edge-Control",
+        "public,maxage=60,stale-while-revalidate=150,stale-if-error=3600"
       );
-    res.setHeader('Vary', 'Accept-Encoding');
+    res.setHeader("Vary", "Accept-Encoding");
     res.setHeader(
-      'Surrogate-Control',
-      'public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600'
-    );
-    res.setHeader(
-      'Content-Security-Policy',
+      "Content-Security-Policy",
       `default-src data: 'unsafe-inline' 'unsafe-eval' https: http:;` +
-      `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
-      `style-src data: 'unsafe-inline' https: http: blob:;` +
-      `img-src data: https: http: blob:;` +
-      `font-src data: https: http:;` +
-      `connect-src https: wss: ws: http: blob:;` +
-      `media-src https: blob: http:;` +
-      `object-src https: http:;` +
-      `child-src https: data: blob: http:;` +
-      `form-action https: http:;` +
-      `block-all-mixed-content;`
+        `script-src data: 'unsafe-inline' 'unsafe-eval' https: http: blob:;` +
+        `style-src data: 'unsafe-inline' https: http: blob:;` +
+        `img-src data: https: http: blob:;` +
+        `font-src data: https: http:;` +
+        `connect-src https: wss: ws: http: blob:;` +
+        `media-src https: blob: http:;` +
+        `object-src https: http:;` +
+        `child-src https: data: blob: http:;` +
+        `form-action https: http:;` +
+        `block-all-mixed-content;`
     );
   }
   return res;
