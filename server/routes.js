@@ -611,6 +611,8 @@ exports.mountQuintypeAt = function (app, mountAt) {
  * GET - "/amp/story/:slug"* returns amp story page
  * GET - "/amp/api/v1/amp-infinite-scroll" returns the infinite scroll config JSON. Passed to <amp-next-page> component's `src` attribute
  *
+ * amp-web-push-helper-iframe-url.html and amp-web-push-permission-dialog-url.html need to be served from root level as per https://docs.webengage.com/docs/web-push-for-amp
+ *
  * @param {Express} app Express app to add the routes to
  * @param {Object} opts Options object used to configure amp. Passing this is optional
  * @param {Object} opts.templates An object that's used to pass custom templates. Each key corresponds to the template name and corresponding value is the template
@@ -638,12 +640,9 @@ exports.ampRoutes = (app, opts = {}) => {
   );
   getWithConfig(app, "/amp/api/v1/bookend.json", bookendHandler, opts);
   getWithConfig(app, "/ampstories/*", ampStoryPageHandler, opts);
+  app.get("/amp-web-push-helper-iframe-url.html", webengageHelperIframeHandler);
   app.get(
-    "/amp/api/v1/amp-web-push-helper-frame.html",
-    webengageHelperIframeHandler
-  );
-  app.get(
-    "/amp/api/v1/amp-permission-dialog-web-engage.html",
+    "/amp-web-push-permission-dialog-url.html",
     webengagePermissionDialogHandler
   );
 };

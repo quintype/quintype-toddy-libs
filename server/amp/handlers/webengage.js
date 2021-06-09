@@ -220,20 +220,22 @@ function getPermissionDialogStr() {
     </html>`;
 }
 
+// versioned so can cache indefinately. Caching for 7 days for now, once everything is fine can increase to 1 yr
 async function webengageHelperIframeHandler(req, res) {
   return res
     .set({
       "Content-Type": "text/html",
-      "Cache-Control": "public,max-age=31104000,s-maxage=31104000",
+      "Cache-Control": "public,max-age=604800,immutable",
     })
     .status(200)
     .send(getHelperIframeHtmlStr());
 }
+// versioned so can cache indefinately
 async function webengagePermissionDialogHandler(req, res) {
   return res
     .set({
       "Content-Type": "text/html",
-      "Cache-Control": "public,max-age=31104000,s-maxage=31104000",
+      "Cache-Control": "public,max-age=604800,immutable",
     })
     .status(200)
     .send(getPermissionDialogStr());
