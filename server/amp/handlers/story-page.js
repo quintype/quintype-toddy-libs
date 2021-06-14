@@ -4,7 +4,7 @@ const get = require("lodash/get");
 const cloneDeep = require("lodash/cloneDeep");
 const merge = require("lodash/merge");
 const { Story, AmpConfig } = require("../../impl/api-client-impl");
-const { getDomainSpecificOpts } = require("../helpers");
+const { optimize, getDomainSpecificOpts } = require("../helpers");
 const { storyToCacheKey } = require("../../caching");
 const { addCacheHeadersToResult } = require("../../handlers/cdn-caching");
 const { handleSpanInstance } = require("../../utils/apm");
@@ -48,12 +48,6 @@ async function ampStoryPageHandler(
     const ampConfig = await config.memoizeAsync(
       "amp-config",
       async () => await AmpConfig.getAmpConfig(client)
-    );
-    // NOTE: "finalAmpConfig" this is just for testing! should not be merged
-    const finalAmpConfig = merge(
-      {},
-      ampConfig.ampConfig,
-      get(domainSpecificOpts, ["featureConfig", "testAmpConfig"], {})
     );
     const story = await Story.getStoryBySlug(client, req.params["0"]);
     let relatedStoriesCollection;
@@ -140,13 +134,13 @@ async function ampStoryPageHandler(
     const ampHtml = ampifyStory({
       story,
       publisherConfig: config.config,
-      ampConfig: finalAmpConfig,
+      ampConfig: ampConfig.ampConfig,
       additionalConfig,
       opts: { ...domainSpecificOpts, domainSlug },
       seo: seoTags ? seoTags.toString() : "",
     });
     if (ampHtml instanceof Error) return next(ampHtml);
-    // const optimizedAmpHtml = await optimize(ampHtml);
+    const optimizedAmpHtml = await optimize(ampHtml);
 
     res.set("Content-Type", "text/html");
     addCacheHeadersToResult({
@@ -156,7 +150,7 @@ async function ampStoryPageHandler(
       config,
     });
     handleSpanInstance({ apmInstance });
-    return res.send(ampHtml);
+    return res.send(optimizedAmpHtml);
   } catch (e) {
     return next(e);
   }
