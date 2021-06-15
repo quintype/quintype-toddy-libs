@@ -1,6 +1,7 @@
 {
   "extends": ["airbnb", "prettier"],
   "plugins": ["react", "jsx-a11y", "import", "prettier"],
+  "parser": "babel-eslint",
   "rules": {
     "import/no-unresolved": "off",
     "import/prefer-default-export": "off",
