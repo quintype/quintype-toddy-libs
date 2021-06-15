@@ -8,6 +8,9 @@
   ],
   "plugins": ["react", "standard"],
   "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "requireConfigFile": false
+  },
   "rules": {
     "import/no-unresolved": "off",
     "import/prefer-default-export": "off",
