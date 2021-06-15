@@ -229,7 +229,6 @@ describe("Isomorphic Handler", function () {
         "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
       )
       .expect("Vary", "Accept-Encoding")
-      .expect("Surrogate-Control", /public/)
       .expect("Surrogate-Key", "foo bar")
       .expect("Cache-Tag", "foo,bar")
       .expect(200, done);
@@ -768,6 +767,54 @@ describe("Isomorphic Handler", function () {
               `child-src https: data: blob: http:;` +
               `form-action https: http:;` +
               `block-all-mixed-content;`
+          );
+        })
+        .then(done);
+    });
+    it("Override the s-maxage cache headers when sMaxAge value present", (done) => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host, cacheKeys: ["c/1/abcdefgh"] },
+          }),
+        [{ pageType: "home-page", path: "/" }],
+        { cdnProvider: cdnProviderFunc(), sMaxAge: "1800" }
+      );
+
+      supertest(app)
+        .get("/")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then((res) => {
+          const cacheControl = res.header["cache-control"];
+          assert.equal(
+            cacheControl,
+            "public,max-age=15,s-maxage=1800,stale-while-revalidate=1000,stale-if-error=14400"
+          );
+        })
+        .then(done);
+    });
+    it("Fallback the value of s-maxage to 900 second if when sMaxAge value not present", (done) => {
+      const app = createApp(
+        (pageType, params, config, client, { host }) =>
+          Promise.resolve({
+            pageType,
+            data: { text: "foobar", host, cacheKeys: ["c/1/abcdefgh"] },
+          }),
+        [{ pageType: "home-page", path: "/" }],
+        { cdnProvider: cdnProviderFunc() }
+      );
+
+      supertest(app)
+        .get("/")
+        .expect("Content-Type", /html/)
+        .expect(200)
+        .then((res) => {
+          const cacheControl = res.header["cache-control"];
+          assert.equal(
+            cacheControl,
+            "public,max-age=15,s-maxage=900,stale-while-revalidate=1000,stale-if-error=14400"
           );
         })
         .then(done);
