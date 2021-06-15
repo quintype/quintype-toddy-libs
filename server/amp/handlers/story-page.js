@@ -45,11 +45,15 @@ async function ampStoryPageHandler(
     const url = urlLib.parse(req.url, true);
     const { ampifyStory, unsupportedStoryElementsPresent } = ampLibrary;
     // eslint-disable-next-line no-return-await
-    const { data: ampConfig } = await config.memoizeAsync(
+
+    const resp = await config.memoizeAsync(
       "amp-config",
       async () => await AmpConfig.getAmpConfig(client)
     );
+    const ampConfig = get(resp, ["data", "ampConfig"], {});
+
     const story = await Story.getStoryBySlug(client, req.params["0"]);
+
     let relatedStoriesCollection;
     let relatedStories = [];
 
@@ -58,6 +62,7 @@ async function ampStoryPageHandler(
       relatedStoriesCollection = await client.getCollectionBySlug(
         ampConfig["related-collection-id"]
       );
+
     if (relatedStoriesCollection) {
       const storiesToTake = get(
         domainSpecificOpts,
@@ -82,6 +87,7 @@ async function ampStoryPageHandler(
         relatedStories
       );
     }
+
 
     if (
       unsupportedStoryElementsPresent(story) &&
@@ -146,12 +152,15 @@ async function ampStoryPageHandler(
     const optimizedAmpHtml = await optimize(ampHtml);
 
     res.set("Content-Type", "text/html");
+    console.log(" DEBUG: ", "--------------------------->", res);
+
     addCacheHeadersToResult({
       res,
       cacheKeys: storyToCacheKey(config["publisher-id"], story),
       cdnProvider,
       config,
     });
+
     handleSpanInstance({ apmInstance });
     return res.send(optimizedAmpHtml);
   } catch (e) {

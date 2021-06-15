@@ -54,7 +54,7 @@ describe("Isomorphic Handler", function () {
   it("Renders the page if the route matches", function (done) {
     const app = createApp(
       (pageType, params, config, client, { host }) =>
-        Promise.resolve({ pageType, data: { text: "foobar", host } }),
+        Promise.resolve({ data: { pageType, text: "foobar", host } }),
       [{ pageType: "home-page", path: "/", exact: true }]
     );
 
@@ -78,7 +78,7 @@ describe("Isomorphic Handler", function () {
   it("Accepts an async pickComponent function", function (done) {
     const app = createApp(
       (pageType, params, config, client, { host }) =>
-        Promise.resolve({ pageType, data: { text: "foobar" } }),
+        Promise.resolve({ data: { pageType, text: "foobar" } }),
       [{ pageType: "home-page", path: "/" }],
       {
         pickComponent: (pageType) => Promise.resolve(pickComponent(pageType)),
@@ -102,7 +102,7 @@ describe("Isomorphic Handler", function () {
   it("Passes all URL parameters to the load data function", function (done) {
     const app = createApp(
       (pageType, params, config, client) =>
-        Promise.resolve({ pageType, data: { text: params.text } }),
+        Promise.resolve({ data: { pageType, text: params.text } }),
       [{ pageType: "home-page", path: "/" }]
     );
 
@@ -121,7 +121,7 @@ describe("Isomorphic Handler", function () {
     it("preloads the app.js", function (done) {
       const app = createApp(
         (pageType, params, config, client) =>
-          Promise.resolve({ pageType, data: { text: "foobar" } }),
+          Promise.resolve({ data: { pageType, text: "foobar" } }),
         [{ pageType: "home-page", path: "/" }],
         {
           preloadJs: true,
@@ -215,8 +215,11 @@ describe("Isomorphic Handler", function () {
     const app = createApp(
       (pageType, params, config, client) =>
         Promise.resolve({
-          pageType,
-          data: { text: "foobar", cacheKeys: ["foo", "bar"] },
+          data: {
+            pageType,
+            text: "foobar",
+            cacheKeys: ["foo", "bar"],
+          },
         }),
       [{ pageType: "home-page", path: "/" }]
     );
@@ -238,7 +241,7 @@ describe("Isomorphic Handler", function () {
   it("it redirects on a 301", function (done) {
     const app = createApp(
       (pageType, params, config, client) =>
-        Promise.resolve({ httpStatusCode: 301, data: { location: "/foobar" } }),
+        Promise.resolve({ data: { httpStatusCode: 301, location: "/foobar" } }),
       [{ pageType: "home-page", path: "/" }]
     );
 
@@ -248,7 +251,7 @@ describe("Isomorphic Handler", function () {
   it("returns a 500 if render layout crashes", function (done) {
     const app = createApp(
       (pageType, params, config, client) =>
-        Promise.resolve({ pageType, data: { text: "foobar" } }),
+        Promise.resolve({ data: { pageType, text: "foobar" } }),
       [{ pageType: "home-page", path: "/" }],
       {
         renderLayout: () => {
@@ -269,7 +272,7 @@ describe("Isomorphic Handler", function () {
 
     const app = createApp(
       (pageType, params, config, client) =>
-        Promise.resolve({ pageType, data: { text: "foobar" } }),
+        Promise.resolve({ data: { pageType, text: "foobar" } }),
       [{ pageType: "home-page", path: "/" }],
       {
         prerenderServiceUrl: "http://localhost:4000",
@@ -386,7 +389,7 @@ describe("Isomorphic Handler", function () {
       const dataLoader = (pageType, _1, _2, _3, { host, next }) =>
         pageType === "skip"
           ? next()
-          : Promise.resolve({ pageType, data: { text: "foobar", host } });
+          : Promise.resolve({ data: { pageType, text: "foobar", host } });
 
       const app = createApp(dataLoader, overlappingRoutes);
 
@@ -411,7 +414,7 @@ describe("Isomorphic Handler", function () {
   it("Passes the primaryHostUrl and currentHostUrl to the render", function (done) {
     const app = createApp(
       (pageType, params, config, client, { host }) =>
-        Promise.resolve({ pageType, data: { text: "foobar", host } }),
+        Promise.resolve({ data: { pageType, text: "foobar", host } }),
       [{ pageType: "home-page", path: "/" }]
     );
 
@@ -593,8 +596,12 @@ describe("Isomorphic Handler", function () {
       const app = createApp(
         (pageType, params, config, client, { host }) =>
           Promise.resolve({
-            pageType,
-            data: { text: "foobar", host, cacheKeys: "DO_NOT_CACHE" },
+            data: {
+              pageType,
+              text: "foobar",
+              host,
+              cacheKeys: "DO_NOT_CACHE",
+            },
           }),
         [{ pageType: "home-page", path: "/" }],
         { cdnProvider: "akamai" }
@@ -636,8 +643,11 @@ describe("Isomorphic Handler", function () {
       const app = createApp(
         (pageType, params, config, client, { host }) =>
           Promise.resolve({
-            pageType,
-            data: { text: "foobar", host },
+            data: {
+              pageType,
+              text: "foobar",
+              host,
+            },
           }),
         [{ pageType: "home-page", path: "/" }],
         { cdnProvider: "akamai" }
@@ -683,8 +693,12 @@ describe("Isomorphic Handler", function () {
       const app = createApp(
         (pageType, params, config, client, { host }) =>
           Promise.resolve({
-            pageType,
-            data: { text: "foobar", host, cacheKeys: ["c/1/abcdefgh"] },
+            data: {
+              pageType,
+              text: "foobar",
+              host,
+              cacheKeys: ["c/1/abcdefgh"],
+            },
           }),
         [{ pageType: "home-page", path: "/" }],
         { cdnProvider: "akamai" }
@@ -730,8 +744,12 @@ describe("Isomorphic Handler", function () {
       const app = createApp(
         (pageType, params, config, client, { host }) =>
           Promise.resolve({
-            pageType,
-            data: { text: "foobar", host, cacheKeys: ["c/1/abcdefgh"] },
+            data: {
+              pageType,
+              text: "foobar",
+              host,
+              cacheKeys: ["c/1/abcdefgh"],
+            },
           }),
         [{ pageType: "home-page", path: "/" }],
         { cdnProvider: cdnProviderFunc() }
@@ -779,8 +797,11 @@ describe("Isomorphic Handler", function () {
       const app = createApp(
         (pageType, params, config, client, { host }) =>
           Promise.resolve({
-            pageType,
-            data: { text: "foobar", host },
+            data: {
+              pageType,
+              text: "foobar",
+              host,
+            },
           }),
         [{ pageType: "story-page", path: "/*/:storySlug" }],
         { redirectToLowercaseSlugs: true }
@@ -800,8 +821,11 @@ describe("Isomorphic Handler", function () {
       const app = createApp(
         (pageType, params, config, client, { host }) =>
           Promise.resolve({
-            pageType,
-            data: { text: "foobar", host },
+            data: {
+              pageType,
+              text: "foobar",
+              host,
+            },
           }),
         [{ pageType: "story-page", path: "/*/:storySlug" }],
         { redirectToLowercaseSlugs: true }
@@ -824,8 +848,11 @@ describe("Isomorphic Handler", function () {
       const app = createApp(
         (pageType, params, config, client, { host }) =>
           Promise.resolve({
-            pageType,
-            data: { text: "foobar", host },
+            data: {
+              pageType,
+              text: "foobar",
+              host,
+            },
           }),
         [{ pageType: "section-page", path: "/:section/:subSection" }],
         { redirectToLowercaseSlugs: true }
@@ -846,8 +873,11 @@ describe("Isomorphic Handler", function () {
       const app = createApp(
         (pageType, params, config, client, { host }) =>
           Promise.resolve({
-            pageType,
-            data: { text: "foobar", host },
+            data: {
+              pageType,
+              text: "foobar",
+              host,
+            },
           }),
         [{ pageType: "story-page", path: "/*/:storySlug" }],
         { redirectToLowercaseSlugs: false }
@@ -871,7 +901,7 @@ describe("Isomorphic Handler", function () {
       mountQuintypeAt(app, "/foo");
       createApp(
         (pageType, params, config, client, { host }) =>
-          Promise.resolve({ pageType, data: { text: "foobar", host } }),
+          Promise.resolve({ data: { pageType, text: "foobar", host } }),
         [{ pageType: "home-page", path: "/", exact: true }],
         {},
         app
@@ -898,7 +928,7 @@ describe("Isomorphic Handler", function () {
       mountQuintypeAt(app, "/foo");
       createApp(
         (pageType, params, config, client, { host }) =>
-          Promise.resolve({ pageType, data: { text: "foobar", host } }),
+          Promise.resolve({ data: { pageType, text: "foobar", host } }),
         [{ pageType: "home-page", path: "/", exact: true }],
         {},
         app
@@ -912,7 +942,7 @@ describe("Isomorphic Handler", function () {
       mountQuintypeAt(app, (hostname) => `/${hostname}`);
       createApp(
         (pageType, params, config, client, { host }) =>
-          Promise.resolve({ pageType, data: { text: "foobar", host } }),
+          Promise.resolve({ data: { pageType, text: "foobar", host } }),
         [{ pageType: "home-page", path: "/", exact: true }],
         {},
         app
@@ -939,7 +969,7 @@ describe("Isomorphic Handler", function () {
       mountQuintypeAt(app, (hostname) => undefined);
       createApp(
         (pageType, params, config, client, { host }) =>
-          Promise.resolve({ pageType, data: { text: "foobar", host } }),
+          Promise.resolve({ data: { pageType, text: "foobar", host } }),
         [{ pageType: "home-page", path: "/", exact: true }],
         {},
         app
