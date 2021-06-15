@@ -81,7 +81,7 @@
     "jsdoc": "^3.6.3",
     "jsdom": "^14.0.0",
     "jsdom-global": "3.0.2",
-    "lint-staged": "^11.0.0",
+    "lint-staged": "^8.1.5",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",
     "onchange": "^4.1.0",
@@ -104,5 +104,16 @@
     "lines": 100,
     "statements": 100,
     "functions": 100
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "npx eslint --fix",
+      "git add"
+    ]
   }
 }
