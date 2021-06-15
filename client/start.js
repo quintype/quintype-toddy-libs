@@ -7,7 +7,12 @@
  * @module start
  */
 
-import { BreakingNews, CLIENT_SIDE_RENDERED, NAVIGATE_TO_PAGE, PAGE_LOADING } from "@quintype/components";
+import {
+  BreakingNews,
+  CLIENT_SIDE_RENDERED,
+  NAVIGATE_TO_PAGE,
+  PAGE_LOADING,
+} from "@quintype/components";
 import { createBrowserHistory } from "history";
 import get from "lodash/get";
 import React from "react";
@@ -16,7 +21,12 @@ import { Provider } from "react-redux";
 import { IsomorphicComponent } from "../isomorphic/component";
 import { makePickComponentSync } from "../isomorphic/impl/make-pick-component-sync";
 import { createQtStore } from "../store/create-store";
-import { registerPageView, registerStoryShare, setMemberId, startAnalytics } from "./analytics";
+import {
+  registerPageView,
+  registerStoryShare,
+  setMemberId,
+  startAnalytics,
+} from "./analytics";
 import { initializeFCM } from "./impl/fcm";
 import {
   checkForServiceWorkerUpdates,
@@ -45,23 +55,31 @@ export const app = {
 };
 
 function getRouteDataAndPath(path, mountAt) {
-  const relativePath = path.startsWith(mountAt) ? path.slice(mountAt.length) : path;
+  const relativePath = path.startsWith(mountAt)
+    ? path.slice(mountAt.length)
+    : path;
   return [`${mountAt || ""}/route-data.json`, relativePath];
 }
 
-function getRouteData(path, { location = global.location, existingFetch, mountAt = global.qtMountAt }) {
+function getRouteData(
+  path,
+  { location = global.location, existingFetch, mountAt = global.qtMountAt }
+) {
   // if mountAt is set, then hit /mountAt/route-data, remove mountAt from path
 
   const [routeDataPath, relativePath] = getRouteDataAndPath(path, mountAt);
   const url = new URL(relativePath, location.origin);
   return (
     existingFetch ||
-    fetch(`${routeDataPath}?path=${encodeURIComponent(url.pathname)}${url.search ? `&${url.search.slice(1)}` : ""}`, {
-      credentials: "same-origin",
-    })
+    fetch(
+      `${routeDataPath}?path=${encodeURIComponent(url.pathname)}${
+        url.search ? `&${url.search.slice(1)}` : ""
+      }`,
+      { credentials: "same-origin" }
+    )
   )
     .then((response) => {
-      if (response.status === 404) {
+      if (response.status == 404) {
         // There is a chance this might abort
         maybeBypassServiceWorker();
       }
@@ -81,7 +99,11 @@ function getRouteData(path, { location = global.location, existingFetch, mountAt
   }
 
   function maybeBypassServiceWorker(e) {
-    if (global.qtLoadedFromShell || `${location.pathname}${location.search}${location.hash}` !== `${path}#bypass-sw`) {
+    if (
+      global.qtLoadedFromShell ||
+      `${location.pathname}${location.search}${location.hash}` !=
+        `${path}#bypass-sw`
+    ) {
       location.href = `${path}#bypass-sw`;
       location.reload();
     }
@@ -102,7 +124,8 @@ let pickComponentWrapper = null;
  * @returns {void}
  */
 export function navigateToPage(dispatch, path, doNotPushPath) {
-  const pathname = !path || path === "undefined" ? global.location.pathname : path;
+  const pathname =
+    !path || path === "undefined" ? global.location.pathname : path;
 
   if (global.disableAjaxNavigation) {
     global.location = pathname;
@@ -111,7 +134,8 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
   dispatch({ type: PAGE_LOADING });
   getRouteData(pathname, {}).then((page) => {
     if (!page) {
-      console && console.log("Recieved a null page. Expecting the browser to redirect.");
+      console &&
+        console.log("Recieved a null page. Expecting the browser to redirect.");
       return;
     }
 
@@ -123,7 +147,8 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
     }
 
     Promise.resolve(
-      pickComponentWrapper && pickComponentWrapper.preloadComponent(page.pageType, page.subPageType)
+      pickComponentWrapper &&
+        pickComponentWrapper.preloadComponent(page.pageType, page.subPageType)
     ).then(() => {
       dispatch({
         type: NAVIGATE_TO_PAGE,
@@ -152,7 +177,8 @@ export function navigateToPage(dispatch, path, doNotPushPath) {
  * @returns {void}
  */
 export function maybeNavigateTo(path, store) {
-  if (store.getState().qt.currentPath !== path) navigateToPage(store.dispatch, path, true);
+  if (store.getState().qt.currentPath != path)
+    navigateToPage(store.dispatch, path, true);
 }
 
 /**
@@ -179,12 +205,24 @@ export function maybeSetUrl(path, title) {
  * @param {callback} callback Callback on completion
  */
 export function renderComponent(clazz, container, store, props = {}, callback) {
-  const component = React.createElement(Provider, { store }, React.createElement(clazz, props || {}));
+  const component = React.createElement(
+    Provider,
+    { store },
+    React.createElement(clazz, props || {})
+  );
 
   if (props.hydrate) {
-    return ReactDOM.hydrate(component, document.getElementById(container), callback);
+    return ReactDOM.hydrate(
+      component,
+      document.getElementById(container),
+      callback
+    );
   }
-  ReactDOM.render(component, document.getElementById(container), callback);
+  return ReactDOM.render(
+    component,
+    document.getElementById(container),
+    callback
+  );
 }
 
 /**
@@ -195,11 +233,19 @@ export function renderComponent(clazz, container, store, props = {}, callback) {
  * @param {Object} props Properties to bootstrap the component with
  * @param {boolean} props.hydrate Hydrate the component instead of rendering it
  */
-export function renderIsomorphicComponent(container, store, pickComponent, props) {
+export function renderIsomorphicComponent(
+  container,
+  store,
+  pickComponent,
+  props
+) {
   if (!store.getState().qt.disableIsomorphicComponent) {
     pickComponentWrapper = makePickComponentSync(pickComponent);
     return pickComponentWrapper
-      .preloadComponent(store.getState().qt.pageType, store.getState().qt.subPageType)
+      .preloadComponent(
+        store.getState().qt.pageType,
+        store.getState().qt.subPageType
+      )
       .then(() =>
         renderComponent(
           IsomorphicComponent,
@@ -221,7 +267,12 @@ export function renderIsomorphicComponent(container, store, pickComponent, props
  * @param {Object} props Properties to bootstrap the component with
  */
 export function renderBreakingNews(container, store, view, props) {
-  return renderComponent(BreakingNews, container, store, Object.assign({ view }, props));
+  return renderComponent(
+    BreakingNews,
+    container,
+    store,
+    Object.assign({ view }, props)
+  );
 }
 
 function getJsonContent(id) {
@@ -255,7 +306,8 @@ export function startApp(renderApplication, reducers, opts) {
   global.app = app;
   const { location } = global;
   const path = `${location.pathname}${location.search || ""}`;
-  const staticData = global.staticPageStoreContent || getJsonContent("static-page");
+  const staticData =
+    global.staticPageStoreContent || getJsonContent("static-page");
   const dataPromise = staticData
     ? Promise.resolve(staticData.qt)
     : getRouteData(path, { existingFetch: global.initialFetch });
@@ -266,7 +318,10 @@ export function startApp(renderApplication, reducers, opts) {
 
   const store = createQtStore(
     reducers,
-    (staticData && staticData.qt) || global.initialPage || getJsonContent("initial-page") || {},
+    (staticData && staticData.qt) ||
+      global.initialPage ||
+      getJsonContent("initial-page") ||
+      {},
     {}
   );
 
@@ -278,7 +333,8 @@ export function startApp(renderApplication, reducers, opts) {
 
   function doStartApp(page) {
     if (!page) {
-      console && console.log("Recieved a null page. Expecting the browser to redirect.");
+      console &&
+        console.log("Recieved a null page. Expecting the browser to redirect.");
       return;
     }
 
@@ -291,7 +347,9 @@ export function startApp(renderApplication, reducers, opts) {
 
     runWithTiming("qt_render", () => renderApplication(store));
 
-    history.listen((change) => app.maybeNavigateTo(`${change.pathname}${change.search || ""}`, store));
+    history.listen((change) =>
+      app.maybeNavigateTo(`${change.pathname}${change.search || ""}`, store)
+    );
 
     registerPageView(store.getState().qt);
 
