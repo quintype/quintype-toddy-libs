@@ -2,13 +2,12 @@
   "extends": [
     "standard",
     "plugin:react/recommended",
-    "plugin:jest/recommended",
     "plugin:prettier/recommended",
     "prettier/react",
     "prettier/standard"
   ],
-  "plugins": ["react", "standard", "jest"],
-  "parser": "babel-eslint",
+  "plugins": ["react", "standard"],
+  "parser": "@babel/eslint-parser",
   "rules": {
     "import/no-unresolved": "off",
     "import/prefer-default-export": "off",
