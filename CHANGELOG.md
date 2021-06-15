@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.16.2](https://github.com/quintype/quintype-node-framework/compare/v4.16.1...v4.16.2) (2021-06-15)
+
+
+### Bug Fixes
+
+* **cdn-caching:** Added support for custom TTL cache values ([#245](https://github.com/quintype/quintype-node-framework/issues/245)) ([d31c754](https://github.com/quintype/quintype-node-framework/commit/d31c754c42f6dae8c9701c13bf924cf2d2c2dead))
+
 ### [4.16.1](https://github.com/quintype/quintype-node-framework/compare/v4.16.0...v4.16.1) (2021-06-03)
 
 
