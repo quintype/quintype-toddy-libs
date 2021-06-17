@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "4.16.4-hotfix-toolbox-optimizer.0",
+  "version": "4.16.3",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
