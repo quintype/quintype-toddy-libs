@@ -124,6 +124,7 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
   {
     config,
     renderLayout,
+    seo,
     assetHelper,
     client,
     loadData,
@@ -134,6 +135,7 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
     maxConfigVersion,
   }
 ) {
+  const url = urlLib.parse(req.url, true);
   const freshRevision = `${assetHelper.assetHash(
     "app.js"
   )}-${await maxConfigVersion(config, domainSlug)}`;
@@ -159,9 +161,13 @@ exports.handleIsomorphicShell = async function handleIsomorphicShell(
         `<${assetHelper.assetPath("app.js")}>; rel=preload; as=script;`
       );
     }
+    const seoInstance = getSeoInstance(seo, config, "shell");
+    const seoTags =
+      seoInstance && seoInstance.getMetaTags(config, "shell", result, { url });
 
     return renderLayout(res, {
       config,
+      seoTags,
       content:
         '<div class="app-loading"><script type="text/javascript">window.qtLoadedFromShell = true</script></div>',
       store: createStore((state) => state, getDefaultState(result)),
