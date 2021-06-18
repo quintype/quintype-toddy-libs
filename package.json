@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "4.16.6-amp-transforms.4",
+  "version": "4.16.6-amp-transforms.5",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
