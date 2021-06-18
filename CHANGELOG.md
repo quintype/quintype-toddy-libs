@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.16.4](https://github.com/quintype/quintype-node-framework/compare/v4.16.3...v4.16.4) (2021-06-17)
+
+
+### Bug Fixes
+
+* **optimizer:** Lock amp optimizer to v2.8.0 🔨  ([#249](https://github.com/quintype/quintype-node-framework/issues/249)) ([7214af7](https://github.com/quintype/quintype-node-framework/commit/7214af711f51a5c26ad565aca9725e55fd429b7f))
+
+### [4.16.3](https://github.com/quintype/quintype-node-framework/compare/v4.16.1...v4.16.3) (2021-06-15)
+
+
+### Bug Fixes
+
+* standardize-linter to avoid lint issue ([#246](https://github.com/quintype/quintype-node-framework/issues/246)) ([68f6c6e](https://github.com/quintype/quintype-node-framework/commit/68f6c6e3e983c3d1ce3bab82f76659c05ee88708))
+* **cdn-caching:** Added support for custom TTL cache values ([#245](https://github.com/quintype/quintype-node-framework/issues/245)) ([d31c754](https://github.com/quintype/quintype-node-framework/commit/d31c754c42f6dae8c9701c13bf924cf2d2c2dead))
+
+### [4.16.2](https://github.com/quintype/quintype-node-framework/compare/v4.16.1...v4.16.2) (2021-06-15)
+
+
+### Bug Fixes
+
+* **cdn-caching:** Added support for custom TTL cache values ([#245](https://github.com/quintype/quintype-node-framework/issues/245)) ([d31c754](https://github.com/quintype/quintype-node-framework/commit/d31c754c42f6dae8c9701c13bf924cf2d2c2dead))
+
 ### [4.16.1](https://github.com/quintype/quintype-node-framework/compare/v4.16.0...v4.16.1) (2021-06-03)
 
 

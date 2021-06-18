@@ -250,6 +250,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
     mobileConfigFields,
     cdnProvider,
     redirectToLowercaseSlugs,
+    sMaxAge,
   }
 ) {
   const url = urlLib.parse(req.query.path || "/", true);
@@ -325,6 +326,7 @@ exports.handleIsomorphicDataLoad = function handleIsomorphicDataLoad(
         cacheKeys: _.get(result, ["data", "cacheKeys"]),
         cdnProvider: cdnProvider,
         config: config,
+        sMaxAge,
       });
       const seoInstance = getSeoInstance(seo, config, result.pageType);
       res.json(
@@ -465,6 +467,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
     oneSignalServiceWorkers,
     shouldEncodeAmpUri,
     publisherConfig,
+    sMaxAge,
   }
 ) {
   const apmInstance = handleSpanInstance({
@@ -482,6 +485,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
         cacheKeys: [customUrlToCacheKey(config["publisher-id"], "redirect")],
         cdnProvider: cdnProvider,
         config: config,
+        sMaxAge,
       });
       return res.redirect(301, result.data.location);
     }
@@ -514,6 +518,7 @@ exports.handleIsomorphicRoute = function handleIsomorphicRoute(
       cacheKeys: _.get(result, ["data", "cacheKeys"]),
       cdnProvider: cdnProvider,
       config: config,
+      sMaxAge,
     });
 
     if (preloadJs) {
@@ -605,6 +610,7 @@ exports.handleStaticRoute = function handleStaticRoute(
     cdnProvider,
     oneSignalServiceWorkers,
     publisherConfig,
+    sMaxAge,
   }
 ) {
   const apmInstance = handleSpanInstance({
@@ -651,6 +657,7 @@ exports.handleStaticRoute = function handleStaticRoute(
         cacheKeys: _.get(result, ["data", "cacheKeys"], ["static"]),
         cdnProvider: cdnProvider,
         config: config,
+        sMaxAge,
       });
 
       const oneSignalScript = oneSignalServiceWorkers

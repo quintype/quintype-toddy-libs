@@ -268,6 +268,7 @@ function getWithConfig(app, route, handler, opts = {}) {
  * @param {Array<object>|function} opts.redirectUrls An array or async function which used to render the redirect url provided in the array of object - >ex- REDIRECT_URLS = [{sourceUrl: "/tag/:tagSlug",destinationUrl: "/topic/:tagSlug",statusCode: 301,}]
  * @param {boolean|function} redirectToLowercaseSlugs If set or evaluates to true, then for every story-page request having capital latin letters in the slug, it responds with a 301 redirect to the lowercase slug URL. (default: true)
  * @param {boolean|function} shouldEncodeAmpUri If set to true, then for every story-page request the slug will be encoded, in case of a vernacular slug this should be set to false. Receives path as param (default: true)
+ * @param {string} opts.sMaxAge Overrides the s-maxage value, the default value is set to 900 seconds
  */
 exports.isomorphicRoutes = function isomorphicRoutes(
   app,
@@ -309,6 +310,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     prerenderServiceUrl = "",
     redirectToLowercaseSlugs = false,
     shouldEncodeAmpUri,
+    sMaxAge = "900",
   }
 ) {
   const withConfig = withConfigPartial(
@@ -405,6 +407,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       appVersion,
       cdnProvider,
       redirectToLowercaseSlugs,
+      sMaxAge,
     })
   );
 
@@ -436,6 +439,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         mobileConfigFields,
         cdnProvider,
         redirectToLowercaseSlugs,
+        sMaxAge,
       })
     );
   }
@@ -471,6 +475,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
             cdnProvider,
             oneSignalServiceWorkers,
             publisherConfig,
+            sMaxAge,
           },
           route
         )
@@ -498,13 +503,14 @@ exports.isomorphicRoutes = function isomorphicRoutes(
       shouldEncodeAmpUri,
       oneSignalServiceWorkers,
       publisherConfig,
+      sMaxAge,
     })
   );
 
   if (redirectRootLevelStories) {
     app.get(
       "/:storySlug",
-      withConfig(redirectStory, { logError, cdnProvider })
+      withConfig(redirectStory, { logError, cdnProvider, sMaxAge })
     );
   }
 
@@ -517,6 +523,7 @@ exports.isomorphicRoutes = function isomorphicRoutes(
         logError,
         seo,
         cdnProvider,
+        sMaxAge,
       })
     );
   }

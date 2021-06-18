@@ -33,7 +33,7 @@ function writeStaticPageResponse(
     pageType: page.type,
     //remove content from data to avoid the script tag inside json breaking the page
     data: Object.assign({}, page, result.data, { content: "" }),
-    currentPath: `${url.pathname}${url.search || ""}`
+    currentPath: `${url.pathname}${url.search || ""}`,
   };
   const store = createBasicStore(result, qt, {
     disableIsomorphicComponent: true,
@@ -67,7 +67,8 @@ exports.customRouteHandler = function customRouteHandler(
     logError,
     seo,
     domainSlug,
-    cdnProvider = null
+    cdnProvider = null,
+    sMaxAge,
   }
 ) {
   const url = urlLib.parse(req.url, true);
@@ -86,7 +87,13 @@ exports.customRouteHandler = function customRouteHandler(
             "Defaulting the status-code to 302 with destination-path as home-page"
           );
         }
-        addCacheHeadersToResult({ res: res, cacheKeys: page.cacheKeys(config["publisher-id"]), cdnProvider: cdnProvider, config: config });
+        addCacheHeadersToResult({
+          res: res,
+          cacheKeys: page.cacheKeys(config["publisher-id"]),
+          cdnProvider: cdnProvider,
+          config: config,
+          sMaxAge,
+        });
 
         let destination = page["destination-path"] || "/";
 
@@ -99,7 +106,13 @@ exports.customRouteHandler = function customRouteHandler(
       }
 
       if (page.type === "static-page") {
-        addCacheHeadersToResult({ res: res, cacheKeys: page.cacheKeys(config["publisher-id"]), cdnProvider: cdnProvider, config: config });
+        addCacheHeadersToResult({
+          res: res,
+          cacheKeys: page.cacheKeys(config["publisher-id"]),
+          cdnProvider: cdnProvider,
+          config: config,
+          sMaxAge,
+        });
         addStaticPageMimeType({ res, page });
 
         if (page.metadata.header || page.metadata.footer) {
