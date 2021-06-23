@@ -18,10 +18,15 @@ const {
 
 const { oneSignalImport } = require("./handlers/one-signal");
 const { customRouteHandler } = require("./handlers/custom-route-handler");
-const { handleManifest, handleAssetLink } = require("./handlers/json-manifest-handlers");
+const {
+  handleManifest,
+  handleAssetLink,
+} = require("./handlers/json-manifest-handlers");
 const { redirectStory } = require("./handlers/story-redirect");
 const { simpleJsonHandler } = require("./handlers/simple-json-handler");
-const { makePickComponentSync } = require("../isomorphic/impl/make-pick-component-sync");
+const {
+  makePickComponentSync,
+} = require("../isomorphic/impl/make-pick-component-sync");
 const { registerFCMTopic } = require("./handlers/fcm-registration-handler");
 const rp = require("request-promise");
 const bodyParser = require("body-parser");
@@ -55,7 +60,9 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
   const host = config.sketches_host;
   const apiProxy = require("http-proxy").createProxyServer({
     target: host,
-    ssl: host.startsWith("https") ? { servername: host.replace(/^https:\/\//, "") } : undefined,
+    ssl: host.startsWith("https")
+      ? { servername: host.replace(/^https:\/\//, "") }
+      : undefined,
   });
 
   apiProxy.on("proxyReq", (proxyReq, req, res, options) => {
@@ -68,7 +75,9 @@ exports.upstreamQuintypeRoutes = function upstreamQuintypeRoutes(
     getClient(req.hostname)
       .getConfig()
       .then(() => res.send("pong"))
-      .catch(() => res.status(503).send({ error: { message: "Config not loaded" } }));
+      .catch(() =>
+        res.status(503).send({ error: { message: "Config not loaded" } })
+      );
   });
 
   app.all("/api/*", sketchesProxy);
@@ -179,7 +188,9 @@ function wrapLoadDataWithMultiDomain(publisherConfig, f, configPos) {
     const { domainSlug } = arguments[arguments.length - 1];
     const config = arguments[configPos];
     const primaryHostUrl = convertToDomain(config["sketches-host"]);
-    const domain = (config.domains || []).find((d) => d.slug === domainSlug) || {
+    const domain = (config.domains || []).find(
+      (d) => d.slug === domainSlug
+    ) || {
       "host-url": primaryHostUrl,
     };
     const result = await f.apply(this, arguments);
@@ -285,7 +296,8 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     lightPages = false,
     cdnProvider = "cloudflare",
     serviceWorkerPaths = ["/service-worker.js"],
-    maxConfigVersion = (config) => get(config, ["theme-attributes", "cache-burst"], 0),
+    maxConfigVersion = (config) =>
+      get(config, ["theme-attributes", "cache-burst"], 0),
     configWrapper = (config) => config,
 
     // The below are primarily for testing
@@ -301,18 +313,31 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     sMaxAge = "900",
   }
 ) {
-  const withConfig = withConfigPartial(getClient, logError, publisherConfig, configWrapper);
+  const withConfig = withConfigPartial(
+    getClient,
+    logError,
+    publisherConfig,
+    configWrapper
+  );
 
   pickComponent = makePickComponentSync(pickComponent);
   loadData = wrapLoadDataWithMultiDomain(publisherConfig, loadData, 2);
-  loadErrorData = wrapLoadDataWithMultiDomain(publisherConfig, loadErrorData, 1);
+  loadErrorData = wrapLoadDataWithMultiDomain(
+    publisherConfig,
+    loadErrorData,
+    1
+  );
 
   if (prerenderServiceUrl) {
     app.use((req, res, next) => {
       if (req.query.prerender) {
         try {
           // eslint-disable-next-line global-require
-          prerender.set("prerenderServiceUrl", prerenderServiceUrl)(req, res, next);
+          prerender.set("prerenderServiceUrl", prerenderServiceUrl)(
+            req,
+            res,
+            next
+          );
         } catch (e) {
           logError(e);
         }
@@ -386,10 +411,17 @@ exports.isomorphicRoutes = function isomorphicRoutes(
     })
   );
 
-  app.post("/register-fcm-topic", bodyParser.json(), withConfig(registerFCMTopic, { publisherConfig }));
+  app.post(
+    "/register-fcm-topic",
+    bodyParser.json(),
+    withConfig(registerFCMTopic, { publisherConfig })
+  );
 
   if (manifestFn) {
-    app.get("/manifest.json", withConfig(handleManifest, { manifestFn, logError }));
+    app.get(
+      "/manifest.json",
+      withConfig(handleManifest, { manifestFn, logError })
+    );
   }
 
   if (mobileApiEnabled) {
@@ -413,7 +445,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(
   }
 
   if (assetLinkFn) {
-    app.get("/.well-known/assetlinks.json", withConfig(handleAssetLink, { assetLinkFn, logError }));
+    app.get(
+      "/.well-known/assetlinks.json",
+      withConfig(handleAssetLink, { assetLinkFn, logError })
+    );
   }
 
   if (templateOptions) {
@@ -473,7 +508,10 @@ exports.isomorphicRoutes = function isomorphicRoutes(
   );
 
   if (redirectRootLevelStories) {
-    app.get("/:storySlug", withConfig(redirectStory, { logError, cdnProvider, sMaxAge }));
+    app.get(
+      "/:storySlug",
+      withConfig(redirectStory, { logError, cdnProvider, sMaxAge })
+    );
   }
 
   if (handleCustomRoute) {
@@ -524,7 +562,9 @@ exports.getWithConfig = getWithConfig;
  * @param opts.cacheControl The cache control header to set on proxied requests (default: *"public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600"*)
  */
 exports.proxyGetRequest = function (app, route, handler, opts = {}) {
-  const { cacheControl = "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600" } = opts;
+  const {
+    cacheControl = "public,max-age=15,s-maxage=240,stale-while-revalidate=300,stale-if-error=3600",
+  } = opts;
 
   getWithConfig(app, route, proxyHandler, opts);
 
@@ -557,13 +597,16 @@ exports.proxyGetRequest = function (app, route, handler, opts = {}) {
 // This could also be done using express's mount point, but /ping stops working
 exports.mountQuintypeAt = function (app, mountAt) {
   app.use(function (req, res, next) {
-    const mountPoint = typeof mountAt === "function" ? mountAt(req.hostname) : mountAt;
+    const mountPoint =
+      typeof mountAt === "function" ? mountAt(req.hostname) : mountAt;
 
     if (mountPoint && req.url.startsWith(mountPoint)) {
       req.url = req.url.slice(mountPoint.length) || "/";
       next();
     } else if (mountPoint && req.url !== "/ping") {
-      res.status(404).send(`Not Found: Quintype has been mounted at ${mountPoint}`);
+      res
+        .status(404)
+        .send(`Not Found: Quintype has been mounted at ${mountPoint}`);
     } else {
       next();
     }
@@ -586,10 +629,19 @@ exports.mountQuintypeAt = function (app, mountAt) {
  *
  */
 exports.ampRoutes = (app, opts = {}) => {
-  const { ampStoryPageHandler, storyPageInfiniteScrollHandler, bookendHandler } = require("./amp/handlers");
+  const {
+    ampStoryPageHandler,
+    storyPageInfiniteScrollHandler,
+    bookendHandler,
+  } = require("./amp/handlers");
 
   getWithConfig(app, "/amp/story/*", ampStoryPageHandler, opts);
-  getWithConfig(app, "/amp/api/v1/amp-infinite-scroll", storyPageInfiniteScrollHandler, opts);
+  getWithConfig(
+    app,
+    "/amp/api/v1/amp-infinite-scroll",
+    storyPageInfiniteScrollHandler,
+    opts
+  );
   getWithConfig(app, "/amp/api/v1/bookend.json", bookendHandler, opts);
   getWithConfig(app, "/ampstories/*", ampStoryPageHandler, opts);
 };
