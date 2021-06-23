@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [4.16.5](https://github.com/quintype/quintype-node-framework/compare/v4.16.4...v4.16.5) (2021-06-18)
+
+### [4.16.4](https://github.com/quintype/quintype-node-framework/compare/v4.16.3...v4.16.4) (2021-06-17)
+
+
+### Bug Fixes
+
+* **optimizer:** Lock amp optimizer to v2.8.0 🔨  ([#249](https://github.com/quintype/quintype-node-framework/issues/249)) ([7214af7](https://github.com/quintype/quintype-node-framework/commit/7214af711f51a5c26ad565aca9725e55fd429b7f))
+
 ### [4.16.3](https://github.com/quintype/quintype-node-framework/compare/v4.16.1...v4.16.3) (2021-06-15)
 
 
