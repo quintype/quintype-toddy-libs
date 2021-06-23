@@ -52,7 +52,8 @@ async function ampStoryPageHandler(
       relatedStoriesCollection = await client.getCollectionBySlug(ampConfig["related-collection-id"]);
     if (relatedStoriesCollection) {
       const storiesToTake = get(domainSpecificOpts, ["featureConfig", "relatedStories", "storiesToTake"], 5);
-      relatedStories = relatedStoriesCollection.items
+      relatedStories = relatedStoriesCollection.items &&
+        relatedStoriesCollection.items
         .filter((item) => item.type === "story" && item.id !== story["story-content-id"])
         .slice(0, storiesToTake)
         .map((item) => item.story);
