@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "4.16.5",
+  "version": "4.16.6-amp-transforms.6",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -27,7 +27,7 @@
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
     "@ampproject/toolbox-optimizer": "2.8.0",
-    "@quintype/amp": "^2.4.4",
+    "@quintype/amp": "^2.4.5",
     "@quintype/backend": "1.25.3",
     "@quintype/components": "^2.29.2",
     "@quintype/prerender-node": "^3.2.24",
