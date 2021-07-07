@@ -18,7 +18,7 @@ exports.homeCollectionOrStories = function homeCollectionOrStories(
   client,
   depth = 1,
   getStoryLimits,
-  params
+  params = {}
 ) {
   return Collection.getCollectionBySlug(
     client,
