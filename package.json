@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "4.16.10",
+  "version": "4.16.11-feat/home-collection-params.0",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
