@@ -1,6 +1,6 @@
 {
   "name": "@quintype/framework",
-  "version": "4.16.8",
+  "version": "4.16.10",
   "description": "Libraries to help build Quintype Node.js apps",
   "main": "index.js",
   "scripts": {
@@ -27,9 +27,9 @@
   "homepage": "https://github.com/quintype/quintype-node-framework#readme",
   "dependencies": {
     "@ampproject/toolbox-optimizer": "2.8.0",
-    "@quintype/amp": "^2.4.6",
+    "@quintype/amp": "^2.4.8",
     "@quintype/backend": "1.25.3",
-    "@quintype/components": "^2.29.2",
+    "@quintype/components": "^2.31.2",
     "@quintype/prerender-node": "^3.2.24",
     "@quintype/seo": "^1.38.1",
     "atob": "^2.1.2",
@@ -73,11 +73,11 @@
     "eslint-config-prettier": "^4.1.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^8.0.1",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-promise": "^4.1.1",
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-standard": "^4.0.1",
-    "eslint-plugin-node": "^8.0.1",
     "gh-pages": "^2.1.1",
     "history": "^4.9.0",
     "husky": "^4.3.8",
