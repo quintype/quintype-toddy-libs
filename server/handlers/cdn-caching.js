@@ -1,3 +1,31 @@
+/**
+ * How quintype handles toggle between different CDN providers
+ * - The default CDN provider is set as `Cloudflare` and can be toggled to the required CDN provider (for now we have support for `akamai`, in future we can support multiple CDN providers based on requirement).
+ *
+ *   How to toggle between cdn providers:
+ *   - If your app is cloned from malibu then, in `malibu/app/server/app.js` pass `cdnProvider` with required value to `isomorphicRoutes`(No need to pass if `cloudflare` is your cdn provider).
+ *
+ *   ```javascript
+ *   import { isomorphicRoutes } from "@quintype/framework/server/routes";
+ *   isomorphicRoutes(app, {
+ *   ...
+ *   ...
+ *   ...
+ *   cdnProvider: "YOUR_CND_PROVIDER_NAME",
+ *   });
+ *   ```
+ *   - In `quintype-node-framework`, the functionality to set the required response headers is written in file: `server/handlers/cdn-caching.js`
+ *   - If the cdn provider is `akamai`, then we are updating the response headers as below
+ *   ```javascript
+ *   res.setHeader("Edge-Control", "private,no-cache,no-store,max-age=0");
+ *   res.setHeader("Edge-Control",`public,maxage=${sMaxAge},stale-while-revalidate=1000,stale-if-error=14400`);
+ *   res.setHeader("Edge-Cache-Tag", _(cacheKeys).uniq().join(","));
+ *   res.setHeader("Edge-Control","public,maxage=60,stale-while-revalidate=150,stale-if-error=3600");
+ *   ```
+ * @category Server
+ * @module cdn-provider-toggle
+ */
+
 const { cache } = require("ejs");
 const _ = require("lodash");
 
@@ -10,14 +38,11 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult({
 }) {
   let cdnProviderVal = null;
   cdnProviderVal =
-    typeof cdnProvider === "function" && Object.keys(config).length > 0
-      ? cdnProvider(config)
-      : cdnProvider;
+    typeof cdnProvider === "function" && Object.keys(config).length > 0 ? cdnProvider(config) : cdnProvider;
   if (cacheKeys) {
     if (cacheKeys === "DO_NOT_CACHE") {
       res.setHeader("Cache-Control", "private,no-cache,no-store,max-age=0");
-      cdnProviderVal === "akamai" &&
-        res.setHeader("Edge-Control", "private,no-cache,no-store,max-age=0");
+      cdnProviderVal === "akamai" && res.setHeader("Edge-Control", "private,no-cache,no-store,max-age=0");
       res.setHeader("Vary", "Accept-Encoding");
       res.setHeader(
         "Content-Security-Policy",
@@ -39,18 +64,14 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult({
         `public,max-age=15,s-maxage=${sMaxAge},stale-while-revalidate=1000,stale-if-error=14400`
       );
       cdnProviderVal === "akamai" &&
-        res.setHeader(
-          "Edge-Control",
-          `public,maxage=${sMaxAge},stale-while-revalidate=1000,stale-if-error=14400`
-        );
+        res.setHeader("Edge-Control", `public,maxage=${sMaxAge},stale-while-revalidate=1000,stale-if-error=14400`);
       res.setHeader("Vary", "Accept-Encoding");
 
       // Cloudflare Headers
       res.setHeader("Cache-Tag", _(cacheKeys).uniq().join(","));
 
       //Akamai Headers
-      cdnProviderVal === "akamai" &&
-        res.setHeader("Edge-Cache-Tag", _(cacheKeys).uniq().join(","));
+      cdnProviderVal === "akamai" && res.setHeader("Edge-Cache-Tag", _(cacheKeys).uniq().join(","));
 
       res.setHeader("Surrogate-Key", _(cacheKeys).uniq().join(" "));
       res.setHeader(
@@ -69,15 +90,9 @@ exports.addCacheHeadersToResult = function addCacheHeadersToResult({
       );
     }
   } else {
-    res.setHeader(
-      "Cache-Control",
-      "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600"
-    );
+    res.setHeader("Cache-Control", "public,max-age=15,s-maxage=60,stale-while-revalidate=150,stale-if-error=3600");
     cdnProviderVal === "akamai" &&
-      res.setHeader(
-        "Edge-Control",
-        "public,maxage=60,stale-while-revalidate=150,stale-if-error=3600"
-      );
+      res.setHeader("Edge-Control", "public,maxage=60,stale-while-revalidate=150,stale-if-error=3600");
     res.setHeader("Vary", "Accept-Encoding");
     res.setHeader(
       "Content-Security-Policy",
