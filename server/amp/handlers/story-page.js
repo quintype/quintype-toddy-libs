@@ -67,8 +67,10 @@ async function ampStoryPageHandler(
     )
       return res.redirect(story.url);
 
+    const timezone = get(additionalConfig, ["publisher", "timezone"], null);
     const seoInstance = typeof seo === "function" ? seo(config, "story-page-amp") : seo;
-    const seoTags = seoInstance && seoInstance.getMetaTags(config, "story-page-amp", { data: story, config }, { url });
+    const seoTags =
+      seoInstance && seoInstance.getMetaTags(config, "story-page-amp", { data: { story, timezone }, config }, { url });
 
     const infiniteScrollAmp = new InfiniteScrollAmp({
       ampConfig,
