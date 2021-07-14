@@ -1,9 +1,11 @@
 /**
  * How quintype handles toggle between different CDN providers
- * - The default CDN provider is set as `Cloudflare` and can be toggled to the required CDN provider (for now we have support for `akamai`, in future we can support multiple CDN providers based on requirement).
+ * - For now we have support for `Cloudflare` and `akamai`.
+ * - The default CDN provider is set as `Cloudflare`.
  *
  *   How to toggle between cdn providers:
  *   - If your app is cloned from malibu then, in `malibu/app/server/app.js` pass `cdnProvider` with required value to `isomorphicRoutes`(No need to pass if `cloudflare` is your cdn provider).
+ *   Note: Contact Quintype before switching the CDN.
  *
  *   ```javascript
  *   import { isomorphicRoutes } from "@quintype/framework/server/routes";
@@ -11,7 +13,7 @@
  *   ...
  *   ...
  *   ...
- *   cdnProvider: "YOUR_CND_PROVIDER_NAME",
+ *   cdnProvider: "YOUR_CDN_PROVIDER_NAME",
  *   });
  *   ```
  *   - In `quintype-node-framework`, the functionality to set the required response headers is written in file: `server/handlers/cdn-caching.js`
