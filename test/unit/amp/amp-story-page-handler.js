@@ -264,23 +264,16 @@ describe("ampStoryPageHandler unit tests", function () {
       })
     );
   });
-  it("Should render timezone if it's passed to seo if timezone is present in publisher config", async function () {
-    let seoPassedToAmpLib;
+  it("should call seo lib with appropriate timezone if timezone info is present in publisher config, pass it on to amplib", async function () {
     let timezone = null;
     const dummySeo = (config, pageType) => {
       return {
         getMetaTags: (config, pageType, data = {}, url) => {
           timezone = data.data.timezone;
-          return {
-            toString: () => "2021-07-15T11:35:20.008+05:30",
-          };
         },
       };
     };
     const dummyAmpLib = {
-      ampifyStory: (params) => {
-        seoPassedToAmpLib = params.seo;
-      },
       unsupportedStoryElementsPresent: () => false,
     };
     await ampStoryPageHandler(dummyReq, dummyRes, dummyNext, {
@@ -293,10 +286,8 @@ describe("ampStoryPageHandler unit tests", function () {
       InfiniteScrollAmp: DummyInfiniteScrollAmp,
     });
     assert.strictEqual(timezone, "Asia/Kolkata");
-    assert.strictEqual(seoPassedToAmpLib, "2021-07-15T11:35:20.008+05:30");
   });
-  it("Should render null if it's not passed to seo if timezone is not present in publisher config", async function () {
-    let seoPassedToAmpLib;
+  it("should call seo lib with null timezone if timezone info is absent in publisher config", async function () {
     let timezone = null;
     const dummySeo = (config, pageType) => {
       return {
@@ -306,9 +297,6 @@ describe("ampStoryPageHandler unit tests", function () {
       };
     };
     const dummyAmpLib = {
-      ampifyStory: (params) => {
-        seoPassedToAmpLib = params.seo;
-      },
       unsupportedStoryElementsPresent: () => false,
     };
     await ampStoryPageHandler(dummyReq, dummyRes, dummyNext, {
