@@ -7,6 +7,7 @@ export function registerServiceWorker({
   mountAt = global.qtMountAt || "",
 }) {
   if (enableServiceWorker && navigator.serviceWorker) {
+    console.log("Registering worker!!!", serviceWorkerLocation);
     return navigator.serviceWorker.register(`${mountAt}${serviceWorkerLocation}`);
   }
   return Promise.resolve(null);
@@ -22,8 +23,17 @@ export function setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page
       app.updateServiceWorker = () =>
         registration.update().then(() => store.dispatch({ type: SERVICE_WORKER_UPDATED }));
       if (global.OneSignal) {
+        let { config: { "theme-attributes": pageThemeAttributes = {} } = {} } = page;
+        let version = pageThemeAttributes["cache-burst"];
         app.ReregisterServiceWorker = () =>
-          registerServiceWorker(opts).then(() => console.log("Re-registered onesignal worker"));
+          registerServiceWorker({ ...opts, serviceWorkerLocation: `/OneSignalSDKUpdaterWorker.js?version=${version}` })
+            .then(() => new Promise((resolve) => setTimeout(resolve, 1)))
+            .then(() =>
+              registerServiceWorker({
+                ...opts,
+                serviceWorkerLocation: `/OneSignalSDKWorker.js?version=${version}`,
+              }).then(() => console.log("Re-registered onesignal worker"))
+            );
       }
     }
 
