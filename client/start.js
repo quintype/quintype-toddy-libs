@@ -11,7 +11,7 @@ import {
   BreakingNews,
   CLIENT_SIDE_RENDERED,
   NAVIGATE_TO_PAGE,
-  PAGE_LOADING,
+  PAGE_LOADING
 } from "@quintype/components";
 import { createBrowserHistory } from "history";
 import get from "lodash/get";
@@ -25,13 +25,13 @@ import {
   registerPageView,
   registerStoryShare,
   setMemberId,
-  startAnalytics,
+  startAnalytics
 } from "./analytics";
 import { initializeFCM } from "./impl/fcm";
 import {
   checkForServiceWorkerUpdates,
   registerServiceWorker,
-  setupServiceWorkerUpdates,
+  setupServiceWorkerUpdates
 } from "./impl/load-service-worker";
 
 require("../assetify/client")();
@@ -343,7 +343,8 @@ export function startApp(renderApplication, reducers, opts) {
       const mssgSenderId = get(page, ["config", "fcmMessageSenderId"], null);
       initializeFCM(mssgSenderId);
     }
-    setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page);
+
+    setupServiceWorkerUpdates(serviceWorkerPromise, app, store, page, opts);
 
     runWithTiming("qt_render", () => renderApplication(store));
 
