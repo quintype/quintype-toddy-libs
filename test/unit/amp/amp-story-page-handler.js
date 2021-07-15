@@ -264,11 +264,14 @@ describe("ampStoryPageHandler unit tests", function () {
       })
     );
   });
-  it("should render customized timezone if it's present in publisher config", async function () {
+  it("Should render timezone if it's passed in seo using publisher config", async function () {
     let seoPassedToAmpLib;
+    let timezone = null;
     const dummySeo = (config, pageType) => {
       return {
-        getMetaTags: () => {
+        getMetaTags: (config, pageType, data = {}, url) => {
+          console.log("here come pageType", data.data.timezone);
+          timezone = data.data.timezone;
           return {
             toString: () => "2021-07-15T11:35:20.008+05:30",
           };
@@ -290,6 +293,7 @@ describe("ampStoryPageHandler unit tests", function () {
       ampLibrary: dummyAmpLib,
       InfiniteScrollAmp: DummyInfiniteScrollAmp,
     });
+    assert.strictEqual(timezone, "Asia/Kolkata");
     assert.strictEqual(seoPassedToAmpLib, "2021-07-15T11:35:20.008+05:30");
   });
 });
