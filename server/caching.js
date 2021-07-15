@@ -1,4 +1,11 @@
 /**
+ * How Quintype handles caching
+ * - Whenever a collection/story/author is created or updated, the platform does cache/purging through CDN.
+ * - When a collection/story/author is created, the request body tag gets affected, then the frontend gets updated with the latest data with the help of cache-keys.
+ *
+ * How cache keys are created
+ * - Cache keys are generated in `quintype-node-framework` (server/caching.js). We have explained how cache keys are generated for each page type
+ *
  * This namespace implements various caching utilities. However, using these functions is deprecated in favor
  * of using {@link module:api-client api-client} and *cacheKeys*.
  *
@@ -37,21 +44,12 @@ exports.storyToCacheKey = function storyToCacheKey(publisherId, story) {
  * @param {Object} collection The Collection. Note, this is not recursive
  * @returns {string} The cache key
  */
-exports.collectionToCacheKey = function collectionToCacheKey(
-  publisherId,
-  collection
-) {
+exports.collectionToCacheKey = function collectionToCacheKey(publisherId, collection) {
   return `c/${publisherId}/${collection.id}`;
 };
 
-exports.sorterToCacheKey = function sorterToCacheKey(
-  publisherId,
-  storyGroup,
-  sectionId
-) {
-  return `q/${publisherId}/${storyGroup}/${
-    sectionId ? `section-${sectionId}` : "home"
-  }`;
+exports.sorterToCacheKey = function sorterToCacheKey(publisherId, storyGroup, sectionId) {
+  return `q/${publisherId}/${storyGroup}/${sectionId ? `section-${sectionId}` : "home"}`;
 };
 
 /**
@@ -63,3 +61,7 @@ exports.sorterToCacheKey = function sorterToCacheKey(
 exports.customUrlToCacheKey = function customUrlToCacheKey(publisherId, page) {
   return `u/${publisherId}/${page.id}`;
 };
+
+/**
+ * Note: We form the cache keys for nested collection by going from the top-level depth to the initial depth of the collections. The values that we get for all the collections/stories on the respective pages are then comma-separated and passed to the Cache-Tag header.
+ */
