@@ -15,6 +15,7 @@ const { handleSpanInstance } = require("../../utils/apm");
  *  - ampConfig is /api/v1/amp/config
  *  - publisherConfig is /api/v1/config
  *  - additionalConfig is an obj containing any extra config. If the publisher passes an async function "opts.getAdditionalConfig", its returnd value is merged into additionalConfig. Use case - Ahead can use this to fetch the pagebuilder config
+ *  - to set timezone in structured data on amp pages, set it in blacknight  Ex: publisher.yml-> publisher->timezone:“Asia/Kolkata”
  *
  * @category AmpHandler
  */
